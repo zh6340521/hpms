@@ -1,1 +1,53 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.mdm.mapper.PropertyMapper">
+	<resultMap type="hpms.mdm.dto.Property" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
+		<result column="GROUP_ID" property="groupId" jdbcType="DECIMAL"/>
+		<result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+		<result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
+        <result column="PROPERTY_TYPE" property="propertyType" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NAME_ALIAS" property="propertyNameAlias" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR"/>
+        <result column="OLD_NUMBER" property="oldNumber" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_STATUS" property="propertyStatus" jdbcType="VARCHAR"/>
+        <result column="PARENT_PROPERTY_ID" property="parentPropertyId" jdbcType="DECIMAL"/>
+        <result column="BUILDING_AMOUNT" property="buildingAmount" jdbcType="DECIMAL"/>
+        <result column="DEPT_AREA" property="deptArea" jdbcType="VARCHAR"/>
+        <result column="FLOOR_AREA" property="floorArea" jdbcType="DECIMAL"/>
+        <result column="GREEN_AREA" property="greenArea" jdbcType="DECIMAL"/>
+        <result column="POSTAL_CODE" property="postalCode" jdbcType="VARCHAR"/>
+        <result column="DEPT_BUILDER" property="deptBuilder" jdbcType="VARCHAR"/>
+        <result column="COMPLETE_TIME" property="completeTime" jdbcType="DATE"/>
+        <result column="SECURITY_UNIT" property="securityUnit" jdbcType="VARCHAR"/>
+        <result column="LONGITUDE" property="longitude" jdbcType="VARCHAR"/>
+        <result column="LATITUDE" property="latitude" jdbcType="VARCHAR"/>
+        <result column="COUNTRY" property="country" jdbcType="VARCHAR"/>
+        <result column="PROVINCE" property="province" jdbcType="VARCHAR"/>
+        <result column="CITY" property="city" jdbcType="VARCHAR"/>
+        <result column="DISTRICT" property="district" jdbcType="VARCHAR"/>
+        <result column="STREET" property="street" jdbcType="VARCHAR"/>
+        <result column="BUILDING_TYPE" property="buildingType" jdbcType="VARCHAR"/>
+        <result column="HEATING_WAY" property="heatingWay" jdbcType="VARCHAR"/>
+        <result column="ROOM_KIND" property="roomKind" jdbcType="VARCHAR"/>
+        <result column="ROOM_TYPE" property="roomType" jdbcType="VARCHAR"/>
+        <result column="ROOM_ORIENTATION" property="roomOrientation" jdbcType="VARCHAR"/>
+        <result column="ROOM_AREA" property="roomArea" jdbcType="DECIMAL"/>
+        <result column="USE_AREA" property="useArea" jdbcType="DECIMAL"/>
+        <result column="FEE_AREA" property="feeArea" jdbcType="DECIMAL"/>
+        <result column="ROOM_DECORATION" property="roomDecoration" jdbcType="VARCHAR"/>
+        <result column="BUILD_DETAILS" property="buildDetails" jdbcType="VARCHAR"/>
+        <result column="PARKING_TYPE" property="parkingType" jdbcType="VARCHAR"/>
+        <result column="PARKING_LENGTH" property="parkingLength" jdbcType="DECIMAL"/>
+        <result column="PARKING_WIDTH" property="parkingWidth" jdbcType="DECIMAL"/>
+        <result column="PARKING_AREA" property="parkingArea" jdbcType="DECIMAL"/>
+        <result column="PUBLIC_SPACE_TYPE" property="publicSpaceType" jdbcType="VARCHAR"/>
+        <result column="PUBLIC_SPACE_AREA" property="publicSpaceArea" jdbcType="DECIMAL"/>
+        <result column="ROOM_STATUS" property="roomStatus" jdbcType="VARCHAR"/>
+        <result column="PARKING_STATUS" property="parkingStatus" jdbcType="VARCHAR"/>
+        <result column="PUBLIC_SPACE_STATUS" property="publicSpaceStatus" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>
