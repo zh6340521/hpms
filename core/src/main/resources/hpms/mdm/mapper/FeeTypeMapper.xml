@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.FeeTypeMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.FeeType">
+        <result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL" />
+        <result column="FEE_TYPE_CODE" property="feeTypeCode" jdbcType="VARCHAR" />
+        <result column="FEE_TYPE_NAME" property="feeTypeName" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE" />
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>

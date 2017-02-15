@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.FeeMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.Fee">
+        <result column="FEE_ID" property="feeId" jdbcType="DECIMAL" />
+        <result column="FEE_CODE" property="feeCode" jdbcType="VARCHAR" />
+        <result column="FEE_NAME" property="feeName" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="BILLING_FREQUENCY" property="billingFrequency" jdbcType="VARCHAR" />
+        <result column="BILLING_METHOD" property="billingMethod" jdbcType="VARCHAR" />
+        <result column="REVENUE_ACCOUNT" property="revenueAccount" jdbcType="VARCHAR" />
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE" />
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL" />
+        <result column="TRANS_TYPE" property="transType" jdbcType="VARCHAR" />
+        <result column="OVERDUE_RATE" property="overdueRate" jdbcType="DECIMAL" />
+        <result column="CHARGE_DAYS" property="chargeDays" jdbcType="DECIMAL" />
+        <result column="ROUND_RULE" property="roundRule" jdbcType="VARCHAR" />
+        <result column="PRECISION" property="precision" jdbcType="DECIMAL" />
+        <result column="PRICE_EDIT_FLAG" property="priceEditFlag" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_FLAG" property="equipmentFlag" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_TYPE" property="equipmentType" jdbcType="VARCHAR" />
+        <result column="OVERDUE_FALG" property="overdueFalg" jdbcType="VARCHAR" />
+        <result column="ITEM_FLAG" property="itemFlag" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>
