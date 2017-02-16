@@ -5,6 +5,8 @@ package hpms.mdm.mapper;/**
 import com.hand.hap.mybatis.common.Mapper;
 import hpms.mdm.dto.VersionStructure;
 
+import java.util.List;
+
 /**
  * @author fuchun.hu@hand-china.com
  * @version 1.0
@@ -13,4 +15,18 @@ import hpms.mdm.dto.VersionStructure;
  * @date 2017/2/15
  */
 public interface VersionStructureMapper extends Mapper<VersionStructure> {
+
+    /**
+     * 根据版本id查询结果数据
+     * @param versionId
+     * @return
+     */
+    public List<VersionStructure> findVersionStructureByVersionId(Long versionId);
+
+    /**
+     * 查询全部版本结构信息
+     * @param vs
+     * @return
+     */
+    public List<VersionStructure> queryVersionStructure(VersionStructure vs);
 }

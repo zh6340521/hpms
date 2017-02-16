@@ -12,7 +12,74 @@
         <result column="STRUCTURE_NAME" property="structureName" jdbcType="VARCHAR" />
         <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
         <result column="BUSINESS_FORMAT" property="businessFormat" jdbcType="VARCHAR" />
-        <result column="STRUCTURE_DESCRIPTION" property="parentStructureId" jdbcType="VARCHAR" />
-        <result column="PARENT_STRUCTURE_ID" property="structureDescription" jdbcType="DECIMAL" />
+        <result column="STRUCTURE_DESCRIPTION" property="structureDescription" jdbcType="VARCHAR" />
+        <result column="PARENT_STRUCTURE_ID" property="parentStructureId" jdbcType="DECIMAL" />
+
+        <result column="parent_structure_name" property="parentStructureName" jdbcType="VARCHAR" />
     </resultMap>
+
+
+
+    <!--根据版本id查询结果数据-->
+    <select id="findVersionStructureByVersionId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+          SELECT vs.structure_id,
+           vs.version_id,
+           vs.structure_number,
+           vs.structure_name,
+           vs.property_id,
+           vs.business_format,
+           vs.parent_structure_id
+      FROM hpms_mdm_version_structure vs
+          <where>
+              1=1
+              and vs.version_id=#{versionId,jdbcType=DECIMAL}
+
+              <if test="structureNumber!=null">
+                  and vs.STRUCTURE_NUMBER=#{structureNumber,jdbcType=VARCHAR}
+              </if>
+
+              <if test="structureName!=null">
+                  and vs.STRUCTURE_NAME=#{structureName,jdbcType=VARCHAR}
+              </if>
+
+          </where>
+    </select>
+
+    <!--查询所有版本结构数据-树形查询-->
+    <select id="queryVersionStructure" parameterType="hpms.mdm.dto.VersionStructure" resultMap="BaseResultMap">
+      SELECT
+        vs.structure_id,
+       vs.version_id,
+       vs.structure_number,
+       vs.structure_name,
+       vs.property_id,
+       vs.business_format,
+       vs.parent_structure_id,
+  (
+    SELECT
+       vs.structure_name
+    FROM
+      hpms_mdm_version_structure vs1
+    WHERE
+      vs1.structure_id = vs.parent_structure_id
+  )as parent_structure_name
+FROM
+  hpms_mdm_version_structure vs
+        <where>
+            1=1
+            <if test="versionId!=null">
+                and vs.version_id=#{versionId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="structureNumber!=null">
+                and vs.STRUCTURE_NUMBER=#{structureNumber,jdbcType=VARCHAR}
+            </if>
+
+            <if test="structureName!=null">
+                and vs.STRUCTURE_NAME=#{structureName,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+    </select>
 </mapper>

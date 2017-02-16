@@ -3,6 +3,8 @@ package hpms.mdm.service;/**
  */
 
 import com.hand.hap.core.ProxySelf;
+import com.hand.hap.system.service.IBaseService;
+import hpms.mdm.dto.BuildingVersion;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -11,5 +13,5 @@ import com.hand.hap.core.ProxySelf;
  * @description：建筑版本接口
  * @date 2017/2/15
  */
-public interface IBuildingVersionService extends ProxySelf<IBuildingVersionService> {
+public interface IBuildingVersionService extends IBaseService<BuildingVersion>,ProxySelf<IBuildingVersionService> {
 }
