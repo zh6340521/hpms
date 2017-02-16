@@ -48,6 +48,12 @@ public class BuildingVersion extends BaseDTO{
     private Long  projectId;
 
     /**
+     * 公司id
+     */
+    @Column
+    private Long companyId;
+
+    /**
      *版本描述
      */
     @Column
@@ -57,13 +63,21 @@ public class BuildingVersion extends BaseDTO{
      *默认版本
      */
     @Column
-    private Long   defaultVersion;
+    private String   defaultVersion;
 
     /**
      *记录状态
      */
     @Column
     private String  enableFlag;
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
 
     public Long getVersionId() {
         return versionId;
@@ -105,11 +119,11 @@ public class BuildingVersion extends BaseDTO{
         this.versionDescription = versionDescription;
     }
 
-    public Long getDefaultVersion() {
+    public String getDefaultVersion() {
         return defaultVersion;
     }
 
-    public void setDefaultVersion(Long defaultVersion) {
+    public void setDefaultVersion(String defaultVersion) {
         this.defaultVersion = defaultVersion;
     }
 

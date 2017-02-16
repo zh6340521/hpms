@@ -18,4 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion> implements IBuildingVersionService {
+
+
 }

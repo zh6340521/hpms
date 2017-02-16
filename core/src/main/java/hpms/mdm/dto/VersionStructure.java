@@ -4,10 +4,7 @@ package hpms.mdm.dto;/**
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -69,6 +66,20 @@ public class VersionStructure extends BaseDTO {
      */
     @Column
     private Long   parentStructureId;
+
+    /**
+     * 父结构名称
+     */
+    @Transient
+    private String parentStructureName;
+
+    public Long getParentStructureName() {
+        return structureId;
+    }
+
+    public void setParentStructureName(String parentStructureName) {
+        this.parentStructureName = parentStructureName;
+    }
 
     public Long getStructureId() {
         return structureId;
