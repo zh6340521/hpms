@@ -175,12 +175,13 @@
                           fields: {
                               //默认版本
                               defaultVersion:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'},
-
-
-
-
                           }
 
+                      },
+                      requestEnd: function(e) {
+                          if (e.type != "read"){
+                              dataSource.page(1);
+                          }
                       }
                   }
               });

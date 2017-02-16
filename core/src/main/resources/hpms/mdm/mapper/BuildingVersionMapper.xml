@@ -15,4 +15,13 @@
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
         <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
     </resultMap>
+
+    <!--查询表中是否存在默认版本-->
+    <select id="findDefaultVersion" resultType="java.lang.Integer">
+        select count('x') from HPMS_MDM_BUILDING_VERSION bv where bv.default_version='Y'
+    </select>
+
+    <update id="updateBuildingVersion" >
+
+    </update>
  </mapper>

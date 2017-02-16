@@ -13,4 +13,19 @@ import hpms.mdm.dto.BuildingVersion;
  * @date 2017/2/15
  */
 public interface BuildingVersionMapper extends Mapper<BuildingVersion> {
+
+    /**
+     * 查询表中是否存在默认版本
+     * @return
+     */
+    public int findDefaultVersion();
+
+    /**
+     * 修改建筑版本表信息
+     * @param b
+     * @return
+     */
+    public int updateBuildingVersion(BuildingVersion b);
+
+
 }

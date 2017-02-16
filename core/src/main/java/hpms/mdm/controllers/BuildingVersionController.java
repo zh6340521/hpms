@@ -7,12 +7,17 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.mdm.dto.BuildingVersion;
 import hpms.mdm.service.IBuildingVersionService;
+import hpms.mdm.util.ValidationTableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,6 +34,8 @@ public class BuildingVersionController extends BaseController {
 
     @Autowired
     private IBuildingVersionService buildingVersionService;
+
+    private Logger logger = LoggerFactory.getLogger(BuildingVersionController.class);
 
     /**
      *
@@ -55,9 +62,26 @@ public class BuildingVersionController extends BaseController {
      */
     @RequestMapping(value = "/mdm/BuildingVersion/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<BuildingVersion> bv){
+    public ResponseData update(HttpServletRequest request,@RequestBody List<BuildingVersion> bv,BindingResult result){
         IRequest requestCtx = createRequestContext(request);
-        return new ResponseData(buildingVersionService.batchUpdate(requestCtx, bv));
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }
+
+        logger.info("进行批量更新");
+        try {
+            buildingVersionService.myBatchUpdate(requestCtx, bv);
+        } catch (ValidationTableException e) {
+            ResponseData rd = new ResponseData(false);
+            String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+                    RequestContextUtils.getLocale(request));
+            rd.setMessage(errorMessage);
+            return rd;
+        }
+
+        return  new ResponseData();
     }
 
     /**
