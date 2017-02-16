@@ -1,3 +1,11 @@
+<#--
+        * description: 费项类型页面
+        * version: 1.0
+        * author: feng.liu01@hand-china.com
+        * #{copyright}#
+        *
+        -->
+
 <#include "../include/header.html">
 
 <script
@@ -22,6 +30,9 @@
             $('#Grid').data('kendoGrid').dataSource.page(1);
         }
     });
+
+    // 临时 id ，用于判断唯一性
+    var feeTypeIdTemp = 0;
 </script>
 <body>
 <div id="page-content">
@@ -122,11 +133,14 @@
                             feeTypeCodeValidation: function (input) {
                                 console.log(input)
                                 if (input.is("[name='feeTypeCode']") && input.val() != "") {
+
+                                    // 正则校验-只允许输入大写字母、下划线及数字
                                     if (! /^[A-Z0-9_]+$/.test(input.val()) ){
                                         input.attr("data-feeTypeCodeValidation-msg", "只允许输入大写字母、下划线及数字");
                                         return false;
-
                                     }
+
+                                    // ajax 校验唯一
                                     var flag = true;
                                     $.ajax({
                                         type:"POST",
@@ -135,7 +149,7 @@
                                         dataType:"json",
                                         data:{feeTypeCode:input.val()},
                                         success:function (data) {
-                                            if (data.total!=0) {
+                                            if (data.total!=0 && data.rows[0].feeTypeId != feeTypeIdTemp) {
                                                 input.attr("data-feeTypeCodeValidation-msg","该值已存在，此字段唯一");
                                                 flag = false;
                                             }
@@ -155,32 +169,6 @@
             }
         }
     });
-
-    function typeCodeValidation(input){
-        /*
-        var re = /^[A-Z0-9_]+$/;
-        if (input.val() === "") {
-            input.attr("validationMessage","必输");
-            return;
-        }
-        if (!re.test(input.val())){
-            input.val("");
-            input.attr("validationMessage","此字段只允许输入大写字母、下划线及数字");
-        } else {
-            $.post(
-                "${base.contextPath}/mdm/feetype/query",
-                {feeTypeCode:input.val()},
-                function (data) {
-//                    alert(JSON.stringify(data));
-                    if (data.total!==0) {
-                        input.attr("validationMessage","该值已存在，此字段唯一");
-                        input.val("");
-
-                    }
-                }
-            );
-        }*/
-    }
 
     $("#Grid").kendoGrid({
         dataSource: dataSource,
@@ -216,7 +204,7 @@
                 attributes: {style: "text-align:center"},
                 width: 120,
                 editor:function (containner, options) {
-                    $('<input onchange="typeCodeValidation($(this))" required style="width: 90%;" ' +
+                    $('<input required style="width: 90%;" ' +
                         'class="k-input k-textbox" validationMessage="必输" ' +
                         'name="' + options.field + '"/>' +
                         '<span class="red">&nbsp;&nbsp;*</span>')
@@ -274,7 +262,11 @@
 //                    <span style="color: red;font-weight:bold;">&nbsp;&nbsp;*</span>
                 }
             }
-        ]
+        ],
+        edit: function (e) {
+            feeTypeIdTemp = e.model.feeTypeId || 0;
+            alert(feeTypeIdTemp)
+        }
     });
 
     function deleteData() {
