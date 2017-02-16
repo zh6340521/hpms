@@ -143,7 +143,7 @@
                 var treeDataSource = new kendo.data.TreeListDataSource({
                     transport: {
                         read: {
-                            url: "${base.contextPath}/mdm/structure/query",
+                            url: "${base.contextPath}/mdm/structure/query?versionId=${RequestParameters.versionId!0}",
                             type: "POST",
                             dataType: "json"
                         }
@@ -216,7 +216,8 @@
                     dataSource = new kendo.data.DataSource({
                         transport: {
                             read:  {
-                                url: crudServiceBaseUrl + "/query",
+                                //将头表id传入后台
+                                url: crudServiceBaseUrl + "/query?versionId=${RequestParameters.versionId!0}",
                                 type : "POST",
                                 dataType: "json"
                             },
@@ -315,14 +316,14 @@
                             style: "text-align: center"
                         },
                         template        : function (dataItem) {
-                            return dataItem['parentstructureName'] || '';
+
+                            return dataItem['parentStructureName'] || '';
                         },
                         editor          : function (container, options) {
                             $('<input name="' + options.field + '"/>')
                                     .appendTo(container)
                                     .kendoLov($.extend(<@lov "VERSION_STRUCTURE_LOV"/>, {
-                                textField: 'parentPositionName',
-                                valueField:'',
+                                textField: 'parentStructureName',
                                 query:function(e){
                                     e.param['versionId']=versionId;
                                 },

@@ -73,14 +73,6 @@ public class VersionStructure extends BaseDTO {
     @Transient
     private String parentStructureName;
 
-    public Long getParentStructureName() {
-        return structureId;
-    }
-
-    public void setParentStructureName(String parentStructureName) {
-        this.parentStructureName = parentStructureName;
-    }
-
     public Long getStructureId() {
         return structureId;
     }
@@ -143,5 +135,13 @@ public class VersionStructure extends BaseDTO {
 
     public void setParentStructureId(Long parentStructureId) {
         this.parentStructureId = parentStructureId;
+    }
+
+    public String getParentStructureName() {
+        return parentStructureName;
+    }
+
+    public void setParentStructureName(String parentStructureName) {
+        this.parentStructureName = parentStructureName;
     }
 }
