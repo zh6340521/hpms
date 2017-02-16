@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.VersionStructureMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.VersionStructure" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="STRUCTURE_ID" property="structureId" jdbcType="DECIMAL" />
+        <result column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="STRUCTURE_NUMBER" property="structureNumber" jdbcType="VARCHAR" />
+        <result column="STRUCTURE_NAME" property="structureName" jdbcType="VARCHAR" />
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
+        <result column="BUSINESS_FORMAT" property="businessFormat" jdbcType="VARCHAR" />
+        <result column="STRUCTURE_DESCRIPTION" property="parentStructureId" jdbcType="VARCHAR" />
+        <result column="PARENT_STRUCTURE_ID" property="structureDescription" jdbcType="DECIMAL" />
+    </resultMap>
+</mapper>

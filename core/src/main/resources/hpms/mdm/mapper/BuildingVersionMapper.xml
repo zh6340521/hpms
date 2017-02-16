@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.BuildingVersionMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.BuildingVersion" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="VERSION_NUMBER" property="versionNumber" jdbcType="VARCHAR" />
+        <result column="VERSION_NAME" property="versionName" jdbcType="VARCHAR" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="VERSION_DESCRIPTION" property="versionDescription" jdbcType="VARCHAR"/>
+        <result column="DEFAULT_VERSION" property="defaultVersion" jdbcType="DECIMAL" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+    </resultMap>
+ </mapper>
