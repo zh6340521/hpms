@@ -6,7 +6,7 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
 import hpms.mdm.dto.BuildingVersion;
-import hpms.mdm.util.ValidationTableException;
+import hpms.utils.ValidationTableException;
 
 import java.util.List;
 

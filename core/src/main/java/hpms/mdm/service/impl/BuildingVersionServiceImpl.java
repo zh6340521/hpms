@@ -7,7 +7,7 @@ import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.mdm.dto.BuildingVersion;
 import hpms.mdm.mapper.BuildingVersionMapper;
 import hpms.mdm.service.IBuildingVersionService;
-import hpms.mdm.util.ValidationTableException;
+import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
