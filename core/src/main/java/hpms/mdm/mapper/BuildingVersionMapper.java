@@ -20,12 +20,7 @@ public interface BuildingVersionMapper extends Mapper<BuildingVersion> {
      */
     public int findDefaultVersion();
 
-    /**
-     * 修改建筑版本表信息
-     * @param b
-     * @return
-     */
-    public int updateBuildingVersion(BuildingVersion b);
+
 
 
 }

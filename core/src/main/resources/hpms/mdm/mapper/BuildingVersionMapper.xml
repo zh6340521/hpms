@@ -21,7 +21,5 @@
         select count('x') from HPMS_MDM_BUILDING_VERSION bv where bv.default_version='Y'
     </select>
 
-    <update id="updateBuildingVersion" >
 
-    </update>
  </mapper>
