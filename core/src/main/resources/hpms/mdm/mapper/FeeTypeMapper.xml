@@ -7,8 +7,6 @@
         <result column="FEE_TYPE_CODE" property="feeTypeCode" jdbcType="VARCHAR" />
         <result column="FEE_TYPE_NAME" property="feeTypeName" jdbcType="VARCHAR" />
         <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
-        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE" />
-        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE" />
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
     </resultMap>
 
