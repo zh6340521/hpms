@@ -1,4 +1,4 @@
-package hpms.mdm.util;
+package hpms.utils;
 
 /**
  * @name ValidationTableException
