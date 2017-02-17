@@ -11,12 +11,14 @@
 <script
         src="${base.contextPath}/common/code?enableFlagData=MDM.ENABLE_FLAG">
 </script>
+
 <style type="text/css">
     span.red {
         color: red;
         font-weight: bold;
     }
 </style>
+
 <script type="text/javascript">
     var viewModel = kendo.observable({
         model: {},
@@ -131,7 +133,6 @@
                         validation: {
                             required: true,
                             feeTypeCodeValidation: function (input) {
-                                console.log(input)
                                 if (input.is("[name='feeTypeCode']") && input.val() != "") {
 
                                     // 正则校验-只允许输入大写字母、下划线及数字
@@ -210,7 +211,6 @@
                         '<span class="red">&nbsp;&nbsp;*</span>')
                         .appendTo(containner);
                 }
-//                ^[A-Z0-9_]+$
             },
             {
                 field: "feeTypeName",
@@ -259,13 +259,11 @@
                             dataSource: enableFlagData
                         });
                     $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(containner);
-//                    <span style="color: red;font-weight:bold;">&nbsp;&nbsp;*</span>
                 }
             }
         ],
         edit: function (e) {
             feeTypeIdTemp = e.model.feeTypeId || 0;
-            alert(feeTypeIdTemp)
         }
     });
 
