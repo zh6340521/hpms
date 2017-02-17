@@ -44,7 +44,7 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label">编码：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.feetype.feetypecode"/>：</label>
                                 <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.feeTypeCode" class="k-textbox">
@@ -54,7 +54,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label">费项类型名称：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.feetype.feetypename"/>：</label>
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.feeTypeName" class="k-textbox">
@@ -144,7 +144,7 @@
 
                                     // 正则校验-只允许输入大写字母、下划线及数字
                                     if (! /^[A-Z0-9_]+$/.test(input.val()) ){
-                                        input.attr("data-feeTypeCodeValidation-msg", "只允许输入大写字母、下划线及数字");
+                                        input.attr("data-feeTypeCodeValidation-msg", "<@spring.message 'hpms.mdm.feetype.codelimit'/>");
                                         return false;
                                     }
 
@@ -158,7 +158,7 @@
                                         data:{feeTypeCode:input.val()},
                                         success:function (data) {
                                             if (data.total!=0 && data.rows[0].feeTypeId != feeTypeIdTemp) {
-                                                input.attr("data-feeTypeCodeValidation-msg","该值已存在，此字段唯一");
+                                                input.attr("data-feeTypeCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
                                                 flag = false;
                                             }
                                         }
@@ -192,7 +192,7 @@
         editable: "inline",
         columns: [
             {
-                title: '<@spring.message "操作栏"/>',
+                title: '<@spring.message "hpms.mdm.feetype.operation"/>',
                 command: [
                     {name:"edit"}
                 ],
@@ -201,12 +201,12 @@
             },
             {
                 field: "feeTypeCode",
-                title: '<@spring.message "编码"/>',
+                title: '<@spring.message "hpms.mdm.feetype.feetypecode"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 editor:function (containner, options) {
                     $('<input required style="width: 90%;" ' +
-                        'class="k-input k-textbox" validationMessage="必输" ' +
+                        'class="k-input k-textbox" validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>' +
                         '<span class="red">&nbsp;&nbsp;*</span>')
                         .appendTo(containner);
@@ -214,12 +214,12 @@
             },
             {
                 field: "feeTypeName",
-                title: '<@spring.message "费项类型名称"/>',
+                title: '<@spring.message "hpms.mdm.feetype.feetypename"/>',
                 attributes: {style: "text-align:center"},
                 width: 200,
                 editor:function (containner, options) {
                     $('<input required style="width: 90%;" ' +
-                        'class="k-input k-textbox" validationMessage="必输" ' +
+                        'class="k-input k-textbox" validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>' +
                         '<span class="red">&nbsp;&nbsp;*</span>')
                         .appendTo(containner);
@@ -227,13 +227,13 @@
             },
             {
                 field: "description",
-                title: '<@spring.message "描述"/>',
+                title: '<@spring.message "hpms.mdm.feetype.description"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "enableFlag",
-                title: '<@spring.message "状态"/>',
+                title: '<@spring.message "hpms.mdm.feetype.enableflag"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -249,7 +249,7 @@
                 },
                 editor:function (containner, options) {
                     $('<input required style="width: 90%;" ' +
-                        ' validationMessage="必输" ' +
+                        ' validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>')
                         .appendTo(containner)
                         .kendoDropDownList({
