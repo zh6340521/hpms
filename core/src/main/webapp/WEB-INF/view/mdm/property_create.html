@@ -1,0 +1,395 @@
+<#--
+ * description: 建筑档案新建界面
+ * version: 1.0
+ * #copyright#
+ *author: chengye.hu@hand-china.com 2017.02.13
+-->
+<#include "../include/header.html">
+<body>
+	<style type="text/css">
+            label {
+                font-size: 12px;
+            }
+            .tdAlign {
+                text-align:right;
+            }
+            .col-md-8,.col-md-4{
+            	margin-top: 5px;
+            }
+	</style>
+	<script src="/core/common/code?propertyStatusData=MDM_PROPERTY_TYPE" type="text/javascript"></script>	
+	<script type="text/javascript">
+	var viewModel = kendo.observable({
+        model: {},
+        propertyStatusData: propertyStatusData,
+        resetForm : function (e) {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+	</script>
+<div id="page-content">
+	<div id="dialogNewData"></div>
+	<div id="property_form">
+		<form class="form-horizontal" id="pool_form" role="form" style="margin-top: 5px;">
+			<div class="row">
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.group'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				    	<input id="groupId" name="groupId" data-bind="value:model.groupId" style="width: 70%;"
+	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span data-for="groupId" class="k-invalid-msg" ></span>
+				    </div>
+				</div>
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.company'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				    	<input id="companyId" name="companyId" data-bind="value:model.companyId" style="width: 70%;"
+	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span data-for="companyId" class="k-invalid-msg" ></span>
+				    </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.project'/></label>
+	                   </div>
+					<div class="col-md-8">
+						<input id="projectId" name="projectId" data-bind="value:model.projectId" style="width: 70%;"
+	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span data-for="projectId" class="k-invalid-msg" ></span>
+					</div>
+				</div>
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.propertytype'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				    	<input id="propertyType" name="propertyType" data-bind="value:model.propertyType" style="width: 70%;"
+	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span data-for="propertyType" class="k-invalid-msg" ></span>
+				    </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.propertyname'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				    	<input type="text" class="k-textbox" id="propertyName"  data-bind="value:model.propertyName" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
+				    </div>
+				</div>
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.propertynumber'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				        <input type="text" class="k-textbox" id="propertyNumber"  data-bind="value:model.propertyNumber" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
+				    </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.oldnumber'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				    	<input type="text" class="k-textbox" id="oldNumber"  data-bind="value:model.oldNumber" style="width: 70%;">
+				    </div>
+				</div>
+				<div class="col-md-6" style="margin-bottom:10px">
+					<div class="col-md-4 tdAlign">
+	                       <label ><@spring.message 'hpms.mdm.property.propertystatus'/></label>
+	                   </div>
+				    <div class="col-md-8">
+				    	<input id="propertyStatus" name="propertyStatus" data-bind="value:model.propertyStatus" style="width: 70%;"
+	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+						<span data-for="propertyStatus" class="k-invalid-msg" ></span>
+				    </div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script>kendo.bind($('#property_form'), viewModel);</script>
+	<br>
+	<div id="toolbar-btn" style="clear:both;" align="center">
+        <span id="submit" onclick="submitData()" class="btn btn-primary" style="width:80px;margin-right:5px;"><@spring.message "hap.save"/></span>
+        <span id="cancel" onclick="cancel()" class="btn btn-danger" style="width:80px;"><@spring.message "hap.cancel"/></span>
+	</div>
+	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+</div>
+	<script type="text/javascript" >
+		var isedit = <#if RequestParameters.isedit?exists>
+                                ${RequestParameters.isedit}
+                             <#else>-1</#if>;
+    	var propertyId = <#if RequestParameters.propertyId?exists>
+                                ${RequestParameters.propertyId}
+                             <#else>-1</#if>;
+	    $('#property_form').kendoValidator();
+	    $("#groupId").kendoComboBox({
+		  valuePrimitive: true,
+		  dataTextField: "companyFullName",
+          dataValueField: "companyId",
+          dataSource: {
+                    transport: {
+                    	read:function(options) {
+						      $.ajax({
+						        type   : "POST",
+						        url: "${base.contextPath}/mdm/property/groupQuery",
+						        data: {}, 
+						        success: function(json) {
+						          options.success(json.rows);
+						        }
+						      });
+    					}
+                	} 
+          }
+		});
+		$("#companyId").kendoComboBox({
+          autoBind: false,
+          valuePrimitive: true,
+          cascadeFrom: "groupId",
+          cascadeFromField: "companyId",
+          filter: "contains",
+          dataTextField: "companyFullName",
+          dataValueField: "companyId",
+          dataSource: {
+              serverFiltering:true,
+              transport: {
+                  read: {
+                  	url:"${base.contextPath}/mdm/property/companyQuery",
+                  	type : "POST" 
+                  }, 
+                  contentType : "application/json",
+                  parameterMap: function(options, type) {
+                      if (type === "read") {
+                          var filter = options.filter.filters[0]
+                          var map = {};
+                          map[filter.field] = filter.value;
+                          return map;
+                      }
+                  }
+              },
+              schema: {
+                  data: 'rows'
+              }
+          },
+          dataBound:function(){
+          		if(propertyId !=-1 && isedit == 1){
+          			this.readonly(true);
+          			$("input[name='companyId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+					$("input[name='companyId_input']").css("background", "#DDDDDD");
+					$("input[name='companyId_input']").next().next().unbind();
+          		}
+          }
+      }) ;
+      $("#projectId").kendoComboBox({
+          autoBind: false,
+          valuePrimitive: true,
+          cascadeFrom: "companyId",
+          cascadeFromField: "companyId",
+          filter: "contains",
+          dataTextField: "projectName",
+          dataValueField: "projectId",
+          dataSource: {
+              serverFiltering:true,
+              transport: {
+                  read: {
+                  	url:"${base.contextPath}/mdm/property/projectQuery",
+                  	type : "POST" 
+                  }, 
+                  contentType : "application/json",
+                  parameterMap: function(options, type) {
+                      if (type === "read") {
+                          var filter = options.filter.filters[0]
+                          var map = {};
+                          map[filter.field] = filter.value;
+                          return map;
+                      }
+                  }
+              },
+              schema: {
+                  data: 'rows'
+              }
+          },
+          dataBound:function(){
+          		if(propertyId !=-1 && isedit == 1){
+          			this.readonly(true);
+          			$("input[name='projectId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+					$("input[name='projectId_input']").css("background", "#DDDDDD");
+					$("input[name='projectId_input']").next().next().unbind();
+          		}
+          }
+      }) ;
+      $("#propertyType").kendoComboBox({
+          autoBind: false,
+          valuePrimitive: true,
+          cascadeFrom: "companyId",
+          cascadeFromField: "companyId",
+          filter: "contains",
+          dataTextField: "configValueName",
+          dataValueField: "configValueId",
+          dataSource: {
+              serverFiltering:true,
+              transport: {
+                  read: {
+                  	url:"${base.contextPath}/mdm/property/propertyTypeQuery",
+                  	type : "POST" 
+                  }, 
+                  contentType : "application/json",
+                  parameterMap: function(options, type) {
+                      if (type === "read") {
+                          var filter = options.filter.filters[0]
+                          var map = {};
+                          map[filter.field] = filter.value;
+                          return map;
+                      }
+                  }
+              },
+              schema: {
+                  data: 'rows'
+              }
+          },
+          dataBound:function(){
+          		if(propertyId !=-1 && isedit == 1){
+          			this.readonly(true);
+          			$("input[name='propertyType_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+					$("input[name='propertyType_input']").css("background", "#DDDDDD");
+					$("input[name='propertyType_input']").next().next().unbind();
+          		}
+          }
+      }) ;
+      	
+      	function cancel(){
+      		if(isedit == 0){
+   				parent.closeTab("property");
+   			}else if(isedit == 2){
+   				parent.closeTab("property_update");
+   			}
+      	}
+      	
+		function submitData() {
+	        if(viewModel.model.groupId==''||viewModel.model.groupId==null){
+	            kendo.ui.showInfoDialog({
+	                message:'groupId不能为空'
+	            })
+	        }else if(viewModel.model.companyId==''||viewModel.model.companyId==null){
+	            kendo.ui.showInfoDialog({
+	                message:'companyId不能为空'
+	            })
+	        }else if(viewModel.model.projectId==''||viewModel.model.projectId==null){
+	            kendo.ui.showInfoDialog({
+	                message:'projectId不能为空'
+	            })
+	        }else if(viewModel.model.propertyType==''||viewModel.model.propertyType==null){
+	            kendo.ui.showInfoDialog({
+	                message:'propertyType不能为空'
+	            })
+	        }else if(viewModel.model.propertyName==''||viewModel.model.propertyName==null){
+	            kendo.ui.showInfoDialog({
+	                message:'propertyName不能为空'
+	            })
+	        }else if(viewModel.model.propertyNumber==''||viewModel.model.propertyNumber==null){
+	            kendo.ui.showInfoDialog({
+	                message:'propertyNumber不能为空'
+	            })
+	        }else if(viewModel.model.propertyStatus==''||viewModel.model.propertyStatus==null){
+	            kendo.ui.showInfoDialog({
+	                message:'propertyStatus不能为空'
+	            })
+	        }else {
+	        	if(isedit == 0){
+	        		viewModel.model.__status ='add';
+	        	}else if(isedit == 2){
+	        		viewModel.model.__status ='update';
+	        	}
+	            Hap.submitForm({
+	                url: '${base.contextPath}/mdm/property/propertySubmit',
+	                formModel: viewModel.model,
+	                success: function (data) {
+	                    //parent.$('#property_grid').data('kendoGrid').dataSource.page(1);
+	                    if(isedit == 0){
+	        				parent.closeTab("property");
+	        			}else if(isedit == 2){
+	        				parent.closeTab("property_update");
+	        			}
+	                    /* if (isedit) {
+	                        window.parent.$("#editWin").data("kendoWindow").close();
+	                    } else {
+	                        window.parent.$("#newWin").data("kendoWindow").close();
+	                    } */
+	                }
+	            });
+	        }
+    	};
+    	if(propertyId !=-1 && isedit == 1){
+    		$.ajax({
+		        type   : "POST",
+		        url: "${base.contextPath}/mdm/property/propertyQuery",
+		        data: { propertyId : propertyId }, 
+		        success: function(json) {
+		        	var row = json.rows[0] || {};
+                    for (var k in row) {
+                   		viewModel.model.set(k, row[k]);
+               		}
+               		$("#propertyName").attr("readonly",true).css("background", "#DDDDDD");
+					$("#propertyNumber").attr("readonly",true).css("background", "#DDDDDD");
+					$("#oldNumber").attr("readonly",true).css("background", "#DDDDDD");
+					
+               		$("#groupId").data("kendoComboBox").readonly(true);
+                    $("input[name='groupId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+					$("input[name='groupId_input']").css("background", "#DDDDDD");
+					$("input[name='groupId_input']").next().next().unbind();
+					
+					$("#propertyStatus").data("kendoComboBox").readonly(true);
+                    $("input[name='propertyStatus_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+					$("input[name='propertyStatus_input']").css("background", "#DDDDDD");
+					$("input[name='propertyStatus_input']").next().next().unbind();
+					
+					$("#submit").hide();
+					$("#cancel").hide();
+		        }
+		    });
+    	}else if(propertyId !=-1 && isedit == 2){
+    		$.ajax({
+		        type   : "POST",
+		        url: "${base.contextPath}/mdm/property/propertyQuery",
+		        data: { propertyId : propertyId }, 
+		        success: function(json) {
+		        	var row = json.rows[0] || {};
+                    for (var k in row) {
+                   		viewModel.model.set(k, row[k]);
+               		}
+		        }
+		    });
+    	}
+    	 
+		$("#propertyStatus").kendoComboBox({
+		  valuePrimitive: true,
+		  dataTextField: "meaning",
+          dataValueField: "value",
+          dataSource: propertyStatusData
+		});
+		/* function onSelect(e) {
+			var dataItem = this.dataItem(e.item.index());
+	        	$.ajax({
+			        type   : "POST",
+			        url: "${base.contextPath}/task/test2/test",
+			        data: {trxDetailId : dataItem.trxDetailId}, 
+			        success: function(json) {
+			        	showFormElements(json)
+			        }
+			    });
+        }; */
+	</script>
+</body>
+</html>

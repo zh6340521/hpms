@@ -13,7 +13,7 @@ import com.hand.hap.system.dto.BaseDTO;
  * @author chengye.hu@hand-china.com	2017年2月15日下午6:25:13
  * @version 
  */
-@Table(name = "hpms.hpms_mdm_property")
+@Table(name = "hpms_mdm_property")
 public class Property extends BaseDTO{
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -22,12 +22,20 @@ public class Property extends BaseDTO{
 	private Long propertyId;//主键
 	@Column
 	private Long groupId;//集团id
+	@Transient
+	private String groupName;//集团名称
 	@Column
 	private Long companyId;//公司id
+	@Transient
+	private String companyName;//公司名称
 	@Column
 	private Long projectId;//项目id
+	@Transient
+	private String projectName;//项目名称
 	@Column
-	private String propertyType;//建筑类型id
+	private Long propertyType;//建筑类型id
+	@Transient
+	private String configValueName;//建筑类型名称
 	@Column
 	private String propertyName;//建筑名称
 	@Column
@@ -123,11 +131,23 @@ public class Property extends BaseDTO{
 	public void setGroupId(Long groupId) {
 		this.groupId = groupId;
 	}
+	public String getGroupName() {
+		return groupName;
+	}
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
 	public Long getCompanyId() {
 		return companyId;
 	}
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 	public Long getProjectId() {
 		return projectId;
@@ -135,11 +155,23 @@ public class Property extends BaseDTO{
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
 	}
-	public String getPropertyType() {
+	public String getProjectName() {
+		return projectName;
+	}
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	public Long getPropertyType() {
 		return propertyType;
 	}
-	public void setPropertyType(String propertyType) {
+	public void setPropertyType(Long propertyType) {
 		this.propertyType = propertyType;
+	}
+	public String getConfigValueName() {
+		return configValueName;
+	}
+	public void setConfigValueName(String configValueName) {
+		this.configValueName = configValueName;
 	}
 	public String getPropertyName() {
 		return propertyName;
