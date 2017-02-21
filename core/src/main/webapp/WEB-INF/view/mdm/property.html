@@ -16,11 +16,9 @@
     		height: 25px;
 		}
 	</style>
-	<script src="/core/common/code?propertyStatusData=MDM_PROPERTY_TYPE" type="text/javascript"></script>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
         model: {},
-        propertyStatusData: propertyStatusData,
         creatFunction: function(){
             $('#property_grid').data('kendoGrid').saveChanges();
         },
@@ -207,7 +205,7 @@
 	            data  : 'rows',
 	            total : 'total',
 	            model : {
-	                id    : "taskOrderId",
+	                id    : "propertyId",
 	                fields: {
 	                	
 	                }

@@ -101,15 +101,15 @@ public class PropertyController extends BaseController{
 	/**
      * 项目查询URL 
      *
-     * @param company 封装参数对象
+     * @param project 封装参数对象
      * @param request   请求
      * @return ResponseData 符合的对象集合以及其它信息所封装的对象
      */
 	@RequestMapping(value = "/mdm/property/projectQuery" , method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData projectQuery(@ModelAttribute Company company, HttpServletRequest request){
+	public ResponseData projectQuery(@ModelAttribute Project project, HttpServletRequest request){
 		IRequest requestContext = createRequestContext(request);
-		List<Project> projects = propertyService.projectQuery(requestContext,company);
+		List<Project> projects = propertyService.projectQuery(requestContext,project);
 		return new ResponseData(projects);
 	}
 	/**

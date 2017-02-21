@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hand.hap.system.dto.BaseDTO;
 
@@ -36,14 +38,17 @@ public class Property extends BaseDTO{
 	private Long propertyType;//建筑类型id
 	@Transient
 	private String configValueName;//建筑类型名称
+	@NotEmpty
 	@Column
 	private String propertyName;//建筑名称
 	@Column
 	private String propertyNameAlias;//建筑名称别名
+	@NotEmpty
 	@Column
 	private String propertyNumber;//建筑编码
 	@Column
 	private String oldNumber;//建筑原始编码
+	@NotEmpty
 	@Column 
 	private String propertyStatus;//建筑状态
 	@Column

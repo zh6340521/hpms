@@ -42,7 +42,7 @@ public interface PropertyMapper extends Mapper<Property>{
      * @param property 公司对象
      * @return List<Project> 符合的对象集合
      */
-	List<Project> projectQuery(Company company);
+	List<Project> projectQuery(Project project);
 	/**
      * 建筑类型信息查询
      * @author chengye.hu@hand-china.com

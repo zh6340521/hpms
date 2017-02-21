@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.mdm.mapper.PriceLineMapper">
+	<resultMap type="hpms.mdm.dto.PriceLine" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="PRICE_LINE_ID" property="priceLineId" jdbcType="DECIMAL"/>
+		<result column="PRICE_HEADER_ID" property="priceHeaderId" jdbcType="DECIMAL"/>
+		<result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL"/>
+		<result column="FEE_ID" property="feeId" jdbcType="DECIMAL"/>
+		<result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
+		<result column="UNIT_PRICE" property="unitPrice" jdbcType="DECIMAL"/>
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR"/>
+        <result column="BILLING_METHOD" property="billingMethod" jdbcType="VARCHAR"/>
+        <result column="CALCULATE_RULE_ID" property="calculateRuleId" jdbcType="DECIMAL"/>
+        <result column="FEE_UOM" property="feeUom" jdbcType="VARCHAR"/>
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE"/>
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

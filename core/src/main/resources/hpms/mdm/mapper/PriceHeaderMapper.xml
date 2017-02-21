@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.mdm.mapper.PriceHeaderMapper">
+	<resultMap type="hpms.mdm.dto.PriceHeader" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="PRICE_HEADER_ID" property="priceHeaderId" jdbcType="DECIMAL"/>
+		<result column="PRICE_CODE" property="priceCode" jdbcType="VARCHAR"/>
+		<result column="PRICE_NAME" property="priceName" jdbcType="VARCHAR"/>
+		<result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+		<result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+		<result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
+		<result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR"/>
+		<result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE"/>
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <select id="priceHeaderQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.PriceHeader">
+    	SELECT
+    		hmph.PRICE_HEADER_ID,
+    		hmph.PRICE_CODE,
+    		hmph.PRICE_NAME,
+    		hmph.COMPANY_ID,
+    		hmph.PROJECT_ID,
+    		hmph.DESCRIPTION,
+    		hmph.START_DATE_ACTIVE,
+    		hmph.END_DATE_ACTIVE,
+    		hmph.ENABLE_FLAG,
+    		fcl.COMPANY_FULL_NAME COMPANY_NAME,
+    		hmp2.PROJECT_NAME
+    	FROM HPMS_MDM_PRICE_HEADER hmph
+    	LEFT JOIN FND_COMPANY_B fc
+      	ON hmph.COMPANY_ID = fc.COMPANY_ID
+      	LEFT JOIN FND_COMPANY_TL fcl
+        ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN HPMS_MDM_PROJECT hmp2
+        ON hmph.PROJECT_ID = hmp2.PROJECT_ID
+        WHERE 1 = 1
+        <if test = "priceHeaderId != null"> AND hmph.PRICE_HEADER_ID like #{priceHeaderId , jdbcType=DECIMAL} </if>
+        <if test = "priceCode != null"> AND hmph.PRICE_CODE like #{priceCode , jdbcType=VARCHAR} </if>
+        <if test = "priceName != null"> AND hmph.PRICE_NAME like #{priceName , jdbcType=VARCHAR} </if>
+        <if test = "companyId != null"> AND hmph.COMPANY_ID like #{companyId , jdbcType=DECIMAL} </if>
+        <if test = "projectId != null"> AND hmph.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
+        <if test = "startDateActive != null"> AND hmph.START_DATE_ACTIVE like #{startDateActive , jdbcType=DATE} </if>
+        <if test = "endDateActive != null"> AND hmph.END_DATE_ACTIVE like #{endDateActive , jdbcType=DATE} </if>
+    </select>
+</mapper>

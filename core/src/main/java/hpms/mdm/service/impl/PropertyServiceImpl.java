@@ -40,8 +40,8 @@ public class PropertyServiceImpl extends BaseServiceImpl<Property> implements IP
 		return propertyMapper.groupQuery();
 	}
 	@Override
-	public List<Project> projectQuery(IRequest requestContext, Company company) {
-		return propertyMapper.projectQuery(company);
+	public List<Project> projectQuery(IRequest requestContext, Project project) {
+		return propertyMapper.projectQuery(project);
 	}
 	@Override
 	public List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue) {

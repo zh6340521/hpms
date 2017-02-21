@@ -46,10 +46,10 @@ public interface IPropertyService extends IBaseService<Property>,ProxySelf<Prope
      * 根据条件查询project 
      * @author chengye.hu@hand-china.com
      * @param requestContext  请求
-     * @param company  封装参数对象
+     * @param project  封装参数对象
      * @return List<Project> 所有符合的结果集
      */
-	List<Project> projectQuery(IRequest requestContext, Company company);
+	List<Project> projectQuery(IRequest requestContext, Project project);
 	/**
      * 根据条件查询建筑类型 
      * @author chengye.hu@hand-china.com
