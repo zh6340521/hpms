@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.CalculateElementMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.CalculateElement">
+        <result column="CALCULATE_ELEMENT_ID" property="calculateElementId" jdbcType="DECIMAL"/>
+        <result column="ELEMENT_CODE" property="elementCode" jdbcType="VARCHAR"/>
+        <result column="ELEMENT_NAME" property="elementName" jdbcType="VARCHAR"/>
+        <result column="TABLE_NAME" property="tableName" jdbcType="VARCHAR"/>
+        <result column="COLUMN_NAME" property="columnName" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectTables" parameterType="hpms.mdm.dto.CalculateElement" resultMap="BaseResultMap">
+      SELECT TABLE_NAME FROM user_tables
+      <where>
+          <if test="tableName!=null">
+              TABLE_NAME like #{tableName}
+          </if>
+      </where>
+    </select>
+
+    <select id="selectColumns" parameterType="hpms.mdm.dto.CalculateElement" resultMap="BaseResultMap">
+        SELECT COLUMN_NAME FROM user_tab_columns
+
+        <where>
+            COLUMN_NAME NOT IN ('PROGRAM_ID','REQUEST_ID','OBJECT_VERSION_NUMBER',
+            'CREATION_DATE','CREATED_BY','LAST_UPDATED_BY',
+            'LAST_UPDATE_DATE','LAST_UPDATE_LOGIN','ATTRIBUTE_CATEGORY',
+            'ATTRIBUTE1','ATTRIBUTE2',
+            'ATTRIBUTE3','ATTRIBUTE4',
+            'ATTRIBUTE5','ATTRIBUTE6',
+            'ATTRIBUTE7','ATTRIBUTE8',
+            'ATTRIBUTE9','ATTRIBUTE10',
+            'ATTRIBUTE11','ATTRIBUTE12',
+            'ATTRIBUTE13','ATTRIBUTE14','ATTRIBUTE15')
+
+            <if test="tableName!=null">
+                AND TABLE_NAME like #{tableName}
+            </if>
+        </where>
+    </select>
+
+</mapper>
