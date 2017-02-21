@@ -35,10 +35,6 @@
             }
         }
     });
-
-    function newData() {
-    	parent.openTab('property','<@spring.message "hpms.mdm.property.property_new"/>','mdm/property_create.html?isedit=0')
-    };
 	</script>
 <div id="page-content">
 	<div id="dialogNewData"></div>
@@ -250,6 +246,7 @@
 	            }
 	        }
 	    });
+	    
 	    var companyData = [];
 	    var projectData = [];
 		var grid = $("#price_header_grid").kendoGrid({
@@ -278,6 +275,11 @@
 	                title      : "编码", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
+	                template   :function(e){
+		                	return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="parent.openTab(\'price_header'+e.priceCode+'\',\''+e.priceCode+'\', \'mdm/price_line.html?priceHeaderId='+e.priceHeaderId+'\')">'               
+									+ e.priceCode
+									+ '</a>'
+                    },
 	                editor: function(container, options){
                         var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
                         editor.css('width','100%');
@@ -321,10 +323,20 @@
 		                             valuePrimitive: true,
 		                             dataSource: companyData,
 		                             select:function(e){
-		                            	 options.model.set('companyName',e.sender.dataItem(e.item)[e.sender.options.dataTextField]);
-		                            	 options.model.set('companyId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
 		                            	 options.model.set('projectName',null);
 			                        	 options.model.set('projectId',null);
+			                        	 $.ajax({
+						    	      		url : '${base.contextPath}/mdm/property/projectQuery?companyId='+options.model.companyId,
+						    	      		type : 'POST',
+						    	      		contentType : "application/json;charset=utf-8",
+						    	      		cache : false,
+						    	      		dataType : 'json',
+						    	      		async : false,
+						    	      		success : function(data) {
+						    	      			var dropdownlist = $("#projectId2").data("kendoDropDownList");
+												dropdownlist.setDataSource(data.rows);
+						    	      		}
+			    	      	 			});
 		                             }
 		                    });
 				        
@@ -338,29 +350,13 @@
 		           		return dataItem['projectName']|| '' 
 		           	},
 		           	editor: function(container, options){
-		           			$.ajax({
-			    	      		url : '${base.contextPath}/mdm/property/projectQuery',
-			    	      		type : 'POST',
-			    	      		contentType : "application/json;charset=utf-8",
-			    	      		cache : false,
-			    	      		dataType : 'json',
-			    	      		data: {'companyId':options.model.companyId},
-			    	      		async : false,
-			    	      		success : function(data) {
-			    	      			projectData = data.rows
-			    	      		}
-			    	      	 });
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input id="projectId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "projectName",
 		                             dataValueField: "projectId",
 		                             valuePrimitive: true,
-		                             dataSource: projectData,
-		                             select:function(e){
-		                            	 options.model.set('projectName',e.sender.dataItem(e.item)[e.sender.options.dataTextField]);
-		                            	 options.model.set('projectId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
-		                             }
+		                             dataSource: projectData
 		                    });
 				        
 		            }

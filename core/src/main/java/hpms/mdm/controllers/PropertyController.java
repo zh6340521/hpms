@@ -107,8 +107,10 @@ public class PropertyController extends BaseController{
      */
 	@RequestMapping(value = "/mdm/property/projectQuery" , method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData projectQuery(@ModelAttribute Project project, HttpServletRequest request){
+	public ResponseData projectQuery(Long companyId, HttpServletRequest request){
 		IRequest requestContext = createRequestContext(request);
+		Project project = new Project();
+		project.setCompanyId(companyId);
 		List<Project> projects = propertyService.projectQuery(requestContext,project);
 		return new ResponseData(projects);
 	}
