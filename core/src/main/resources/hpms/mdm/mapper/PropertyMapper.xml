@@ -125,7 +125,7 @@
     		hmcv.CONFIG_VALUE_NAME
     	FROM HPMS_MDM_PROPERTY hmp
     	LEFT JOIN FND_COMPANY_B fc
-      	ON hmp.COMPANY_ID = fc.COMPANY_ID
+        ON hmp.COMPANY_ID = fc.COMPANY_ID
       	LEFT JOIN FND_COMPANY_TL fcl
         ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
         LEFT JOIN HPMS_MDM_PROJECT hmp2

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.ProjectMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.Project">
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="GROUP_ID" property="groupId" jdbcType="DECIMAL" />
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="PROJECT_CONTACT" property="projectContact" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="PROJECT_ADDRESS" property="projectAddress" jdbcType="VARCHAR" />
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE" />
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap type="com.hand.hap.fnd.dto.Company" id="companyResultMap">
+        <id column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR"/>
+        <result column="COMPANY_SHORT_NAME" property="companyShortName" jdbcType="VARCHAR"/>
+        <result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="projectQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.Project">
+        SELECT HMP.PROJECT_ID,
+        HMP.PROJECT_CODE,
+        HMP.PROJECT_NAME,
+        HMP.GROUP_ID,
+        HMP.COMPANY_ID,
+        HMP.PROJECT_CONTACT,
+        HMP.CONTACT_PHONE,
+        HMP.PROJECT_ADDRESS,
+        HMP.START_DATE_ACTIVE,
+        HMP.END_DATE_ACTIVE,
+        HMP.ENABLE_FLAG,
+        HMP.PROGRAM_ID,
+        HMP.REQUEST_ID,
+        FG.COMPANY_FULL_NAME GROUP_NAME,
+        FC.COMPANY_FULL_NAME COMPANY_NAME
+        FROM HPMS_MDM_PROJECT HMP
+        LEFT JOIN FND_COMPANY_B fg
+        ON hmp.group_id = fg.COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL fgl
+        ON (fg.COMPANY_ID = fgl.COMPANY_ID AND fgl.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN FND_COMPANY_B fc
+        ON hmp.COMPANY_ID = fc.COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL fcl
+        ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
+        WHERE 1=1
+        <if test = "projectCode != null"> AND hmp.Project_Code like #{projectCode , jdbcType=VARCHAR} </if>
+        <if test = "projectName != null"> AND hmp.Project_Name like #{projectName , jdbcType=VARCHAR} </if>
+    </select>
+
+
+    <!-- 查询有效的公司名称 -->
+    <select id="companyQuery" resultMap="companyResultMap" parameterType="com.hand.hap.fnd.dto.Company">
+        SELECT FC.COMPANY_ID,
+        FC.COMPANY_CODE,
+        FC.COMPANY_SHORT_NAME,
+        FC.COMPANY_FULL_NAME
+        FROM FND_COMPANY_B FC
+        WHERE
+        SYSDATE BETWEEN
+        NVL(FC.START_DATE_ACTIVE,
+        TO_DATE('1900-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS'))
+        AND
+        NVL(FC.END_DATE_ACTIVE,
+        TO_DATE('2999-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS'))
+
+        <if test="companyId != null">
+            AND PARENT_COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+        </if>
+    </select>
+
+
+    <!-- 查询有效的集团名称 -->
+    <select id="groupQuery" resultMap="companyResultMap" parameterType="com.hand.hap.fnd.dto.Company">
+        SELECT FC.COMPANY_ID,
+        FC.COMPANY_CODE,
+        FC.COMPANY_SHORT_NAME,
+        FC.COMPANY_FULL_NAME
+        FROM FND_COMPANY_B FC
+        WHERE
+        SYSDATE BETWEEN
+        NVL(FC.START_DATE_ACTIVE,
+        TO_DATE('1900-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS'))
+        AND
+        NVL(FC.END_DATE_ACTIVE,
+        TO_DATE('2999-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS'))
+        AND FC.PARENT_COMPANY_ID is null
+    </select>
+
+
+</mapper>

@@ -12,12 +12,32 @@
             $('#Grid').data('kendoGrid').dataSource.page(1);
         }
     });
+
+    function newData() {
+        $("#newWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('hap.new'),
+            draggable: true,
+            height: "500px",
+            width: "700px",
+            close: function(){
+                $("#editWin").empty();
+            },
+            content: "project_create.html?isedit=0",
+            iframe: true,
+            modal: true
+        });
+        var win = $("#newWin").data("kendoWindow");
+        win.center().open();
+    }
+
 </script>
 <body>
+<div id="newWin" style="display: none"></div>
+<div id="editWin" style="display: none"></div>
 <div id="page-content">
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
-        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><@spring.message "hap.new"/></span>
-        <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
+        <span onclick="newData()" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.new"/></span>
         <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
@@ -77,7 +97,10 @@
             total: 'total',
             model: {
                 id: "projectId",
-                fields: {}
+                fields: {
+                    startDateActive: {type: "date"},
+                    endDateActive: {type: "date"}
+                }
             }
         }
     });
@@ -96,14 +119,21 @@
         },
         columns: [
             {
-                field: "projectId",
-                title: '<@spring.message "Project.projectId"/>',
-                width: 120
+                field      : "",
+                title      : '<@spring.message "hap.action"/>',
+                width      : 50 ,
+                template : function(rowdata) {
+                    var uid = rowdata.uid.toString();
+                    var singleDispatch = '<button type="button" id="dispatch" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-eye-open"></span></button>&nbsp;';
+                    var singleRecycle = '<button type="button" id="recycle" class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-edit"></span></button>';
+                    return singleDispatch + singleRecycle;
+                },
+                attributes  : {style: "text-align:center"}
             },
                     {
                 field: "projectCode",
                 title: '<@spring.message "Project.projectCode"/>',
-                width: 120
+                width: 90
             },
                     {
                 field: "projectName",
@@ -111,58 +141,79 @@
                 width: 120
             },
                     {
-                field: "groupId",
+                field: "groupName",
                 title: '<@spring.message "Project.groupId"/>',
-                width: 120
+                width: 150
             },
                     {
-                field: "companyId",
+                field: "companyName",
                 title: '<@spring.message "Project.companyId"/>',
-                width: 120
+                width: 150
             },
                     {
                 field: "projectContact",
                 title: '<@spring.message "Project.projectContact"/>',
-                width: 120
+                width: 90
             },
                     {
                 field: "contactPhone",
                 title: '<@spring.message "Project.contactPhone"/>',
-                width: 120
+                width: 90
             },
                     {
                 field: "projectAddress",
                 title: '<@spring.message "Project.projectAddress"/>',
-                width: 120
+                width: 180
             },
                     {
                 field: "startDateActive",
                 title: '<@spring.message "Project.startDateActive"/>',
-                width: 120
+                width: 120,
+                format: "{0:yyyy-MM-dd}"
             },
                     {
                 field: "endDateActive",
                 title: '<@spring.message "Project.endDateActive"/>',
-                width: 120
-            },
-                    {
-                field: "enableFlag",
-                title: '<@spring.message "Project.enableFlag"/>',
-                width: 120
-            },
-                    {
-                field: "programId",
-                title: '<@spring.message "Project.programId"/>',
-                width: 120
-            },
-                    {
-                field: "requestId",
-                title: '<@spring.message "Project.requestId"/>',
-                width: 120
+                width: 120,
+                format: "{0:yyyy-MM-dd}"
             },
         ],
-        editable: true
+        editable: false
     });
+
+    function lookProject(projectId) {
+        $("#editWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('hap.view'),
+            draggable: true,
+            height: "500px",
+            width: "700px",
+            close: function(){
+            },
+            content: "project_create.html?isedit=1&projectId=" + projectId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#editWin").data("kendoWindow");
+        win.center().open();
+    }
+
+    function updateProject(projectId) {
+        $("#editWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('hap.edit'),
+            draggable: true,
+            height: "500px",
+            width: "700px",
+            close: function(){
+            },
+            content: "project_create.html?isedit=2&projectId=" + projectId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#editWin").data("kendoWindow");
+        win.center().open();
+    }
 
     function deleteData() {
 
