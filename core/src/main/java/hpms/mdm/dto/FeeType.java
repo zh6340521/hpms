@@ -1,6 +1,5 @@
 package hpms.mdm.dto;
 
-import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.GeneratedValue;
@@ -8,39 +7,38 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * @name hpms.mdm.dto.FeeType
- * @description 费项类型 dto 类 ，  映射 HPMS_MDM_FEE_TYPE 表
  * @author feng.liu01@hand-china.com 2017/02/16
  * @version 1.0
+ * @name hpms.mdm.dto.FeeType
+ * @description 费项类型 dto 类 ，  映射 HPMS_MDM_FEE_TYPE 表
  */
 
-@ExtensionAttribute(disable = true)
 @Table(name = "HPMS_MDM_FEE_TYPE")
 public class FeeType extends BaseDTO {
     /**
-     *表ID，主键，供其他表做外键
+     * 表ID，主键，供其他表做外键
      */
     @Id
     @GeneratedValue
     private Long feeTypeId;
 
     /**
-     *编码
+     * 编码
      */
     private String feeTypeCode;
 
     /**
-     *名称
+     * 名称
      */
     private String feeTypeName;
 
     /**
-     *描述
+     * 描述
      */
     private String description;
 
     /**
-     *记录状态
+     * 记录状态
      */
     private String enableFlag;
 
