@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.hand.hap.system.dto.BaseDTO;
 import java.util.Date;
 
@@ -39,6 +41,11 @@ public class Project extends BaseDTO {
 
       private Long requestId;
 
+      @Transient
+      private String groupName;//集团名称
+      @Transient
+      private String companyName;//公司名称
+
 
      public void setProjectId(Long projectId){
          this.projectId = projectId;
@@ -72,6 +79,14 @@ public class Project extends BaseDTO {
          return groupId;
      }
 
+     public String getGroupName() {
+        return groupName;
+     }
+
+     public void setGroupName(String groupName) {
+        this.groupName = groupName;
+     }
+
      public void setCompanyId(Long companyId){
          this.companyId = companyId;
      }
@@ -79,6 +94,14 @@ public class Project extends BaseDTO {
      public Long getCompanyId(){
          return companyId;
      }
+
+     public String getCompanyName() {
+        return companyName;
+    }
+
+     public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
      public void setProjectContact(String projectContact){
          this.projectContact = projectContact;
