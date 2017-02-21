@@ -6,7 +6,10 @@
     var projectId = <#if RequestParameters.projectId?exists> ${RequestParameters.projectId} <#else>-1</#if>;
 
     viewModel = kendo.observable({
-        model: {}
+        model: {
+            startDateActive : new Date(),
+            endDateActive : new Date("9999/12/31")
+        }
     });
     if(projectId !=-1 && isedit == 1){
         $.ajax({
@@ -65,7 +68,7 @@
                         <label class="col-xs-2 control-label"
                                style="text-align: right"><@spring.message "Project.projectCode"/></label>
                         <div class="col-xs-5">
-                            <input id="projectCode" name="projectCode" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.projectCode" class="k-textbox"
+                            <input id="projectCode" name="projectCode" type="text" pattern="^[0-9A-Z_]+$" required validationMessage="<@spring.message "Project.codelimit"/>" data-bind="value:model.projectCode" class="k-textbox"
                             style="width: 100%;">
                             <script>kendo.bind($('#projectCode'), viewModel);</script>
                         </div>
@@ -177,7 +180,7 @@
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "Project.endDateActive"/></label>
                         <div class="col-xs-7">
-                            <input id="endDateActive" name="endDateActive" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.endDateActive" class="datepicker"
+                            <input id="endDateActive" name="endDateActive" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.endDateActive" class="datepicker" data-max="9999/12/31"
                             style="width: 100%;">
                             <script>kendo.bind($('#endDateActive'), viewModel);</script>
                         </div>
@@ -291,6 +294,8 @@
             }else {
                 if(isedit == 0){
                     viewModel.model.__status ='add';
+                }else if(isedit == 1){
+                    window.parent.$("#editWin").data("kendoWindow").close();
                 }else if(isedit == 2){
                     viewModel.model.__status ='update';
                 }
