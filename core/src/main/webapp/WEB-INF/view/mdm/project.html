@@ -21,6 +21,7 @@
             height: "500px",
             width: "700px",
             close: function(){
+                $("#viewWin").empty();
                 $("#editWin").empty();
             },
             content: "project_create.html?isedit=0",
@@ -34,6 +35,7 @@
 </script>
 <body>
 <div id="newWin" style="display: none"></div>
+<div id="viewWin" style="display: none"></div>
 <div id="editWin" style="display: none"></div>
 <div id="page-content">
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
@@ -42,9 +44,9 @@
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "Project.projectCode"/>'
+            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "hpms.mdm.project.projectCode"/>'
                    data-bind="value:model.projectCode" class="k-textbox">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "Project.projectName"/>'
+            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "hpms.mdm.project.projectName"/>'
                    data-bind="value:model.projectName" class="k-textbox">
         <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryResource" type="submit"><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>
@@ -132,48 +134,48 @@
             },
                     {
                 field: "projectCode",
-                title: '<@spring.message "Project.projectCode"/>',
+                title: '<@spring.message "hpms.mdm.project.projectCode"/>',
                 width: 90
             },
                     {
                 field: "projectName",
-                title: '<@spring.message "Project.projectName"/>',
+                title: '<@spring.message "hpms.mdm.project.projectName"/>',
                 width: 120
             },
                     {
                 field: "groupName",
-                title: '<@spring.message "Project.groupId"/>',
+                title: '<@spring.message "hpms.mdm.project.groupName"/>',
                 width: 150
             },
                     {
                 field: "companyName",
-                title: '<@spring.message "Project.companyId"/>',
+                title: '<@spring.message "hpms.mdm.project.companyName"/>',
                 width: 150
             },
                     {
                 field: "projectContact",
-                title: '<@spring.message "Project.projectContact"/>',
+                title: '<@spring.message "hpms.mdm.project.projectContact"/>',
                 width: 90
             },
                     {
                 field: "contactPhone",
-                title: '<@spring.message "Project.contactPhone"/>',
+                title: '<@spring.message "hpms.mdm.project.contactPhone"/>',
                 width: 90
             },
                     {
                 field: "projectAddress",
-                title: '<@spring.message "Project.projectAddress"/>',
+                title: '<@spring.message "hpms.mdm.project.projectAddress"/>',
                 width: 180
             },
                     {
                 field: "startDateActive",
-                title: '<@spring.message "Project.startDateActive"/>',
+                title: '<@spring.message "hpms.mdm.project.startDateActive"/>',
                 width: 120,
                 format: "{0:yyyy-MM-dd}"
             },
                     {
                 field: "endDateActive",
-                title: '<@spring.message "Project.endDateActive"/>',
+                title: '<@spring.message "hpms.mdm.project.endDateActive"/>',
                 width: 120,
                 format: "{0:yyyy-MM-dd}"
             },
@@ -182,7 +184,7 @@
     });
 
     function lookProject(projectId) {
-        $("#editWin").kendoWindow({
+        $("#viewWin").kendoWindow({
             actions: ["Close"],
             title: $l('hap.view'),
             draggable: true,
@@ -194,7 +196,7 @@
             iframe: true,
             modal: true
         });
-        var win = $("#editWin").data("kendoWindow");
+        var win = $("#viewWin").data("kendoWindow");
         win.center().open();
     }
 

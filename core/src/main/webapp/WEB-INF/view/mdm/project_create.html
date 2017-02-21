@@ -66,9 +66,9 @@
                 <div class="col-xs-12" >
                     <div class="form-group">
                         <label class="col-xs-2 control-label"
-                               style="text-align: right"><@spring.message "Project.projectCode"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectCode"/></label>
                         <div class="col-xs-5">
-                            <input id="projectCode" name="projectCode" type="text" pattern="^[0-9A-Z_]+$" required validationMessage="<@spring.message "Project.codelimit"/>" data-bind="value:model.projectCode" class="k-textbox"
+                            <input id="projectCode" name="projectCode" type="text" pattern="^[0-9A-Z_]+$" required validationMessage="<@spring.message "hpms.mdm.project.codelimit"/>" data-bind="value:model.projectCode" class="k-textbox"
                             style="width: 100%;">
                             <script>kendo.bind($('#projectCode'), viewModel);</script>
                         </div>
@@ -81,7 +81,7 @@
                 <div class="col-xs-12" >
                     <div class="form-group">
                         <label class="col-xs-2 control-label"
-                               style="text-align: right"><@spring.message "Project.projectName"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectName"/></label>
                         <div class="col-xs-5">
                             <input id="projectName" name="projectName" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.projectName" class="k-textbox"
                             style="width: 100%;">
@@ -96,7 +96,7 @@
                 <div class="col-xs-12" >
                     <div class="form-group">
                         <label class="col-xs-2 control-label"
-                               style="text-align: right"><@spring.message "Project.groupId"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.groupName"/></label>
                         <div class="col-xs-5">
                             <input id="groupId" name="groupId" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.groupId" class="k-textbox"
                             style="width: 100%;">
@@ -111,7 +111,7 @@
                 <div class="col-xs-12" >
                     <div class="form-group">
                         <label class="col-xs-2 control-label"
-                               style="text-align: right"><@spring.message "Project.companyId"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.companyName"/></label>
                         <div class="col-xs-5">
                             <input id="companyId" name="companyId" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.companyId" class="k-textbox"
                             style="width: 100%;">
@@ -126,7 +126,7 @@
                 <div class="col-xs-6" >
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "Project.projectContact"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectContact"/></label>
                         <div class="col-xs-7">
                             <input id="projectContact" type="text" data-bind="value:model.projectContact" class="k-textbox"
                                    style="width: 100%;">
@@ -138,7 +138,7 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "Project.contactPhone"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.contactPhone"/></label>
                         <div class="col-xs-7">
                             <input id="contactPhone" type="text" data-bind="value:model.contactPhone" class="k-textbox"
                                    style="width: 100%;">
@@ -150,7 +150,7 @@
                 <div class="col-xs-12" >
                     <div class="form-group">
                         <label class="col-xs-2 control-label"
-                               style="text-align: right"><@spring.message "Project.projectAddress"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectAddress"/></label>
                         <div class="col-xs-5">
                             <input id="projectAddress" name="projectAddress" type="text" data-bind="value:model.projectAddress" class="k-textbox"
                             style="width: 100%;">
@@ -163,7 +163,7 @@
                 <div class="col-xs-6" >
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "Project.startDateActive"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.startDateActive"/></label>
                         <div class="col-xs-7">
                             <input id="startDateActive" name="startDateActive" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.startDateActive" class="datepicker"
                                    style="width: 100%;">
@@ -178,7 +178,7 @@
                 <div class="col-xs-6" >
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "Project.endDateActive"/></label>
+                               style="text-align: right"><@spring.message "hpms.mdm.project.endDateActive"/></label>
                         <div class="col-xs-7">
                             <input id="endDateActive" name="endDateActive" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.endDateActive" class="datepicker" data-max="9999/12/31"
                             style="width: 100%;">
@@ -262,40 +262,42 @@
         $("#closeWin").click(function(){
             if(isedit == 0){
                 window.parent.$("#newWin").data("kendoWindow").close();
-            }else if(isedit == 1 || isedit == 2){
+            }else if(isedit == 1){
+                window.parent.$("#viewWin").data("kendoWindow").close();
+            }else if(isedit == 2){
                 window.parent.$("#editWin").data("kendoWindow").close();
             }
         });
         $("#saveGrid").click(function () {
             if(viewModel.model.projectCode==''||viewModel.model.projectCode==null){
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "Project.projectCode"/>不能为空'
+                    message:'<@spring.message "hpms.mdm.project.projectCode"/>不能为空'
                 })
             }else if(viewModel.model.projectName==''||viewModel.model.projectName==null){
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "Project.projectName"/>不能为空'
+                    message:'<@spring.message "hpms.mdm.project.projectName"/>不能为空'
                 })
             }else if(viewModel.model.groupId==''||viewModel.model.groupId==null){
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "Project.groupId"/>不能为空'
+                    message:'<@spring.message "hpms.mdm.project.groupName"/>不能为空'
                 })
             }else if(viewModel.model.companyId==''||viewModel.model.companyId==null){
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "Project.companyId"/>不能为空'
+                    message:'<@spring.message "hpms.mdm.project.companyName"/>不能为空'
                 })
             }else if(viewModel.model.startDateActive==''||viewModel.model.startDateActive==null){
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "Project.startDateActive"/>不能为空'
+                    message:'<@spring.message "hpms.mdm.project.startDateActive"/>不能为空'
                 })
             }else if(viewModel.model.endDateActive==''||viewModel.model.endDateActive==null){
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "Project.endDateActive"/>不能为空'
+                    message:'<@spring.message "hpms.mdm.project.endDateActive"/>不能为空'
                 })
             }else {
                 if(isedit == 0){
                     viewModel.model.__status ='add';
                 }else if(isedit == 1){
-                    window.parent.$("#editWin").data("kendoWindow").close();
+                    window.parent.$("#viewWin").data("kendoWindow").close();
                 }else if(isedit == 2){
                     viewModel.model.__status ='update';
                 }
