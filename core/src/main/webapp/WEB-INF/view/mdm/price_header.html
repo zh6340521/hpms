@@ -42,19 +42,19 @@
 		<form class="form-horizontal" id="pool_form" role="form" style="margin-top: 5px;">
 			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">编码</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.pricecode'/></label>
 				    <div class="col-md-7">
 				    	<input class="k-textbox" name="priceCode" data-bind="value:model.priceCode" style="width: 90%;"/>
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">定价表名称</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.pricename'/></label>
 					<div class="col-md-7">
 						<input class="k-textbox" name="priceName" data-bind="value:model.priceName" style="width: 90%;"/>
 					</div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">公司</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.property.company'/></label>
 				    <div class="col-md-7">
 				      <input id="companyId" name="companyId"  data-bind="value:model.companyId" style="width: 90%;">
 				    </div>
@@ -62,19 +62,19 @@
 			</div>
 			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">项目</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.property.project'/></label>
 				    <div class="col-md-7">
 				        <input id="projectId" name="projectId"  data-bind="value:model.projectId" style="width: 90%;"/> 
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">有效期起</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.startdate'/></label>
 				    <div class="col-md-7">
 				    	<input id="startDateActive" data-role="datepicker"  data-bind="value:model.startDateActive" style="width: 90%;"/>
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">有效期止</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.enddate'/></label>
 				    <div class="col-md-7">
 				    	<input id="endDateActive" data-role="datepicker" data-bind="value:model.endDateActive" style="width: 90%;"/>
 				    </div>
@@ -272,7 +272,7 @@
 			        		width: "9%"
 			    },{
 		        	field      : "priceCode",
-	                title      : "编码", 
+	                title      : "<@spring.message 'hpms.mdm.priceheader.pricecode'/>", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
 	                template   :function(e){
@@ -287,7 +287,7 @@
                 	}
 		        },{
 		        	field      : "priceName",
-	                title      : "定价表名称", 
+	                title      : "<@spring.message 'hpms.mdm.priceheader.pricename'/>", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
@@ -297,7 +297,7 @@
                 	}
 		        },{
 		        	field      : "companyId",
-	                title      : "公司", 
+	                title      : "<@spring.message 'hpms.mdm.property.company'/>", 
 	                width      : "13%",
 	                attributes : {style: "text-align:center"},
 	                template: function(dataItem){
@@ -343,7 +343,7 @@
 		            }
 		        },{
 		        	field      : "projectId",
-	                title      : "项目", 
+	                title      : "<@spring.message 'hpms.mdm.property.project'/>", 
 	                width      : "13%",
 	                attributes : {style: "text-align:center"},
 	              	template: function(dataItem){
@@ -362,7 +362,7 @@
 		            }
 		        },{
 		        	field      : "description",
-	                title      : "描述", 
+	                title      : "<@spring.message 'hap.description'/>", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
@@ -372,7 +372,7 @@
                 	}
 		        },{
 		        	field      : "startDateActive",
-	                title      : "有效时间起", 
+	                title      : "<@spring.message 'hpms.mdm.priceheader.startdate'/>", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
 	                format: "{0:yyyy-MM-dd}",
@@ -399,7 +399,7 @@
 	                }
 		        },{
 		        	field      : "endDateActive",
-	                title      : "有效时间止", 
+	                title      : "<@spring.message 'hpms.mdm.priceheader.enddate'/>", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
 	                format: "{0:yyyy-MM-dd}",

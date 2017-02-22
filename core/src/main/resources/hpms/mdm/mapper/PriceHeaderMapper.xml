@@ -15,7 +15,7 @@
         <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE"/>
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
     </resultMap>
-    
+    <!-- 条件查询定价表头 -->
     <select id="priceHeaderQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.PriceHeader">
     	SELECT
     		hmph.PRICE_HEADER_ID,

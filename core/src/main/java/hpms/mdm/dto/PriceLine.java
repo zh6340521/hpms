@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -31,30 +32,39 @@ public class PriceLine extends BaseDTO{
 	private Long priceHeaderId;//定价表名称
 	@NotNull
 	@Column 
-	private Long feeTypeId;//行ID
+	private Long feeTypeId;//费项类型
+	@Transient
+	private String feeTypeName;//费项类型名称
 	@NotNull
 	@Column
-	private Long feeId;//费项类型
-	@NotNull
-	@Column
-	private Long projectId;//费项
+	private Long feeId;//费项
+	@Transient
+	private String feeName;//费项名称
 	@NotNull
 	@Column
 	private Long unitPrice;//单价
 	@NotEmpty
 	@Column
 	private String currency;//币种
+	@Transient
+	private String currencyName;//币种名称
 	@NotEmpty
 	@Column
 	private String billingMethod;//计算方式
+	@Transient
+	private String billingMethodName;//计算方式名称
 	@Column
 	private Long calculateRuleId;//计算规则
+	@Transient
+	private String ruleName;//计算规则名称
 	@Column
 	private String feeUom;//单位
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@Transient
+	private String feeUomName;//单位名称
+	@JsonFormat(pattern="yyyy-MM-dd")
 	@Column
 	private Date startDateActive;//有效期起
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	@Column
 	private Date endDateActive;//有效期至
 	@Column
@@ -77,17 +87,23 @@ public class PriceLine extends BaseDTO{
 	public void setFeeTypeId(Long feeTypeId) {
 		this.feeTypeId = feeTypeId;
 	}
+	public String getFeeTypeName() {
+		return feeTypeName;
+	}
+	public void setFeeTypeName(String feeTypeName) {
+		this.feeTypeName = feeTypeName;
+	}
 	public Long getFeeId() {
 		return feeId;
 	}
 	public void setFeeId(Long feeId) {
 		this.feeId = feeId;
 	}
-	public Long getProjectId() {
-		return projectId;
+	public String getFeeName() {
+		return feeName;
 	}
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
+	public void setFeeName(String feeName) {
+		this.feeName = feeName;
 	}
 	public Long getUnitPrice() {
 		return unitPrice;
@@ -101,11 +117,23 @@ public class PriceLine extends BaseDTO{
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
+	public String getCurrencyName() {
+		return currencyName;
+	}
+	public void setCurrencyName(String currencyName) {
+		this.currencyName = currencyName;
+	}
 	public String getBillingMethod() {
 		return billingMethod;
 	}
 	public void setBillingMethod(String billingMethod) {
 		this.billingMethod = billingMethod;
+	}
+	public String getBillingMethodName() {
+		return billingMethodName;
+	}
+	public void setBillingMethodName(String billingMethodName) {
+		this.billingMethodName = billingMethodName;
 	}
 	public Long getCalculateRuleId() {
 		return calculateRuleId;
@@ -113,11 +141,23 @@ public class PriceLine extends BaseDTO{
 	public void setCalculateRuleId(Long calculateRuleId) {
 		this.calculateRuleId = calculateRuleId;
 	}
+	public String getRuleName() {
+		return ruleName;
+	}
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
 	public String getFeeUom() {
 		return feeUom;
 	}
 	public void setFeeUom(String feeUom) {
 		this.feeUom = feeUom;
+	}
+	public String getFeeUomName() {
+		return feeUomName;
+	}
+	public void setFeeUomName(String feeUomName) {
+		this.feeUomName = feeUomName;
 	}
 	public Date getStartDateActive() {
 		return startDateActive;
