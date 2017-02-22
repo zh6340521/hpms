@@ -7,60 +7,134 @@ package hpms.mdm.dto;
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import com.hand.hap.system.dto.BaseDTO;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import java.util.Date;
 
+
+/**
+ * @author jun.guo@hand-china.com
+ * @version 1.0
+ * @name Fee
+ * @description:收费项目实体类
+ * @date 2017/2/16
+ */
 @ExtensionAttribute(disable = true)
 @Table(name = "HPMS_MDM_FEE")
 public class Fee extends BaseDTO {
-    @Id
-    @GeneratedValue
+   
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3690266863289816002L;
+	@Id
+    @Column
+    @GeneratedValue(generator = GENERATOR_TYPE)
     private Long feeId;
-
+    @Column
     private String feeCode;
-
+    @Column
     private String feeName;
-
+    @Column
     private String description;
-
+    @Column
     private String billingFrequency;
-
+    @Column
     private String billingMethod;
-
+    @Column
     private String revenueAccount;
-
+    @Column
     private Date startDateActive;
-
+    @Column
     private Date endDateActive;
-
+    @Column
     private String enableFlag;
-
+    @Column
     private Long feeTypeId;
-
+    @Column
     private String transType;
-
+    @Column
     private Long overdueRate;
-
+    @Column
     private Long chargeDays;
-
+    @Column
     private String roundRule;
-
+    @Column
     private Long precision;
-
+    @Column
     private String priceEditFlag;
-
+    @Column
     private String equipmentFlag;
-
+    @Column
     private String equipmentType;
-
+    @Column
     private String overdueFalg;
-
+    @Column
     private String itemFlag;
 
+    @Transient
+    private String feeTypeName;
+    
+    @Transient
+    private String meaning1;
+    
+    @Transient
+    private String meaning2;
+    
+    @Transient
+    private String meaning3;
+    
+    @Transient
+    private String meaning4;
+    
+    @Transient
+    private Long itemCount;
 
-    public void setFeeId(Long feeId) {
+    public Long getItemCount() {
+		return itemCount;
+	}
+
+	public void setItemCount(Long itemCount) {
+		this.itemCount = itemCount;
+	}
+
+	public String getMeaning1() {
+		return meaning1;
+	}
+
+	public void setMeaning1(String meaning1) {
+		this.meaning1 = meaning1;
+	}
+
+	public String getMeaning2() {
+		return meaning2;
+	}
+
+	public void setMeaning2(String meaning2) {
+		this.meaning2 = meaning2;
+	}
+
+	public String getMeaning3() {
+		return meaning3;
+	}
+
+	public void setMeaning3(String meaning3) {
+		this.meaning3 = meaning3;
+	}
+
+	public String getMeaning4() {
+		return meaning4;
+	}
+
+	public void setMeaning4(String meaning4) {
+		this.meaning4 = meaning4;
+	}
+
+	public void setFeeId(Long feeId) {
         this.feeId = feeId;
     }
 
@@ -68,7 +142,15 @@ public class Fee extends BaseDTO {
         return feeId;
     }
 
-    public void setFeeCode(String feeCode) {
+    public String getFeeTypeName() {
+		return feeTypeName;
+	}
+
+	public void setFeeTypeName(String feeTypeName) {
+		this.feeTypeName = feeTypeName;
+	}
+
+	public void setFeeCode(String feeCode) {
         this.feeCode = feeCode;
     }
 

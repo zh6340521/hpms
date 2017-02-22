@@ -1,8 +1,11 @@
 package hpms.mdm.service;
 
+import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
 import hpms.mdm.dto.CalRuleLine;
+
+import java.util.List;
 
 /**
  * @author feng.liu01@hand-china.com 2017/02/21
@@ -12,5 +15,10 @@ import hpms.mdm.dto.CalRuleLine;
  */
 
 public interface ICalRuleLineService extends IBaseService<CalRuleLine>, ProxySelf<ICalRuleLineService> {
-
+    /**
+     * 根据条件查询
+     * @param calRuleLine
+     * @return
+     */
+    List<CalRuleLine> selectElementName(IRequest request, CalRuleLine calRuleLine, int pageNum, int pageSize);
 }

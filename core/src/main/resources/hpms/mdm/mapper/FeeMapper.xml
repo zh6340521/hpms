@@ -24,7 +24,134 @@
         <result column="EQUIPMENT_TYPE" property="equipmentType" jdbcType="VARCHAR" />
         <result column="OVERDUE_FALG" property="overdueFalg" jdbcType="VARCHAR" />
         <result column="ITEM_FLAG" property="itemFlag" jdbcType="VARCHAR" />
+        <result column="FEE_TYPE_NAME" property="feeTypeName" jdbcType="VARCHAR" />
+        <result column="MEANING1" property="meaning1" jdbcType="VARCHAR" />
+        <result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
+        <result column="MEANING3" property="meaning3" jdbcType="VARCHAR" />
+        <result column="MEANING4" property="meaning4" jdbcType="VARCHAR" />
+        <result column="ITEMCOUNT" property="itemCount" jdbcType="DECIMAL" />
     </resultMap>
+    
+    
+     <!--查询收费项目-->
+    <select id="queryFee" parameterType="hpms.mdm.dto.Fee" resultMap="BaseResultMap">
+      SELECT HMF.FEE_ID,
+      HMF.FEE_CODE,
+      HMF.FEE_NAME,
+      HMF.DESCRIPTION,
+      HMF.BILLING_FREQUENCY,
+      HMF.BILLING_METHOD,
+      HMF.REVENUE_ACCOUNT,
+      HMF.START_DATE_ACTIVE,
+      HMF.END_DATE_ACTIVE,
+      HMF.ENABLE_FLAG,
+      HMF.FEE_TYPE_ID,
+      HMF.TRANS_TYPE,
+      HMF.OVERDUE_RATE,
+      HMF.CHARGE_DAYS,
+      HMF.ROUND_RULE,
+      HMF.PRECISION,
+      HMF.PRICE_EDIT_FLAG,
+      HMF.EQUIPMENT_FLAG,
+      HMF.EQUIPMENT_TYPE,
+      HMF.OVERDUE_FALG,
+      HMF.ITEM_FLAG,
+      HMFT.FEE_TYPE_NAME,
+      HCVV1.MEANING MEANING1,
+      HCVV2.MEANING MEANING2,
+      HCVV3.MEANING MEANING3,
+      HCVV4.MEANING MEANING4
+   FROM HPMS_MDM_FEE HMF
+   LEFT JOIN HPMS_MDM_FEE_TYPE HMFT
+     ON HMF.FEE_TYPE_ID = HMFT.FEE_TYPE_ID
+   LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+     ON HCVV1.CODE = 'HPMS_TRANS_TYPE'
+    AND HCVV1.VALUE = HMF.TRANS_TYPE
+    AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+   LEFT JOIN HPMS_CODE_VALUE_V HCVV2
+     ON HCVV2.CODE = 'HPMS_BILLING_FREQ'
+    AND HCVV2.VALUE = HMF.BILLING_FREQUENCY
+    AND HCVV2.LANG = #{request.locale,jdbcType=VARCHAR}
+   LEFT JOIN HPMS_CODE_VALUE_V HCVV3
+     ON HCVV3.CODE = 'HPMS_BILL_METHOD'
+    AND HCVV3.VALUE = HMF.BILLING_METHOD
+    AND HCVV3.LANG = #{request.locale,jdbcType=VARCHAR}
+   LEFT JOIN HPMS_CODE_VALUE_V HCVV4
+     ON HCVV4.CODE = 'HPMS_ROUND_RULE'
+    AND HCVV4.VALUE = HMF.ROUND_RULE
+    AND HCVV4.LANG = #{request.locale,jdbcType=VARCHAR}
+        
+        <where>
+            1=1                       
+            <if test="feeCode!=null">
+                and HMF.FEE_CODE LIKE concat('%', concat(#{feeCode,jdbcType=VARCHAR}, '%'))               
+            </if>
+            <if test="feeId!=null">
+                and HMF.FEE_ID=#{feeId,jdbcType=DECIMAL}
+            </if>
 
+            <if test="transType!=null">
+                and HMF.TRANS_TYPE=#{transType,jdbcType=VARCHAR}
+            </if>
+            
+            <if test="feeTypeId!=null">
+                and HMF.FEE_TYPE_ID=#{feeTypeId,jdbcType=DECIMAL}
+            </if>
 
+            <if test="feeTypeName!=null">
+                and HMFT.FEE_TYPE_NAME=#{feeTypeName,jdbcType=VARCHAR}
+            </if>
+            
+            <if test="feeName!=null">
+                and HMF.FEE_NAME=#{feeName,jdbcType=VARCHAR}
+            </if>
+            
+            <if test="billingFrequency!=null">
+                and HMF.BILLING_FREQUENCY=#{billingFrequency,jdbcType=VARCHAR}
+            </if>
+            
+            <if test="billingMethod!=null">
+                and HMF.BILLING_METHOD=#{billingMethod,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+    </select>
+    
+    
+  <!-- Author:jun.guo@hand-china.com 
+	Description:通过编码判断收费项目是否存在 
+	Date:2017/2/22 -->
+	<select id="queryCountByCode" resultType="int"
+		parameterType="hpms.mdm.dto.Fee">
+	   SELECT COUNT(1)
+		FROM HPMS_MDM_FEE HMF		
+        <where>
+            1=1                       
+            <if test="feeCode!=null">
+                and HMF.FEE_CODE = #{feeCode,jdbcType=VARCHAR}              
+            </if>       
+        </where>   
+             
+	
+	</select>
+	
+	
+    <!-- Author:jun.guo@hand-china.com 
+	Description:通过编码判断收费项目是否存在 
+	Date:2017/2/22 -->
+	<select id="queryCountItemFlag" resultMap="BaseResultMap">
+	   SELECT COUNT(1) ITEMCOUNT
+		FROM HPMS_MDM_FEE HMF		
+        <where>
+            1=1                       
+            <if test="feeCode!=null">
+                and HMF.ITEM_FLAG = 'Y'              
+            </if>       
+        </where>   
+             
+	
+	</select>
+
+ 
 </mapper>

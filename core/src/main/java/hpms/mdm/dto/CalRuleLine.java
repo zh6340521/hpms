@@ -5,6 +5,7 @@ import com.hand.hap.system.dto.BaseDTO;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author feng.liu01@hand-china.com 2017/02/21
@@ -47,6 +48,12 @@ public class CalRuleLine extends BaseDTO {
      *记录状态
      */
     private String enableFlag;
+
+    /**
+     * 计算要素名称
+     */
+    @Transient
+    private String elementName;
 
     public void setCalRuleLineId(Long calRuleLineId) {
         this.calRuleLineId = calRuleLineId;
@@ -96,4 +103,11 @@ public class CalRuleLine extends BaseDTO {
         return enableFlag;
     }
 
+    public String getElementName() {
+        return elementName;
+    }
+
+    public void setElementName(String elementName) {
+        this.elementName = elementName;
+    }
 }

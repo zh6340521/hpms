@@ -42,7 +42,7 @@ public class CalRuleLineController extends BaseController {
     public ResponseData query(CalRuleLine dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(service.select(requestContext, dto, page, pageSize));
+        return new ResponseData(service.selectElementName(requestContext, dto, page, pageSize));
     }
 
     /**
