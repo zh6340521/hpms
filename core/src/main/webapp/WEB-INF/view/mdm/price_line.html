@@ -207,9 +207,23 @@
 	                id    : "priceLineId",
 	                fields: {
 	                	priceHeaderId :{defaultValue:priceHeaderId},
+	                	feeTypeId :{validation: {required: true}},
 	                	feeId  : {validation: {required: true}},
-                    	projectId : {validation: {required: true}},
-                    	unitPrice: {validation: {required: true}},
+                    	unitPrice: {
+                    		validation: {
+	                    		required: true,
+	                    		unitPriceValidation: function (input) {
+	                    			if (input.is("[name='unitPrice']") && input.val() != "") {
+	                                    // 正则校验-只允许输入非负数
+	                                    if (! /^(0|[1-9]\d*)$/.test(input.val()) ){
+	                                        input.attr("data-unitPriceValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
+	                                        return false;
+	                                    }
+	                                }
+	                                return true;
+	                    		} 
+                    		}
+                    	},
                     	currency: {type:"string",validation: {required: true}},
                     	feeUom: {type:"string",validation: {required: true}},
                     	billingMethod: {type:"string",validation: {required: true}},
@@ -218,19 +232,6 @@
 	            }
 	        }
 	    });
-	    
-	    function verifyNumber(self){
-    		var reg =  /^(0|[1-9]\d*)$/;
-    		if(reg.test(self.value)){
-    		
-    		}else{
-    			kendo.ui.showErrorDialog({
-                        message: '单价只能为非负数!'
-                }).done(function (e) {
-                	self.value= "";
-                })
-    		}
-		}
 
 	    var feeTypeData = [];
 	    var feeData = [];
@@ -327,7 +328,7 @@
 	                width      : "13%",
 	                attributes : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input onblur="verifyNumber(this)" class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="unitPrice"/>');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="unitPrice"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}

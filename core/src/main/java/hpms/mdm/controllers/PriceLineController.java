@@ -114,8 +114,10 @@ public class PriceLineController extends BaseController{
      */
 	@RequestMapping(value = "/mdm/priceLine/feeQuery" , method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData feeQuery(@ModelAttribute Fee fee, HttpServletRequest request){
+	public ResponseData feeQuery(Long feeTypeId, HttpServletRequest request){
 		IRequest requestContext = createRequestContext(request);
+		Fee fee = new Fee();
+		fee.setFeeTypeId(feeTypeId);
 		List<Fee> fees = feeService.select(requestContext, fee, 1, 100);
 		return new ResponseData(fees);
 	}

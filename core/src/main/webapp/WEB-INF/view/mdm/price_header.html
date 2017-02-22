@@ -235,7 +235,37 @@
 	            model : {
 	                id    : "priceHeaderId",
 	                fields: {
-	                	priceCode  : {type:"string",validation: {required: true}},
+	                	priceCode  : {type:"string",
+	                	validation: {
+		                	required: true,
+		                	priceCodeValidation: function (input) {
+		                		if (input.is("[name='priceCode']") && input.val() != "") {
+	                                    // 正则校验-只允许输入大写字母、下划线及数字
+	                                    if (! /^[A-Z0-9_]+$/.test(input.val()) ){
+	                                        input.attr("data-priceCodeValidation-msg", "<@spring.message 'hpms.mdm.feetype.codelimit'/>");
+	                                        return false;
+	                                    }
+	                                    // ajax 校验唯一
+	                                    $.ajax({
+	                                        type:"POST",
+	                                        url:"${base.contextPath}/mdm/priceHeader/priceHeaderQuery",
+	                                        async:false,
+	                                        dataType:"json",
+	                                        data:{priceCode:input.val()},
+	                                        success:function (data) {
+	                                            if (data.rows.length>0) {
+	                                                input.attr("data-priceCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
+	                                            	return false;
+	                                            }
+	                                        }
+	
+	                                    });
+	                                    return true;
+	                                }
+	                                return true;
+		                		}
+		                	}
+	                	},
                     	priceName : {type:"string",validation: {required: true}},
                     	companyId: {validation: {required: true}},
                     	projectId: {validation: {required: true}},
@@ -246,20 +276,6 @@
 	            }
 	        }
 	    });
-	    
-	    function verifyPriceCode(self){
-	        var reg = /^[a-zA-Z0-9_]+$/ig;
-	        var str = self.value;
-	        if(reg.test(str)){
-	        	self.value = str.toUpperCase();
-	        }else{
-	        	kendo.ui.showErrorDialog({
-                        message: '编码格式只能由大写字母、数字、下划线组成!'
-                }).done(function (e) {
-                	self.value= "";
-                })
-	        } 
-    	}
 	    
 	    var companyData = [];
 	    var projectData = [];
@@ -295,7 +311,7 @@
 									+ '</a>'
                     },
 	                editor: function(container, options){
-                        var editor = $('<input onkeyup="verifyPriceCode(this)" class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
