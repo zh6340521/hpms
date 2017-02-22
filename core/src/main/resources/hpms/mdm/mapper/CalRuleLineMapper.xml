@@ -9,7 +9,29 @@
         <result column="CALCULATE_OPERATOR" property="calculateOperator" jdbcType="VARCHAR" />
         <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="ELEMENT_NAME" property="elementName" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <select id="selectElementName"
+            resultMap="BaseResultMap" parameterType="hpms.mdm.dto.CalRuleLine">
+
+        SELECT
+            "l".CAL_RULE_LINE_ID,
+            "l".CALCULATE_RULE_ID,
+            "l".CALCULATE_ELEMENT_ID,
+            "l".CALCULATE_OPERATOR,
+            "l".DESCRIPTION,
+            "l".ENABLE_FLAG,
+            "l".OBJECT_VERSION_NUMBER,
+            "e".ELEMENT_NAME
+        FROM HPMS_MDM_CAL_RULE_LINE "l"
+        LEFT JOIN HPMS_MDM_CALCULATE_ELEMENT "e"
+        ON "l".CALCULATE_ELEMENT_ID = "e".CALCULATE_ELEMENT_ID
+        <where>
+            <if test="calculateRuleId!=null">
+                AND "l".CALCULATE_RULE_ID = #{calculateRuleId}
+            </if>
+        </where>
+    </select>
 
 </mapper>
