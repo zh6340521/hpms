@@ -93,7 +93,7 @@
 	                       <label ><@spring.message 'hpms.mdm.property.propertynumber'/></label>
 	                   </div>
 				    <div class="col-md-8">
-				        <input type="text" class="k-textbox" id="propertyNumber"  data-bind="value:model.propertyNumber" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
+				        <input onblur="verifyPropertyNumber(this)" type="text" class="k-textbox" id="propertyNumber"  data-bind="value:model.propertyNumber" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
 				    </div>
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 	                       <label ><@spring.message 'hpms.mdm.property.oldnumber'/></label>
 	                   </div>
 				    <div class="col-md-8">
-				    	<input type="text" class="k-textbox" id="oldNumber"  data-bind="value:model.oldNumber" style="width: 70%;">
+				    	<input onblur="verifyPropertyNumber(this)" type="text" class="k-textbox" id="oldNumber"  data-bind="value:model.oldNumber" style="width: 70%;">
 				    </div>
 				</div>
 				<div class="col-md-6" style="margin-bottom:10px">
@@ -268,6 +268,17 @@
           		}
           }
       }) ;
+      	
+      	function verifyPropertyNumber(self){
+      		var reg = /^[A-Z0-9_]+$/;
+	        if (! reg.test(self.value)) {
+	        	kendo.ui.showErrorDialog({
+                        message: "<@spring.message 'hpms.mdm.feetype.codelimit'/>"
+                }).done(function (e) {
+                        self.value= "";
+                })
+	        }
+      	}
       	
       	function cancel(){
       		if(isedit == 0){
