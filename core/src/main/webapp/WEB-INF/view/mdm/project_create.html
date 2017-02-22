@@ -26,8 +26,11 @@
                 $("#projectContact").attr("readonly",true).css("background", "#DDDDDD");
                 $("#contactPhone").attr("readonly",true).css("background", "#DDDDDD");
                 $("#projectAddress").attr("readonly",true).css("background", "#DDDDDD");
-                $("#startDateActive").attr("readonly",true).css("background", "#DDDDDD");
-                $("#endDateActive").attr("readonly",true).css("background", "#DDDDDD");
+
+                $("#startDateActive").data("kendoDatePicker").readonly();
+                $("#startDateActive").css("background", "#DDDDDD");
+                $("#endDateActive").data("kendoDatePicker").readonly();
+                $("#endDateActive").css("background", "#DDDDDD");
 
                 $("#groupId").data("kendoComboBox").readonly(true);
                 $("input[name='groupId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
@@ -39,8 +42,8 @@
                 $("input[name='companyId_input']").css("background", "#DDDDDD");
                 $("input[name='companyId_input']").next().next().unbind();
 
-                $("#submit").hide();
-                $("#cancel").hide();
+                $("#saveGrid").hide();
+                $("#closeWin").hide();
             }
         });
     }else if(projectId !=-1 && isedit == 2){
@@ -98,7 +101,7 @@
                         <label class="col-xs-2 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.groupName"/></label>
                         <div class="col-xs-5">
-                            <input id="groupId" name="groupId" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.groupId" class="k-textbox"
+                            <input id="groupId" name="groupId" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.groupId"
                             style="width: 100%;">
                             <script>kendo.bind($('#groupId'), viewModel);</script>
                         </div>
@@ -113,7 +116,7 @@
                         <label class="col-xs-2 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.companyName"/></label>
                         <div class="col-xs-5">
-                            <input id="companyId" name="companyId" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.companyId" class="k-textbox"
+                            <input id="companyId" name="companyId" type="text" required validationMessage="<@spring.message "hap.validation.notempty"/>" data-bind="value:model.companyId"
                             style="width: 100%;">
                             <script>kendo.bind($('#companyId'), viewModel);</script>
                         </div>
@@ -272,6 +275,10 @@
             if(viewModel.model.projectCode==''||viewModel.model.projectCode==null){
                 kendo.ui.showInfoDialog({
                     message:'<@spring.message "hpms.mdm.project.projectCode"/>不能为空'
+                })
+            }else if(! /^[A-Z0-9_]+$/.test(viewModel.model.projectCode) ){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.projectCode"/><@spring.message "hpms.mdm.project.codelimit"/>'
                 })
             }else if(viewModel.model.projectName==''||viewModel.model.projectName==null){
                 kendo.ui.showInfoDialog({
