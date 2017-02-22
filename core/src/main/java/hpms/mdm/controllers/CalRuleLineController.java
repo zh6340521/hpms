@@ -3,8 +3,8 @@ package hpms.mdm.controllers;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-import hpms.mdm.dto.CalculateElement;
-import hpms.mdm.service.ICalculateElementService;
+import hpms.mdm.dto.CalRuleLine;
+import hpms.mdm.service.ICalRuleLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,46 +17,44 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * @author feng.liu01@hand-china.com 2017/02/20
+ * @author feng.liu01@hand-china.com 2017/02/21
  * @version 1.0
- * @name hpms.mdm.controllers.CalculateElementController
- * @description 计算要素 controller 类
+ * @name hpms.mdm.controllers.CalRuleLineController
+ * @description 计费规则行数据 controller 类
  */
 
 @Controller
-public class CalculateElementController extends BaseController {
+public class CalRuleLineController extends BaseController {
 
     @Autowired
-    private ICalculateElementService service;
-
+    private ICalRuleLineService service;
 
     /**
      * 查询
-     *
      * @param dto
      * @param page
      * @param pageSize
      * @param request
      * @return
      */
-    @RequestMapping(value = "/mdm/calelement/query")
+    @RequestMapping(value = "/mdm/calRuleLine/query")
     @ResponseBody
-    public ResponseData query(CalculateElement dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+    public ResponseData query(CalRuleLine dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         return new ResponseData(service.select(requestContext, dto, page, pageSize));
     }
 
     /**
-     * 插入和更新
-     *
+     * 保存和更新
      * @param request
      * @param dto
+     * @param result
      * @return
      */
-    @RequestMapping(value = "/mdm/calelement/submit")
+    @RequestMapping(value = "/mdm/calRuleLine/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request, @RequestBody List<CalculateElement> dto, BindingResult result) {
+    public ResponseData update(HttpServletRequest request, @RequestBody List<CalRuleLine> dto, BindingResult result) {
         IRequest requestCtx = createRequestContext(request);
         if (result.hasErrors()) {
             ResponseData rd = new ResponseData(false);
@@ -68,14 +66,13 @@ public class CalculateElementController extends BaseController {
 
     /**
      * 删除
-     *
      * @param request
      * @param dto
      * @return
      */
-    @RequestMapping(value = "/mdm/calelement/remove")
+    @RequestMapping(value = "/mdm/calRuleLine/remove")
     @ResponseBody
-    public ResponseData delete(HttpServletRequest request, @RequestBody List<CalculateElement> dto) {
+    public ResponseData delete(HttpServletRequest request, @RequestBody List<CalRuleLine> dto) {
         service.batchDelete(dto);
         return new ResponseData();
     }

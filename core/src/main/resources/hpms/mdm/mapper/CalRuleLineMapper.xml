@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.CalRuleLineMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.CalRuleLine">
+        <result column="CAL_RULE_LINE_ID" property="calRuleLineId" jdbcType="DECIMAL" />
+        <result column="CALCULATE_RULE_ID" property="calculateRuleId" jdbcType="DECIMAL" />
+        <result column="CALCULATE_ELEMENT_ID" property="calculateElementId" jdbcType="DECIMAL" />
+        <result column="CALCULATE_OPERATOR" property="calculateOperator" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>
