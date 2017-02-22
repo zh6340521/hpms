@@ -1,0 +1,590 @@
+<#--
+        * description: 收费项目新建界面
+        * author:jun.guo@hand-china.com
+        * version: 1.0
+        *
+        -->
+<#include "../include/header.html">
+<body>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="${base.contextPath}/common/code?roundRule=HPMS_ROUND_RULE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?billMethod=HPMS_BILL_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?transType=HPMS_TRANS_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?billingFreq=HPMS_BILLING_FREQ" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?enableFlag=MDM.ENABLE_FLAG" type="text/javascript"></script>
+
+<script>
+    var isedit = '${RequestParameters.isedit!0}' == '1';
+    var islook = '${RequestParameters.islook!0}' == '1';
+    var feeId= <#if RequestParameters.feeId?exists>
+                  ${RequestParameters.feeId}
+                     <#else>-1</#if>;
+   //console.log(feeId);
+    newViewModel = kendo.observable({
+        model: {},
+        roundRuleData : roundRule,
+        billMethodData:billMethod,
+        transTypeData:transType,
+        billingFreqData:billingFreq,
+        enableFlagData:enableFlag
+    });
+   
+   
+   if(isedit==0){
+	   $(document).ready(function(){        
+	        if(newViewModel.model.itemCount!=0){
+	     	   $("#itemFlag").data("kendoCheckbox").enable(false);
+	        }	        
+	        newViewModel.model.set('equipmentFlag','N');
+	        newViewModel.model.set('overdueFalg','N');
+	        newViewModel.model.set('itemFlag','N');
+	        
+	    });
+   }
+   if (isedit) {
+        $.ajax({
+            url    : '${base.contextPath}/hpms/mdm/fee/query?feeId='+feeId,
+            success: function (args) {
+                var a0 = args.rows[0] || {};
+                for (var k in a0) {
+                    newViewModel.model.set(k, a0[k]);
+                }
+            }
+        });
+        
+        $(document).ready(function(){
+           $("#feeCode").attr("readonly",true).css("background", "#DDDDDD");
+           if((newViewModel.model.itemFlag=='N'||newViewModel.model.itemFlag==null)&&newViewModel.model.itemCount!=0){
+        	   $("#itemFlag").data("kendoCheckbox").enable(false);
+           }           
+        });
+    } 
+    if (islook) {
+       $.ajax({
+           url    : '${base.contextPath}/hpms/mdm/fee/query?feeId='+feeId,
+           success: function (args) {
+               var a0 = args.rows[0] || {};
+               for (var k in a0) {
+                   newViewModel.model.set(k, a0[k]);
+               }
+           }
+       });
+       
+       $(document).ready(function(){
+    	  
+    	   
+    	   //$("input[name='feeCode']").css("border", "none");   	   
+    	   $("#feeCode").attr("disabled",true); 
+    	   $("#feeCode").css("color", "#ababab");
+    	   $("#feeName").attr("disabled",true);
+    	   $("#feeName").css("color", "#ababab");
+    	   //$("input[name='feeName']").addClass("k-state-disabled").unbind();
+    	   $("input[name='feeType']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   $("input[name='feeType']").css("background", "#DDDDDD");
+    	   $("input[name='billingFrequency']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   $("input[name='billingMethod']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   $("input[name='transType']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   $("input[name='roundRule']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   $("#precision").attr("disabled",true);
+    	   $("#precision").css("color", "#ababab");
+    	   $("input[name='enableFlag']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   
+    	   $("#equipmentFlag").attr("disabled",true);
+    	   $("input[name='equipmentType']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	   $("#overdueFalg").attr("disabled",true);
+    	   $("#overdueRate").attr("disabled",true);
+    	   $("#chargeDays").attr("disabled",true);
+    	   $("#chargeDays").css("color", "#ababab");
+    	   //$("#itemFlag").attr("disabled",true);
+    	   $("#itemFlag").data("kendoCheckbox").enable(false);
+    	   $("#description").attr("disabled",true);
+    	   $("#description").css("background", "rgb(255, 255, 255)");
+    	   
+    	   $("#button").hide();
+    	});
+       
+       
+    } 
+
+</script>
+
+    <div id="page-content" style="margin-right:10%">
+        <form class="form-horizontal" >
+
+            
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.feeCode"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="feeCode" name="feeCode" type="text" data-bind="value:model.feeCode" class="k-textbox"
+                               style="width: 100%;" >
+                        <script>
+                        document.getElementById('feeCode').onblur=function(){
+                        	var tt= /^[A-Z0-9_]+$/;
+                        	if(tt.test(this.value)){
+                        	//alert('正整数');
+                        	}else{
+                        	//alert('非正整数');
+                        	var $parent = $("input[name='feeCode']").parent();
+                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="feeCode" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"大写字母下划线数字"+'</span>');
+                            }
+                      
+                        }  
+                        
+                        kendo.bind($('#feeCode'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.feeType"/>:</label>
+                    <div class="col-xs-6">
+                      
+                               
+                        <input id="feeType" name="feeType" style="width: 100%" data-bind="text:model.feeTypeName,value:model.feeTypeId"/>       
+                        <script>
+                        
+                        var feeTypeName=[];
+                        
+                        function myDataToJson(data){
+                        	this.feeTypeName = data.feeTypeName;
+                        	this.feeTypeId = data.feeTypeId;
+                        	
+                        }
+                        
+                        $.ajax({
+                        	url : '${base.contextPath}/mdm/feetype/query',
+                	      		type : 'POST',
+                	      		contentType : "application/json;charset=utf-8",
+                	      		cache : false,
+                	      		dataType : 'json',
+                	      		async : false,
+                	      		success : function(data) {
+                	      			
+                	      			for (var i = 0; i < data.rows.length; i++) {
+                	      			feeTypeName.push(new myDataToJson(data.rows[i]));
+                	      			}
+                	      		}
+                        });
+            	      		                       
+                        $("#feeType").kendoDropDownList({ 
+                         optionLabel: "--请选择--",	
+                         dataTextField: 'feeTypeName',
+                   	     dataValueField: 'feeTypeId',
+                   	   
+                   	     dataSource:feeTypeName,
+                   	     select:function(e){
+                   	    	newViewModel.model.set('feeTypeId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                   	    	
+                   	    	console.log(newViewModel.model.feeTypeId);
+                   	     }
+                	      	                      
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#feeType'), newViewModel);
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.feeName"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="feeName" name="feeName" type="text" data-bind="value:model.feeName" class="k-textbox"
+                               style="width: 100%;" required validationMessage="必输">
+                        <script>kendo.bind($('#feeName'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.billingFrequency"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="billingFrequency" name="billingFrequency" style="width: 100%" data-bind="text:model.meaning,value:model.billingFrequency"/>       
+                        <script>
+                        $("#billingFrequency").kendoDropDownList({                      	 
+                        	optionLabel: "--请选择--",
+                        	dataTextField: "meaning",
+                        	template: function(dataItem){
+                             	return dataItem['meaning'] || ''
+                            },
+                            dataValueField: "value",
+                            dataSource: billingFreq,
+                            select : function(e){
+	                            var dataItem = this.dataItem(e.item);
+	                            newViewModel.model.set('billingFrequency',dataItem.value);
+	                        }
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#billingFrequency'), newViewModel);</script>
+                       
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.billingMethod"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="billingMethod" name="billingMethod" style="width: 100%" data-bind="text:model.meaning,value:model.billingMethod"/>       
+                        <script> 
+                        $("#billingMethod").kendoDropDownList({                      	 
+                        	optionLabel: "--请选择--",
+                        	dataTextField: "meaning",
+                            dataValueField: "value",
+                            template: function(dataItem){
+                             	return dataItem['meaning'] || ''
+                            },
+                            dataSource: billMethod,
+                            select : function(e){
+	                            var dataItem = this.dataItem(e.item);
+	                            newViewModel.model.set('billingMethod',dataItem.value);
+	                        }
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#billingMethod'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.transType"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="transType" name="transType" style="width: 100%" data-bind="text:model.meaning,value:model.transType"/>       
+                        <script>
+                        $("#transType").kendoDropDownList({                      	 
+                        	optionLabel: "--请选择--",
+                        	dataTextField: "meaning",
+                            dataValueField: "value",
+                            template: function(dataItem){
+                             	return dataItem['meaning'] || ''
+                            },
+                            dataSource: transType,
+                            select : function(e){
+	                            var dataItem = this.dataItem(e.item);
+	                            newViewModel.model.set('transType',dataItem.value);
+	                        }
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#transType'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.roundRule"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="roundRule" name="roundRule" style="width: 100%" data-bind="text:model.meaning,value:model.roundRule"/>       
+                        <script> 
+                        $("#roundRule").kendoDropDownList({ 
+                        	optionLabel: "--请选择--",
+                        	dataTextField: "meaning",
+                            dataValueField: "value",
+                            template: function(dataItem){
+                             	return dataItem['meaning'] || ''
+                            },
+                            dataSource: roundRule,
+                            select : function(e){
+	                            var dataItem = this.dataItem(e.item);
+	                            newViewModel.model.set('roundRule',dataItem.value);
+	                        }
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#roundRule'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.precision"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="precision"  type="text" name="precision" data-bind="value:model.precision" class="k-textbox"  
+                               style="width: 100%;">
+                        <script>  
+                        newViewModel.model.precision=2;
+                      document.getElementById('precision').onblur=function(){
+                        	var tt= /^([1-9]\d{0,}|0)$/;
+                        	if(tt.test(this.value)){
+                        	//alert('正整数');
+                        	}else{
+                        	//alert('非正整数');
+                        	var $parent = $("input[name='precision']").parent();
+                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="precision" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                            }
+                      
+                        }  
+                        kendo.bind($('#precision'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.enableFlag"/>:</label>
+                    <div class="col-xs-6">
+                       <input id="enableFlag" name="enableFlag" style="width: 100%" data-bind="text:model.meaning,value:model.enableFlag"/>       
+                        <script>
+                        $("#enableFlag").kendoDropDownList({                      	 
+                        	optionLabel: "--请选择--",
+                        	dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: enableFlag,
+                            template: function(dataItem){
+                             	return dataItem['meaning'] || ''
+                            },
+                            select : function(e){
+	                            var dataItem = this.dataItem(e.item);
+	                            newViewModel.model.set('enableFlag',dataItem.value);
+	                        }
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#enableFlag'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div style="clear:both">           
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6   control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.equipmentFlag"/>:</label>
+                    <div class="col-xs-6" >
+                        <input id="equipmentFlag" type="checkbox" data-bind="value:model.equipmentFlag" name="equipmentFlag" value='Y'>
+                        <script>
+                        $(document).ready(function(){
+                        $('#equipmentTypeDiv').hide();	
+                       // console.log(newViewModel.model.equipmentFlag);
+                        if(newViewModel.model.equipmentFlag=="Y"){
+                       			$('#equipmentTypeDiv').show();
+                       			
+                       	}
+                        if(newViewModel.model.equipmentFlag=="N"){
+                            	$('#equipmentTypeDiv').hide();
+                       	}	
+                       
+                        $("#equipmentFlag").kendoCheckbox({
+                        	checkedValue:'Y',
+                			uncheckedValue:'N',
+                			defaultValue:'Y',
+                           	change:function(){
+                           		if(newViewModel.model.equipmentFlag=="Y"){
+                           			$('#equipmentTypeDiv').show();
+                           			
+                           		}
+                                if(newViewModel.model.equipmentFlag=="N"){
+                                	$('#equipmentTypeDiv').hide();
+                           		}
+                           	}
+                          });
+                        });
+                        kendo.bind($('#equipmentFlag'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             
+           
+            <div class="col-xs-6"  id="equipmentTypeDiv">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.equipmentType"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="equipmentType" name="equipmentType" style="width: 100%" data-bind="text:model.equipmentType,value:model.equipmentType"/>       
+                        <script> 
+                        $("#equipmentType").kendoDropDownList({                      	 
+                            
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#equipmentType'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            
+         
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6   control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.overdueFalg"/>:</label>
+                    <div class="col-xs-6" >
+                        <input id="overdueFalg" type="checkbox" data-bind="value:model.overdueFalg" name="overdueFalg" >
+                        <script>
+                        $(document).ready(function(){
+                        	$('#overdueRateDiv').hide();
+                        	$('#chargeDaysDiv').hide();
+                           // console.log(newViewModel.model.overdueFalg);
+                            if(newViewModel.model.overdueFalg=="Y"){
+                           			$('#overdueRateDiv').show();
+                           			$('#chargeDaysDiv').show();
+                           	}
+                            if(newViewModel.model.overdueFalg=="N"){
+                                	$('#overdueRateDiv').hide();
+                                	$('#chargeDaysDiv').hide();
+                           	}	
+                           
+                            $("#overdueFalg").kendoCheckbox({
+                            	checkedValue:'Y',
+                    			uncheckedValue:'N',
+                    			defaultValue:'Y',
+                               	change:function(){
+                               		
+                               		if(newViewModel.model.overdueFalg=="Y"){
+                               			$('#overdueRateDiv').show();
+                               			$('#chargeDaysDiv').show();                              			
+                               		}
+                                    if(newViewModel.model.overdueFalg=="N"){
+                                    	$('#overdueRateDiv').hide();
+                                    	$('#chargeDaysDiv').hide();
+                               		}
+                               	}
+                              });
+                            });
+                        
+                        kendo.bind($('#overdueFalg'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+          
+            
+            <div class="col-xs-6" id="overdueRateDiv">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.overdueRate"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="overdueRate" type="text" data-bind="value:model.overdueRate" class="k-textbox"
+                               style="width: 100%;" name="overdueRate">
+                        <script>
+                        document.getElementById('overdueRate').onblur=function(){
+                        	var tt= /^\d+(\.{0,1}\d+){0,1}$/;
+                        	if(tt.test(this.value)){
+                        	//alert('正整数');
+                        	}else{
+                        	//alert('非正整数');
+                        	var $parent = $("input[name='overdueRate']").parent();
+                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="overdueRate" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的数"+'</span>');
+                            }
+                      
+                        }  
+                        kendo.bind($('#overdueRate'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            
+          
+           
+            <div class="col-xs-6" id="chargeDaysDiv">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.chargeDays"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="chargeDays" type="text" data-bind="value:model.chargeDays" class="k-textbox"
+                               style="width: 100%;" name="chargeDays">
+                        <script>
+                        document.getElementById('chargeDays').onblur=function(){
+                        	var tt= /^([1-9]\d{0,}|0)$/;
+                        	if(tt.test(this.value)){
+                        	//alert('正整数');
+                        	}else{
+                        	//alert('非正整数');
+                        	var $parent = $("input[name='chargeDays']").parent();
+                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="chargeDays" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                            }
+                      
+                        }
+                        kendo.bind($('#chargeDays'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6   control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.itemFalg"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="itemFlag" type="checkbox" data-bind="value:model.itemFlag" name="itemFlag" >
+                        <script>
+                        
+                        $("#itemFlag").kendoCheckbox({
+                        	checkedValue:'Y',
+                			uncheckedValue:'N'
+                        });
+                      
+                        kendo.bind($('#itemFlag'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div style="clear:both">           
+            </div>
+              <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-xs-3   control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.Fee.description"/>:</label>
+                    <div class="col-xs-9">                   
+                        <textarea id="description" data-bind="value:model.description" style="width: 100%;height:120px" ></textarea>
+                        <script>kendo.bind($('#description'), newViewModel);</script>
+                    </div>
+                   
+                </div>
+            </div>
+            
+            
+
+            <div  align="center" style="clear:both; background: #fff;margin-left:10%;padding-top:50px" id="button">
+    	      <span class="btn btn-success" id="saveGrid" type="submit"><@spring.message "hap.save"/></span>
+    	      <span class="btn btn-success" id="closeWin" type="button"><@spring.message "hap.cancel"/></span>
+	        </div>
+        </form>
+    </div>
+<style>
+    
+   input::-webkit-outer-spin-button,  
+   input::-webkit-inner-spin-button {  
+    -webkit-appearance: none;  
+   }  
+</style>
+<script>
+
+    $("#page-content").kendoValidator();
+    $("#closeWin").click(function(){
+    	if (isedit) {
+            window.parent.$("#editWin").data("kendoWindow").close();
+        } else {
+            window.parent.$("#newWin").data("kendoWindow").close();
+        }
+    });
+    $("#saveGrid").click(function () {
+      if(newViewModel.model.feeCode==''||newViewModel.model.feeCode==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "Fee.feeCode"/>不能为空'
+            })
+        }else if(newViewModel.model.feeName==''||newViewModel.model.feeName==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "Fee.feeName"/>不能为空'
+            })
+        }else {
+            newViewModel.model.__status = isedit ? 'update' : 'add';
+            Hap.submitForm({
+                url: '${base.contextPath}/hpms/mdm/fee/submit',
+                formModel: newViewModel.model,
+                success: function (data) {
+                    window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
+                    if (isedit) {
+                        window.parent.$("#editWin").data("kendoWindow").close();
+                    } else {
+                        window.parent.$("#newWin").data("kendoWindow").close();
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

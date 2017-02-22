@@ -23,16 +23,28 @@ import java.util.List;
 
     @RequestMapping(value = "/hpms/mdm/fee/query")
     @ResponseBody
-    public ResponseData query(Fee dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+    public ResponseData query(Fee fee, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
         @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(service.select(requestContext,dto,page,pageSize));
+        return new ResponseData(service.findAllFee(fee, requestContext, page, pageSize));
     }
 
     @RequestMapping(value = "/hpms/mdm/fee/submit")
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<Fee> dto){
         IRequest requestCtx = createRequestContext(request);
+        
+        
+        for(Fee fee:dto){
+        	
+            if(fee.getFeeId()==null){
+            int count = service.queryCountByCode(requestCtx, fee);
+            if(count>0){
+                throw new RuntimeException("编号已经存在"); 
+                }
+            }
+        }
+        
         return new ResponseData(service.batchUpdate(requestCtx, dto));
     }
 
