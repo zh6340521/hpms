@@ -71,7 +71,7 @@
         <id column="CONFIG_VALUE_ID" property="configValueId" jdbcType="DECIMAL"/>
         <result column="CONFIG_VALUE_NAME" property="configValueName" jdbcType="VARCHAR"/>
     </resultMap>
-    
+    <!-- 条件查询建筑档案 -->
     <select id="propertyQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.Property">
     	SELECT
     		hmp.PROPERTY_ID,
@@ -196,7 +196,7 @@
 	           		AND COMPANY_ID = #{companyId,jdbcType=DECIMAL}
 	           </if>
     </select>
-    
+    <!-- 查询有效的建筑类型 -->
     <select id="propertyTypeQuery" resultMap="configValueResultMap" parameterType="hpms.mdm.dto.ConfigValue">
     	SELECT HMCV.CONFIG_VALUE_ID,
        		   HMCV.CONFIG_VALUE_NAME

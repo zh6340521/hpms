@@ -15,7 +15,15 @@ import hpms.mdm.dto.PriceHeader;
  * @version 1.0
  */
 public interface IPriceHeaderService extends IBaseService<PriceHeader>,ProxySelf<PriceHeader>{
-
+	/**
+     * 根据条件查询priceHeader 
+     * @author chengye.hu@hand-china.com
+     * @param requestContext  请求
+     * @param priceHeader  封装参数对象
+     * @param page     查询页
+     * @param pageSize 页面大小
+     * @return List<PriceHeader> 所有符合的结果集
+     */
 	List<PriceHeader> priceHeaderQuery(IRequest requestContext, PriceHeader priceHeader, int page, int pageSize);
 
 }

@@ -13,7 +13,12 @@ import hpms.mdm.dto.PriceHeader;
  * @version 1.0
  */
 public interface PriceHeaderMapper extends Mapper<PriceHeader>{
-
+	/**
+     * 定价表头信息查询
+     * @author chengye.hu@hand-china.com
+     * @param priceHeader 定价表头对象
+     * @return List<PriceHeader> 符合的对象集合
+     */
 	List<PriceHeader> priceHeaderQuery(PriceHeader priceHeader);
 
 }

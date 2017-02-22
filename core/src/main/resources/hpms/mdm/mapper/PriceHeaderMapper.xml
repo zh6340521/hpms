@@ -15,7 +15,7 @@
         <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE"/>
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
     </resultMap>
-    
+    <!-- 条件查询定价表头 -->
     <select id="priceHeaderQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.PriceHeader">
     	SELECT
     		hmph.PRICE_HEADER_ID,
@@ -42,7 +42,7 @@
         <if test = "priceName != null"> AND hmph.PRICE_NAME like #{priceName , jdbcType=VARCHAR} </if>
         <if test = "companyId != null"> AND hmph.COMPANY_ID like #{companyId , jdbcType=DECIMAL} </if>
         <if test = "projectId != null"> AND hmph.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
-        <if test = "startDateActive != null"> AND hmph.START_DATE_ACTIVE like #{startDateActive , jdbcType=DATE} </if>
-        <if test = "endDateActive != null"> AND hmph.END_DATE_ACTIVE like #{endDateActive , jdbcType=DATE} </if>
+        <if test = "startDateActive != null"> AND hmph.START_DATE_ACTIVE &gt;= #{startDateActive , jdbcType=DATE} </if>
+        <if test = "endDateActive != null"> AND hmph.END_DATE_ACTIVE &lt;= #{endDateActive , jdbcType=DATE} </if>
     </select>
 </mapper>

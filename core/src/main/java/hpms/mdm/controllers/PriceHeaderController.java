@@ -58,7 +58,7 @@ public class PriceHeaderController extends BaseController{
      */
 	@RequestMapping(value = "/mdm/priceHeader/priceHeaderSubmit" , method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData propertySubmit(@RequestBody List<PriceHeader> priceHeaders , BindingResult result ,HttpServletRequest request){
+	public ResponseData priceHeaderSubmit(@RequestBody List<PriceHeader> priceHeaders , BindingResult result ,HttpServletRequest request){
 		IRequest requestContext = createRequestContext(request);
 		getValidator().validate(priceHeaders, result);
 		if (result.hasErrors()) {
