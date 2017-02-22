@@ -30,7 +30,7 @@
     });
    
    
-   if(isedit==0){
+   if(isedit==0&&!islook){
 	   $(document).ready(function(){        
 	        if(newViewModel.model.itemCount!=0){
 	     	   $("#itemFlag").data("kendoCheckbox").enable(false);
@@ -101,6 +101,7 @@
     	   $("#description").css("background", "rgb(255, 255, 255)");
     	   
     	   $("#button").hide();
+    	   
     	});
        
        
