@@ -247,6 +247,20 @@
 	        }
 	    });
 	    
+	    function verifyPriceCode(self){
+	        var reg = /^[a-zA-Z0-9_]+$/ig;
+	        var str = self.value;
+	        if(reg.test(str)){
+	        	self.value = str.toUpperCase();
+	        }else{
+	        	kendo.ui.showErrorDialog({
+                        message: '编码格式只能由大写字母、数字、下划线组成!'
+                }).done(function (e) {
+                	self.value= "";
+                })
+	        } 
+    	}
+	    
 	    var companyData = [];
 	    var projectData = [];
 		var grid = $("#price_header_grid").kendoGrid({
@@ -281,7 +295,7 @@
 									+ '</a>'
                     },
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
+                        var editor = $('<input onkeyup="verifyPriceCode(this)" class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}

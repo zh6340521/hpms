@@ -218,6 +218,20 @@
 	            }
 	        }
 	    });
+	    
+	    function verifyNumber(self){
+    		var reg =  /^(0|[1-9]\d*)$/;
+    		if(reg.test(self.value)){
+    		
+    		}else{
+    			kendo.ui.showErrorDialog({
+                        message: '单价只能为非负数!'
+                }).done(function (e) {
+                	self.value= "";
+                })
+    		}
+		}
+
 	    var feeTypeData = [];
 	    var feeData = [];
 	    var calculateRuleData = [];
@@ -313,7 +327,7 @@
 	                width      : "13%",
 	                attributes : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="unitPrice"/>');
+                        var editor = $('<input onblur="verifyNumber(this)" class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="unitPrice"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
