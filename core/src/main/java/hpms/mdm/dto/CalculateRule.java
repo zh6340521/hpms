@@ -20,7 +20,7 @@ public class CalculateRule extends BaseDTO {
      * 表ID，主键，供其他表做外键
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = GENERATOR_TYPE)
     private Long calculateRuleId;
 
     /**

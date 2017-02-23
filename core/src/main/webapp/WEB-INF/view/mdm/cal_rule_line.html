@@ -90,7 +90,10 @@
                     <div id="toolbar-btn" style="padding-bottom: 10px;">
                         <span class="btn btn-primary k-grid-add"
                               style="float: left; margin-right: 5px;"
-                              data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+                              data-bind="click:createFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <@spring.message "hap.new"/>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -172,7 +175,10 @@
                 title: '<@spring.message "hpms.mdm.feetype.operation"/>',
                 command: [
                     {name:"edit"},
-                    {name:"destroy"}
+                    {
+                        name:"delete",
+                        text:"<span class='fa fa-trash-o'></span>"
+                    }
                 ],
                 attributes: {style: "text-align:center"},
                 width: 60
