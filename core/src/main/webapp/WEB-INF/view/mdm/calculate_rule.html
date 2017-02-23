@@ -36,9 +36,6 @@
     // 临时 id ，用于判断唯一性
     var calculateRuleIdTemp = 0;
 
-    function newTab(calRuleId,ruleCode) {
-        window.top.openTab("calRule_"+calRuleId,ruleCode,"mdm/cal_rule_line.html?calRuleId="+calRuleId);
-    }
 </script>
 <body>
 <div id="page-content">
@@ -69,12 +66,19 @@
                 </div>
                 <div class="row" style="margin-left: 0px;margin-bottom: 10px">
                     <div id="toolbar-btn" style="padding-bottom: 10px;">
-        <span class="btn btn-primary k-grid-add"
-              style="float: left; margin-right: 5px;"
-              data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+                        <span class="btn btn-primary k-grid-add"
+                              style="float: left; margin-right: 5px;"
+                              data-bind="click:createFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <@spring.message "hap.new"/>
+                        </span>
+
                         <span class="btn btn-primary k-grid-save-changes"
                               style="float: left; margin-right: 5px;"
-                              data-bind="click:queryResource"><@spring.message "hap.query"/></span>
+                              data-bind="click:queryResource">
+                            <i class="fa fa-search" style="margin-right:3px;"></i>
+                            <@spring.message "hap.query"/>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -198,6 +202,19 @@
             {
                 title: '<@spring.message "hpms.mdm.feetype.operation"/>',
                 command: [
+                    {
+                        name:"detail",
+                        text:"<i class='fa fa-search'></i>",
+                        click:function (e) {
+                            e.preventDefault();
+                            var tr = $(e.target).closest("tr");
+                            var data = this.dataItem(tr);
+                            window.top.openTab(
+                                "calRule_"+data.calculateRuleId,data.ruleCode,
+                                "mdm/cal_rule_line.html?calRuleId="+data.calculateRuleId);
+
+                        }
+                    },
                     {name:"edit"}
                 ],
                 attributes: {style: "text-align:center"},
@@ -214,13 +231,6 @@
                         'name="' + options.field + '"/>' +
                         '<span class="red">&nbsp;&nbsp;*</span>')
                         .appendTo(containner);
-                },
-                template:function (dataItem) {
-                    return '<a style="text-decoration:none; color:blue; cursor:pointer;" ' +
-                        'onclick="newTab('+dataItem.calculateRuleId+',\''+dataItem.ruleCode+'\')">' +
-                        dataItem.ruleCode +
-                        '</a>';
-
                 }
             },
             {

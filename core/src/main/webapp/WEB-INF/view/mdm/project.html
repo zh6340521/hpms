@@ -39,8 +39,8 @@
 <div id="editWin" style="display: none"></div>
 <div id="page-content">
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
-        <span onclick="newData()" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.new"/></span>
-        <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
+        <span onclick="newData()" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+        <span onclick="deleteData()" class="btn btn-danger" style="float:left;margin-right:5px;"><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
@@ -48,7 +48,7 @@
                    data-bind="value:model.projectCode" class="k-textbox">
             <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "hpms.mdm.project.projectName"/>'
                    data-bind="value:model.projectName" class="k-textbox">
-        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryResource" type="submit"><@spring.message "hap.query"/></span>
+        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryResource" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>
     </div>
     <script>kendo.bind($('#query-form'), viewModel);</script>
@@ -125,10 +125,9 @@
                 title      : '<@spring.message "hap.action"/>',
                 width      : 50 ,
                 template : function(rowdata) {
-                    var uid = rowdata.uid.toString();
-                    var singleDispatch = '<button type="button" id="dispatch" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-eye-open"></span></button>&nbsp;';
-                    var singleRecycle = '<button type="button" id="recycle" class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-edit"></span></button>';
-                    return singleDispatch + singleRecycle;
+                    var buttonView = '<button type="button" id="dispatch" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-search"></span></button>';
+                    var buttonEdit = '<button type="button" id="recycle" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-edit"></span></button>&nbsp;';
+                    return buttonEdit + buttonView;
                 },
                 attributes  : {style: "text-align:center"}
             },

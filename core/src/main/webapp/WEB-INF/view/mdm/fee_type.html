@@ -66,11 +66,15 @@
                 <div class="row" style="margin-left: 0px;margin-bottom: 10px">
                     <div id="toolbar-btn" style="padding-bottom: 10px;">
                         <span class="btn btn-primary k-grid-add"
-                              style="float: left; margin-right: 5px;"
-                             data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+                              style="float: left; margin-right: 5px;" data-bind="click:createFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <@spring.message "hap.new"/>
+                        </span>
                         <span class="btn btn-primary k-grid-save-changes"
-                              style="float: left; margin-right: 5px;"
-                              data-bind="click:queryResource"><@spring.message "hap.query"/></span>
+                              style="float: left; margin-right: 5px;" data-bind="click:queryResource">
+                            <i class="fa fa-search" style="margin-right:3px;"></i>
+                            <@spring.message "hap.query"/>
+                        </span>
                     </div>
                 </div>
             </div>
