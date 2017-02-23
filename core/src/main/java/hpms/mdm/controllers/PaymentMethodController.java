@@ -1,6 +1,7 @@
 package hpms.mdm.controllers;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
+import com.hand.hap.system.dto.ResponseData;
+
+import hpms.mdm.dto.PaymentMethod;
+import hpms.mdm.service.IPaymentMethodService;
 /**
  * 
  * @name PaymentMethodController
@@ -24,10 +29,6 @@ import com.hand.hap.system.controllers.BaseController;
  * @author chengye.hu@hand-china.com	2017年2月23日下午1:59:55
  * @version 1.0
  */
-import com.hand.hap.system.dto.ResponseData;
-
-import hpms.mdm.dto.PaymentMethod;
-import hpms.mdm.service.IPaymentMethodService;
 @Controller
 public class PaymentMethodController extends BaseController{
 	@Autowired
@@ -50,9 +51,9 @@ public class PaymentMethodController extends BaseController{
 		return new ResponseData(paymentMethods);
 	}
 	/**
-     * property基础信息保存更新 
+     * paymentMethod基础信息保存更新 
      *
-     * @param propertys 封装参数对象
+     * @param paymentMethods 封装参数对象
      * @param result      校验
      * @param request   请求
      * @return ResponseData 符合的对象集合以及其它信息所封装的对象

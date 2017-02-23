@@ -1,5 +1,5 @@
 <#--
- * description: 付款方式
+ * description: 付款条件
  * version: 1.0
  * #copyright#
  *author: chengye.hu@hand-china.com 2017.02.23
@@ -21,13 +21,13 @@
 	var viewModel = kendo.observable({
         model: {},
         createFunction: function(){
-            $('#payment_method_grid').data('kendoGrid').addRow();
+            $('#payment_term_grid').data('kendoGrid').addRow();
         },
         saveFunction: function () {
-            $('#payment_method_grid').data('kendoGrid').saveChanges();
+            $('#payment_term_grid').data('kendoGrid').saveChanges();
         },
         queryResource    : function (e) {
-            $('#payment_method_grid').data('kendoGrid').dataSource.page(1);
+            $('#payment_term_grid').data('kendoGrid').dataSource.page(1);
         },
         resetForm : function (e) {
             var formData = viewModel.model.toJSON();
@@ -46,7 +46,7 @@
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 	<div style="clear:both">
-        <div id="payment_method_grid" ></div>
+        <div id="payment_term_grid" ></div>
     </div>
 </div>
 	<script type="text/javascript" >
@@ -54,12 +54,12 @@
 		var dataSource = new kendo.data.DataSource({
 	        transport   : {
 	            read        : {
-	                url     : _basePath+"/mdm/paymentMethod/paymentMethodQuery",
+	                url     : _basePath+"/mdm/paymentTerm/paymentTermQuery",
 	                type    : "POST",
 	                dataType: "json"
 	            },
                 create: {
-                    url: _basePath + "/mdm/paymentMethod/paymentMethodSubmit",
+                    url: _basePath + "/mdm/paymentTerm/paymentTermSubmit",
                     contentType: "application/json",
                     type: "POST",
                     success : function(e){
@@ -69,7 +69,7 @@
                     }
                 },
                 update: {
-                    url: _basePath + "/mdm/paymentMethod/paymentMethodSubmit",
+                    url: _basePath + "/mdm/paymentTerm/paymentTermSubmit",
                     contentType: "application/json",
                     type: "POST",
                     success : function(e){
@@ -104,29 +104,29 @@
 	            data  : 'rows',
 	            total : 'total',
 	            model : {
-	                id    : "paymentMethodId",
+	                id    : "paymentTermId",
 	                fields: {
-	                	paymentMethodCode  : {type:"string",
+	                	paymentTermCode  : {type:"string",
 	                	validation: {
 		                	required: true,
-		                	paymentMethodCodeValidation: function (input) {
-		                		if (input.is("[name='paymentMethodCode']") && input.val() != "") {
+		                	paymentTermCodeValidation: function (input) {
+		                		if (input.is("[name='paymentTermCode']") && input.val() != "") {
 	                                    // 正则校验-只允许输入大写字母、下划线及数字
 	                                    if (! /^[A-Z0-9_]+$/.test(input.val()) ){
-	                                        input.attr("data-paymentMethodCodeValidation-msg", "<@spring.message 'hpms.mdm.feetype.codelimit'/>");
+	                                        input.attr("data-paymentTermCodeValidation-msg", "<@spring.message 'hpms.mdm.feetype.codelimit'/>");
 	                                        return false;
 	                                    }
 	                                    // ajax 校验唯一
 	                                    var flag = true;
 	                                    $.ajax({
 	                                        type:"POST",
-	                                        url:"${base.contextPath}/mdm/paymentMethod/paymentMethodQuery",
+	                                        url:"${base.contextPath}/mdm/paymentTerm/paymentTermQuery",
 	                                        async:false,
 	                                        dataType:"json",
-	                                        data:{paymentMethodCode:input.val()},
+	                                        data:{paymentTermCode:input.val()},
 	                                        success:function (data) {
 	                                            if (data.rows.length>0) {
-	                                                input.attr("data-paymentMethodCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
+	                                                input.attr("data-paymentTermCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
 	                                            	flag = false;
 	                                            }
 	                                        }
@@ -138,13 +138,26 @@
 		                		}
 		                	}
 	                	},
-                    	paymentMethodName : {type:"string",validation: {required: true}},
-                    	description: {type:"string"},
+                    	paymentTermName : {type:"string",validation: {required: true}},
+                    	days: {
+                    		validation: {
+	                    		daysValidation: function (input) {
+	                    			if (input.is("[name='days']") && input.val() != "") {
+	                                    // 正则校验-只允许输入非负数
+	                                    if (! /^(0|[1-9]\d*)$/.test(input.val()) ){
+	                                        input.attr("data-daysValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
+	                                        return false;
+	                                    }
+	                                }
+	                                return true;
+		                    	}
+		                    }
+                    	},
                     	apFlag: {type:"string",validation: {required: true},defaultValue:"Y"},
                     	arFlag: {type:"string",validation: {required: true},defaultValue:"Y"}
 	                },
                     editable: function(col) {
-                    	if(col=='paymentMethodCode'&&this.paymentMethodCode!=""){
+                    	if(col=='paymentTermCode'&&this.paymentTermCode!=""){
                     		return false;
                     	}
                     	return true;
@@ -153,7 +166,7 @@
 	        }
 	    });
 	    
-		var grid = $("#payment_method_grid").kendoGrid({
+		var grid = $("#payment_term_grid").kendoGrid({
 	        	dataSource : dataSource,
 		        navigatable: false,
 		        height: '100%',
@@ -171,32 +184,32 @@
 		        },
 	       		columns : [
 	       		{
-		        	field      : "paymentMethodCode",
+		        	field      : "paymentTermCode",
 	                title      : "<@spring.message 'hpms.mdm.priceheader.pricecode'/>", 
 	                width      : "20%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentMethodCode"/>');
+                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentTermCode"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
 		        },{
-		        	field      : "paymentMethodName",
-	                title      : "<@spring.message 'hpms.mdm.paymentmethod.paymentmethodname'/>", 
+		        	field      : "paymentTermName",
+	                title      : "<@spring.message 'hpms.mdm.paymentterm.paymenttermname'/>", 
 	                width      : "20%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentMethodName"/>');
+                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentTermName"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
 		        },{
-		        	field      : "description",
-	                title      : "<@spring.message 'hap.description'/>", 
+		        	field      : "days",
+	                title      : "<@spring.message 'hpms.mdm.paymentterm.days'/>", 
 	                width      : "20%",
 	                attributes : {style: "text-align:center"},
 		           	editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" name="description"/>');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" name="days"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
@@ -240,8 +253,8 @@
 		            }
 		        }]
 	    }).data("kendoGrid");
-    	Hap.autoResizeGrid("#payment_method_grid");
-    	$("#payment_method_grid thead>tr th").css("text-align","center");
+    	Hap.autoResizeGrid("#payment_term_grid");
+    	$("#payment_term_grid thead>tr th").css("text-align","center");
     	
     	function editFunctionResources(){
 	    	var checked = grid.selectedDataItems();
