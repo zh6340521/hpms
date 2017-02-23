@@ -85,7 +85,7 @@
 	<script>kendo.bind($('#price_header_form'), viewModel);</script>
 	<div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
         <span  data-bind="click:createFunction" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.new"/></span>
-        <span  data-bind="click:queryResource" class="btn btn-danger" style="float:left;"><@spring.message "hap.query"/></span>
+        <span  data-bind="click:queryResource" class="btn btn-primary" style="float:left;"><@spring.message "hap.query"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 	<div style="clear:both">
@@ -246,6 +246,7 @@
 	                                        return false;
 	                                    }
 	                                    // ajax 校验唯一
+	                                    var flag = true;
 	                                    $.ajax({
 	                                        type:"POST",
 	                                        url:"${base.contextPath}/mdm/priceHeader/priceHeaderQuery",
@@ -255,12 +256,12 @@
 	                                        success:function (data) {
 	                                            if (data.rows.length>0) {
 	                                                input.attr("data-priceCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
-	                                            	return false;
+	                                            	flag = false;
 	                                            }
 	                                        }
 	
 	                                    });
-	                                    return true;
+	                                    return flag;
 	                                }
 	                                return true;
 		                		}
