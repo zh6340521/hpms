@@ -11,7 +11,7 @@ import java.util.List;
  * @author feng.liu01@hand-china.com 2017/02/21
  * @version 1.0
  * @name hpms.mdm.service.ICalRuleLineService
- * @description 计费规则行数据 mapper 类
+ * @description 计费规则行数据 service 接口类
  */
 
 public interface ICalRuleLineService extends IBaseService<CalRuleLine>, ProxySelf<ICalRuleLineService> {

@@ -1,3 +1,9 @@
+<#--
+ * description: 项目档案
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/2/15 10:20:00
+-->
 <#include "../include/header.html">
 <script type="text/javascript">
     var viewModel = kendo.observable({
@@ -18,7 +24,7 @@
             actions: ["Close"],
             title: $l('hap.new'),
             draggable: true,
-            height: "500px",
+            height: "450px",
             width: "700px",
             close: function(){
                 $("#viewWin").empty();
@@ -123,7 +129,7 @@
             {
                 field      : "",
                 title      : '<@spring.message "hap.action"/>',
-                width      : 50 ,
+                width      : 70 ,
                 template : function(rowdata) {
                     var buttonView = '<button type="button" id="dispatch" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-search"></span></button>';
                     var buttonEdit = '<button type="button" id="recycle" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateProject('+rowdata.projectId+')"><span class="glyphicon glyphicon-edit"></span></button>&nbsp;';
@@ -134,7 +140,7 @@
                     {
                 field: "projectCode",
                 title: '<@spring.message "hpms.mdm.project.projectCode"/>',
-                width: 90
+                width: 70
             },
                     {
                 field: "projectName",
@@ -187,7 +193,7 @@
             actions: ["Close"],
             title: $l('hap.view'),
             draggable: true,
-            height: "500px",
+            height: "450px",
             width: "700px",
             close: function(){
             },
@@ -204,7 +210,7 @@
             actions: ["Close"],
             title: $l('hap.edit'),
             draggable: true,
-            height: "500px",
+            height: "450px",
             width: "700px",
             close: function(){
             },

@@ -188,10 +188,10 @@
                 title: '<@spring.message "hpms.mdm.calelement.elementname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
-                editor:function (containner, options) {
+                editor:function (container, options) {
                     $('<input validationMessage="<@spring.message "hap.error.nullexception"/>"' +
                         ' required style="width: 90%;" name="' + options.field + '"/>')
-                        .appendTo(containner)
+                        .appendTo(container)
                         .kendoLov({
                             //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
                             code:"MDM_CALCULATE_ELEMENT",
@@ -201,7 +201,7 @@
                             model: options.model
                         });
 
-                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(containner);
+                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
                 },
                 template:function (dataItem) {
 
@@ -213,18 +213,18 @@
                 title: '<@spring.message "hpms.mdm.calruleline.calculateoperator"/>',
                 attributes: {style: "text-align:center"},
                 width: 80,
-                editor:function (containner, options) {
+                editor:function (container, options) {
                     $('<input required style="width: 90%;" ' +
                         ' validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>')
-                        .appendTo(containner)
+                        .appendTo(container)
                         .kendoDropDownList({
                             dataTextField:"meaning",
                             dataValueField:"value",
                             valuePrimitive:true,
                             dataSource: calOperatorData
                         });
-                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(containner);
+                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
                 }
             }
         ]

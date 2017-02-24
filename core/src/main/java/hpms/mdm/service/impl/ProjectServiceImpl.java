@@ -13,6 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ *
+ * @name ProjectServiceImpl
+ * @description 项目档案 Impl
+ * @author jun.zhao02@hand-china.com    2017/2/15 10:20:00
+ * @version 1.0
+ */
 @Service
 @Transactional
 public class ProjectServiceImpl extends BaseServiceImpl<Project> implements IProjectService{

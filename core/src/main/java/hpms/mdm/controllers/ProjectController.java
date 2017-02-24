@@ -16,14 +16,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-
-    @Controller
-    public class ProjectController extends BaseController{
+/**
+ *
+ * @name ProjectController
+ * @description 项目档案 Controller
+ * @author jun.zhao02@hand-china.com    2017/2/15 10:20:00
+ * @version 1.0
+ */
+@Controller
+public class ProjectController extends BaseController{
 
     @Autowired
     private IProjectService service;
 
-
+    /**
+     * project查询
+     *
+     * @param dto       封装参数对象
+     * @param page      查询页
+     * @param pageSize  页面大小
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
     @RequestMapping(value = "/hpms/mdm/project/query")
     @ResponseBody
     public ResponseData query(Project dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
@@ -33,6 +47,13 @@ import java.util.List;
         return new ResponseData(projects);
     }
 
+    /**
+     * project保存更新
+     *
+     * @param dto       封装参数对象
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
     @RequestMapping(value = "/hpms/mdm/project/submit")
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<Project> dto){
@@ -40,6 +61,13 @@ import java.util.List;
         return new ResponseData(service.batchUpdate(requestCtx, dto));
     }
 
+    /**
+     * project删除
+     *
+     * @param dto       封装参数对象
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
     @RequestMapping(value = "/hpms/mdm/project/remove")
     @ResponseBody
     public ResponseData delete(HttpServletRequest request,@RequestBody List<Project> dto){
@@ -47,6 +75,13 @@ import java.util.List;
         return new ResponseData();
     }
 
+    /**
+     * company查询
+     *
+     * @param dto       封装参数对象
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
     @RequestMapping(value = "/hpms/mdm/project/companyQuery" )
     @ResponseBody
     public ResponseData companyQuery(Company dto, HttpServletRequest request) {
@@ -54,10 +89,17 @@ import java.util.List;
         List<Company> companys = service.companyQuery(requestContext,dto);
         return new ResponseData(companys);
     }
+
+    /**
+     * group查询
+     *
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
     @RequestMapping(value = "/hpms/mdm/project/groupQuery" )
     @ResponseBody
     public ResponseData groupQuery(HttpServletRequest request) {
         List<Company> companys = service.groupQuery();
         return new ResponseData(companys);
     }
-    }
+}

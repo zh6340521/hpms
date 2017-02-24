@@ -225,12 +225,12 @@
                 title: '<@spring.message "hpms.mdm.calculaterule.rulecode"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
-                editor:function (containner, options) {
+                editor:function (container, options) {
                     $('<input required style="width: 90%;" ' +
                         'class="k-input k-textbox" validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>' +
                         '<span class="red">&nbsp;&nbsp;*</span>')
-                        .appendTo(containner);
+                        .appendTo(container);
                 }
             },
             {
@@ -238,12 +238,12 @@
                 title: '<@spring.message "hpms.mdm.calculaterule.rulename"/>',
                 attributes: {style: "text-align:center"},
                 width: 200,
-                editor:function (containner, options) {
+                editor:function (container, options) {
                     $('<input required style="width: 90%;" ' +
                         'class="k-input k-textbox" validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>' +
                         '<span class="red">&nbsp;&nbsp;*</span>')
-                        .appendTo(containner);
+                        .appendTo(container);
                 }
             },
             {
@@ -262,18 +262,18 @@
                     });
                     return v || "";
                 },
-                editor:function (containner, options) {
+                editor:function (container, options) {
                     $('<input required style="width: 90%;" ' +
                         ' validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
                         'name="' + options.field + '"/>')
-                        .appendTo(containner)
+                        .appendTo(container)
                         .kendoDropDownList({
                             dataTextField:"meaning",
                             dataValueField:"value",
                             valuePrimitive:true,
                             dataSource: enableFlagData
                         });
-                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(containner);
+                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
                 }
             }
         ],
