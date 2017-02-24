@@ -29,7 +29,7 @@
         LEFT JOIN HPMS_CODE_VALUE_V hcvv2
         ON hmpt.AR_FLAG = hcvv2.VALUE AND hcvv2.CODE = 'SYS.YES_NO' AND hcvv2.LANG = #{request.locale, jdbcType = VARCHAR}
     	WHERE 1 = 1
-        <if test = "paymentTermId != null"> AND hmpt.PAYMENT_TERM_ID like #{paymentTermId , jdbcType=DECIMAL} </if>
-        <if test = "paymentTermCode != null"> AND hmpt.PAYMENT_TERM_CODE like #{paymentTermCode , jdbcType=VARCHAR} </if>
+        <if test = "paymentTermId != null"> AND hmpt.PAYMENT_TERM_ID = #{paymentTermId , jdbcType=DECIMAL} </if>
+        <if test = "paymentTermCode != null"> AND hmpt.PAYMENT_TERM_CODE like concat('%', concat(#{paymentTermCode,jdbcType=VARCHAR}, '%')) </if>
     </select>
 </mapper>

@@ -35,6 +35,7 @@
             }
         }
     });
+    var priceHeaderId = 0;
 	</script>
 <div id="page-content">
 	<div id="dialogNewData"></div>
@@ -254,7 +255,7 @@
 	                                        dataType:"json",
 	                                        data:{priceCode:input.val()},
 	                                        success:function (data) {
-	                                            if (data.rows.length>0) {
+	                                            if (data.rows.length>0 && data.rows[0].priceHeaderId != priceHeaderId) {
 	                                                input.attr("data-priceCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
 	                                            	flag = false;
 	                                            }
@@ -456,7 +457,10 @@
 	                             }
 	                      });
 	                }
-		        }]
+		        }],
+		        edit: function (e) {
+		            priceHeaderId = e.model.priceHeaderId || 0;
+		        }
 	    }).data("kendoGrid");
     	Hap.autoResizeGrid("#price_header_grid");
     	$("#price_header_grid thead>tr th").css("text-align","center");

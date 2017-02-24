@@ -29,7 +29,7 @@
         LEFT JOIN HPMS_CODE_VALUE_V hcvv2
         ON hmpm.AR_FLAG = hcvv2.VALUE AND hcvv2.CODE = 'SYS.YES_NO' AND hcvv2.LANG = #{request.locale, jdbcType = VARCHAR}
     	WHERE 1 = 1
-        <if test = "paymentMethodId != null"> AND hmpm.PAYMENT_METHOD_ID like #{paymentMethodId , jdbcType=DECIMAL} </if>
-        <if test = "paymentMethodCode != null"> AND hmpm.PAYMENT_METHOD_CODE like #{paymentMethodCode , jdbcType=VARCHAR} </if>
+        <if test = "paymentMethodId != null"> AND hmpm.PAYMENT_METHOD_ID = #{paymentMethodId , jdbcType=DECIMAL} </if>
+        <if test = "paymentMethodCode != null"> AND hmpm.PAYMENT_METHOD_CODE like concat('%', concat(#{paymentMethodCode,jdbcType=VARCHAR}, '%')) </if>
     </select>
 </mapper>
