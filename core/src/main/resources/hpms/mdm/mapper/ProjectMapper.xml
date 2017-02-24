@@ -27,6 +27,7 @@
         <result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <!--查询项目档案，关联出集团和公司名称-->
     <select id="projectQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.Project">
         SELECT HMP.PROJECT_ID,
         HMP.PROJECT_CODE,

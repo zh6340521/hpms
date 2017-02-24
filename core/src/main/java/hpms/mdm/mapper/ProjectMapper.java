@@ -6,6 +6,13 @@ import hpms.mdm.dto.Project;
 
 import java.util.List;
 
+/**
+ *
+ * @name ProjectMapper
+ * @description 项目档案 Mapper
+ * @author jun.zhao02@hand-china.com    2017/2/15 10:20:00
+ * @version 1.0
+ */
 public interface ProjectMapper extends Mapper<Project>{
 
 	/**

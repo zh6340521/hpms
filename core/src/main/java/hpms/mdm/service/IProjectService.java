@@ -7,6 +7,13 @@ import hpms.mdm.dto.Project;
 import com.hand.hap.fnd.dto.Company;
 import java.util.List;
 
+/**
+ *
+ * @name IProjectService
+ * @description 项目档案 Service
+ * @author jun.zhao02@hand-china.com    2017/2/15 10:20:00
+ * @version 1.0
+ */
 public interface IProjectService extends IBaseService<Project>, ProxySelf<IProjectService>{
 	/**
 	 * 根据条件查询project
