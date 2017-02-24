@@ -311,6 +311,17 @@
 		           		return dataItem['feeName']|| '' 
 		           	},
 		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/priceLine/feeQuery?feeTypeId='+options.model.feeTypeId,
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			feeData = data.rows
+			    	      		}
+    	      	 			 });
 				        	$('<input id="feeId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({

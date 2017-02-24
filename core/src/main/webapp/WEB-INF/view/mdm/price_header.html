@@ -382,6 +382,17 @@
 		           		return dataItem['projectName']|| '' 
 		           	},
 		           	editor: function(container, options){
+		           			$.ajax({
+				    	      		url : '${base.contextPath}/mdm/property/projectQuery?companyId='+options.model.companyId,
+				    	      		type : 'POST',
+				    	      		contentType : "application/json;charset=utf-8",
+				    	      		cache : false,
+				    	      		dataType : 'json',
+				    	      		async : false,
+				    	      		success : function(data) {
+				    	      			projectData = data.rows;
+				    	      		}
+			    	      	 });
 				        	$('<input id="projectId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
