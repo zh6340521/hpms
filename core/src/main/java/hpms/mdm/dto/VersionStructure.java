@@ -72,6 +72,16 @@ public class VersionStructure extends BaseDTO {
      */
     @Transient
     private String parentStructureName;
+    @Transient
+    private String propertyName;//建筑实体
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
 
     public Long getStructureId() {
         return structureId;

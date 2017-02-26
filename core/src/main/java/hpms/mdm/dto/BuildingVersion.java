@@ -4,10 +4,7 @@ package hpms.mdm.dto;/**
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -70,6 +67,28 @@ public class BuildingVersion extends BaseDTO{
      */
     @Column
     private String  enableFlag;
+
+    @Transient
+    private String companyFullName;
+    @Transient
+    private String projectName;
+
+
+    public String getCompanyFullName() {
+        return companyFullName;
+    }
+
+    public void setCompanyFullName(String companyFullName) {
+        this.companyFullName = companyFullName;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
     public Long getCompanyId() {
         return companyId;

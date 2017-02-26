@@ -27,4 +27,14 @@ public interface IBuildingVersionService extends IBaseService<BuildingVersion>,P
      */
     public void myBatchUpdate(IRequest requestCtx, List<BuildingVersion> bvs) throws ValidationTableException;
 
+    /**
+     * 查询建筑版本数据
+     * @param requestCtx
+     * @param bv
+     * @param page
+     * @param pagesize
+     * @return
+     */
+    public List<BuildingVersion> selectBuildingVersion(IRequest requestCtx,BuildingVersion bv,int page,int pagesize);
+
 }
