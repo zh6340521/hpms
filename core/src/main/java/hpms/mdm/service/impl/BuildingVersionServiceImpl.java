@@ -77,6 +77,7 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
 
         logger.info("当传入的 默认版本 不为空且值为Y时");
         if(bv.getDefaultVersion()!=null&&bv.getDefaultVersion()!=""&&"Y".equals(bv.getDefaultVersion())){
+            logger.info("查询 除了自身外其他的数据");
             List<BuildingVersion> bvList = buildingVersionMapper.findDefaultVersion(bv);
             count = bvList.size();
             for(BuildingVersion b1:bvList){
