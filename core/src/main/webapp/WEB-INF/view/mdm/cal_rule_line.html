@@ -198,6 +198,9 @@
                             contextPath:'${base.contextPath}',
                             locale:'${base.locale}',
                             textField:'elementName',
+                            query:function (e) {
+                                e.param.enableFlag = "Y";
+                            },
                             model: options.model
                         });
 

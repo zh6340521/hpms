@@ -1,5 +1,6 @@
 package hpms.mdm.dto;
 
+import com.hand.hap.mybatis.annotation.Condition;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.GeneratedValue;
@@ -25,11 +26,13 @@ public class CalculateElement extends BaseDTO {
     /**
      * 编码
      */
+    @Condition(operator = LIKE)
     private String elementCode;
 
     /**
      * 计算要素名称
      */
+    @Condition(operator = LIKE)
     private String elementName;
 
     /**

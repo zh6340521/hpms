@@ -162,7 +162,8 @@
                                     structureNumber: response.rows[i].structureNumber,
                                     structureName: response.rows[i].structureName,
                                     propertyId: response.rows[i].propertyId,
-                                    businessFormat: response.rows[i].businessFormat
+                                    businessFormat: response.rows[i].businessFormat,
+                                    propertyName  :response.rows[i].propertyName
                                 };
                                 products.push(product);
                             }
@@ -182,7 +183,7 @@
                     columns: [
                         {field: "structureNumber", title: "结构编码"},
                         {field: "structureName", title: "结构名称"},
-                        {field: "propertyId", title: "建筑实体"},
+                        {field: "propertyName", title: "建筑实体"},
                         {field: "businessFormat", title: "建筑类型"}
                     ]
 
@@ -273,14 +274,16 @@
                     });
 
             var grid = $("#grid").kendoGrid({
-                dataSource: dataSource,
+                dataSource : dataSource,
                 navigatable: false,
                 height: '100%',
                 resizable: true,
-                scrollable: true,
-                reorderable:true,
+                scrollable: "multiple,rowbox",
+                reorderable: true,
+                sortable   : true,
+                selectable : "row",
+                editable: "inline",
                 columnMenu: true,
-                selectable:'row',
                 pageable: {
                     pageSizes: [5, 10, 20, 50],
                     refresh: true,
@@ -290,11 +293,11 @@
                     {
                         field: "structureNumber",
                         title: '结构编码',
-                        width: '17%' ,
+                        width: '13%' ,
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {
                             //alert(options.field);
-                            $('<input type="text" validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                            $('<input type="text" required validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
 
                         },
 
@@ -303,8 +306,15 @@
                     {
                         field: "structureName",
                         title: '结构名称',
-                        width: '18%' ,
+                        width: '17%' ,
                         attributes: {style: "text-align:center"},
+                        editor: function (container, options) {
+                            //alert(options.field);
+                            $('<input type="text"  required  name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
+
+                        },
+
+
 
                     },
                     {
@@ -315,6 +325,7 @@
                             "class": "table-header-cell",
                             style: "text-align: center"
                         },
+                        attributes: {style: "text-align:center"},
                         template        : function (dataItem) {
 
                             return dataItem['parentStructureName'] || '';
@@ -332,10 +343,32 @@
                         }
                     },
                     {
-                        field: "propertyId",
+                        /*field: "propertyId",
                         title: '建筑实体',
                         width: '17%' ,
+                        attributes: {style: "text-align:center"},*/
+                        field: "propertyId",
+                        title: '建筑实体',
+                        width: 140,
+                        headerAttributes: {
+                            "class": "table-header-cell",
+                            style: "text-align: center"
+                        },
                         attributes: {style: "text-align:center"},
+                        template        : function (dataItem) {
+
+                            return dataItem['propertyName'] || '';
+                        },
+                        editor          : function (container, options) {
+                            $('<input name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoLov($.extend(<@lov "PROPERTY_LOV"/>, {
+                                textField: 'propertyName',
+                                valueField:'propertyId',
+
+                                model    : options.model
+                            }));
+                        }
                     },
                     {
                         field: "businessFormat",
@@ -343,6 +376,11 @@
                         title: '建筑类型',
                         width: '20%' ,
                         attributes: {style: "text-align:center"},
+                        editor: function (container, options) {
+                            //alert(options.field);
+                            $('<input type="text"  required  name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
+
+                        },
 
 
                     },
@@ -360,7 +398,7 @@
 
                     },
                 ],
-                editable: "inline"
+
 
             }).data("kendoGrid");
 

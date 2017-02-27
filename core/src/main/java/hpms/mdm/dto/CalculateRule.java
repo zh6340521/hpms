@@ -1,5 +1,6 @@
 package hpms.mdm.dto;
 
+import com.hand.hap.mybatis.annotation.Condition;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.GeneratedValue;
@@ -26,11 +27,13 @@ public class CalculateRule extends BaseDTO {
     /**
      * 编码
      */
+    @Condition(operator = LIKE)
     private String ruleCode;
 
     /**
      * 计算公式名称
      */
+    @Condition(operator = LIKE)
     private String ruleName;
 
     /**

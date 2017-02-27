@@ -16,6 +16,7 @@
         <result column="PARENT_STRUCTURE_ID" property="parentStructureId" jdbcType="DECIMAL" />
 
         <result column="parent_structure_name" property="parentStructureName" jdbcType="VARCHAR" />
+        <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
     </resultMap>
 
 
@@ -55,6 +56,7 @@
        vs.property_id,
        vs.business_format,
        vs.parent_structure_id,
+       hmp.property_name,
   (
     SELECT
        vs.structure_name
@@ -65,6 +67,8 @@
   )as parent_structure_name
 FROM
   hpms_mdm_version_structure vs
+  left join hpms_mdm_property hmp
+  on vs.property_id = hmp.property_id
         <where>
             1=1
             <if test="versionId!=null">
