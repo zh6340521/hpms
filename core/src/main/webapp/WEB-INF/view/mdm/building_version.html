@@ -66,8 +66,28 @@
                               <label class="col-sm-4 control-label">公司</label>
                               <div class="col-sm-8">
                                   <input type="text" id="companyId" style="width: 160px"
-                                         data-bind="value:model.companyId"
-                                         class="k-textbox">
+                                         data-bind="value:model.companyId">
+                                  <script>
+                                      $("#companyId").kendoComboBox({
+                                          valuePrimitive: true,  //原始值
+                                          dataTextField: "companyFullName",
+                                          dataValueField: "companyId",
+                                          dataSource: {
+                                              transport: {
+                                                  read:function(options) {
+                                                      $.ajax({
+                                                          type   : "POST",
+                                                          url: "${base.contextPath}/mdm/property/companyQuery",
+                                                          data: {},
+                                                          success: function(json) {
+                                                              options.success(json.rows);
+                                                          }
+                                                      });
+                                                  }
+                                              }
+                                          }
+                                      });
+                                  </script>
                               </div>
                           </div>
                       </div>
@@ -78,9 +98,41 @@
                               <label class="col-sm-4 control-label">项目</label>
                               <div class="col-sm-8">
                                   <input type="text" id="projectId" style="width: 160px"
-                                         data-bind="value:model.projectId"
-                                         class="k-textbox">
+                                         data-bind="value:model.projectId">
                               </div>
+                              <script>
+                                  $("#projectId").kendoComboBox({
+                                      autoBind: false,
+                                      valuePrimitive: true,
+                                      cascadeFrom: "companyId",  //联动绑定的参数
+                                      cascadeFromField: "companyId",
+                                      filter: "contains",
+                                      dataTextField: "projectName",
+                                      dataValueField: "projectId",
+                                      dataSource: {
+                                          serverFiltering:true,
+                                          transport: {
+                                              read: {
+                                                  url:"${base.contextPath}/mdm/property/projectQuery",
+                                                  type : "POST"
+                                              },
+                                              contentType : "application/json",
+                                              parameterMap: function(options, type) {
+                                                  if (type === "read") {
+                                                      var filter = options.filter.filters[0]
+                                                      var map = {};
+                                                      map[filter.field] = filter.value;
+                                                      return map;
+                                                  }
+                                              }
+                                          },
+                                          schema: {
+                                              data: 'rows'
+                                          }
+                                      }
+                                  }) ;
+                              </script>
+
                           </div>
                       </div>
 
@@ -141,12 +193,23 @@
                           url : crudServiceBaseUrl + "/submit",
                           contentType: "application/json",
                           type : "POST",
-
+                          success : function(e){
+                              alert(e);
+                          },
+                          error:function(e){
+                              alert(e);
+                          }
                       },
                       update : {
                           url : crudServiceBaseUrl + "/submit",
                           contentType: "application/json",
                           type : "POST",
+                          success : function(e){
+                              alert(e);
+                          },
+                          error:function(e){
+                              alert(e);
+                          }
                       },
                       destroy: {
                           url: crudServiceBaseUrl + "/remove",
@@ -175,27 +238,56 @@
                           fields: {
                               //默认版本
                               defaultVersion:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'},
+                              companyId:{},
+                              projectName:{},
+                              projectId :{},
+                              companyFullName:{},
+
                           }
 
                       },
-                      requestEnd: function(e) {
+                     /* requestEnd: function(e) {
                           if (e.type != "read"){
                               dataSource.page(1);
                           }
-                      }
+                      }*/
+                      requestEnd: function(e) {
+                          if (e.response.success && e.type != "read") {
+                              kendo.ui.showInfoDialog({
+                                  message:'<@spring.message "hap.tip.success"/>'
+                              })
+                          }else{
+                              this.cancelChanges();
+                          }
+                      },
                   }
               });
 
+      //手动创建数据源
+      var companyInfo=[];
+      var projectInfo=[];
+
+      function myDataToJson2(data){
+          this.companyFullName = data.companyFullName;
+          this.companyId = data.companyId;
+      }
+
+      function myDataToJson3(data){
+          this.projectId = data.projectId;
+          this.projectName = data.projectName;
+      }
 
       var grid = $("#grid").kendoGrid({
-          dataSource: dataSource,
+          dataSource : dataSource,
           navigatable: false,
           height: '100%',
           resizable: true,
-          scrollable: true,
-          reorderable:true,
+          scrollable: "multiple,rowbox",
+          reorderable: true,
+          sortable   : true,
+          selectable : "row",
+          editable: "inline",
           columnMenu: true,
-          selectable:'row',
           pageable: {
               pageSizes: [5, 10, 20, 50],
               refresh: true,
@@ -217,23 +309,163 @@
                   },
                   editor: function (container, options) {
                       //alert(options.field);
-                      $('<input type="text" validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                      $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
 
                   },
 
               },
               {
-                  field: "companyId",
+                  /*field: "companyId",
                   title: '所属公司',
-                  width: '18%' ,
+                  width: '18%',
                   attributes: {style: "text-align:center"},
+                  template: function (dataItem) {
 
+                      return dataItem['companyFullName'] || ''
+                  },
+                  editor: function (container, options) {
+                      $.ajax({
+                          url: "${base.contextPath}/mdm/property/companyQuery",
+                          type: 'POST',
+                          contentType: "application/json;charset=utf-8",
+                          cache: false,
+                          dataType: 'json',
+                          async: false,
+                          success: function (data) {
+                              companyInfo.splice(1, companyInfo.length);
+                              for (var i = 0; i < data.rows.length; i++) {
+                                  companyInfo.push(new myDataToJson2(data.rows[i]));
+                              }
+                          }
+                      });
+
+                      $('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+                              .appendTo(container)
+                              .kendoDropDownList({
+                                  optionLabel: " ",
+                                  dataSource:companyInfo,
+                                  dataTextField: "companyFullName",
+                                  dataValueField: "companyId",
+
+                                  //下拉框选中事件
+                                  select:function(e){
+                                      options.model.set('companyFullName',e.sender.dataItem(e.item)[e.sender.options.dataTextField]);
+                                      options.model.set('companyId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+
+
+                                      //选中时将companyId作为参数进行查询
+                                      $.ajax({
+                                          url : '${base.contextPath}/mdm/property/projectQuery?companyId='+options.model.companyId,
+                                          type : 'POST',
+                                          contentType : "application/json;charset=utf-8",
+                                          cache : false,
+                                          dataType : 'json',
+                                          async : false,
+                                          success : function(data) {
+                                              //将结果的值赋给数据源  通过id绑定
+                                              dropdownlist = $("#projectId2").data("kendoDropDownList");
+                                              dropdownlist.setDataSource(data.rows);
+                                          }
+                                      });
+                                  }
+                              });
+
+
+
+                  }*/
+                  field      : "companyId",
+                  title      : "<@spring.message 'hpms.mdm.property.company'/>",
+                  width      : "18%",
+                  attributes : {style: "text-align:center"},
+                  template: function(dataItem){
+                      return dataItem['companyFullName']|| ''
+                  },
+                  editor: function(container, options){
+                      $.ajax({
+                          url : '${base.contextPath}/mdm/property/companyQuery',
+                          type : 'POST',
+                          contentType : "application/json;charset=utf-8",
+                          cache : false,
+                          dataType : 'json',
+                          async : false,
+                          success : function(data) {
+                              companyInfo = data.rows
+                              /*companyInfo.splice(1, companyInfo.length);
+                              for (var i = 0; i < data.rows.length; i++) {
+                                  companyInfo.push(new myDataToJson2(data.rows[i]));
+                              }*/
+                          }
+                      });
+                      $('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+                              .appendTo(container)
+                              .kendoDropDownList({
+                                  dataTextField: "companyFullName",
+                                  dataValueField: "companyId",
+                                  valuePrimitive: true,
+                                  dataSource: companyInfo,
+                                  select:function(e){
+                                      options.model.set('companyFullName',e.sender.dataItem(e.item)[e.sender.options.dataTextField]);
+                                      options.model.set('companyId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+
+
+                                      options.model.set('projectName',null);
+                                      options.model.set('projectId',null);
+                                      $.ajax({
+                                          url : '${base.contextPath}/mdm/property/projectQuery?companyId='+options.model.companyId,
+                                          type : 'POST',
+                                          contentType : "application/json;charset=utf-8",
+                                          cache : false,
+                                          dataType : 'json',
+                                          async : false,
+                                          success : function(data) {
+                                              var dropdownlist = $("#projectId2").data("kendoDropDownList");
+                                              dropdownlist.setDataSource(data.rows);
+                                          }
+                                      });
+                                  }
+                              });
+
+                  }
               },
               {
                   field: "projectId",
                   title: '项目',
                   width: '18%' ,
                   attributes: {style: "text-align:center"},
+                  template: function(dataItem) {
+                      return dataItem['projectName']|| '';
+                  },
+                  editor: function(container, options) {
+                      $.ajax({
+                          url : '${base.contextPath}/mdm/property/projectQuery?companyId='+options.model.companyId,
+                          type : 'POST',
+                          contentType : "application/json;charset=utf-8",
+                          cache : false,
+                          dataType : 'json',
+                          async : false,
+                          success : function(data) {
+                              projectInfo.splice(1, projectInfo.length);
+                              for (var i = 0; i < data.rows.length; i++) {
+                                  projectInfo.push(new myDataToJson3(data.rows[i]));
+                              }
+                          }
+                      });
+
+                      $('<input id="projectId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+                              .appendTo(container)
+                              .kendoDropDownList({
+                                  dataTextField: "projectName",
+                                  dataValueField: "projectId",
+                                  dataSource: projectInfo,
+                                  select:function(e){
+
+                                      //选中事件
+                                      options.model.set('projectName',e.sender.dataItem(e.item)[e.sender.options.dataTextField]);
+                                      options.model.set('projectId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+
+                                  }
+                              });
+                  }
 
               },
               {
@@ -241,18 +473,31 @@
                   title: '版本名称',
                   width: '17%' ,
                   attributes: {style: "text-align:center"},
+
+                  editor: function (container, options) {
+
+                      //alert(options.field);
+                      $('<input type="text" required  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+
+                  },
               },
               {
                   field: "versionDescription",
                   //name:"meaning",
                   title: '版本描述',
-                  width: '20%' ,
+                  width: '18%' ,
                   attributes: {style: "text-align:center"},
+                  editor: function (container, options) {
+
+                      //alert(options.field);
+                      $('<input type="text"   name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+
+                  },
 
 
               },
               {field: "defaultVersion",
-                  width: '8%',
+                  width: '10%',
                   title: '默认版本',
                   attributes: {style: "text-align:center"}
               },
@@ -268,6 +513,7 @@
                           name:'destroy',
                           text:'删除'
                       }],
+                  attributes: {style: "text-align:center"},
                   title		: "操作",
                   width		: "16%" ,
                   headerAttributes: {
@@ -275,8 +521,8 @@
                   },
 
               },
+
           ],
-          editable: "inline"
 
       }).data("kendoGrid");
 

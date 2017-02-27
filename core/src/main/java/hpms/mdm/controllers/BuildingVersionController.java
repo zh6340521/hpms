@@ -51,7 +51,8 @@ public class BuildingVersionController extends BaseController {
     public ResponseData query(BuildingVersion bv, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(buildingVersionService.select(requestContext,bv,page,pageSize));
+        List<BuildingVersion> bvList = buildingVersionService.selectBuildingVersion(requestContext,bv,page,pageSize);
+        return new ResponseData(bvList);
     }
 
     /**
@@ -81,7 +82,8 @@ public class BuildingVersionController extends BaseController {
             return rd;
         }
 
-        return  new ResponseData();
+        logger.info("将保存后的json数据传入前台");
+        return  new ResponseData(bv);
     }
 
     /**

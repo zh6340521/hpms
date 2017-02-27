@@ -37,11 +37,11 @@
         LEFT JOIN HPMS_MDM_PROJECT hmp2
         ON hmph.PROJECT_ID = hmp2.PROJECT_ID
         WHERE 1 = 1
-        <if test = "priceHeaderId != null"> AND hmph.PRICE_HEADER_ID like #{priceHeaderId , jdbcType=DECIMAL} </if>
-        <if test = "priceCode != null"> AND hmph.PRICE_CODE like #{priceCode , jdbcType=VARCHAR} </if>
-        <if test = "priceName != null"> AND hmph.PRICE_NAME like #{priceName , jdbcType=VARCHAR} </if>
-        <if test = "companyId != null"> AND hmph.COMPANY_ID like #{companyId , jdbcType=DECIMAL} </if>
-        <if test = "projectId != null"> AND hmph.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
+        <if test = "priceHeaderId != null"> AND hmph.PRICE_HEADER_ID = #{priceHeaderId , jdbcType=DECIMAL} </if>
+        <if test = "priceCode != null"> AND hmph.PRICE_CODE like concat('%', concat(#{priceCode,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "priceName != null"> AND hmph.PRICE_NAME like concat('%', concat(#{priceName,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "companyId != null"> AND hmph.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
+        <if test = "projectId != null"> AND hmph.PROJECT_ID = #{projectId , jdbcType=DECIMAL} </if>
         <if test = "startDateActive != null"> AND hmph.START_DATE_ACTIVE &gt;= #{startDateActive , jdbcType=DATE} </if>
         <if test = "endDateActive != null"> AND hmph.END_DATE_ACTIVE &lt;= #{endDateActive , jdbcType=DATE} </if>
     </select>

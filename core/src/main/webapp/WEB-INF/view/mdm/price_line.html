@@ -38,7 +38,6 @@
             }
         }
     });
-
 	</script>
 <div id="page-content">
 	<div id="dialogNewData"></div>
@@ -68,8 +67,8 @@
 	</div>
 	<script>kendo.bind($('#price_line_form'), viewModel);</script>
 	<div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
-        <span  data-bind="click:createFunction" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.new"/></span>
-        <span  data-bind="click:queryResource" class="btn btn-primary" style="float:left;"><@spring.message "hap.query"/></span>
+        <span  data-bind="click:createFunction" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+        <span  data-bind="click:queryResource" class="btn btn-primary" style="float:left;"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 	<div style="clear:both">
@@ -215,7 +214,7 @@
 	                    		unitPriceValidation: function (input) {
 	                    			if (input.is("[name='unitPrice']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-	                                    if (! /^(0|[1-9]\d*)$/.test(input.val()) ){
+	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
 	                                        input.attr("data-unitPriceValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
 	                                        return false;
 	                                    }
@@ -312,6 +311,17 @@
 		           		return dataItem['feeName']|| '' 
 		           	},
 		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/priceLine/feeQuery?feeTypeId='+options.model.feeTypeId,
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			feeData = data.rows
+			    	      		}
+    	      	 			 });
 				        	$('<input id="feeId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({

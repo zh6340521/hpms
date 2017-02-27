@@ -69,10 +69,10 @@
         LEFT JOIN SYS_CODE_VALUE_TL scvt3
         ON (scvb3.CODE_VALUE_ID = scvt3.CODE_VALUE_ID AND scvt3.LANG = #{request.locale, jdbcType = VARCHAR})
         WHERE 1 = 1
-        <if test = "priceLineId != null"> AND hmpl.PRICE_HEADER_ID like #{priceLineId , jdbcType=DECIMAL} </if>
-        <if test = "priceHeaderId != null"> AND hmpl.PRICE_HEADER_ID like #{priceHeaderId , jdbcType=DECIMAL} </if>
-        <if test = "feeTypeId != null"> AND hmpl.FEE_TYPE_ID like #{feeTypeId , jdbcType=DECIMAL} </if>
-        <if test = "feeId != null"> AND hmpl.FEE_ID like #{feeId , jdbcType=DECIMAL} </if>
-        <if test = "billingMethod != null"> AND hmpl.BILLING_METHOD like #{billingMethod , jdbcType=VARCHAR} </if>
+        <if test = "priceLineId != null"> AND hmpl.PRICE_HEADER_ID = #{priceLineId , jdbcType=DECIMAL} </if>
+        <if test = "priceHeaderId != null"> AND hmpl.PRICE_HEADER_ID = #{priceHeaderId , jdbcType=DECIMAL} </if>
+        <if test = "feeTypeId != null"> AND hmpl.FEE_TYPE_ID = #{feeTypeId , jdbcType=DECIMAL} </if>
+        <if test = "feeId != null"> AND hmpl.FEE_ID = #{feeId , jdbcType=DECIMAL} </if>
+        <if test = "billingMethod != null"> AND hmpl.BILLING_METHOD = #{billingMethod , jdbcType=VARCHAR} </if>
     </select>
 </mapper>

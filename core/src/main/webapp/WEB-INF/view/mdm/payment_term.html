@@ -40,9 +40,9 @@
 <div id="page-content">
 	
 	<div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
-        <span  data-bind="click:createFunction" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.new"/></span>
-        <span  onclick="editFunctionResources()" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.edit"/></span>
-        <span  data-bind="click:saveFunction" class="btn btn-success k-grid-save-changes" style="float:left;"><@spring.message "hap.save"/></span>
+        <span  data-bind="click:createFunction" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+        <span  onclick="editFunctionResources()" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-edit" style="margin-right:3px;"></i><@spring.message "hap.edit"/></span>
+        <span  data-bind="click:saveFunction" class="btn btn-success k-grid-save-changes" style="float:left;"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 	<div style="clear:both">
@@ -144,7 +144,7 @@
 	                    		daysValidation: function (input) {
 	                    			if (input.is("[name='days']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-	                                    if (! /^(0|[1-9]\d*)$/.test(input.val()) ){
+	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
 	                                        input.attr("data-daysValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
 	                                        return false;
 	                                    }

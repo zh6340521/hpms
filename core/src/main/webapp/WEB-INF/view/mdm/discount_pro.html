@@ -1,8 +1,8 @@
 <#--
- * description: 定价表头
+ * description: 优惠方案
  * version: 1.0
  * #copyright#
- *author: chengye.hu@hand-china.com 2017.02.20
+ *author: chengye.hu@hand-china.com 2017.02.24
 -->
 <#include "../include/header.html">
 <body>
@@ -16,17 +16,19 @@
     		height: 25px;
 		}
 	</style>
+	<script src="/core/common/code?enableFlagData=MDM.ENABLE_FLAG" type="text/javascript"></script>
+	<script src="/core/common/code?discountTypeData=HPMS_DISCOUNT_TYPE" type="text/javascript"></script>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
         model: {},
         createFunction: function(){
-            $('#price_header_grid').data('kendoGrid').addRow();
+            $('#discount_pro_grid').data('kendoGrid').addRow();
         },
         saveFunction: function () {
-            $('#price_header_grid').data('kendoGrid').saveChanges();
+            $('#discount_pro_grid').data('kendoGrid').saveChanges();
         },
         queryResource    : function (e) {
-            $('#price_header_grid').data('kendoGrid').dataSource.page(1);
+            $('#discount_pro_grid').data('kendoGrid').dataSource.page(1);
         },
         resetForm : function (e) {
             var formData = viewModel.model.toJSON();
@@ -35,33 +37,18 @@
             }
         }
     });
-    var priceHeaderId = 0;
+    var discountProId = 0;
 	</script>
 <div id="page-content">
-	<div id="dialogNewData"></div>
-	<div id="price_header_form">
+	<div id="discount_pro_form">
 		<form class="form-horizontal" id="pool_form" role="form" style="margin-top: 5px;">
 			<div class="row">
-				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.pricecode'/></label>
-				    <div class="col-md-7">
-				    	<input class="k-textbox" name="priceCode" data-bind="value:model.priceCode" style="width: 90%;"/>
-				    </div>
-				</div>
-				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.pricename'/></label>
-					<div class="col-md-7">
-						<input class="k-textbox" name="priceName" data-bind="value:model.priceName" style="width: 90%;"/>
-					</div>
-				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
 					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.property.company'/></label>
 				    <div class="col-md-7">
 				      <input id="companyId" name="companyId"  data-bind="value:model.companyId" style="width: 90%;">
 				    </div>
 				</div>
-			</div>
-			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
 					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.property.project'/></label>
 				    <div class="col-md-7">
@@ -69,33 +56,35 @@
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.startdate'/></label>
-				    <div class="col-md-7">
-				    	<input id="startDateActive" data-role="datepicker"  data-bind="value:model.startDateActive" style="width: 90%;"/>
-				    </div>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.discountpro.discountproname'/></label>
+					<div class="col-md-7">
+						<input class="k-textbox" name="discountProName" data-bind="value:model.discountProName" style="width: 90%;"/>
+					</div>
 				</div>
+			</div>
+			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.priceheader.enddate'/></label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.feetype.enableflag'/></label>
 				    <div class="col-md-7">
-				    	<input id="endDateActive" data-role="datepicker" data-bind="value:model.endDateActive" style="width: 90%;"/>
+				        <input id="enableFlag" name="enableFlag"  data-bind="value:model.enableFlag" style="width: 90%;"/> 
 				    </div>
 				</div>
 			</div>
 		</form>
 	</div>
-	<script>kendo.bind($('#price_header_form'), viewModel);</script>
+	<script>kendo.bind($('#discount_pro_form'), viewModel);</script>
 	<div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
         <span  data-bind="click:createFunction" class="btn btn-primary" style="float:left;margin-right:5px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
         <span  data-bind="click:queryResource" class="btn btn-primary" style="float:left;"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 	<div style="clear:both">
-        <div id="price_header_grid" ></div>
+        <div id="discount_pro_grid" ></div>
     </div>
 </div>
 	<script type="text/javascript" >
 		
-		$('#price_header_form input').keydown(function (e) {
+		$('#discount_pro_form input').keydown(function (e) {
 		    if (e.keyCode == 13) {
 		        e.target.blur();
 		        viewModel.queryResource(e);
@@ -152,16 +141,22 @@
           }
       }) ;
       
+      	$("#enableFlag").kendoComboBox({
+		  valuePrimitive: true,
+		  dataTextField: "meaning",
+          dataValueField: "value",
+          dataSource: enableFlagData
+		});
 	  
 		var dataSource = new kendo.data.DataSource({
 	        transport   : {
 	            read        : {
-	                url     : _basePath+"/mdm/priceHeader/priceHeaderQuery",
+	                url     : _basePath+"/mdm/discountPro/discountProQuery",
 	                type    : "POST",
 	                dataType: "json"
 	            },
                 create: {
-                    url: _basePath + "/mdm/priceHeader/priceHeaderSubmit",
+                    url: _basePath + "/mdm/discountPro/discountProSubmit",
                     contentType: "application/json",
                     type: "POST",
                     success : function(e){
@@ -171,7 +166,7 @@
                     }
                 },
                 update: {
-                    url: _basePath + "/mdm/priceHeader/priceHeaderSubmit",
+                    url: _basePath + "/mdm/discountPro/discountProSubmit",
                     contentType: "application/json",
                     type: "POST",
                     success : function(e){
@@ -186,35 +181,7 @@
 	                    var datas = Hap.prepareSubmitParameter(options, type)
 	                    return kendo.stringify(datas);
 	                } else if (type === "read") {
-	                	var model = viewModel.model.toJSON();
-	                    var map = {};
-	                    if(model.priceCode){
-	                        map.priceCode = model.priceCode.trim();
-	                    }
-	                    if(model.priceName){
-	                        map.priceName = model.priceName.trim();
-	                    }
-	                    if(model.companyId){
-	                        map.companyId = model.companyId;
-	                    }
-	                    if(model.projectId){
-	                        map.projectId = model.projectId
-	                    }
-	                    if(model.startDateActive){
-	                        map.startDateActive = new Date(model.startDateActive);
-	                    }
-	                    if(model.endDateActive){
-	                        map.endDateActive = new Date(model.endDateActive);
-	                    }
-	                    if (options.page) {
-	                        map.page = options.page;
-	                    }
-	                    if (options.pageSize) {
-	                        map.pagesize = options.pageSize;
-	                    }
-	                    return map;
-	                	
-	                    //return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+	                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
 	                }
 	            }
 	        },
@@ -234,29 +201,29 @@
 	            data  : 'rows',
 	            total : 'total',
 	            model : {
-	                id    : "priceHeaderId",
+	                id    : "discountProId",
 	                fields: {
-	                	priceCode  : {type:"string",
+	                	discountProCode  : {type:"string",
 	                	validation: {
 		                	required: true,
-		                	priceCodeValidation: function (input) {
-		                		if (input.is("[name='priceCode']") && input.val() != "") {
+		                	discountProCodeValidation: function (input) {
+		                		if (input.is("[name='discountProCode']") && input.val() != "") {
 	                                    // 正则校验-只允许输入大写字母、下划线及数字
 	                                    if (! /^[A-Z0-9_]+$/.test(input.val()) ){
-	                                        input.attr("data-priceCodeValidation-msg", "<@spring.message 'hpms.mdm.feetype.codelimit'/>");
+	                                        input.attr("data-discountProCodeValidation-msg", "<@spring.message 'hpms.mdm.feetype.codelimit'/>");
 	                                        return false;
 	                                    }
 	                                    // ajax 校验唯一
 	                                    var flag = true;
 	                                    $.ajax({
 	                                        type:"POST",
-	                                        url:"${base.contextPath}/mdm/priceHeader/priceHeaderQuery",
+	                                        url:"${base.contextPath}/mdm/discountPro/discountProQuery",
 	                                        async:false,
 	                                        dataType:"json",
-	                                        data:{priceCode:input.val()},
+	                                        data:{discountProCode:input.val()},
 	                                        success:function (data) {
-	                                            if (data.rows.length>0 && data.rows[0].priceHeaderId != priceHeaderId) {
-	                                                input.attr("data-priceCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
+	                                            if (data.rows.length>0 && data.rows[0].discountProId != discountProId) {
+	                                                input.attr("data-discountProCodeValidation-msg","<@spring.message 'hpms.mdm.feetype.unique'/>");
 	                                            	flag = false;
 	                                            }
 	                                        }
@@ -268,12 +235,42 @@
 		                		}
 		                	}
 	                	},
-                    	priceName : {type:"string",validation: {required: true}},
+                    	discountProName : {type:"string",validation: {required: true}},
                     	companyId: {validation: {required: true}},
                     	projectId: {validation: {required: true}},
+                    	feeTypeId: {validation: {required: true}},
+                    	feeId: {validation: {required: true}},
+                    	discountType : {type:"string",validation: {required: true}},
+                    	amount: {
+                    		validation: {
+	                    		amountValidation: function (input) {
+	                    			if (input.is("[name='amount']") && input.val() != "") {
+	                                    // 正则校验-只允许输入非负数
+	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
+	                                        input.attr("data-amountValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
+	                                        return false;
+	                                    }
+	                                }
+	                                return true;
+	                    		} 
+                    		}
+                    	},
+                    	percent: {
+                    		validation: {
+	                    		percentValidation: function (input) {
+	                    			if (input.is("[name='percent']") && input.val() != "") {
+	                                    // 正则校验-只允许输入非负数
+	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
+	                                        input.attr("data-percentValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
+	                                        return false;
+	                                    }
+	                                }
+	                                return true;
+	                    		} 
+                    		}
+                    	},
                     	description: {type:"string"},
-                    	startDateActive: {type:"date",validation: {required: true}},
-                    	endDateActive: {type:"date",validation: {required: true}},
+                    	enableFlag: {type:"string"}
 	                }
 	            }
 	        }
@@ -281,7 +278,9 @@
 	    
 	    var companyData = [];
 	    var projectData = [];
-		var grid = $("#price_header_grid").kendoGrid({
+	    var feeTypeData = [];
+	    var feeData = [];
+		var grid = $("#discount_pro_grid").kendoGrid({
 	        	dataSource : dataSource,
 		        navigatable: false,
 		        height: '100%',
@@ -301,36 +300,31 @@
 	       		{command : [{name:"edit"}], 
 			        		title: '<@spring.message "hap.action"/>', 
 			        		attributes: {style: "text-align:center"},
-			        		width: "9%"
+			        		width: "6%"
 			    },{
-		        	field      : "priceCode",
+		        	field      : "discountProCode",
 	                title      : "<@spring.message 'hpms.mdm.priceheader.pricecode'/>", 
-	                width      : "13%",
+	                width      : "7%",
 	                attributes  : {style: "text-align:center"},
-	                template   :function(e){
-		                	return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="parent.openTab(\'price_header'+e.priceCode+'\',\''+e.priceCode+'\', \'mdm/price_line.html?priceHeaderId='+e.priceHeaderId+'\')">'               
-									+ e.priceCode
-									+ '</a>'
-                    },
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="discountProCode"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
 		        },{
-		        	field      : "priceName",
-	                title      : "<@spring.message 'hpms.mdm.priceheader.pricename'/>", 
-	                width      : "13%",
+		        	field      : "discountProName",
+	                title      : "<@spring.message 'hpms.mdm.discountpro.discountproname'/>", 
+	                width      : "9%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceName"/>');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="discountProName"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
 		        },{
 		        	field      : "companyId",
 	                title      : "<@spring.message 'hpms.mdm.property.company'/>", 
-	                width      : "13%",
+	                width      : "9%",
 	                attributes : {style: "text-align:center"},
 	                template: function(dataItem){
 						return dataItem['companyName']|| '' 
@@ -376,7 +370,7 @@
 		        },{
 		        	field      : "projectId",
 	                title      : "<@spring.message 'hpms.mdm.property.project'/>", 
-	                width      : "13%",
+	                width      : "7%",
 	                attributes : {style: "text-align:center"},
 	              	template: function(dataItem){
 		           		return dataItem['projectName']|| '' 
@@ -404,77 +398,165 @@
 				        
 		            }
 		        },{
+		        	field      : "feeTypeId",
+	                title      : "<@spring.message 'hpms.mdm.priceline.feetype'/>", 
+	                width      : "7%",
+	                attributes  : {style: "text-align:center"},
+	                template: function(dataItem){
+						return dataItem['feeTypeName']|| '' 
+		           	},
+		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/priceLine/feeTypeQuery',
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			feeTypeData = data.rows
+			    	      		}
+			    	      	 }); 
+				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+		                         .appendTo(container)
+		                         .kendoDropDownList({
+		                             dataTextField: "feeTypeName",
+		                             dataValueField: "feeTypeId",
+		                             valuePrimitive: true,
+		                             dataSource: feeTypeData,
+		                             select:function(e){
+		                            	 options.model.set('feeName',null);
+			                        	 options.model.set('feeId',null);
+			                        	 $.ajax({
+						    	      		url : '${base.contextPath}/mdm/priceLine/feeQuery?feeTypeId='+options.model.feeTypeId,
+						    	      		type : 'POST',
+						    	      		contentType : "application/json;charset=utf-8",
+						    	      		cache : false,
+						    	      		dataType : 'json',
+						    	      		async : false,
+						    	      		success : function(data) {
+						    	      			var dropdownlist = $("#feeId2").data("kendoDropDownList");
+												dropdownlist.setDataSource(data.rows);
+						    	      		}
+			    	      	 			 });
+		                             }
+		                    });
+				        
+		            }
+		        },{
+		        	field      : "feeId",
+	                title      : "<@spring.message 'hpms.mdm.priceline.fee'/>", 
+	                width      : "7%",
+	                attributes  : {style: "text-align:center"},
+	                template: function(dataItem){
+		           		return dataItem['feeName']|| '' 
+		           	},
+		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/priceLine/feeQuery?feeTypeId='+options.model.feeTypeId,
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			feeData = data.rows
+			    	      		}
+    	      	 			 });
+				        	$('<input id="feeId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+		                         .appendTo(container)
+		                         .kendoDropDownList({
+		                             dataTextField: "feeName",
+		                             dataValueField: "feeId",
+		                             valuePrimitive: true,
+		                             dataSource: feeData
+		                    });
+				        
+		            }
+		        },{
+		        	field      : "discountType",
+	                title      : "<@spring.message 'hpms.mdm.discountpro.discounttype'/>", 
+	                width      : "7%",
+	                attributes  : {style: "text-align:center"},
+	                template: function(dataItem){
+		           		return dataItem['discountTypeName']|| '' 
+		           	},
+		           	editor: function(container, options){
+				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+		                         .appendTo(container)
+		                         .kendoDropDownList({
+		                             dataTextField: "meaning",
+		                             dataValueField: "value",
+		                             valuePrimitive: true,
+		                             dataSource: discountTypeData,
+		                             select: function(e) {
+                                	 	if(e.dataItem.value == "AMOUNT"){
+                                	 		$("#percent").attr("disabled",true);
+                                	 		$("#amount").attr("disabled",false);
+                                	 	}else if(e.dataItem.value == "RATE"){
+                                	 		$("#amount").attr("disabled",true);
+                                	 		$("#percent").attr("disabled",false);
+                                	 	}
+         							 }
+		                    });
+				        
+		            }
+		        },{
+		        	field      : "amount",
+	                title      : "<@spring.message 'hpms.mdm.discountpro.amount'/>", 
+	                width      : "7%",
+	                attributes  : {style: "text-align:center"},
+	                editor: function(container, options){
+                        var editor = $('<input id="amount" class="k-input k-textbox k-valid" type="text" name="amount"/>');
+                        editor.css('width','100%');
+                        container.append(editor);
+                	}
+		        },{
+		        	field      : "percent",
+	                title      : "<@spring.message 'hpms.mdm.discountpro.percent'/>", 
+	                width      : "6%",
+	                attributes  : {style: "text-align:center"},
+	                editor: function(container, options){
+                        var editor = $('<input id="percent" class="k-input k-textbox k-valid" type="text" name="percent"/>');
+                        editor.css('width','100%');
+                        container.append(editor);
+                	}
+		        },{
+		        	field      : "enableFlag",
+	                title      : "<@spring.message 'hpms.mdm.feetype.enableflag'/>", 
+	                width      : "7%",
+	                attributes  : {style: "text-align:center"},
+	                template: function(dataItem){
+		           		return dataItem['enableFlagName']|| '' 
+		           	},
+		           	editor: function(container, options){
+				        	$('<input name="' + options.field + '"/>')
+		                         .appendTo(container)
+		                         .kendoDropDownList({
+		                             dataTextField: "meaning",
+		                             dataValueField: "value",
+		                             valuePrimitive: true,
+		                             dataSource: enableFlagData
+		                    });
+				        
+		            }
+		        },{
 		        	field      : "description",
 	                title      : "<@spring.message 'hap.description'/>", 
-	                width      : "13%",
+	                width      : "7%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
                         var editor = $('<input class="k-input k-textbox k-valid" type="text" name="description"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
-		        },{
-		        	field      : "startDateActive",
-	                title      : "<@spring.message 'hpms.mdm.priceheader.startdate'/>", 
-	                width      : "13%",
-	                attributes  : {style: "text-align:center"},
-	                format: "{0:yyyy-MM-dd}",
-	                editor: function(container, options) {
-	                	var end = options.model.endDateActive;
-	                    var d;
-	                    if(end){
-	                        d=end;
-	                    }       
-	                     $('<input id="startDateActive" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
-	                        .appendTo(container)
-	                        .kendoDatePicker({
-	                             format:"yyyy-MM-dd",
-	                             max:d,
-	                             change:function(){
-	                                 if(this.value()!=null){                              	 
-	                                 d = this.value();
-	                                 }else{
-	                                	d= new Date(1900, 0, 1, 22, 0, 0);
-	                                 }
-	                                 $('#endDateActive').data('kendoDatePicker').min(d)
-	                             }
-	                      }); 
-	                }
-		        },{
-		        	field      : "endDateActive",
-	                title      : "<@spring.message 'hpms.mdm.priceheader.enddate'/>", 
-	                width      : "13%",
-	                attributes  : {style: "text-align:center"},
-	                format: "{0:yyyy-MM-dd}",
-	                editor: function(container, options) {
-	                    var start = options.model.startDateActive;
-	                    var d;
-	                    if(start){
-	                    	d=start;
-	                    }
-	                    $('<input id="endDateActive" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
-	                        .appendTo(container)
-	                        .kendoDatePicker({
-	                             format:"yyyy-MM-dd",
-	                             min:d,
-	                             change:function(){
-	                                 if(this.value()!=null){                              	 
-	                                 d = this.value();
-	                                 }else{
-	                                  d= new Date(2099, 0, 1, 22, 0, 0);
-	                                 }
-	                                 console.log(d);
-	                                 $('#startDateActive').data('kendoDatePicker').max(d);
-	                             }
-	                      });
-	                }
 		        }],
 		        edit: function (e) {
-		            priceHeaderId = e.model.priceHeaderId || 0;
+		            discountProId = e.model.discountProId || 0;
 		        }
 	    }).data("kendoGrid");
-    	Hap.autoResizeGrid("#price_header_grid");
-    	$("#price_header_grid thead>tr th").css("text-align","center");
+    	Hap.autoResizeGrid("#discount_pro_grid");
+    	$("#discount_pro_grid thead>tr th").css("text-align","center");
 	</script>
 </body>
 </html>

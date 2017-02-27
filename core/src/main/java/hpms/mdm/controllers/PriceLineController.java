@@ -118,6 +118,7 @@ public class PriceLineController extends BaseController{
 		IRequest requestContext = createRequestContext(request);
 		Fee fee = new Fee();
 		fee.setFeeTypeId(feeTypeId);
+		fee.setEnableFlag("Y");
 		List<Fee> fees = feeService.select(requestContext, fee, 1, 100);
 		return new ResponseData(fees);
 	}

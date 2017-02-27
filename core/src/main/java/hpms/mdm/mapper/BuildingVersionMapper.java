@@ -5,6 +5,8 @@ package hpms.mdm.mapper;/**
 import com.hand.hap.mybatis.common.Mapper;
 import hpms.mdm.dto.BuildingVersion;
 
+import java.util.List;
+
 /**
  * @author fuchun.hu@hand-china.com
  * @version 1.0
@@ -18,7 +20,14 @@ public interface BuildingVersionMapper extends Mapper<BuildingVersion> {
      * 查询表中是否存在默认版本
      * @return
      */
-    public int findDefaultVersion();
+    public List<BuildingVersion> findDefaultVersion(BuildingVersion bv);
+
+    /**
+     * 查询建筑版本数据
+     * @param bv
+     * @return
+     */
+    public List<BuildingVersion> selectBuildingVersion(BuildingVersion bv);
 
 
 

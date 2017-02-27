@@ -2,6 +2,7 @@ package hpms.mdm.service.impl;/**
  * Created by user1 on 2017/2/15.
  */
 
+import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.mdm.dto.BuildingVersion;
@@ -44,7 +45,7 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
             if(bv.getDefaultVersion()=="Y"||"Y".equals(bv.getDefaultVersion())){
 
                 logger.info("先查询表中是否存在默认版本");
-                int a = findDefaultVersionCount();
+                int a = UniqueVersion(bvs,bv.getVersionId(),bv);
                 if(a>0){
                     logger.info("将这条记录删除，并抛出错误信息");
                     bvs.remove(bv);
@@ -62,14 +63,42 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
         }
     }
 
-
-    /**
-     * 查询表中默认版本数量
-     * @return
-     */
-    public int findDefaultVersionCount(){
-        return buildingVersionMapper.findDefaultVersion();
+    @Override
+    public List<BuildingVersion> selectBuildingVersion(IRequest requestCtx, BuildingVersion bv, int page, int pagesize) {
+        PageHelper.startPage(page,pagesize);
+        return buildingVersionMapper.selectBuildingVersion(bv);
     }
+
+
+    //验证版本id+默认版本的唯一性
+    public int UniqueVersion(List<BuildingVersion> bvs, Long  versionId,BuildingVersion bv) {
+        int count = 0;
+        bv.setVersionId(versionId);
+
+        logger.info("当传入的 默认版本 不为空且值为Y时");
+        if(bv.getDefaultVersion()!=null&&bv.getDefaultVersion()!=""&&"Y".equals(bv.getDefaultVersion())){
+            logger.info("查询 除了自身外其他的数据");
+            List<BuildingVersion> bvList = buildingVersionMapper.findDefaultVersion(bv);
+            count = bvList.size();
+            for(BuildingVersion b1:bvList){
+                for(BuildingVersion b2:bvs){
+                    if(b1.getDefaultVersion().equals(b2.getDefaultVersion())){
+                        return count;
+                    }else{
+                        count = count-1;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
+        return count;
+
+    }
+
+
 
 
 }

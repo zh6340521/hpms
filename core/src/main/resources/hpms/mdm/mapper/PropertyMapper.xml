@@ -133,13 +133,13 @@
         LEFT JOIN HPMS_MDM_CONFIG_VALUE hmcv
         ON hmp.PROPERTY_TYPE = hmcv.CONFIG_VALUE_ID
         WHERE 1 = 1
-        <if test = "propertyId != null"> AND hmp.PROPERTY_ID like #{propertyId , jdbcType=DECIMAL} </if>
-        <if test = "companyId != null"> AND hmp.COMPANY_ID like #{companyId , jdbcType=DECIMAL} </if>
-        <if test = "projectId != null"> AND hmp.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
-        <if test = "propertyType != null"> AND hmp.PROPERTY_TYPE like #{propertyType , jdbcType=DECIMAL} </if>
-        <if test = "propertyName != null"> AND hmp.PROPERTY_NAME like #{propertyName , jdbcType=VARCHAR} </if>
-        <if test = "propertyNumber != null"> AND hmp.PROPERTY_NUMBER like #{propertyNumber , jdbcType=VARCHAR} </if>
-        <if test = "oldNumber != null"> AND hmp.OLD_NUMBER like #{oldNumber , jdbcType=VARCHAR} </if>
+        <if test = "propertyId != null"> AND hmp.PROPERTY_ID = #{propertyId , jdbcType=DECIMAL} </if>
+        <if test = "companyId != null"> AND hmp.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
+        <if test = "projectId != null"> AND hmp.PROJECT_ID = #{projectId , jdbcType=DECIMAL} </if>
+        <if test = "propertyType != null"> AND hmp.PROPERTY_TYPE = #{propertyType , jdbcType=DECIMAL} </if>
+        <if test = "propertyName != null"> AND hmp.PROPERTY_NAME like concat('%', concat(#{propertyName,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "propertyNumber != null"> AND hmp.PROPERTY_NUMBER like concat('%', concat(#{propertyNumber,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "oldNumber != null"> AND hmp.OLD_NUMBER like concat('%', concat(#{oldNumber,jdbcType=VARCHAR}, '%')) </if>
     </select>
     
     <!-- 查询有效的公司名称 -->
