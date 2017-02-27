@@ -1,5 +1,6 @@
 package hpms.mdm.dto;
 
+import com.hand.hap.mybatis.annotation.Condition;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.GeneratedValue;
@@ -26,11 +27,13 @@ public class EquipmentType extends BaseDTO {
     /**
      *类型编码
      */
+    @Condition(operator = LIKE)
     private String typeCode;
 
     /**
      *类型名称
      */
+    @Condition(operator = LIKE)
     private String typeName;
 
     /**
