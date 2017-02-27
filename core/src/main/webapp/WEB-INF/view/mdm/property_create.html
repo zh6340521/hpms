@@ -16,6 +16,10 @@
             .col-md-8,.col-md-4{
             	margin-top: 5px;
             }
+            span.red {
+		        color: red;
+		        font-weight: bold;
+    		}
 	</style>
 	<script src="/core/common/code?propertyStatusData=HPMS_MDM_PROPERTY_STATUS" type="text/javascript"></script>	
 	<script type="text/javascript">
@@ -43,6 +47,7 @@
 				    <div class="col-md-8">
 				    	<input id="groupId" name="groupId" data-bind="value:model.groupId" style="width: 70%;"
 	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span class="red">&nbsp;&nbsp;*</span>
 	                       <span data-for="groupId" class="k-invalid-msg" ></span>
 				    </div>
 				</div>
@@ -53,6 +58,7 @@
 				    <div class="col-md-8">
 				    	<input id="companyId" name="companyId" data-bind="value:model.companyId" style="width: 70%;"
 	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span class="red">&nbsp;&nbsp;*</span>
 	                       <span data-for="companyId" class="k-invalid-msg" ></span>
 				    </div>
 				</div>
@@ -65,6 +71,7 @@
 					<div class="col-md-8">
 						<input id="projectId" name="projectId" data-bind="value:model.projectId" style="width: 70%;"
 	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span class="red">&nbsp;&nbsp;*</span>
 	                       <span data-for="projectId" class="k-invalid-msg" ></span>
 					</div>
 				</div>
@@ -75,6 +82,7 @@
 				    <div class="col-md-8">
 				    	<input id="propertyType" name="propertyType" data-bind="value:model.propertyType" style="width: 70%;"
 	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+	                       <span class="red">&nbsp;&nbsp;*</span>
 	                       <span data-for="propertyType" class="k-invalid-msg" ></span>
 				    </div>
 				</div>
@@ -86,6 +94,7 @@
 	                   </div>
 				    <div class="col-md-8">
 				    	<input type="text" class="k-textbox" id="propertyName"  data-bind="value:model.propertyName" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
+				    	<span class="red">&nbsp;&nbsp;*</span>
 				    </div>
 				</div>
 				<div class="col-md-6" style="margin-bottom:10px">
@@ -94,6 +103,7 @@
 	                   </div>
 				    <div class="col-md-8">
 				        <input onblur="verifyPropertyNumber(this)" type="text" class="k-textbox" id="propertyNumber"  data-bind="value:model.propertyNumber" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
+				    	<span class="red">&nbsp;&nbsp;*</span>
 				    </div>
 				</div>
 			</div>
@@ -113,6 +123,7 @@
 				    <div class="col-md-8">
 				    	<input id="propertyStatus" name="propertyStatus" data-bind="value:model.propertyStatus" style="width: 70%;"
 	                       			required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+						<span class="red">&nbsp;&nbsp;*</span>
 						<span data-for="propertyStatus" class="k-invalid-msg" ></span>
 				    </div>
 				</div>

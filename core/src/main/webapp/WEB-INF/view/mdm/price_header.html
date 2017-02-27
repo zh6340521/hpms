@@ -15,6 +15,10 @@
 			width: 180px;
     		height: 25px;
 		}
+		span.red {
+	        color: red;
+	        font-weight: bold;
+    	}
 	</style>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
@@ -313,8 +317,8 @@
 									+ '</a>'
                     },
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>');
-                        editor.css('width','100%');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>'+'<span class="red">&nbsp;&nbsp;*</span>');
+                        editor.css('width','90%');
                         container.append(editor);
                 	}
 		        },{
@@ -323,8 +327,8 @@
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceName"/>');
-                        editor.css('width','100%');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceName"/>'+'<span class="red">&nbsp;&nbsp;*</span>');
+                        editor.css('width','90%');
                         container.append(editor);
                 	}
 		        },{
@@ -347,7 +351,7 @@
 			    	      			companyData = data.rows
 			    	      		}
 			    	      	 }); 
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "companyFullName",
@@ -371,7 +375,7 @@
 			    	      	 			});
 		                             }
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "projectId",
@@ -393,7 +397,7 @@
 				    	      			projectData = data.rows;
 				    	      		}
 			    	      	 });
-				        	$('<input id="projectId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" id="projectId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "projectName",
@@ -401,7 +405,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: projectData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "description",
@@ -425,7 +429,7 @@
 	                    if(end){
 	                        d=end;
 	                    }       
-	                     $('<input id="startDateActive" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+	                     $('<input style="width: 90%;" id="startDateActive" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 	                        .appendTo(container)
 	                        .kendoDatePicker({
 	                             format:"yyyy-MM-dd",
@@ -438,7 +442,8 @@
 	                                 }
 	                                 $('#endDateActive').data('kendoDatePicker').min(d)
 	                             }
-	                      }); 
+	                      });
+	                      $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container); 
 	                }
 		        },{
 		        	field      : "endDateActive",
@@ -452,7 +457,7 @@
 	                    if(start){
 	                    	d=start;
 	                    }
-	                    $('<input id="endDateActive" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+	                    $('<input style="width: 90%;" id="endDateActive" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 	                        .appendTo(container)
 	                        .kendoDatePicker({
 	                             format:"yyyy-MM-dd",
@@ -467,6 +472,7 @@
 	                                 $('#startDateActive').data('kendoDatePicker').max(d);
 	                             }
 	                      });
+	                      $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 	                }
 		        }],
 		        edit: function (e) {

@@ -15,6 +15,10 @@
 			width: 180px;
     		height: 25px;
 		}
+		span.red {
+	        color: red;
+	        font-weight: bold;
+    	}
 	</style>
 	<script src="/core/common/code?isData=SYS.YES_NO" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -176,8 +180,8 @@
 	                width      : "20%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentMethodCode"/>');
-                        editor.css('width','100%');
+                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentMethodCode"/>'+'<span class="red">&nbsp;&nbsp;*</span>');
+                        editor.css('width','90%');
                         container.append(editor);
                 	}
 		        },{
@@ -186,8 +190,8 @@
 	                width      : "20%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentMethodName"/>');
-                        editor.css('width','100%');
+                        var editor = $('<input required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="paymentMethodName"/>'+'<span class="red">&nbsp;&nbsp;*</span>');
+                        editor.css('width','90%');
                         container.append(editor);
                 	}
 		        },{
@@ -209,7 +213,7 @@
 		           		return dataItem['apFlagName']|| '' 
 		           	},
 		           	editor: function(container, options){
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "meaning",
@@ -217,7 +221,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: isData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "arFlag",
@@ -228,7 +232,7 @@
 		           		return dataItem['arFlagName']|| '' 
 		           	},
 		           	editor: function(container, options){
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "meaning",
@@ -236,7 +240,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: isData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        }]
 	    }).data("kendoGrid");

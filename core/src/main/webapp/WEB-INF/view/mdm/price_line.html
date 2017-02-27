@@ -15,6 +15,10 @@
 			width: 180px;
     		height: 25px;
 		}
+		span.red {
+	        color: red;
+	        font-weight: bold;
+    	}
 	</style>
 	<script src="/core/common/code?billingMethodData=HPMS_BILL_METHOD" type="text/javascript"></script>
 	<script src="/core/common/code?currencyData=HPMS_MDM_PAYMENT_CURRENCY" type="text/javascript"></script>
@@ -276,7 +280,7 @@
 			    	      			feeTypeData = data.rows
 			    	      		}
 			    	      	 }); 
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "feeTypeName",
@@ -300,7 +304,7 @@
 			    	      	 			 });
 		                             }
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "feeId",
@@ -322,7 +326,7 @@
 			    	      			feeData = data.rows
 			    	      		}
     	      	 			 });
-				        	$('<input id="feeId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" id="feeId2" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "feeName",
@@ -330,7 +334,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: feeData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "unitPrice",
@@ -338,8 +342,8 @@
 	                width      : "13%",
 	                attributes : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="unitPrice"/>');
-                        editor.css('width','100%');
+                        var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="unitPrice"/>'+'<span class="red">&nbsp;&nbsp;*</span>');
+                        editor.css('width','90%');
                         container.append(editor);
                 	}
 		        },{
@@ -351,7 +355,7 @@
 		           		return dataItem['currencyName']|| '' 
 		           	},
 		           	editor: function(container, options){
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "meaning",
@@ -359,7 +363,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: currencyData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "feeUom",
@@ -370,7 +374,7 @@
 		           		return dataItem['feeUomName']|| '' 
 		           	},
 		           	editor: function(container, options){
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "meaning",
@@ -378,7 +382,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: feeUomData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "billingMethod",
@@ -389,7 +393,7 @@
 		           		return dataItem['billingMethodName']|| '' 
 		           	},
 		           	editor: function(container, options){
-				        	$('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+				        	$('<input style="width: 90%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "meaning",
@@ -397,7 +401,7 @@
 		                             valuePrimitive: true,
 		                             dataSource: billingMethodData
 		                    });
-				        
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
 		        },{
 		        	field      : "calculateRuleId",

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.fnd.dto.Company;
@@ -23,6 +24,7 @@ import hpms.mdm.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
 import hpms.mdm.service.IPropertyService;
+import hpms.utils.ValidationTableException;
 
 /**
  * @name PropertyController
@@ -69,7 +71,21 @@ public class PropertyController extends BaseController{
             rd.setMessage(getErrorMessage(result, request));
             return rd;
         }else{
-        	return new ResponseData(propertyService.batchUpdate(requestContext, propertys));
+        	try{
+        	Property property = new Property();
+        	property.setPropertyNumber(propertys.get(0).getPropertyNumber());
+	        	if(propertyService.propertyQuery(requestContext,property,1,100).size()>0){
+	        		throw new ValidationTableException("hpms.mdm.property.property_code_not_uniqueness", null);
+	        	}else{
+	        		return new ResponseData(propertyService.batchUpdate(requestContext, propertys));
+	        	}
+        	}catch (ValidationTableException e){
+    	        ResponseData responseData = new ResponseData(false);
+    	        String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+    	                RequestContextUtils.getLocale(request));
+    	        responseData.setMessage(errorMessage);
+    	        return responseData;
+            }
         }
 	}
 	/**
