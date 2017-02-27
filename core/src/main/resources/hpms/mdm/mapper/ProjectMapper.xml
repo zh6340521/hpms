@@ -55,8 +55,8 @@
         ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
         WHERE 1=1
         <if test = "projectId != null"> AND hmp.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
-        <if test = "projectCode != null"> AND hmp.Project_Code like #{projectCode , jdbcType=VARCHAR} </if>
-        <if test = "projectName != null"> AND hmp.Project_Name like #{projectName , jdbcType=VARCHAR} </if>
+        <if test = "projectCode != null"> AND hmp.Project_Code like concat('%', concat(#{projectCode , jdbcType=VARCHAR}, '%')) </if>
+        <if test = "projectName != null"> AND hmp.Project_Name like concat('%', concat(#{projectName , jdbcType=VARCHAR}, '%')) </if>
     </select>
 
 
