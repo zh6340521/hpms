@@ -22,7 +22,9 @@
     <!--查询建筑版本中默认版本信息-->
     <select id="findDefaultVersion" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.BuildingVersion">
         SELECT bv.version_id,
-               bv.default_version
+               bv.default_version,
+               bv.company_id,
+               bv.project_id
           FROM hpms_mdm_building_version bv
 
           <where>
@@ -33,6 +35,14 @@
 
               <if test="versionId!=null">
                   and bv.version_id != #{versionId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="companyId!=null">
+                  and bv.company_id = #{companyId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="projectId!=null">
+                  and bv.project_id = #{projectId,jdbcType=DECIMAL}
               </if>
           </where>
 
