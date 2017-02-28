@@ -57,6 +57,12 @@
         <if test = "projectId != null"> AND hmp.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
         <if test = "projectCode != null"> AND hmp.Project_Code like concat('%', concat(#{projectCode , jdbcType=VARCHAR}, '%')) </if>
         <if test = "projectName != null"> AND hmp.Project_Name like concat('%', concat(#{projectName , jdbcType=VARCHAR}, '%')) </if>
+        <if test = "startDateActive != null">
+            AND hmp.START_DATE_ACTIVE &lt;= #{startDateActive,jdbcType=DATE}
+        </if>
+        <if test = "endDateActive != null">
+            AND hmp.END_DATE_ACTIVE &gt;= #{endDateActive,jdbcType=DATE}
+        </if>
     </select>
 
 

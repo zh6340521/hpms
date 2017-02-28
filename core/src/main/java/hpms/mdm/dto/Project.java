@@ -1,12 +1,13 @@
 package hpms.mdm.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hand.hap.mybatis.annotation.ExtensionAttribute;
+import com.hand.hap.system.dto.BaseDTO;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import com.hand.hap.system.dto.BaseDTO;
 import java.util.Date;
 
 /**
@@ -37,8 +38,10 @@ public class Project extends BaseDTO {
 
       private String projectAddress;//项目地址
 
+      @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
       private Date startDateActive;//有效期起
 
+      @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
       private Date endDateActive;//有效期止
 
       private String enableFlag;//状态
