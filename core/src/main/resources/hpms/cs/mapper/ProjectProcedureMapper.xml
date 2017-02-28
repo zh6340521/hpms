@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.cs.mapper.ProjectProcedureMapper">
+    <resultMap id="BaseResultMap" type="hpms.cs.dto.ProjectProcedure" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="PROJECT_PROCEDURE_ID" property="projectProcedureId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="PROCEDURE_TYPE" property="procedureType" jdbcType="VARCHAR" />
+        <result column="CONFIG_PROCEDURE_ID" property="configProcedureId" jdbcType="DECIMAL" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+
+        <result column="PROCEDURE_NAME" property="procedureName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectProcedureName" resultMap="BaseResultMap" parameterType="hpms.cs.dto.ProjectProcedure">
+        SELECT
+        "p".PROJECT_PROCEDURE_ID,
+        "p".PROJECT_ID,
+        "p".PROCEDURE_TYPE,
+        "p".CONFIG_PROCEDURE_ID,
+        "p".ENABLE_FLAG,
+        "p".OBJECT_VERSION_NUMBER,
+        "c".PROCEDURE_NAME
+        FROM
+        HPMS.HPMS_PROJECT_PROCEDURE "p"
+        LEFT JOIN HPMS.HPMS_CONFIG_PROCEDURE "c"
+        ON "p".CONFIG_PROCEDURE_ID = "c".CONFIG_PROCEDURE_ID
+        <where>
+            <if test="projectId!=null">
+                AND "p".PROJECT_ID = #{projectId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
