@@ -1,0 +1,251 @@
+<#--
+        * description: 项目手续材料配置页面
+        * version: 1.0
+        * author: feng.liu01@hand-china.com
+        * #{copyright}#
+        *
+        -->
+
+<#include "../include/header.html">
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        procedures: [],
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            if (!viewModel.model.projectId){
+                kendo.ui.showErrorDialog({
+                    message: '<@spring.message "hpms.mdm.projectprocedure.error"/>'
+                });
+                return;
+            }
+            var data=[];
+            if (viewModel.procedures.length>0){
+                for (var i = 0;i<viewModel.procedures.length;i++) {
+                    data.push({
+                        projectId: viewModel.model.projectId,
+                        configProcedureId: viewModel.procedures[i],
+                        __status:'add'
+                    })
+                }
+            } else {
+                data.push({
+                    projectId: viewModel.model.projectId,
+                    __status:'delete'
+                })
+            }
+
+
+            $.ajax({
+                url: '${base.contextPath}/cs/projectProcedure/submit',
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data       : kendo.stringify(data),
+                success: function (args) {
+                    if(args.success){
+                        kendo.ui.showInfoDialog({
+                            title:$l('hap.prompt'),
+                            message:$l('hap.tip.success')
+                        })
+                    }
+                    else{
+                        alert("error")
+                    }
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        }
+    });
+
+
+
+</script>
+<body>
+<div id="page-content">
+    <div class="panel" style="padding: 0px;border:none;box-shadow: none;width: 50%;">
+        <div class="form-horizontal" id="query-form">
+            <div class="panel-body">
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hrorgunit.companyname"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="companyId" type="text" style="float:left;width:150px;margin-right:5px;">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.property.project"/>：</label>
+                            <div class="col-sm-8">
+                                <input data-bind="value:model.projectId" id="projectId" type="text" style="float:left;width:150px;margin-right:5px;">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div  class="row procedure" style="margin-bottom: 10px;margin-top: 40px">
+                </div>
+
+                <div class="row" style="margin-bottom: 10px">
+                    <div id="toolbar-btn" style="padding-bottom: 10px;">
+                        <span class="btn btn-primary k-grid-add"
+                              style="float: left;margin-left: 70px" data-bind="click:saveFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <@spring.message "hap.save"/>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+
+</div>
+
+<script type="text/javascript">
+    $("#companyId").kendoDropDownList({
+        optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+        dataTextField:"companyFullName",
+        dataValueField:"companyId",
+        valuePrimitive:true,
+        dataSource: {
+            transport: {
+                read: {
+                    url:"${base.contextPath}/fnd/company/query",
+                    type : "POST"
+                },
+                contentType : "application/json"
+            },
+            schema: {
+                data: 'rows'
+            }
+        }
+    });
+
+    $("#projectId").kendoDropDownList({
+        optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+        dataTextField:"projectName",
+        dataValueField:"projectId",
+        cascadeFrom:"companyId",
+        valuePrimitive:true,
+        dataSource: {
+            transport: {
+                read: {
+                    url:"${base.contextPath}/hpms/mdm/project/query",
+                    type : "POST"
+                },
+                contentType : "application/json",
+                parameterMap: function(options, type) {
+                    if (type === "read") {
+                        return {startDateActive:new Date(),endDateActive:new Date()};
+                    }
+                }
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+        select: function (e) {
+            if (e.dataItem.projectId){
+                var projectId = e.dataItem.projectId;
+                console.log(e.dataItem.projectId)
+                $.ajax({
+                    url: "${base.contextPath}/cs/projectProcedure/query",
+                    type: "POST",
+                    dataType: "json",
+                    data:{projectId:e.dataItem.projectId},
+                    async:false,
+                    success: function (data) {
+                        console.log(data)
+                        var proceduresTemp = [];
+                        for (var i = 0;i<data.rows.length;i++){
+                            console.log(data.rows[i].configProcedureId)
+                            proceduresTemp.push(data.rows[i].configProcedureId+"")
+                        }
+                        console.log(proceduresTemp);
+                        viewModel.set("procedures",proceduresTemp);
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+        }
+    });
+
+    function myhtml(value1,text1,flag,value2,text2,i) {
+        var label = "&nbsp;";
+        if (i==0) {
+            label = "<@spring.message 'hpms.mdm.projectprocedure.procedure'/>：";
+        }
+        var s = '<div class="row procedure" style="margin-bottom: 10px;">'+
+            '<div class="col-sm-6" style="padding: 0">'+
+            '<div class="form-group" style="margin: 0">'+
+            '<label class="col-sm-4 control-label" style="margin-top: -8px">'+label+'</label>'+
+            '<input value="'+value1+'" type="checkbox" style="margin-left: 20px"'+
+            'data-bind="checked:procedures" />'+
+            '<span>&nbsp;'+text1+'</span>'+
+            '</div></div>';
+
+        if (flag) {
+            s += '<div class="col-sm-6" style="padding: 0">'+
+                '<input  value="'+value2+'" type="checkbox"'+
+                'data-bind="checked:procedures" />'+
+                '<span>&nbsp;'+text2+'</span>'+
+                '</div>'+
+                '</div>';
+        } else {
+            s += '</div>';
+        }
+        return s;
+    }
+
+    $.ajax({
+        url: "${base.contextPath}/cs/procedure/query",
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var rows = args.rows;
+            for (var i = 0;i<rows.length;i++) {
+                var s = "";
+                if (i%2!=0)
+                    continue;
+                if (i==rows.length-1) {
+                    s = myhtml(rows[i].configProcedureId,rows[i].procedureName,false);
+                } else {
+                    s = myhtml(rows[i].configProcedureId,rows[i].procedureName,true,rows[i+1].configProcedureId,rows[i+1].procedureName,i);
+                }
+                $(".procedure:last").after(s);
+            }
+        },
+        error: function () {
+
+        }
+    });
+
+
+    kendo.bind($('#query-form'), viewModel);
+
+</script>
+</body>
+</html>

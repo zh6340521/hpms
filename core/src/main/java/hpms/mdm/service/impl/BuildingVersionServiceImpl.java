@@ -55,7 +55,7 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
                 if(a>0){
                     logger.info("将这条记录删除，并抛出错误信息");
                     bvs.remove(bv);
-                    throw new ValidationTableException("已经存在一个默认版本！", null);
+                    throw new ValidationTableException("hpms.mdm.build.submit_error", null);
                 }
             }
 
@@ -81,30 +81,23 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
         int count = 0;
         bv.setVersionId(versionId);
 
-        logger.info("当传入的 默认版本 不为空且值为Y时");
-        if(bv.getDefaultVersion()!=null&&bv.getDefaultVersion()!=""&&"Y".equals(bv.getDefaultVersion())){
-            logger.info("查询 除了自身外其他的数据");
-            List<BuildingVersion> bvList = buildingVersionMapper.findDefaultVersion(bv);
-            count = bvList.size();
-            for(BuildingVersion b1:bvList){
-                for(BuildingVersion b2:bvs){
-                    if(b1.getDefaultVersion().equals(b2.getDefaultVersion())){
-                        return count;
-                    }else{
-                        count = count-1;
+        logger.info("查询 除了自身外其他的数据");
+        List<BuildingVersion> bvList = buildingVersionMapper.findDefaultVersion(bv);
+        count = bvList.size();
+        for (BuildingVersion b1 : bvList) {
+            for (BuildingVersion b2 : bvs) {
+                if (b1.getVersionId().equals(b2.getVersionId())) {
+                    if (b1.getCompanyId().equals(b2.getCompanyId()) && (b1.getProjectId().equals(b2.getProjectId()))) {
+                        continue;
+                    } else {
+                        count = count - 1;
                         break;
                     }
                 }
             }
         }
-
-
-
         return count;
-
     }
-
-
 
 
 }
