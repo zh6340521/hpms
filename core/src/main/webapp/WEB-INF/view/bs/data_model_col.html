@@ -1,0 +1,105 @@
+<#--
+        * description: 基础数据--数据模型跳转界面
+        * author:fuchun.hu@hand-china.com
+        * version: 1.0
+        *
+        -->
+    <#include "../include/header.html">
+    <body>
+    <!--***********************form表单*****************-->
+    <div>
+        <script type="text/javascript">
+
+            //获取特定字段来判断是新增还是编辑界面
+            var modelId = '${RequestParameters.modelId!0}';
+
+            var viewModel = kendo.observable({
+                model: {},
+                /*--新增--*/
+                createFunction:function(e){
+                    $('#grid').data('kendoGrid').addRow();
+                },
+            })
+
+            //根据前界面传入的version进行查询
+            $.ajax({
+                url:'${base.contextPath}/bs/DataModel/query?modelId='+modelId,
+
+                //将查询出的json数据set到viewmodel的model中
+                success: function (args) {
+                    var a0 = args.rows[0] || {};
+                    for (var k in a0) {
+                        viewModel.model.set(k, a0[k]);
+                    }
+                }
+            });
+
+
+
+
+        </script>
+
+        <!--bootstrap标识-->
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel" style="padding: 0px;">
+                    <form class="form-horizontal" id="lovForm">
+                        <div class="panel-body">
+                            <!--将基数为12的分成三段，每段有两列，长度分别为4,4,4-->
+
+                            <!--第一段-->
+                            <div class="col-sm-4">
+                                <div class="row">
+                                    <div class="form-group required-input">
+                                        <label class="col-sm-4 control-label">编码</label>
+                                        <div class="col-sm-8">
+                                            <input name="modelCode" id="modelCode" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.modelCode"
+                                                   class="k-textbox" required>
+                                            <script>kendo.bind($('#modelCode'), viewModel);</script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--第二段-->
+                            <div class="col-sm-4">
+                                <div class="row">
+                                    <div class="form-group required-input">
+                                        <label class="col-sm-4 control-label">模型名称</label>
+                                        <div class="col-sm-8">
+                                            <input name="modelName" id="modelName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.modelName"
+                                                   class="k-textbox" required>
+                                            <script>kendo.bind($('#modelName'), modelName);</script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--第三段-->
+                            <div class="col-sm-4">
+                                <div class="row">
+                                    <div class="form-group required-input">
+                                        <label class="col-sm-4 control-label">数据表名</label>
+                                        <div class="col-sm-8">
+                                            <input name="tableName" id="tableName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.tableName"
+                                                   class="k-textbox" required>
+                                            <script>kendo.bind($('#tableName'), viewModel);</script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            kendo.bind($('#page-content'), viewModel);
+        </script>
+        <div id="createWin"></div>
+    </div>
+
+
+    </body>
