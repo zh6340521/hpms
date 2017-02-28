@@ -49,7 +49,7 @@
     <!--查询所有版本结构数据-树形查询-->
     <select id="queryVersionStructure" parameterType="hpms.mdm.dto.VersionStructure" resultMap="BaseResultMap">
       SELECT
-        vs.structure_id,
+       vs.structure_id,
        vs.version_id,
        vs.structure_number,
        vs.structure_name,
@@ -57,6 +57,7 @@
        vs.business_format,
        vs.parent_structure_id,
        hmp.property_name,
+       vs.object_version_number,
   (
     SELECT
        vs.structure_name

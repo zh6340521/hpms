@@ -4,6 +4,7 @@ package hpms.mdm.service.impl;/**
 
 import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
+import com.hand.hap.system.service.IBaseService;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.mdm.dto.BuildingVersion;
 import hpms.mdm.mapper.BuildingVersionMapper;
@@ -11,6 +12,7 @@ import hpms.mdm.service.IBuildingVersionService;
 import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,9 +37,13 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
     @Autowired
     private BuildingVersionMapper buildingVersionMapper;
 
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ValidationTableException.class)
     public void myBatchUpdate(IRequest requestCtx, List<BuildingVersion> bvs) throws ValidationTableException {
+        logger.info("创建IBaseService的动态代理");
+        IBaseService self = (IBaseService) AopContext.currentProxy();
+
         for(BuildingVersion bv:bvs){
             bv.setLastUpdatedBy(requestCtx.getUserId());
             bv.setLastUpdateDate(new Date());
@@ -55,9 +61,9 @@ public class BuildingVersionServiceImpl extends BaseServiceImpl<BuildingVersion>
 
             logger.info("进行批量更新或插入");
             if(bv.getVersionId()!=null){
-                buildingVersionMapper.updateByPrimaryKey(bv);
+                self.updateByPrimaryKey(requestCtx,bv);
             }else{
-                buildingVersionMapper.insertSelective(bv);
+                self.insertSelective(requestCtx,bv);
             }
 
         }

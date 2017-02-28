@@ -48,7 +48,8 @@
                bv.version_description,
                bv.default_version,
                bv.company_id,
-               bv.project_id
+               bv.project_id,
+               bv.object_version_number
           FROM hpms_mdm_building_version bv,
                fnd_company_tl            fc,
                hpms_mdm_project         mp
