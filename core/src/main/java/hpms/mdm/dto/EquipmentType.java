@@ -71,6 +71,15 @@ public class EquipmentType extends BaseDTO {
      */
     private String enableFlag;
 
+    private String meaning;
+
+    public String getMeaning() {
+        return meaning;
+    }
+
+    public void setMeaning(String meaning) {
+        this.meaning = meaning;
+    }
 
     public void setEquipmentTypeId(Long equipmentTypeId) {
         this.equipmentTypeId = equipmentTypeId;
