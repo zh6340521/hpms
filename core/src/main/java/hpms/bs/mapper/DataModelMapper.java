@@ -5,6 +5,8 @@ package hpms.bs.mapper;/**
 import com.hand.hap.mybatis.common.Mapper;
 import hpms.bs.dto.DataModel;
 
+import java.util.List;
+
 /**
  * @author fuchun.hu@hand-china.com
  * @version 1.0
@@ -13,4 +15,17 @@ import hpms.bs.dto.DataModel;
  * @date 2017/2/28
  */
 public interface DataModelMapper extends Mapper<DataModel> {
+    /**
+     * 查询数据库中数据表名
+     * @param d
+     * @return
+     */
+    public List<DataModel> countTableName(DataModel d);
+
+    /**
+     * 查询数据库中的编码
+     * @param d
+     * @return
+     */
+    public List<DataModel> countModelCode(DataModel d);
 }

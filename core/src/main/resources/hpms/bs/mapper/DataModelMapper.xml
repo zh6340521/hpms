@@ -11,4 +11,45 @@
         <result column="model_name" property="modelName" jdbcType="VARCHAR" />
         <result column="table_name" property="tableName" jdbcType="VARCHAR" />
     </resultMap>
+
+    <!--查询数据库中数据表名-->
+    <select id="countTableName" parameterType="hpms.bs.dto.DataModel" resultMap="BaseResultMap">
+         SELECT dm.model_id,
+          dm.model_code,
+          dm.table_name
+         FROM hpms_data_model dm
+         <where>
+             1=1
+             <if test="modelId!=null">
+                 and dm.model_id !=#{modelId,jdbcType=DECIMAL}
+             </if>
+
+             <if test="tableName!=null">
+                 AND dm.table_name =#{tableName,jdbcType=VARCHAR}
+             </if>
+         </where>
+
+
+    </select>
+
+    <!--查询数据库中的编码-->
+    <select id="countModelCode" parameterType="hpms.bs.dto.DataModel" resultMap="BaseResultMap">
+        SELECT dm.model_id,
+        dm.model_code,
+        dm.table_name
+        FROM hpms_data_model dm
+        <where>
+            1=1
+            <if test="modelId!=null">
+                and dm.model_id !=#{modelId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="modelCode!=null">
+                AND dm.model_code =#{modelCode,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+
+    </select>
 </mapper>

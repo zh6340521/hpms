@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.bs.mapper.DataModelColMapper">
+    <resultMap id="BaseResultMap" type="hpms.bs.dto.DataModelCol" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="model_col_id" property="modelColId" jdbcType="DECIMAL" />
+        <result column="model_id" property="modelId" jdbcType="DECIMAL" />
+        <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+        <result column="column_type" property="columnType" jdbcType="VARCHAR" />
+        <result column="column_length" property="columnLength" jdbcType="DECIMAL" />
+        <result column="column_name_alias" property="columnNameAlias" jdbcType="VARCHAR" />
+    </resultMap>
+</mapper>

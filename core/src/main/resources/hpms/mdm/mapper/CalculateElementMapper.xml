@@ -10,6 +10,9 @@
         <result column="COLUMN_NAME" property="columnName" jdbcType="VARCHAR"/>
         <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+
+        <result column="COLUMN_TYPE" property="columnType" jdbcType="VARCHAR"/>
+        <result column="COLUMN_LENGTH" property="columnLength" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="selectTables" parameterType="hpms.mdm.dto.CalculateElement" resultMap="BaseResultMap">
@@ -22,7 +25,7 @@
     </select>
 
     <select id="selectColumns" parameterType="hpms.mdm.dto.CalculateElement" resultMap="BaseResultMap">
-        SELECT COLUMN_NAME FROM user_tab_columns
+        SELECT COLUMN_NAME,DATA_TYPE as COLUMN_TYPE,DATA_LENGTH as COLUMN_LENGTH FROM user_tab_columns
 
         <where>
             COLUMN_NAME NOT IN ('PROGRAM_ID','REQUEST_ID','OBJECT_VERSION_NUMBER',
