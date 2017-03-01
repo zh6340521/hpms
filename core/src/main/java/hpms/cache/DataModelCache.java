@@ -45,6 +45,14 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
         return super.getValue(key);
     }
 
+    @Override
+    protected void initLoad() {
+        DataModel area=new DataModel();
+        DataModelCol d=new DataModelCol();
+        this.updateDataModel(area,d);
+
+    }
+
     //保存数据到redis
     public void updateDataModel(DataModel dm, DataModelCol dmc){
         logger.info("判断行表里的头id是否为空，不为空赋给头表对象");
