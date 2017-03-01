@@ -349,8 +349,8 @@ $("#billingMethod").kendoDropDownList({
                 },
                 template : function(rowdata) {
                     var uid = rowdata.uid.toString();
-                    var singleDispatch = '<button type="button" id="lookFee" class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookFee('+rowdata.feeId+')"><span class="glyphicon glyphicon-search"></span></button>&nbsp;';
-                    var singleRecycle = '<button type="button" id="editFee" class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="editFee('+rowdata.feeId+')"><span class="glyphicon glyphicon-edit"></span></button>';
+                    var singleDispatch = '<button type="button" id="lookFee" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookFee('+rowdata.feeId+')"><span class="fa fa-search"></span></button>&nbsp;';
+                    var singleRecycle = '<button type="button" id="editFee" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="editFee('+rowdata.feeId+')"><span class="fa fa-edit"></span></button>';
                     return singleDispatch + singleRecycle;
                 }  	
       			},
@@ -406,15 +406,7 @@ $("#billingMethod").kendoDropDownList({
                 title: '<@spring.message "hpms.mdm.Fee.enableFlag"/>',
                 width: 80,
                 attributes: {style: "text-align:center"}
-                /* editor: function (container, options) {
-                	$('<input name="' + options.field + '"/>')
-                    .appendTo(container)
-                    .kendoCheckbox({
-                    	checkedValue:'Y',
-            			uncheckedValue:'N'
-                      });
-                    
-                } */
+
             }
                 
         ],

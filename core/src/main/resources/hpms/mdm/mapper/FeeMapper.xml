@@ -29,7 +29,7 @@
         <result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
         <result column="MEANING3" property="meaning3" jdbcType="VARCHAR" />
         <result column="MEANING4" property="meaning4" jdbcType="VARCHAR" />
-        <result column="ITEMCOUNT" property="itemCount" jdbcType="DECIMAL" />
+
     </resultMap>
     
     
@@ -140,14 +140,12 @@
     <!-- Author:jun.guo@hand-china.com 
 	Description:通过编码判断收费项目是否存在 
 	Date:2017/2/22 -->
-	<select id="queryCountItemFlag" resultMap="BaseResultMap">
-	   SELECT COUNT(1) ITEMCOUNT
+	<select id="queryCountItemFlag" resultType="java.lang.Long">
+	   SELECT COUNT(1)
 		FROM HPMS_MDM_FEE HMF		
         <where>
-            1=1                       
-            <if test="feeCode!=null">
-                and HMF.ITEM_FLAG = 'Y'              
-            </if>       
+            1=1
+                and HMF.ITEM_FLAG = 'Y'
         </where>   
              
 	

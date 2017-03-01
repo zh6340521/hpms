@@ -10,4 +10,6 @@ public interface FeeMapper extends Mapper<Fee>{
 	 public List<Fee> queryFee(Fee fee);
 	 
 	 public int queryCountByCode(Fee fee);
+
+	public Long queryCountItemFlag();
 }
