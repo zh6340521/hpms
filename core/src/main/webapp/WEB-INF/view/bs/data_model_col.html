@@ -237,6 +237,10 @@
                                     select:function(e){
                                         options.model.set("columnType",e.item.columnType);
                                         options.model.set("columnLength",e.item.columnLength);
+
+                                        //将带出来的字段设置为不可编辑
+                                        $("#columnType").attr("disabled",true);
+                                        $("#columnLength").attr("disabled",true);
                                     },
 
                                     //改变事件，当lov的input框发生变化时触发
@@ -256,14 +260,22 @@
                     attributes: {style: "text-align:center"},
                     title: '字段类型',
                     width: 80,
-                    readonly:true
+                    editor: function(container, options){
+                        var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
+                        editor.css('width','100%');
+                        container.append(editor);
+                    }
                 },
                 {
                     field: "columnLength",
                     title: '长度',
                     width: 80 ,
                     attributes: {style: "text-align:center"},
-                    readonly:true
+                    editor: function(container, options){
+                        var editor = $('<input id="columnLength" class="k-input k-textbox k-valid" type="text" name="columnLength"/>');
+                        editor.css('width','100%');
+                        container.append(editor);
+                    }
                 },
                 {
                     field: "columnNameAlias",

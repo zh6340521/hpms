@@ -50,13 +50,13 @@ public class DataModelServiceImpl extends BaseServiceImpl<DataModel> implements 
             if(count>0){
                 logger.info("将这条记录删除，并抛出错误信息");
                 dms.remove(dm);
-                throw new ValidationTableException("该编码已存在", null);
+                throw new ValidationTableException("hpms.bs.datamodel.modelcode_error", null);
             }
 
             if(b>0){
                 logger.info("将这条记录删除，并抛出错误信息");
                 dms.remove(dm);
-                throw new ValidationTableException("该数据表名已经存在", null);
+                throw new ValidationTableException("hpms.bs.datamodel.tablename_error", null);
             }
 
 

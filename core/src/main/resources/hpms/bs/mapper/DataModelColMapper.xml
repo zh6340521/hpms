@@ -13,4 +13,23 @@
         <result column="column_length" property="columnLength" jdbcType="DECIMAL" />
         <result column="column_name_alias" property="columnNameAlias" jdbcType="VARCHAR" />
     </resultMap>
+
+    <!--查询字段名-->
+    <select id="countColumnName" resultMap="BaseResultMap" parameterType="hpms.bs.dto.DataModelCol">
+       SELECT dmc.model_col_id,
+        dmc.column_name
+   FROM hpms_data_model_col dmc
+
+   <where>
+       1=1
+       <if test="modelColId!=null">
+           and dmc.model_col_id != #{modelColId,jdbcType=DECIMAL}
+       </if>
+
+       <if test="columnName!=null">
+           and  dmc.column_name =#{columnName,jdbcType=VARCHAR}
+       </if>
+   </where>
+
+    </select>
 </mapper>
