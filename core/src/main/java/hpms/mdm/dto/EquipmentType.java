@@ -6,6 +6,7 @@ import com.hand.hap.system.dto.BaseDTO;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author feng.liu01@hand-china.com 2017/02/23
@@ -71,6 +72,7 @@ public class EquipmentType extends BaseDTO {
      */
     private String enableFlag;
 
+    @Transient
     private String meaning;
 
     public String getMeaning() {
