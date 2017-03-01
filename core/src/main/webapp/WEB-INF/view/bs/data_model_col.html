@@ -221,7 +221,7 @@
                     attributes: {style: "text-align:center"},
                     width: '18%',
                     editor: function(container, options) {
-                        $('<input name="' + options.field + '"/>')
+                        $('<input style="width: 80%;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
                                 .appendTo(container)
                                 .kendoLov({
                                     //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
@@ -237,6 +237,7 @@
                                     select:function(e){
                                         options.model.set("columnType",e.item.columnType);
                                         options.model.set("columnLength",e.item.columnLength);
+                                        options.model.set("columnName",e.item.columnName);
 
                                         //将带出来的字段设置为不可编辑
                                         $("#columnType").attr("disabled",true);
