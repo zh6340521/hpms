@@ -5,7 +5,7 @@ package hpms.bs.service;/**
 import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
-import hpms.bs.dto.DataModel;
+import hpms.bs.dto.DataModelCol;
 import hpms.utils.ValidationTableException;
 
 import java.util.List;
@@ -13,16 +13,16 @@ import java.util.List;
 /**
  * @author fuchun.hu@hand-china.com
  * @version 1.0
- * @name IDataModelService
+ * @name IDataModelColService
  * @description
  * @date 2017/2/28
  */
-public interface IDataModelService extends IBaseService<DataModel>,ProxySelf<IDataModelService> {
+public interface IDataModelColService extends IBaseService<DataModelCol>,ProxySelf<IDataModelColService> {
 
     /**
      * 批量更新
-     * @param dm
      * @param requestCtx
+     * @param bvs
      */
-    public void myBatchUpdate(List<DataModel> dm,IRequest requestCtx) throws ValidationTableException;
+    public void myBatchUpdate(IRequest requestCtx, List<DataModelCol> bvs) throws ValidationTableException;
 }

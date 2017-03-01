@@ -5,14 +5,11 @@ package hpms.bs.controllers;/**
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-import hpms.bs.dto.DataModel;
-import hpms.bs.service.IDataModelService;
+import hpms.bs.dto.DataModelCol;
+import hpms.bs.service.IDataModelColService;
 import hpms.utils.ValidationTableException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,33 +22,31 @@ import java.util.List;
 /**
  * @author fuchun.hu@hand-china.com
  * @version 1.0
- * @name DataModelController
+ * @name DataModelColController
  * @description
  * @date 2017/2/28
  */
 @Controller
-public class DataModelController extends BaseController {
+public class DataModelColController extends BaseController {
     @Autowired
-    private IDataModelService dataModelService;
-
-    private Logger logger = LoggerFactory.getLogger(DataModelController.class);
+    private IDataModelColService dataModelColService;
 
     /**
      *
      * 查询
-     * @param dm
+     * @param dmc
      * @param page
      * @param pageSize
      * @param request
      * @return
      */
-    @RequestMapping(value = "/bs/DataModel/query")
+    @RequestMapping(value = "/bs/DataModelCol/query")
     @ResponseBody
-    public ResponseData query(DataModel dm, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+    public ResponseData query(DataModelCol dmc, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        List<DataModel> dmList = dataModelService.select(requestContext,dm,page,pageSize);
-        return new ResponseData(dmList);
+        List<DataModelCol> dmcList = dataModelColService.select(requestContext,dmc,page,pageSize);
+        return new ResponseData(dmcList);
     }
 
     /**
@@ -60,17 +55,12 @@ public class DataModelController extends BaseController {
      * @param dms
      * @return
      */
-    @RequestMapping(value = "/bs/DataModel/submit")
+    @RequestMapping(value = "/bs/DataModelCol/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<DataModel> dms,BindingResult result){
+    public ResponseData update(HttpServletRequest request,@RequestBody List<DataModelCol> dms){
         IRequest requestCtx = createRequestContext(request);
-        if (result.hasErrors()) {
-            ResponseData rd = new ResponseData(false);
-            rd.setMessage(getErrorMessage(result, request));
-            return rd;
-        }
         try {
-            dataModelService.myBatchUpdate(dms,requestCtx);
+            dataModelColService.myBatchUpdate(requestCtx,dms);
         } catch (ValidationTableException e) {
             ResponseData rd = new ResponseData(false);
             String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
@@ -78,19 +68,9 @@ public class DataModelController extends BaseController {
             rd.setMessage(errorMessage);
             return rd;
         }
+
         return new ResponseData(dms);
     }
 
-    /**
-     * 删除
-     * @param request
-     * @param dms
-     * @return
-     */
-    @RequestMapping(value = "/bs/DataModel/remove")
-    @ResponseBody
-    public ResponseData delete(HttpServletRequest request,@RequestBody List<DataModel> dms){
-        dataModelService.batchDelete(dms);
-        return new ResponseData();
-    }
+
 }
