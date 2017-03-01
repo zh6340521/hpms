@@ -28,4 +28,11 @@ public interface DataModelMapper extends Mapper<DataModel> {
      * @return
      */
     public List<DataModel> countModelCode(DataModel d);
+
+    /**
+     * 删除数据
+     * @param d
+     * @return
+     */
+    public int deleteDataModel(DataModel d);
 }

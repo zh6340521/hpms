@@ -25,4 +25,20 @@ public interface IDataModelService extends IBaseService<DataModel>,ProxySelf<IDa
      * @param requestCtx
      */
     public void myBatchUpdate(List<DataModel> dm,IRequest requestCtx) throws ValidationTableException;
+
+    /**
+     * 删除
+     * @param dm
+     * @return
+     */
+    public int deleteDataModel(List<DataModel> dm);
+
+    /**
+     * 根据头表id去redis中查询数据
+     * @param dm
+     * @return
+     */
+    public List<DataModel> findDataModelbyModelId(DataModel dm);
+
+
 }

@@ -5,9 +5,11 @@ package hpms.bs.service.impl;/**
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.IBaseService;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
+import hpms.bs.dto.DataModel;
 import hpms.bs.dto.DataModelCol;
 import hpms.bs.mapper.DataModelColMapper;
 import hpms.bs.service.IDataModelColService;
+import hpms.cache.DataModelCache;
 import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,9 @@ public class DataModelColServiceImpl extends BaseServiceImpl<DataModelCol> imple
    @Autowired
    private DataModelColMapper dataModelColMapper;
 
+    @Autowired
+    private DataModelCache dataModelCache;
+
     private Logger logger = LoggerFactory.getLogger(DataModelColServiceImpl.class);
 
     @Override
@@ -53,7 +58,20 @@ public class DataModelColServiceImpl extends BaseServiceImpl<DataModelCol> imple
             }else{
                 self.insertSelective(requestCtx,dmc);
             }
+
+            logger.info("将数据保存到redis");
+            submitDataModelRedis(requestCtx,dmcs);
         }
+    }
+
+    //将数据保存到redis
+    public void submitDataModelRedis(IRequest iRequest, List<DataModelCol> dmc){
+
+        for(DataModelCol d:dmc){
+            DataModel dm=new DataModel();
+            dataModelCache.updateDataModel(dm,d);
+        }
+
     }
 
     //验证字段名的唯一性

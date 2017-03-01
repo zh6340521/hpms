@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.bs.mapper.ConfigMapper">
+    <resultMap id="BaseResultMap" type="hpms.bs.dto.Config" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="config_id" property="configId" jdbcType="DECIMAL" />
+        <result column="config_number" property="configNumber" jdbcType="VARCHAR" />
+        <result column="config_name" property="configName" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="DECIMAL" />
+        <result column="model_name" property="modelName" jdbcType="VARCHAR" />
+        <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+        <result column="enable_flag" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+
+        <result column="company_full_name" property="companyFullName" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <!--查询配置表的数据-->
+    <select id="findAllConfig" resultMap="BaseResultMap" parameterType="hpms.bs.dto.Config">
+      SELECT hc.config_id,
+         hc.config_number,
+         hc.config_name,
+         hc.company_id,
+         hc.model_name,
+         hc.column_name,
+         hc.enable_flag,
+         hc.description,
+         hc.object_version_number,
+         ct.company_full_name
+    FROM hpms_config    hc,
+         fnd_company_tl ct
+
+   <where>
+       1=1
+       <if test="modelName!=null">
+           and hc.model_name=#{modelName,jdbcType=VARCHAR}
+       </if>
+
+       <if test="configNumber!=null">
+           and hc.config_number=#{configNumber,jdbcType=VARCHAR}
+       </if>
+
+       <if test="configName!=null">
+           and hc.config_name=#{configName,jdbcType=VARCHAR}
+       </if>
+
+       <if test="configId!=null">
+           and hc.config_id=#{configId,jdbcType=DECIMAL}
+       </if>
+
+       and hc.company_id = ct.company_id
+       and ct.lang = #{request.locale,jdbcType=VARCHAR}
+   </where>
+
+    </select>
+</mapper>

@@ -4,10 +4,7 @@ package hpms.bs.dto;/**
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -65,6 +62,17 @@ public class DataModelCol extends BaseDTO {
      */
     @Column
     private String columnNameAlias;
+
+    @Transient
+    private String modelName; //模型名称
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
     public Long getModelColId() {
         return modelColId;

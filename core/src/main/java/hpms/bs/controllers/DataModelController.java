@@ -90,7 +90,7 @@ public class DataModelController extends BaseController {
     @RequestMapping(value = "/bs/DataModel/remove")
     @ResponseBody
     public ResponseData delete(HttpServletRequest request,@RequestBody List<DataModel> dms){
-        dataModelService.batchDelete(dms);
+        dataModelService.deleteDataModel(dms);
         return new ResponseData();
     }
 }

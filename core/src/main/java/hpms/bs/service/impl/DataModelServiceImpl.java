@@ -6,8 +6,11 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.IBaseService;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.bs.dto.DataModel;
+import hpms.bs.dto.DataModelCol;
+import hpms.bs.mapper.DataModelColMapper;
 import hpms.bs.mapper.DataModelMapper;
 import hpms.bs.service.IDataModelService;
+import hpms.cache.DataModelCache;
 import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +37,12 @@ public class DataModelServiceImpl extends BaseServiceImpl<DataModel> implements 
 
     @Autowired
     private DataModelMapper dataModelMapper;
+
+    @Autowired
+    private DataModelCache dataModelCache;
+
+    @Autowired
+    private DataModelColMapper dataModelColMapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ValidationTableException.class)
@@ -64,15 +74,57 @@ public class DataModelServiceImpl extends BaseServiceImpl<DataModel> implements 
             logger.info("批量进行更新");
             if(dm.getModelId()==null){
                 self.insertSelective(requestCtx,dm);
+
             }else{
                 self.updateByPrimaryKey(requestCtx,dm);
             }
+
+            logger.info("将数据保存到redis");
+            submitDataModelRedis(requestCtx,dms);
         }
 
 
 
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int deleteDataModel(List<DataModel> dm) {
+        int c=0;
+        logger.info("先删除行表");
+        DataModelCol dmc = new DataModelCol();
+        for(DataModel d1:dm) {
+            dmc.setModelId(d1.getModelId());
+            c=dataModelColMapper.deleteDataModelCol(dmc);
+
+
+            logger.info("删除头表");
+            c=dataModelMapper.delete(d1);
+
+            logger.info("删除redis");
+            dataModelCache.remove(Long.toString(d1.getModelId()));
+
+
+        }
+
+        return c;
+    }
+
+    @Override
+    public List<DataModel> findDataModelbyModelId(DataModel dm) {
+        List<DataModel> dmList = new ArrayList<>();
+        DataModel dm1 =  dataModelCache.getValue(Long.toString(dm.getModelId()));
+        dmList.add(dm1);
+        return dmList;
+    }
+
+    public void submitDataModelRedis(IRequest iRequest, List<DataModel> dm){
+        DataModelCol dmc=new DataModelCol();
+        for(DataModel d:dm){
+            dataModelCache.updateDataModel(d,dmc);
+        }
+
+    }
 
     //验证编码的唯一性
     public int UniqueModelCode(List<DataModel> dmms, Long  modelId,DataModel dmm) {

@@ -2,12 +2,11 @@ package hpms.bs.dto;/**
  * Created by user1 on 2017/2/28.
  */
 
+import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -51,6 +50,19 @@ public class DataModel extends BaseDTO {
      */
     @Column
     private String tableName;
+
+    @Transient
+    @Children
+    private List<DataModelCol> dataModelCol;
+
+
+    public List<DataModelCol> getDataModelCol() {
+        return dataModelCol;
+    }
+
+    public void setDataModelCol(List<DataModelCol> dataModelCol) {
+        this.dataModelCol = dataModelCol;
+    }
 
     public Long getModelId() {
         return modelId;
