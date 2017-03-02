@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.cs.mapper.OccProcedureMapper">
+    <resultMap id="BaseResultMap" type="hpms.cs.dto.OccProcedure">
+        <result column="OCC_PROCEDURE_ID" property="occProcedureId" jdbcType="DECIMAL" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
+        <result column="PROCEDURE_TYPE" property="procedureType" jdbcType="VARCHAR" />
+        <result column="CONFIG_PROCEDURE_ID" property="configProcedureId" jdbcType="DECIMAL" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>

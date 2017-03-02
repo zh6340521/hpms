@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.cs.mapper.OccupationMapper">
+    <resultMap id="BaseResultMap" type="hpms.cs.dto.Occupation">
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+        <result column="CUSTOMER_CODE" property="customerCode" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR"/>
+        <result column="ROOM_AREA" property="roomArea" jdbcType="DECIMAL"/>
+        <result column="SERVICE_DATE_FROM" property="serviceDateFrom" jdbcType="DATE"/>
+        <result column="SERVICE_DATE_TO" property="serviceDateTo" jdbcType="DATE"/>
+        <result column="TRANSFER_DATE" property="transferDate" jdbcType="DATE"/>
+        <result column="FEE_DATE" property="feeDate" jdbcType="DATE"/>
+        <result column="IN_TRANSACTOR" property="inTransactor" jdbcType="VARCHAR"/>
+        <result column="MOVEOUT_DATE" property="moveoutDate" jdbcType="DATE"/>
+        <result column="OUT_TRANSACTOR" property="outTransactor" jdbcType="VARCHAR"/>
+        <result column="FEE_DATE_TO" property="feeDateTo" jdbcType="DATE"/>
+        <result column="MOVEOUT_REASON" property="moveoutReason" jdbcType="VARCHAR"/>
+        <result column="REMARKS" property="remarks" jdbcType="VARCHAR"/>
+        <result column="MOVEOUT_FLAG" property="moveoutFlag" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="propertyQuery" resultMap="BaseResultMap" parameterType="hpms.cs.dto.Occupation">
+        SELECT
+        hmp.PROPERTY_ID,
+        hmp.GROUP_ID,
+        hmp.COMPANY_ID,
+        hmp.PROJECT_ID,
+        hmp.PROPERTY_TYPE,
+        hmp.PROPERTY_NAME,
+        hmp.PROPERTY_NUMBER,
+        fcl.COMPANY_FULL_NAME COMPANY_NAME,
+        hmp2.PROJECT_NAME
+        FROM HPMS_MDM_PROPERTY hmp
+        LEFT JOIN FND_COMPANY_B fc
+        ON hmp.COMPANY_ID = fc.COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL fcl
+        ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN HPMS_MDM_PROJECT hmp2
+        ON hmp.PROJECT_ID = hmp2.PROJECT_ID
+        <where>
+            <if test="companyId != null">
+                AND hmp.COMPANY_ID = #{companyId , jdbcType=DECIMAL}
+            </if>
+            <if test="projectId != null">
+                AND hmp.PROJECT_ID = #{projectId , jdbcType=DECIMAL}
+            </if>
+            <if test="propertyName != null">
+                AND hmp.PROPERTY_NAME like concat('%',concat(#{propertyName,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="propertyNumber != null">
+                AND hmp.PROPERTY_NUMBER like concat('%',concat(#{propertyNumber,jdbcType=VARCHAR}, '%'))
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
