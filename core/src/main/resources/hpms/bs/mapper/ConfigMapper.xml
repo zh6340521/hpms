@@ -16,6 +16,7 @@
         <result column="description" property="description" jdbcType="VARCHAR" />
 
         <result column="company_full_name" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="model_name" property="modelName" jdbcType="VARCHAR" />
     </resultMap>
 
 
@@ -30,9 +31,11 @@
          hc.enable_flag,
          hc.description,
          hc.object_version_number,
-         ct.company_full_name
+         ct.company_full_name,
+         dm.model_name
     FROM hpms_config    hc,
-         fnd_company_tl ct
+         fnd_company_tl ct,
+         hpms_data_model dm
 
    <where>
        1=1
@@ -57,6 +60,7 @@
        </if>
 
        and hc.company_id = ct.company_id
+       and dm.model_id = hc.model_id
        and ct.lang = #{request.locale,jdbcType=VARCHAR}
    </where>
 

@@ -79,6 +79,16 @@ public class Config extends BaseDTO {
 
     @Transient
     private String companyFullName;//公司名称
+    @Transient
+    private String modelName;//模型名称
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
     public String getCompanyFullName() {
         return companyFullName;

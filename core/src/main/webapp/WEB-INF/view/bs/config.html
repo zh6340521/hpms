@@ -128,10 +128,13 @@
                           </div>
                       </div>
 
-                      <div class="from-group col-md-4" style="margin-bottom:10px">
-                          <label class="col-md-4 control-label">配置名称</label>
-                          <div class="col-md-7">
-                              <input type="text" class="k-textbox" name="configName"  data-bind="value:model.configName" style="width: 100%;"/>
+
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 control-label">配置名称</label>
+                              <div class="col-md-7">
+                                  <input type="text" class="k-textbox" name="configName"  data-bind="value:model.configName" style="width: 90%;"/>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -293,7 +296,7 @@
                           var data = this.dataItem(tr);
                           window.top.openTab(
                                   "configval"+data.configId,data.configNumber,
-                                  "bs/config_value.html?configId="+data.configId+'&companyId='+data.companyId);
+                                  "bs/config_value.html?configId="+data.configId+'&companyId='+data.companyId+'&modelId='+data.modelId);
 
                       }
                   },{
@@ -369,7 +372,7 @@
 
                   editor: function (container, options) {
                       //alert(options.field);
-                      $('<input type="text" required  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                      $('<input type="text" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
 
                   },
               },
@@ -380,7 +383,7 @@
                   width: '18%' ,
                   attributes: {style: "text-align:center"},
                   editor: function(container, options) {
-                          var editor=$('<input name="' + options.field + '"/>')
+                          var editor=$('<input required  validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
                                   .appendTo(container)
                                   .kendoLov({
                                       //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
@@ -415,7 +418,7 @@
                   width: '18%' ,
                   attributes: {style: "text-align:center"},
                   editor: function(container, options) {
-                      var editor=$('<input name="' + options.field + '"/>')
+                      var editor=$('<input required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
                               .appendTo(container)
                               .kendoLov({
                                   //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置

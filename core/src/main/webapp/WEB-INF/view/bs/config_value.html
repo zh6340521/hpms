@@ -12,6 +12,7 @@
 
                 var configId = '${RequestParameters.configId!0}';
                 var companyId = '${RequestParameters.companyId!0}';
+                var modelId = '${RequestParameters.modelId!0}';
 
 
 
@@ -26,7 +27,6 @@
                 //根据前界面传入的version进行查询
                 $.ajax({
                     url:'${base.contextPath}/bs/config/query?configId='+configId,
-                    // url:'${base.contextPath}/bs/DataModel/queryByModelId?modelId='+modelId,
 
                     //将查询出的json数据set到viewmodel的model中
                     success: function (args) {
@@ -223,9 +223,9 @@
                                 e.preventDefault();
                                 var tr = $(e.target).closest("tr");
                                 var data = this.dataItem(tr);
-                                /*window.top.openTab(
-                                        "configval"+data.configId,data.configNumber,
-                                        "bs/config_value.html?configId="+data.configId);*/
+                                window.top.openTab(
+                                        "configcol"+data.configVauleId,data.configValueNumber,
+                                        "bs/config_column.html?configVauleId="+data.configVauleId+'&companyId='+data.companyId+'&modelId='+modelId);
 
                             }
                         },{
@@ -249,11 +249,18 @@
                         title: '编码',
                         attributes: {style: "text-align:center"},
                         width: '8%',
-                        editor: function (container, options) {
-                                //alert(options.field);
-                                $('<input type="text" required validationMessage="只允许输入大写字母、数字及下划线" pattern="^[0-9A-Z_]+$"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
 
-                       },
+                        editor: function (container, options) {
+                            //根据是否存在主键id来判断是新增还是编辑
+                            if (options.model.configValueId != "") {
+                                container.html(options.model.configValueNumber);
+                                container.removeClass('k-edit-cell');
+                            } else {
+                                var editor =  $('<input type="text" required validationMessage="只允许输入大写字母、数字及下划线" pattern="^[0-9A-Z_]+$"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                                editor.css('width','100%');
+                                container.append(editor);
+                            }
+                        }
 
                     },
                     {
