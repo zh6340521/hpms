@@ -134,6 +134,7 @@
                 <ref bean="lovCache"/>
                 <ref bean="codeCache"/>
                 <ref bean="resourceCustomizationCache"/>
+                <ref bean="dataModelCache"/>
 
                 <bean class="com.hand.hap.cache.impl.RedisCache">
                     <property name="name" value="resource_url"/>

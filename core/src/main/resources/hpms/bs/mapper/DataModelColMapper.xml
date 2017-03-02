@@ -58,6 +58,28 @@
 
     <!--根据头表id删除-->
     <delete id="deleteDataModelCol" parameterType="hpms.bs.dto.DataModelCol">
-       delete hpms_data_model dm where dm.model_id=#{modelId,jdbcType=DECIMAL}
+       delete hpms_data_model_col dm where dm.model_id=#{modelId,jdbcType=DECIMAL}
     </delete>
+
+    <!--查询行表数据-->
+    <select id="findDataModelCol" parameterType="hpms.bs.dto.DataModelCol" resultMap="BaseResultMap">
+        SELECT dmc.model_col_id,
+               dmc.model_id,
+               dmc.column_name,
+               dmc.column_type,
+               dmc.column_length,
+               dmc.column_name_alias,
+               dm.model_name,
+               dmc.object_version_number
+      FROM hpms_data_model_col dmc,
+           hpms_data_model     dm
+
+       <where>
+           1=1
+           <if test="modelId!=null">
+               and dmc.model_id=#{modelId,jdbcType=DECIMAL}
+           </if>
+               and dmc.model_id = dm.model_id
+       </where>
+    </select>
 </mapper>

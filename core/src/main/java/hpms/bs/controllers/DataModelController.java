@@ -93,4 +93,13 @@ public class DataModelController extends BaseController {
         dataModelService.deleteDataModel(dms);
         return new ResponseData();
     }
+
+    @RequestMapping(value = "/bs/DataModel/queryByModelId")
+    @ResponseBody
+    public ResponseData queryByModelId(Long modelId,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        String mId = Long.toString(modelId);
+        List<DataModel> dmList = dataModelService.findDataModelbyModelId(requestContext,mId);
+        return new ResponseData(dmList);
+    }
 }
