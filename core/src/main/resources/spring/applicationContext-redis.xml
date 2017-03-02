@@ -121,7 +121,17 @@
     </bean>
 
 
-
+    <!--add by yyz-->
+    <bean id="hap_extend_rules" class="hap.extend.core.dataPermission.cache.impl.DataPermissionRuleCache">
+        <property name="name" value="hap_extend.rules"/>
+    </bean>
+    <bean id="hap_extend_mappermethod_rules" class="hap.extend.core.dataPermission.cache.impl.DataPermissionRuleMethodCache">
+        <property name="name" value="hap_extend.mappermethod_rules"/>
+    </bean>
+    <bean id="hap_extend_rule_user" class="hap.extend.core.dataPermission.cache.impl.DataPermissionRuleUserCache">
+        <property name="name" value="hap_extend.rule_user"/>
+    </bean>
+    <!--add end-->
 
 
     <bean id="cacheManager" class="com.hand.hap.cache.impl.CacheManagerImpl">
@@ -135,6 +145,12 @@
                 <ref bean="codeCache"/>
                 <ref bean="resourceCustomizationCache"/>
                 <ref bean="dataModelCache"/>
+
+                <!--add by yyz -->
+                <ref bean="hap_extend_rules"/>
+                <ref bean="hap_extend_mappermethod_rules"/>
+                <ref bean="hap_extend_rule_user"/>
+                <!--add end-->
 
                 <bean class="com.hand.hap.cache.impl.RedisCache">
                     <property name="name" value="resource_url"/>
