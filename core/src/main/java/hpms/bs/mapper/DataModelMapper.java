@@ -35,4 +35,11 @@ public interface DataModelMapper extends Mapper<DataModel> {
      * @return
      */
     public int deleteDataModel(DataModel d);
+
+    /**
+     * 查询数据模型
+     * @param d
+     * @return
+     */
+    public List<DataModel> findDataModel(DataModel d);
 }

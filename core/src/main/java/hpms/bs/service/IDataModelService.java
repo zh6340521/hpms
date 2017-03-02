@@ -40,5 +40,15 @@ public interface IDataModelService extends IBaseService<DataModel>,ProxySelf<IDa
      */
     public List<DataModel> findDataModelbyModelId(DataModel dm);
 
+    /**
+     * 查询所有数据模型数据
+     * @param requestCtx
+     * @param dm
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public List<DataModel> findAllDataModel(IRequest requestCtx,DataModel dm,int page,int pageSize);
+
 
 }

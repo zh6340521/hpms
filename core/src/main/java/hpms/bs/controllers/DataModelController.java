@@ -50,7 +50,7 @@ public class DataModelController extends BaseController {
     public ResponseData query(DataModel dm, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        List<DataModel> dmList = dataModelService.select(requestContext,dm,page,pageSize);
+        List<DataModel> dmList = dataModelService.findAllDataModel(requestContext,dm,page,pageSize);
         return new ResponseData(dmList);
     }
 

@@ -28,23 +28,37 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
     private DataModelColMapper dataModelColMapper;
 
 
-     //删除redis中的数据
+
+    /**
+     * 删除redis中的数据
+     * @param key
+     */
     @Override
     public void remove(String key) {
         super.remove(key);
     }
 
-    //查询所有数据
+    /**
+     * 查询所有数据
+     * @return
+     */
     @Override
     public List<DataModel> getAll(){
        return super.getAll();
     }
 
-    //根据id查询数据
+    /**
+     * 根据id查询数据
+     * @param key
+     * @return
+     */
     public DataModel getValue(String key){
         return super.getValue(key);
     }
 
+    /**
+     * 初始化调用的方法
+     */
     @Override
     protected void initLoad() {
         DataModel area=new DataModel();
@@ -53,7 +67,13 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
 
     }
 
-    //保存数据到redis
+
+
+    /**
+     * 将数据保存到redis
+     * @param dm
+     * @param dmc
+     */
     public void updateDataModel(DataModel dm, DataModelCol dmc){
         logger.info("判断行表里的头id是否为空，不为空赋给头表对象");
         if(dmc.getModelId()!=null&&!dmc.getModelId().equals("")){
