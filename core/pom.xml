@@ -42,6 +42,26 @@
             <artifactId>hap-db</artifactId>
             <version>${hap.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>hap.extend</groupId>
+            <artifactId>data_permission-core</artifactId>
+            <type>war</type>
+            <version>${data_permission.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>hap.extend</groupId>
+            <artifactId>data_permission-core</artifactId>
+            <version>${data_permission.version}</version>
+            <classifier>classes</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>hap.extend</groupId>
+            <artifactId>core-db</artifactId>
+            <version>${data_permission.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>core</finalName>
@@ -117,6 +137,12 @@
                         <version>1.0-SNAPSHOT</version>
                     </dependency>
 
+                    <dependency>
+                        <groupId>hap.extend</groupId>
+                        <artifactId>core-db</artifactId>
+                        <version>${data_permission.version}</version>
+                    </dependency>
+
                 </dependencies>
                 <executions>
                     <execution>
@@ -156,12 +182,12 @@
                 <version>2.6</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
-                    <overlays>
-                        <overlay>
-                            <groupId>com.hand</groupId>
-                            <artifactId>hap</artifactId>
-                        </overlay>
-                    </overlays>
+                    <!--<overlays>-->
+                        <!--<overlay>-->
+                            <!--<groupId>com.hand</groupId>-->
+                            <!--<artifactId>hap</artifactId>-->
+                        <!--</overlay>-->
+                    <!--</overlays>-->
                 </configuration>
             </plugin>
             <plugin>
