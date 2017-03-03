@@ -1,0 +1,91 @@
+<#--
+ * description: 应收费用清单
+ * version: 1.0
+ * #copyright#
+ *author: chengye.hu@hand-china.com 2017.02.15
+-->
+<#include "../include/header.html">
+<body>
+    <style type="text/css">
+		.k-textbox {
+			width: 180px;
+    		height: 25px;
+		}
+		.inputbox{
+			width: 180px;
+    		height: 25px;
+		}
+	</style>
+	<script src="/core/common/code?feeStatusData=HPMS_FEE_LIST_TPYE" type="text/javascript"></script>
+	<script src="/core/common/code?transTypeData=HPMS_TRANS_TYPE" type="text/javascript"></script>
+	<script type="text/javascript">
+	var viewModel = kendo.observable({
+        model: {},
+        creatFunction: function(){
+            $('#fee_list_grid').data('kendoGrid').saveChanges();
+        },
+        queryResource    : function (e) {
+            $('#fee_list_grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm : function (e) {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+
+    function newData() {
+    	parent.openTab('fee_list','应收费用清单新建','fin/fee_list_create.html?isedit=0')
+    };
+	</script>
+<div id="page-content">
+	<div id="treeview"></div> 
+		
+</div>
+	<script type="text/javascript" >
+	
+	var companyId = <#if RequestParameters.companyId?exists>
+                                ${RequestParameters.companyId}
+                             <#else>-1</#if>;
+    var projectId = <#if RequestParameters.projectId?exists>
+                                ${RequestParameters.projectId}
+                             <#else>-1</#if>;
+	
+			
+	homogeneous = new kendo.data.HierarchicalDataSource({
+                      transport: {
+                          read: {
+                              url: "${base.contextPath}/fin/feeList/structureQuery",
+                              data: {companyId:companyId,projectId:projectId},
+                              type   : "POST",
+                              dataType: "json"
+                          }
+                      },
+                      schema: {
+                      	  data:"rows",
+                          model: {
+                              id: "structureId",
+                              hasChildren: "hasChildren",
+                              children:"items"
+                          }
+                      }
+                  });
+	
+	var treeview = $("#treeview").kendoTreeView({
+              dataSource:homogeneous,
+              dataValueField: "id",
+              dataTextField: "structureName",
+              select: onSelect
+          });
+	function onSelect(e){
+		window.parent.viewModel.model.set("structureName",this.dataItem(e.node).structureName);
+		window.parent.viewModel.model.set("structureId",this.dataItem(e.node).structureId);
+		window.parent.viewModel.model.set("versionId",this.dataItem(e.node).versionId);
+		window.parent.$("#property_tree").data("kendoWindow").close();
+		
+	}
+		
+	</script>
+</body>
+</html>

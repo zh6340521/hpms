@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.fin.mapper.FeeListMapper">
+	<resultMap type="hpms.fin.dto.FeeList" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="FEE_LIST_ID" property="feeListId" jdbcType="DECIMAL"/>
+		<result column="FEE_LIST_CODE" property="feeListCode" jdbcType="VARCHAR"/>
+		<result column="FEE_STATUS" property="feeStatus" jdbcType="VARCHAR"/>
+		<result column="FEE_STATUS_NAME" property="feeStatusName" jdbcType="VARCHAR"/>
+		<result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL"/>
+		<result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+		<result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR"/>
+		<result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR"/>
+		<result column="FEE_PERIOD" property="feePeriod" jdbcType="VARCHAR"/>
+		<result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL"/>
+		<result column="FEE_TYPE_NAME" property="feeTypeName" jdbcType="VARCHAR"/>
+		<result column="FEE_ID" property="feeId" jdbcType="DECIMAL"/>
+		<result column="FEE_NAME" property="feeName" jdbcType="VARCHAR"/>
+		<result column="UNIT_PRICE" property="unitPrice" jdbcType="DECIMAL"/>
+        <result column="FEE_UOM" property="feeUom" jdbcType="VARCHAR"/>
+        <result column="FEE_QUANTITY" property="feeQuantity" jdbcType="DECIMAL"/>
+        <result column="CURRENCY_TYPE" property="currencyType" jdbcType="VARCHAR"/>
+        <result column="CURRENCY_TYPE_NAME" property="currencyTypeName" jdbcType="VARCHAR"/>
+        <result column="SEGMENT_FLAG" property="segmentFlag" jdbcType="VARCHAR"/>
+        <result column="LAST_RECORD" property="lastRecord" jdbcType="DECIMAL"/>
+        <result column="PRESENT_RECORD" property="presentRecord" jdbcType="DECIMAL"/>
+        <result column="GROSS_AMOUNT" property="grossAmount" jdbcType="DECIMAL"/>
+        <result column="ADJ_AMOUNT" property="adjAmount" jdbcType="DECIMAL"/>
+        <result column="OVERDUE_PAYMENT" property="overduePayment" jdbcType="DECIMAL"/>
+        <result column="TOTAL_AMOUNT" property="totalAmount" jdbcType="DECIMAL"/>
+        <result column="ACCRUED_DATE" property="accruedDate" jdbcType="DATE"/>
+        <result column="DATE_TO" property="dateTo" jdbcType="DATE"/>
+        <result column="REMARK" property="remark" jdbcType="VARCHAR"/>
+        <result column="REFERENCE_NUMBER" property="referenceNumber" jdbcType="VARCHAR"/>
+        <result column="DATA_SOURCE" property="dataSource" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="TRANS_TYPE" property="transType" jdbcType="VARCHAR"/>
+        <result column="TRANS_TYPE_NAME" property="transTypeName" jdbcType="VARCHAR"/>
+        <result column="PAY_PART_REPAIR" property="payPartRepair" jdbcType="VARCHAR"/>
+        <result column="GENERATE_DATE" property="generateDate" jdbcType="DATE"/>
+        <result column="COUNTED_DATE" property="countedDate" jdbcType="DATE"/>
+    </resultMap>
+    <!-- 条件查询应收费用清单 -->
+    <select id="feeListQuery" resultMap="BaseResultMap" parameterType="hpms.fin.dto.FeeList">
+    	SELECT
+    		hffl.FEE_LIST_ID,
+    		hffl.FEE_LIST_CODE,
+    		hffl.FEE_STATUS,
+    		hffl.OCCUPATION_ID,
+    		hffl.FEE_PERIOD,
+    		hffl.FEE_TYPE_ID,
+    		hffl.FEE_ID,
+    		hffl.UNIT_PRICE,
+    		hffl.FEE_UOM,
+    		hffl.FEE_QUANTITY,
+    		hffl.CURRENCY_TYPE,
+    		hffl.SEGMENT_FLAG,
+    		hffl.LAST_RECORD,
+    		hffl.PRESENT_RECORD,
+    		hffl.GROSS_AMOUNT,
+    		hffl.ADJ_AMOUNT,
+    		hffl.OVERDUE_PAYMENT,
+    		hffl.TOTAL_AMOUNT,
+    		hffl.ACCRUED_DATE,
+    		hffl.DATE_TO,
+    		hffl.REMARK,
+    		hffl.REFERENCE_NUMBER,
+    		hffl.DATA_SOURCE,
+    		hffl.COMPANY_ID,
+    		hffl.TRANS_TYPE,
+    		hffl.PAY_PART_REPAIR,
+    		hffl.GENERATE_DATE,
+    		hffl.COUNTED_DATE,
+    		hco.CUSTOMER_NAME,
+    		hco.PROPERTY_NAME,
+    		hco.PROPERTY_NUMBER,
+    		hmft.FEE_TYPE_NAME,
+    		hmf.FEE_NAME,
+    		hcvv1.MEANING TRANS_TYPE_NAME,
+    		hcvv2.MEANING FEE_STATUS_NAME,
+    		hcvv3.MEANING CURRENCY_TYPE_NAME
+    	FROM HPMS_FIN_FEE_LIST hffl
+    	LEFT JOIN HPMS_CS_OCCUPATION hco
+      	ON hffl.OCCUPATION_ID = hco.OCCUPATION_ID
+      	LEFT JOIN HPMS_MDM_FEE_TYPE hmft
+      	ON hffl.FEE_TYPE_ID = hmft.FEE_TYPE_ID
+      	LEFT JOIN HPMS_MDM_FEE hmf
+        ON hffl.FEE_ID = hmf.FEE_ID
+        LEFT JOIN HPMS_CODE_VALUE_V hcvv1
+    	ON hffl.TRANS_TYPE = hcvv1.VALUE AND hcvv1.CODE = 'HPMS_TRANS_TYPE' AND hcvv1.LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V hcvv2
+    	ON hffl.FEE_STATUS = hcvv2.VALUE AND hcvv2.CODE = 'HPMS_FEE_LIST_TPYE' AND hcvv2.LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V hcvv3
+    	ON hffl.CURRENCY_TYPE = hcvv3.VALUE AND hcvv3.CODE = 'HPMS_MDM_PAYMENT_CURRENCY' AND hcvv3.LANG = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1 = 1
+        <if test = "feeListId != null"> AND hffl.FEE_LIST_ID = #{feeListId , jdbcType=DECIMAL} </if>
+        <if test = "propertyName != null"> AND hco.PROPERTY_NAME = #{propertyName,jdbcType=VARCHAR}</if>
+        <if test = "propertyNumber != null"> AND hffl.PROPERTY_NUMBER like concat('%', concat(#{propertyNumber,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "feeTypeId != null"> AND hffl.FEE_TYPE_ID = #{feeTypeId , jdbcType=DECIMAL} </if>
+        <if test = "transType != null"> AND hffl.TRANS_TYPE = #{transType , jdbcType=VARCHAR} </if>
+        <if test = "feeListCode != null"> AND hffl.FEE_LIST_CODE like concat('%', concat(#{feeListCode,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "feeStatus != null"> AND hffl.FEE_STATUS = #{feeStatus , jdbcType=VARCHAR} </if>
+        <if test = "accruedDate != null"> AND hffl.ACCRUED_DATE &gt;= #{accruedDate , jdbcType=DATE} </if>
+        <if test = "accruedDate2 != null"> AND hffl.ACCRUED_DATE &lt;= #{accruedDate2 , jdbcType=DATE} </if>
+    </select>
+</mapper>
