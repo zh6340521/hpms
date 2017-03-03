@@ -156,9 +156,12 @@
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.contactPhone"/></label>
                         <div class="col-xs-7">
-                            <input id="contactPhone" type="text" data-bind="value:model.contactPhone" class="k-textbox"
+                            <input id="contactPhone" type="text" pattern="^[0-9]{11}$" validationMessage="<@spring.message "hpms.phonevalidation"/>" data-bind="value:model.contactPhone" class="k-textbox"
                                    style="width: 94%;">
                             <script>kendo.bind($('#contactPhone'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="contactPhone"></span>
                         </div>
                     </div>
                 </div>
@@ -181,7 +184,7 @@
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.startDateActive"/></label>
                         <div class="col-xs-7">
-                            <input id="startDateActive" name="startDateActive" type="text" required validationMessage="<@spring.message "hpms.mdm.project.startDateActive"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.startDateActive" class="datepicker"
+                            <input id="startDateActive" name="startDateActive" type="text" required validationMessage="<@spring.message "hpms.mdm.project.startDateActive"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.startDateActive"
                                    style="width: 94%;">
                             <span class="red_text">*</span>
                             <script>kendo.bind($('#startDateActive'), viewModel);</script>
@@ -197,7 +200,7 @@
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.endDateActive"/></label>
                         <div class="col-xs-7">
-                            <input id="endDateActive" name="endDateActive" type="text" required validationMessage="<@spring.message "hpms.mdm.project.endDateActive"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.endDateActive" class="datepicker" data-max="9999/12/31"
+                            <input id="endDateActive" name="endDateActive" type="text" required validationMessage="<@spring.message "hpms.mdm.project.endDateActive"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.endDateActive" data-max="9999/12/31"
                             style="width: 94%;">
                             <span class="red_text">*</span>
                             <script>kendo.bind($('#endDateActive'), viewModel);</script>
@@ -303,9 +306,13 @@
                 kendo.ui.showInfoDialog({
                     message:'<@spring.message "hpms.mdm.project.groupName"/><@spring.message "hap.error.nullexception"/>'
                 })
-            }else if(viewModel.model.companyId==''||viewModel.model.companyId==null){
+            }else if(viewModel.model.companyId==''||viewModel.model.companyId==null) {
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "hpms.mdm.project.companyName"/><@spring.message "hap.error.nullexception"/>'
+                    message: '<@spring.message "hpms.mdm.project.companyName"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(! /^[0-9]{11}$/.test(viewModel.model.contactPhone) && !viewModel.model.contactPhone=='' && !viewModel.model.contactPhone==null ){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.contactPhone"/><@spring.message "hpms.phonevalidation"/>'
                 })
             }else if(viewModel.model.startDateActive==''||viewModel.model.startDateActive==null){
                 kendo.ui.showInfoDialog({
@@ -337,9 +344,52 @@
                 });
             }
         });
-        //日期
-        $(".datepicker").kendoDatePicker({
-            animation: false
+        //开始和结束日期校验
+        $(document).ready(function() {
+            function startChange() {
+                var startDate = start.value(),
+                    endDate = end.value();
+
+                if (startDate) {
+                    startDate = new Date(startDate);
+                    startDate.setDate(startDate.getDate());
+                    end.min(startDate);
+                } else if (endDate) {
+                    start.max(new Date(endDate));
+                } else {
+                    endDate = new Date();
+                    start.max(endDate);
+                    end.min(endDate);
+                }
+            }
+
+            function endChange() {
+                var endDate = end.value(),
+                    startDate = start.value();
+
+                if (endDate) {
+                    endDate = new Date(endDate);
+                    endDate.setDate(endDate.getDate());
+                    start.max(endDate);
+                } else if (startDate) {
+                    end.min(new Date(startDate));
+                } else {
+                    endDate = new Date();
+                    start.max(endDate);
+                    end.min(endDate);
+                }
+            }
+
+            var start = $("#startDateActive").kendoDatePicker({
+                change: startChange
+            }).data("kendoDatePicker");
+
+            var end = $("#endDateActive").kendoDatePicker({
+                change: endChange
+            }).data("kendoDatePicker");
+
+            start.max(end.value());
+            end.min(start.value());
         });
 
     </script>
