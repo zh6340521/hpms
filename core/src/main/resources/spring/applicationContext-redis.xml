@@ -144,6 +144,7 @@
                 <ref bean="lovCache"/>
                 <ref bean="codeCache"/>
                 <ref bean="resourceCustomizationCache"/>
+                <ref bean="dataModelCache"/>
 
                 <!--add by yyz -->
                 <ref bean="hap_extend_rules"/>

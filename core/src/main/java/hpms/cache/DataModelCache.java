@@ -27,6 +27,14 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
     @Autowired
     private DataModelColMapper dataModelColMapper;
 
+    /**
+     * 初始化调用的方法
+     */
+    public void init() {
+        this.setType(DataModel.class);
+        this.strSerializer = this.getRedisTemplate().getStringSerializer();
+        this.initLoad();
+    }
 
 
     /**
@@ -52,13 +60,11 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
      * @param key
      * @return
      */
-    public DataModel getValue(String key){
-        return super.getValue(key);
+    public DataModel getValue(String key) {
+        return (DataModel)super.getValue(key);
     }
 
-    /**
-     * 初始化调用的方法
-     */
+
     @Override
     protected void initLoad() {
         DataModel area=new DataModel();
@@ -86,11 +92,11 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
         }
 
         logger.info("查询所有行表和头表对象");
-        List<DataModel> dmList = dataModelMapper.select(dm);
+        List<DataModel> dmList = dataModelMapper.findDataModel(dm);
 
         DataModelCol dmc1 = new DataModelCol();
         dmc1.setModelId(dm.getModelId());
-        List<DataModelCol> dmcList = dataModelColMapper.select(dmc1);
+        List<DataModelCol> dmcList = dataModelColMapper.findDataModelCol(dmc1);
 
         logger.info("遍历头表对象");
         Iterator headerList =dmList.iterator();

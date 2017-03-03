@@ -5,7 +5,7 @@ import java.util.List;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.mybatis.common.Mapper;
 
-import hpms.mdm.dto.ConfigValue;
+import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
 

@@ -60,7 +60,7 @@
        vs.object_version_number,
   (
     SELECT
-       vs.structure_name
+       vs1.structure_name
     FROM
       hpms_mdm_version_structure vs1
     WHERE

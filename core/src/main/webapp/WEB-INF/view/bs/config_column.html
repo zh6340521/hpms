@@ -1,0 +1,352 @@
+<#--
+        * description: 配置值跳转界面
+        * author:fuchun.hu@hand-china.com
+        * version: 1.0
+        *
+        -->
+    <#include "../include/header.html">
+     <body>
+     <!--定义数据源columnStyleData-->
+     <script src="${base.contextPath}/common/code?columnStyleData=HPMS_COL_TYPE" type="text/javascript"></script>
+
+     <!--***********************form表单*****************-->
+     <div>
+         <script type="text/javascript">
+
+             var configValueId = '${RequestParameters.configValueId!0}';
+             var companyId = '${RequestParameters.companyId!0}';
+             var modelId = '${RequestParameters.modelId!0}';
+
+
+             var viewModel = kendo.observable({
+                 model: {},
+                 /*--新增--*/
+                 createFunction:function(e){
+                     $('#grid').data('kendoGrid').addRow();
+                 },
+             })
+
+             //根据前界面传入的version进行查询
+             $.ajax({
+                 url:'${base.contextPath}/bs/configvalue/query?configValueId='+configValueId,
+
+                 //将查询出的json数据set到viewmodel的model中
+                 success: function (args) {
+                     var a0 = args.rows[0] || {};
+                     for (var k in a0) {
+                         viewModel.model.set(k, a0[k]);
+                     }
+                 }
+             });
+
+
+
+
+         </script>
+
+         <!--bootstrap标识-->
+         <div id="content-container">
+             <div id="page-content">
+                 <div class="panel" style="padding: 0px;">
+                     <form class="form-horizontal" id="lovForm">
+                         <div class="panel-body">
+                             <!--将基数为12的分成三段，每段有两列，长度分别为6,6-->
+
+                             <!--第一段-->
+                             <div class="col-sm-4">
+                                 <div class="row">
+                                     <div class="form-group required-input">
+                                         <label class="col-sm-5 control-label">编码</label>
+                                         <div class="col-sm-7">
+                                             <input name="configValueNumber" id="configValueNumber" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.configValueNumber"
+                                                    class="k-textbox" required>
+                                             <script>kendo.bind($('#configValueNumber'), viewModel);</script>
+                                         </div>
+                                     </div>
+                                 </div>
+
+                             </div>
+
+                             <!--第二段-->
+                             <div class="col-sm-4">
+                                 <div class="row">
+                                     <div class="form-group required-input">
+                                         <label class="col-sm-5 control-label">类型名称</label>
+                                         <div class="col-sm-7">
+                                             <input name="configValueName" id="configValueName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.configValueName"
+                                                    class="k-textbox" required>
+                                             <script>kendo.bind($('#configValueName'), viewModel);</script>
+                                         </div>
+                                     </div>
+                                 </div>
+
+                             </div>
+
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+         <script>
+             kendo.bind($('#page-content'), viewModel);
+         </script>
+         <div id="createWin"></div>
+     </div>
+
+     <!--*****************我是grid分割线************************-->
+     <div class="col-sm-12" style="margin-top: 10px;">
+         <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+             <!--新增-->
+             <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+         </div>
+
+         <!--将按钮绑定到viewmodel上-->
+         <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+
+
+         <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+             <div style="clear:both">
+                 <div id="grid" ></div>
+             </div>
+
+         </div>
+
+     </div>
+
+
+     <script>
+         var crudServiceBaseUrl = "${base.contextPath}/bs/configcolumn",
+                 dataSource = new kendo.data.DataSource({
+                     transport: {
+                         read:  {
+                             //将头表id传入后台
+                             url: crudServiceBaseUrl + "/query?configValueId=${RequestParameters.configValueId!0}",
+                             type : "POST",
+                             dataType: "json"
+                         },
+                         create : {
+                             url : crudServiceBaseUrl + "/submit",
+                             contentType: "application/json",
+                             type : "POST",
+
+                         },
+                         update : {
+                             url : crudServiceBaseUrl + "/submit",
+                             contentType: "application/json",
+                             type : "POST",
+                         },
+                         destroy: {
+                             url: crudServiceBaseUrl + "/remove",
+                             contentType: "application/json",
+                             type: "POST"
+                         },
+                         parameterMap: function(options, type) {
+                             if (type !== "read" && options.models) {
+                                 //判断状态
+                                 var datas = Hap.prepareSubmitParameter(options, type);
+                                 //将前端的头id赋给子对象
+                                 for (var i=0;i<datas.length;i++) {
+                                     datas[i].configValueId = configValueId;
+                                     datas[i].companyId = companyId;
+                                 }
+                                 //从一个对象解析出字符串
+                                 return kendo.stringify(datas);
+                             } else if (type === "read") {
+                                 return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                             }
+                         }
+                     },
+                     batch: true,
+                     serverPaging : true,//是否在服务器端分页
+                     pageSize: 10,
+                     schema: {
+                         data:'rows',
+                         total:'total',
+                         model: {
+                             id: "configColumnId",   //标记信息状态的属性，不然没法根据状态判断是add还是update
+                             fields: {
+                                 //是否必输
+                                 requiredFlag:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'},
+                                //是否启用
+                                 enableFlag:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'},
+
+                             }
+
+                         }
+                     }
+                 });
+
+         var grid = $("#grid").kendoGrid({
+             dataSource : dataSource,
+             navigatable: false,
+             height: '100%',
+             resizable: true,
+             scrollable: "multiple,rowbox",
+             reorderable: true,
+             sortable   : true,
+             selectable : "row",
+             editable: "inline",
+             columnMenu: true,
+             pageable: {
+                 pageSizes: [5, 10, 20, 50],
+                 refresh: true,
+                 buttonCount: 5
+             },
+             columns: [
+                 {
+
+                     command	: [{
+                         name : "edit",
+                         text :'编辑'
+
+                     },{
+                         name:"delete",
+                         text:"<span class='fa fa-trash-o'></span>",
+                     }],
+                     attributes: {style: "text-align:center"},
+                     title		: "操作",
+                     width		: "4%" ,
+                     headerAttributes: {
+                         style: "text-align: center"
+                     },
+
+                 },
+                 {
+                     field: "columnName",
+                     //name:"meaning",
+                     title: '字段名',
+                     width: '6%' ,
+                     attributes: {style: "text-align:center"},
+                     editor: function(container, options) {
+                         var editor=$('<input required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
+                                 .appendTo(container)
+                                 .kendoLov({
+                                     //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
+                                     code:"LOV_BS_COLUMN_NAME",
+                                     contextPath:'',
+                                     locale:'${base.locale}',
+
+                                     //传递查询参数
+                                     query:function (e) {
+                                         if (!e.param.modelId) {
+                                             e.param.modelId = modelId;
+                                         }
+                                     },
+                                     //拖一带三
+                                     select:function(e){
+                                         options.model.set("columnType",e.item.columnType);
+                                         options.model.set("columnLength",e.item.columnLength);
+                                         options.model.set("columnName",e.item.columnName);
+                                         options.model.set("columnNameAlias",e.item.columnNameAlias);
+
+                                         //将带出来的字段设置为不可编辑
+                                         $("#columnType").attr("disabled",true);
+                                         $("#columnLength").attr("disabled",true);
+                                         $("#columnNameAlias").attr("disabled",true);
+                                     },
+
+
+                                     textField: 'columnName',
+                                     model: options.model
+                                 });
+
+                         editor.css('width','100%');
+                         container.append(editor);
+
+
+                     }
+
+                 },
+                 {
+                     field: "columnType",
+                     attributes: {style: "text-align:center"},
+                     title: '字段类型',
+                     width: '6%',
+                     editor: function(container, options){
+                         var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
+                         editor.css('width','100%');
+                         container.append(editor);
+                     }
+                 },
+                 {
+                     field: "columnLength",
+                     title: '长度',
+                     width: '6%' ,
+                     attributes: {style: "text-align:center"},
+                     editor: function(container, options){
+                         var editor = $('<input id="columnLength" class="k-input k-textbox k-valid" type="text" name="columnLength"/>');
+                         editor.css('width','100%');
+                         container.append(editor);
+                     }
+                 },
+                 {
+                     field: "columnNameAlias",
+                     //name:"meaning",
+                     title: '别名',
+                     width: '6%' ,
+                     attributes: {style: "text-align:center"},
+                     editor: function (container, options) {
+                         var editor = $('<input id="columnNameAlias" class="k-input k-textbox k-valid" type="text" name="columnNameAlias"/>');
+                         editor.css('width','100%');
+                         container.append(editor);
+                     },
+
+
+                 },
+                 {
+                     field: "columnStyle",
+                     attributes: {style: "text-align:center"},
+                     title: '字符样式',
+                     width: 80,
+                     template: function(dataItem){//模板函数，相当于文本框渲染
+                         //将field的数据和下拉框内的数据进行绑定
+                         var v = dataItem.columnStyle;
+
+                         //studentSsexData定义好的一个数据源，想当于dataSource，进行遍历
+                         $.each(columnStyleData,function(i,n){
+                             if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                                 v = n.meaning;
+                                 return v;
+                             }
+                         })
+                         return v;
+                     },
+
+                     editor: function(container, options){
+                         //编辑时出现下拉框,options.field就是当前选中的field
+                         $('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+                                 .appendTo(container)
+                                 .kendoDropDownList({
+                                     //定义下拉框，下拉框studentStatusData其实也是json字符串，同样是key-value，
+                                     // dataValueField放置key，dataTextField放置显示的value
+                                     dataTextField: "meaning",
+                                     dataValueField: "value",
+                                     dataSource: columnStyleData,
+                                     valuePrimitive: true,//如果不是true的话，选中内容会是一个object 并不是一个简单的json字符串、
+                                 });
+                     }
+                 },
+                 {field: "requiredFlag",
+                     width: '5%',
+                     title: '是否必输',
+                     attributes: {style: "text-align:center"}
+                 },
+                 {field: "enableFlag",
+                     width: '5%',
+                     title: '是否启用',
+                     attributes: {style: "text-align:center"}
+                 }
+
+             ],
+
+
+         }).data("kendoGrid");
+
+
+         //自动调整
+         Hap.autoResizeGrid("#grid");
+         //设置表格上的字居中
+         $("#grid thead>tr th").css("text-align","center");
+     </script>
+
+     </body>

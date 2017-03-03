@@ -67,7 +67,7 @@
         <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR"/>
     </resultMap>
     
-    <resultMap type="hpms.mdm.dto.ConfigValue" id="configValueResultMap">
+    <resultMap type="hpms.bs.dto.ConfigValue" id="configValueResultMap">
         <id column="CONFIG_VALUE_ID" property="configValueId" jdbcType="DECIMAL"/>
         <result column="CONFIG_VALUE_NAME" property="configValueName" jdbcType="VARCHAR"/>
     </resultMap>
@@ -197,7 +197,7 @@
 	           </if>
     </select>
     <!-- 查询有效的建筑类型 -->
-    <select id="propertyTypeQuery" resultMap="configValueResultMap" parameterType="hpms.mdm.dto.ConfigValue">
+    <select id="propertyTypeQuery" resultMap="configValueResultMap" parameterType="hpms.bs.dto.ConfigValue">
     	SELECT HMCV.CONFIG_VALUE_ID,
        		   HMCV.CONFIG_VALUE_NAME
           FROM HPMS_MDM_CONFIG_VALUE HMCV

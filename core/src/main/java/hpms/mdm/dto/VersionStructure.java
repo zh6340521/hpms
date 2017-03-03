@@ -2,7 +2,10 @@ package hpms.mdm.dto;/**
  * Created by user1 on 2017/2/15.
  */
 
+import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
+
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -74,7 +77,12 @@ public class VersionStructure extends BaseDTO {
     private String parentStructureName;
     @Transient
     private String propertyName;//建筑实体
-
+    @Transient
+    private List<VersionStructure> items;//huchengye
+    
+    @Transient
+    private boolean hasChildren;//huchengye
+    
     public String getPropertyName() {
         return propertyName;
     }
@@ -154,4 +162,21 @@ public class VersionStructure extends BaseDTO {
     public void setParentStructureName(String parentStructureName) {
         this.parentStructureName = parentStructureName;
     }
+
+	public List<VersionStructure> getItems() {
+		return items;
+	}
+
+	public void setItems(List<VersionStructure> items) {
+		this.items = items;
+	}
+
+	public boolean isHasChildren() {
+		return hasChildren;
+	}
+
+	public void setHasChildren(boolean hasChildren) {
+		this.hasChildren = hasChildren;
+	}
+    
 }
