@@ -10,12 +10,13 @@
         <result column="config_number" property="configNumber" jdbcType="VARCHAR" />
         <result column="config_name" property="configName" jdbcType="VARCHAR" />
         <result column="company_id" property="companyId" jdbcType="DECIMAL" />
-        <result column="model_name" property="modelName" jdbcType="VARCHAR" />
+        <result column="model_id" property="modelId" jdbcType="DECIMAL" />
         <result column="column_name" property="columnName" jdbcType="VARCHAR" />
         <result column="enable_flag" property="enableFlag" jdbcType="VARCHAR" />
         <result column="description" property="description" jdbcType="VARCHAR" />
 
         <result column="company_full_name" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="model_name" property="modelName" jdbcType="VARCHAR" />
     </resultMap>
 
 
@@ -25,34 +26,41 @@
          hc.config_number,
          hc.config_name,
          hc.company_id,
-         hc.model_name,
+         hc.model_id,
          hc.column_name,
          hc.enable_flag,
          hc.description,
          hc.object_version_number,
-         ct.company_full_name
+         ct.company_full_name,
+         dm.model_name
     FROM hpms_config    hc,
-         fnd_company_tl ct
+         fnd_company_tl ct,
+         hpms_data_model dm
 
    <where>
        1=1
-       <if test="modelName!=null">
-           and hc.model_name=#{modelName,jdbcType=VARCHAR}
+       <if test="modelId!=null">
+           and hc.model_id =#{modelId,jdbcType=DECIMAL}
        </if>
 
        <if test="configNumber!=null">
-           and hc.config_number=#{configNumber,jdbcType=VARCHAR}
+           and hc.config_number like concat('%',concat(#{configNumber,jdbcType=VARCHAR},'%'))
        </if>
 
        <if test="configName!=null">
-           and hc.config_name=#{configName,jdbcType=VARCHAR}
+           and hc.config_name like concat('%',concat(#{configName,jdbcType=VARCHAR},'%'))
        </if>
 
        <if test="configId!=null">
            and hc.config_id=#{configId,jdbcType=DECIMAL}
        </if>
 
+       <if test="companyId!=null">
+           and hc.company_id =#{companyId,jdbcType=DECIMAL}
+       </if>
+
        and hc.company_id = ct.company_id
+       and dm.model_id = hc.model_id
        and ct.lang = #{request.locale,jdbcType=VARCHAR}
    </where>
 

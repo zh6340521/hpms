@@ -27,23 +27,43 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
     @Autowired
     private DataModelColMapper dataModelColMapper;
 
+    /**
+     * 初始化调用的方法
+     */
+    public void init() {
+        this.setType(DataModel.class);
+        this.strSerializer = this.getRedisTemplate().getStringSerializer();
+        this.initLoad();
+    }
 
-     //删除redis中的数据
+
+    /**
+     * 删除redis中的数据
+     * @param key
+     */
     @Override
     public void remove(String key) {
         super.remove(key);
     }
 
-    //查询所有数据
+    /**
+     * 查询所有数据
+     * @return
+     */
     @Override
     public List<DataModel> getAll(){
        return super.getAll();
     }
 
-    //根据id查询数据
-    public DataModel getValue(String key){
-        return super.getValue(key);
+    /**
+     * 根据id查询数据
+     * @param key
+     * @return
+     */
+    public DataModel getValue(String key) {
+        return (DataModel)super.getValue(key);
     }
+
 
     @Override
     protected void initLoad() {
@@ -53,7 +73,13 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
 
     }
 
-    //保存数据到redis
+
+
+    /**
+     * 将数据保存到redis
+     * @param dm
+     * @param dmc
+     */
     public void updateDataModel(DataModel dm, DataModelCol dmc){
         logger.info("判断行表里的头id是否为空，不为空赋给头表对象");
         if(dmc.getModelId()!=null&&!dmc.getModelId().equals("")){
@@ -66,11 +92,11 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
         }
 
         logger.info("查询所有行表和头表对象");
-        List<DataModel> dmList = dataModelMapper.select(dm);
+        List<DataModel> dmList = dataModelMapper.findDataModel(dm);
 
         DataModelCol dmc1 = new DataModelCol();
         dmc1.setModelId(dm.getModelId());
-        List<DataModelCol> dmcList = dataModelColMapper.select(dmc1);
+        List<DataModelCol> dmcList = dataModelColMapper.findDataModelCol(dmc1);
 
         logger.info("遍历头表对象");
         Iterator headerList =dmList.iterator();

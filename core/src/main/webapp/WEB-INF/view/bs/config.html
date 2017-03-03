@@ -94,10 +94,26 @@
                           </div>
                       </div>
 
-                      <div class="from-group col-md-4" style="margin-bottom:10px">
+                      <!--<div class="from-group col-md-4" style="margin-bottom:10px">
                           <label class="col-md-5 control-label">模型名称</label>
-                          <div class="col-md-7">
-                              <input type="text" class="k-textbox" name="modelName"  data-bind="value:model.modelName" style="width: 90%;"/>
+                          <div class="col-sm-8">
+
+                              &lt;!&ndash;设置文本框绑定viewmodel&ndash;&gt;
+                              <input name="modelName" type="text" style="width: 100%" id="modelName"
+                                     data-bind="value:model.modelId,text:model.modelName">
+
+                              <script>kendo.bind($('#modelName'), viewModel);</script>
+                          </div>
+                      </div>-->
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 control-label">模型名称</label>
+                              <div class="col-md-7">
+                                  <input name="modelName" type="text" style="width: 100%" id="modelName"
+                                         data-bind="value:model.modelId,text:model.modelName">
+
+                                  <script>kendo.bind($('#modelName'), viewModel);</script>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -112,16 +128,41 @@
                           </div>
                       </div>
 
-                      <div class="from-group col-md-4" style="margin-bottom:10px">
-                          <label class="col-md-5 control-label">配置名称</label>
-                          <div class="col-md-7">
-                              <input type="text" class="k-textbox" name="configName"  data-bind="value:model.configName" style="width: 90%;"/>
+
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label class="col-sm-4 control-label">配置名称</label>
+                              <div class="col-md-7">
+                                  <input type="text" class="k-textbox" name="configName"  data-bind="value:model.configName" style="width: 90%;"/>
+                              </div>
                           </div>
                       </div>
                   </div>
 
           </form>
       </div>
+      <script>
+          kendo.bind($('#page-content'), viewModel);
+
+          $("#modelName").kendoLov($.extend({"queryColumns":1,
+              "height":400,
+              "width":600,
+              "readonly":true,
+              "dataValueField":"modelId",
+              "dataTextField":"modelName",
+              "title":"模型名称",
+              "placeholder":"模型名称",
+              "form":"<div class='form-group' style='width:100.0%;float:left;margin-left:5px;'>" +
+              "<label class='col-sm-3 control-label'>模型编号</label><div class='col-sm-9'><input name='modelCode' data-bind='value:data.modelCode' style='width:100%'></div></div><div class='form-group' style='width:100.0%;float:left;margin-left:5px;'>" +
+              "<label class='col-sm-3 control-label'>模型名称</label><div class='col-sm-9'><input name='modelName' data-bind='value:data.modelName' style='width:100%'></div></div>",
+              "formItemMap":{"modelName":{"type":"kendoMaskedTextBox"},"modelCode":{"type":"kendoMaskedTextBox"}},
+              "grid":{"height":400,"url":"${base.contextPath}/common/lov/MDM_BS_MODEL","columns":[{"field":"modelCode","title":"模型编号","width":200,"attributes":{"style":"text-align:center"}},
+                  {"field":"modelName","title":"模型名称","width":200,"attributes":{"style":"text-align:center"}}]}}, {
+
+          }))
+
+      </script>
+
       <script>kendo.bind($('#data_form'), viewModel);</script>
 
       <div class="row" style="margin-left: 0px;margin-bottom: 10px">
@@ -255,7 +296,7 @@
                           var data = this.dataItem(tr);
                           window.top.openTab(
                                   "configval"+data.configId,data.configNumber,
-                                  "bs/config_value.html?configId="+data.configId);
+                                  "bs/config_value.html?configId="+data.configId+'&companyId='+data.companyId+'&modelId='+data.modelId);
 
                       }
                   },{
@@ -331,18 +372,18 @@
 
                   editor: function (container, options) {
                       //alert(options.field);
-                      $('<input type="text" required  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                      $('<input type="text" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
 
                   },
               },
               {
-                  field: "modelName",
+                  field: "modelId",
                   //name:"meaning",
                   title: '模型名称',
                   width: '18%' ,
                   attributes: {style: "text-align:center"},
                   editor: function(container, options) {
-                          var editor=$('<input name="' + options.field + '"/>')
+                          var editor=$('<input required  validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
                                   .appendTo(container)
                                   .kendoLov({
                                       //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
@@ -357,7 +398,7 @@
                                           }
                                       },
 
-
+                                      valueField:'modelId',
                                       textField: 'modelName',
                                       model: options.model
                                   });
@@ -377,7 +418,7 @@
                   width: '18%' ,
                   attributes: {style: "text-align:center"},
                   editor: function(container, options) {
-                      var editor=$('<input name="' + options.field + '"/>')
+                      var editor=$('<input required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
                               .appendTo(container)
                               .kendoLov({
                                   //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
@@ -387,8 +428,8 @@
 
                                   //传递查询参数
                                   query:function (e) {
-                                      if (!e.param.modelName) {
-                                          e.param.modelName = options.model.get("modelName");
+                                      if (!e.param.modelId) {
+                                          e.param.modelId = options.model.get("modelId");
                                       }
                                   },
 

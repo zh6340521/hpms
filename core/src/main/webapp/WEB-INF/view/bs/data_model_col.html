@@ -10,7 +10,6 @@
     <div>
         <script type="text/javascript">
 
-            //获取特定字段来判断是新增还是编辑界面
             var modelId = '${RequestParameters.modelId!0}';
 
             var viewModel = kendo.observable({
@@ -23,7 +22,8 @@
 
             //根据前界面传入的version进行查询
             $.ajax({
-                url:'${base.contextPath}/bs/DataModel/query?modelId='+modelId,
+                //url:'${base.contextPath}/bs/DataModel/query?modelId='+modelId,
+                url:'${base.contextPath}/bs/DataModel/queryByModelId?modelId='+modelId,
 
                 //将查询出的json数据set到viewmodel的model中
                 success: function (args) {

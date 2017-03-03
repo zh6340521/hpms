@@ -2,6 +2,7 @@ package hpms.bs.service.impl;/**
  * Created by user1 on 2017/2/28.
  */
 
+import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.IBaseService;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
@@ -111,12 +112,22 @@ public class DataModelServiceImpl extends BaseServiceImpl<DataModel> implements 
     }
 
     @Override
-    public List<DataModel> findDataModelbyModelId(DataModel dm) {
+    public List<DataModel> findDataModelbyModelId(IRequest requestContext,String modelId) {
         List<DataModel> dmList = new ArrayList<>();
-        DataModel dm1 =  dataModelCache.getValue(Long.toString(dm.getModelId()));
+        DataModel dm1 =  this.dataModelCache.getValue(modelId);
+
         dmList.add(dm1);
         return dmList;
     }
+
+    @Override
+    public List<DataModel> findAllDataModel(IRequest requestCtx, DataModel dm, int page, int pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<DataModel> dmList = dataModelMapper.findDataModel(dm);
+        return dmList;
+    }
+
+
 
     public void submitDataModelRedis(IRequest iRequest, List<DataModel> dm){
         DataModelCol dmc=new DataModelCol();

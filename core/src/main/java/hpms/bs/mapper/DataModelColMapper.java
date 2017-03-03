@@ -37,5 +37,12 @@ public interface DataModelColMapper extends Mapper<DataModelCol> {
      */
     public int deleteDataModelCol(DataModelCol dmc);
 
+    /**
+     * 查询行表数据
+     * @param dmc
+     * @return
+     */
+    public List<DataModelCol> findDataModelCol(DataModelCol dmc);
+
 
 }
