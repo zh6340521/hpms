@@ -65,4 +65,53 @@
    </where>
 
     </select>
+
+    <!--通过公司id查询编码-->
+    <select id="findConfigNumberByCompanyId" parameterType="hpms.bs.dto.Config" resultMap="BaseResultMap">
+                SELECT hc.company_id,
+                       hc.config_number,
+                       hc.config_id
+                  FROM hpms_config hc
+                  <where>
+                      1=1
+                      <if test="companyId!=null">
+                          and hc.company_id =#{companyId,jdbcType=DECIMAL}
+                      </if>
+
+                      <if test="configNumber!=null">
+                          and hc.config_number=#{configNumber,jdbcType=VARCHAR}
+                      </if>
+
+                      <if test="configId!=null">
+                          and hc.config_id!=#{configId,jdbcType=DECIMAL}
+                      </if>
+                  </where>
+    </select>
+
+    <!--通过公司id+模型id+字段名确定唯一性-->
+    <select id="findUniqueConfig" resultMap="BaseResultMap" parameterType="hpms.bs.dto.Config">
+        SELECT hc.config_id,
+               hc.company_id,
+               hc.model_id,
+               hc.column_name
+          FROM hpms_config hc
+          <where>
+              1=1
+              <if test="configId!=null">
+                  and hc.config_id!=#{configId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="companyId!=null">
+                  and hc.company_id =#{companyId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="modelId!=null">
+                  and hc.model_id=#{modelId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="columnName!=null">
+                  and hc.column_name=#{columnName,jdbcType=VARCHAR}
+              </if>
+          </where>
+    </select>
 </mapper>

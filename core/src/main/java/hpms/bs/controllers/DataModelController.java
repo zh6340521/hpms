@@ -94,12 +94,16 @@ public class DataModelController extends BaseController {
         return new ResponseData();
     }
 
-    @RequestMapping(value = "/bs/DataModel/queryByModelId")
+    @RequestMapping(value = "/bs/DataModel/queryByCache")
     @ResponseBody
     public ResponseData queryByModelId(Long modelId,HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         String mId = Long.toString(modelId);
         List<DataModel> dmList = dataModelService.findDataModelbyModelId(requestContext,mId);
+       /* for(DataModel dm:dmList){
+            List<DataModelCol> dmcList = dm.getDataModelCol();
+            logger.info("1111*********************"+dmcList);
+        }*/
         return new ResponseData(dmList);
     }
 }

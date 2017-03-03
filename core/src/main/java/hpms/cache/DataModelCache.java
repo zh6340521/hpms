@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -105,10 +107,7 @@ public class DataModelCache extends HashStringRedisCache<DataModel> {
             logger.info("遍历行表对象");
             Iterator lineList  = dmcList.iterator();
 
-            Map<String,Object> map2 = new HashMap<>();
-            List<Map<String,String>> list=new ArrayList<>();
 
-            Map<String, List<String>> dataModelMap  = new HashMap<>();
             List<DataModelCol> dmc1List = new ArrayList<DataModelCol>();
             while(lineList.hasNext()){
                 Object dataModelCol = lineList.next();
