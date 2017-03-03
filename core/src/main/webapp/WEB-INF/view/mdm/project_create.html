@@ -310,9 +310,9 @@
                 kendo.ui.showInfoDialog({
                     message: '<@spring.message "hpms.mdm.project.companyName"/><@spring.message "hap.error.nullexception"/>'
                 })
-            }else if(! /^[0-9]{11}$/.test(viewModel.model.contactPhone) && !viewModel.model.contactPhone=='' && !viewModel.model.contactPhone==null ){
+            }else if(! (viewModel.model.contactPhone==''||viewModel.model.contactPhone==null) && ! (/^[0-9]{11}$/.test(viewModel.model.contactPhone)) ) {
                 kendo.ui.showInfoDialog({
-                    message:'<@spring.message "hpms.mdm.project.contactPhone"/><@spring.message "hpms.phonevalidation"/>'
+                    message: '<@spring.message "hpms.mdm.project.contactPhone"/><@spring.message "hpms.phonevalidation"/>'
                 })
             }else if(viewModel.model.startDateActive==''||viewModel.model.startDateActive==null){
                 kendo.ui.showInfoDialog({
