@@ -43,7 +43,7 @@ public class ConfigColumn extends BaseDTO {
      *配置值id
      */
     @Column
-    private Long configVauleId;
+    private Long configValueId;
 
     /**
      *公司id
@@ -101,12 +101,12 @@ public class ConfigColumn extends BaseDTO {
         this.configColumnId = configColumnId;
     }
 
-    public Long getConfigVauleId() {
-        return configVauleId;
+    public Long getConfigValueId() {
+        return configValueId;
     }
 
-    public void setConfigVauleId(Long configVauleId) {
-        this.configVauleId = configVauleId;
+    public void setConfigValueId(Long configValueId) {
+        this.configValueId = configValueId;
     }
 
     public Long getCompanyId() {

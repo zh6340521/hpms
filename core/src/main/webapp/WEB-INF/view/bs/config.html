@@ -108,7 +108,7 @@
                       <div class="col-sm-4">
                           <div class="form-group">
                               <label class="col-sm-4 control-label">模型名称</label>
-                              <div class="col-md-7">
+                              <div class="col-md-6">
                                   <input name="modelName" type="text" style="width: 100%" id="modelName"
                                          data-bind="value:model.modelId,text:model.modelName">
 
@@ -360,8 +360,16 @@
 
                   editor: function (container, options) {
                       //alert(options.field);
-                      $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
-
+                     // $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                      //根据是否存在主键id来判断是新增还是编辑
+                      if (options.model.configId != "") {
+                          container.html(options.model.configNumber);
+                          container.removeClass('k-edit-cell');
+                      } else {
+                          var editor =  $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                          editor.css('width','100%');
+                          container.append(editor);
+                      }
                   },
               },
               {
@@ -382,6 +390,9 @@
                   title: '模型名称',
                   width: '18%' ,
                   attributes: {style: "text-align:center"},
+                  template        : function (dataItem) {
+                      return dataItem['modelName'] || '';
+                  },
                   editor: function(container, options) {
                           var editor=$('<input required  validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
                                   .appendTo(container)
@@ -431,6 +442,11 @@
                                       if (!e.param.modelId) {
                                           e.param.modelId = options.model.get("modelId");
                                       }
+                                  },
+                                  //将查询出的数据进行赋值
+                                  select:function(e){
+                                      options.model.set("columnName",e.item.columnName);
+
                                   },
 
 

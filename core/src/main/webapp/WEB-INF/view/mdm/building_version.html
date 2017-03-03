@@ -137,10 +137,7 @@
                       </div>
 
 
-                      <div >
-                          <span class="btn btn-primary" data-bind="click:queryResource" style="width: 70px;float:left;margin-right:5px;" type="submit">查询</span>
-                          <span class="btn btn-default" style="float:left;width:70px"  data-bind="click:resetForm" type="button">重置</span>
-                      </div>
+
                       <div style="clear:both"></div>
                   </div>
           </form>
@@ -148,10 +145,20 @@
       <!--将form和viewmodel进行绑定-->
       <script>kendo.bind($('#query-form'), viewModel);</script>
 
-
-      <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;margin-left:15px;">
-          <span class="btn btn-primary" style="margin-left:15px;" data-bind="click:createFunction">新建</span>
+      <div class="row" style="margin-left: 0px;margin-bottom: 10px">
+          <div id="toolbar-btn" style="padding-bottom: 10px;">
+                        <span class="btn btn-primary k-grid-add"
+                              style="float: left; margin-right: 5px;"
+                              data-bind="click:createFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>新建</span>
+                        <span class="btn btn-primary k-grid-save-changes"
+                              style="float: left; margin-right: 5px;"
+                              data-bind="click:queryResource">
+                            <i class="fa fa-search" style="margin-right:3px;"></i>查询</span>
+          </div>
       </div>
+
+
       <!--将按钮绑定到viewmodel上-->
       <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
       <div style="clear: both;">
@@ -295,21 +302,62 @@
           },
           columns: [
               {
+
+                  command	: [{
+                      name:"detail",
+                      text:"<i class='fa fa-search'></i>",
+                      click:function (e) {
+                          e.preventDefault();
+                          var tr = $(e.target).closest("tr");
+                          var data = this.dataItem(tr);
+                          window.top.openTab(
+                                  "VersionDetail"+data.versionId,data.versionNumber,
+                                  "mdm/version_structure.html?versionId="+data.versionId);
+
+                      }
+                  },{
+                      name : "edit",
+                      text :'编辑'
+
+                  },{
+                      name:"delete",
+                      text:"<span class='fa fa-trash-o'></span>",
+                  }],
+                  attributes: {style: "text-align:center"},
+                  title		: "操作",
+                  width		: "16%" ,
+                  headerAttributes: {
+                      style: "text-align: center"
+                  },
+
+              },
+              {
                   field: "versionNumber",
                   title: '编码',
                   width: '17%' ,
                   attributes: {style: "text-align:center"},
-                  template : function (rowdata) {
+                 /* template : function (rowdata) {
                       if (!!rowdata.versionId) {
                           return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="editBuildingVersion('+rowdata.versionId+',\''+rowdata.versionNumber+'\')"><font color="blue">'
                                   + rowdata.versionNumber
                                   + '</font></a>';
 
                       }else return rowdata.versionNumber
-                  },
+                  },*/
                   editor: function (container, options) {
+                      //根据是否存在主键id来判断是新增还是编辑
+                      if (options.model.versionId != "") {
+                          container.html(options.model.versionNumber);
+                          container.removeClass('k-edit-cell');
+                      } else {
+                          var editor =  $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                          editor.css('width','100%');
+                          container.append(editor);
+                      }
+
+
                       //alert(options.field);
-                      $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                     // $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
 
                   },
 
@@ -477,7 +525,7 @@
                   editor: function (container, options) {
 
                       //alert(options.field);
-                      $('<input type="text" required  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                      $('<input type="text" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
 
                   },
               },
@@ -502,25 +550,7 @@
                   attributes: {style: "text-align:center"}
               },
 
-              {
 
-                  command	: [{
-                      name : "edit",
-                      text :'编辑'
-
-                  },
-                      {
-                          name:'destroy',
-                          text:'删除'
-                      }],
-                  attributes: {style: "text-align:center"},
-                  title		: "操作",
-                  width		: "16%" ,
-                  headerAttributes: {
-                      style: "text-align: center"
-                  },
-
-              },
 
           ],
 

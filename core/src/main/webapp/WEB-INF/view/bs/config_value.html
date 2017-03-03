@@ -224,8 +224,8 @@
                                 var tr = $(e.target).closest("tr");
                                 var data = this.dataItem(tr);
                                 window.top.openTab(
-                                        "configcol"+data.configVauleId,data.configValueNumber,
-                                        "bs/config_column.html?configVauleId="+data.configVauleId+'&companyId='+data.companyId+'&modelId='+modelId);
+                                        "configcol"+data.configValueId,data.configValueNumber,
+                                        "bs/config_column.html?configValueId="+data.configValueId+'&companyId='+data.companyId+'&modelId='+modelId);
 
                             }
                         },{
@@ -233,8 +233,8 @@
                             text :'编辑'
 
                         },{
-                            name:'destroy',
-                            text:'删除'
+                            name:"delete",
+                            text:"<span class='fa fa-trash-o'></span>",
                         }],
                         attributes: {style: "text-align:center"},
                         title		: "操作",
