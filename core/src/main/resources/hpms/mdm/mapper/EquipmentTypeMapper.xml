@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.EquipmentTypeMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.EquipmentType" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL"/>
+        <result column="TYPE_CODE" property="typeCode" jdbcType="VARCHAR"/>
+        <result column="TYPE_NAME" property="typeName" jdbcType="VARCHAR"/>
+        <result column="TYPE_ATTRIBUTE" property="typeAttribute" jdbcType="VARCHAR"/>
+        <result column="METER_FLAG" property="meterFlag" jdbcType="VARCHAR"/>
+        <result column="PREFIX" property="prefix" jdbcType="VARCHAR"/>
+        <result column="START_NUM" property="startNum" jdbcType="VARCHAR"/>
+        <result column="END_NUM" property="endNum" jdbcType="VARCHAR"/>
+        <result column="CUR_NUM" property="curNum" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+</mapper>

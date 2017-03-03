@@ -19,6 +19,6 @@ databaseChangeLog(logicalFilePath: "hpms/core/db/liquibase.groovy") {
         dbType = "sqlserver";
     }
     // 现在支持自动根据 db.url 参数检测数据库类型
-    migrationHelper.dbmigrate(dbType,["com/hand/hap","hpms/core"] ,["table", "data", "patch"])
+    migrationHelper.dbmigrate(dbType,["com/hand/hap","hpms/core","hap/extend/core"] ,["table", "data", "patch"])
 
 }

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.bs.mapper.DataModelColMapper">
+    <resultMap id="BaseResultMap" type="hpms.bs.dto.DataModelCol" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="model_col_id" property="modelColId" jdbcType="DECIMAL" />
+        <result column="model_id" property="modelId" jdbcType="DECIMAL" />
+        <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+        <result column="column_type" property="columnType" jdbcType="VARCHAR" />
+        <result column="column_length" property="columnLength" jdbcType="DECIMAL" />
+        <result column="column_name_alias" property="columnNameAlias" jdbcType="VARCHAR" />
+
+        <result column="model_name" property="modelName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--查询字段名-->
+    <select id="countColumnName" resultMap="BaseResultMap" parameterType="hpms.bs.dto.DataModelCol">
+       SELECT dmc.model_col_id,
+        dmc.column_name
+   FROM hpms_data_model_col dmc
+
+   <where>
+       1=1
+       <if test="modelColId!=null">
+           and dmc.model_col_id != #{modelColId,jdbcType=DECIMAL}
+       </if>
+
+       <if test="columnName!=null">
+           and  dmc.column_name =#{columnName,jdbcType=VARCHAR}
+       </if>
+
+       <if test="modelId!=null">
+           and dmc.model_id=#{modelId,jdbcType=DECIMAL}
+       </if>
+   </where>
+
+    </select>
+
+    <!--lov查询字段名-->
+    <select id="findColumnNameForLov" resultMap="BaseResultMap" parameterType="hpms.bs.dto.DataModelCol">
+      SELECT mc.column_name,
+             mc.column_name_alias
+  FROM hpms_data_model_col mc,
+       hpms_data_model     dm
+
+      <where>
+          1=1
+          <if test="modelName!=null">
+              and dm.model_name = #{modelName,jdbcType=VARCHAR}
+          </if>
+
+              and dm.model_id = mc.model_id
+      </where>
+    </select>
+
+    <!--根据头表id删除-->
+    <delete id="deleteDataModelCol" parameterType="hpms.bs.dto.DataModelCol">
+       delete hpms_data_model_col dm where dm.model_id=#{modelId,jdbcType=DECIMAL}
+    </delete>
+
+    <!--查询行表数据-->
+    <select id="findDataModelCol" parameterType="hpms.bs.dto.DataModelCol" resultMap="BaseResultMap">
+        SELECT dmc.model_col_id,
+               dmc.model_id,
+               dmc.column_name,
+               dmc.column_type,
+               dmc.column_length,
+               dmc.column_name_alias,
+               dm.model_name,
+               dmc.object_version_number
+      FROM hpms_data_model_col dmc,
+           hpms_data_model     dm
+
+       <where>
+           1=1
+           <if test="modelId!=null">
+               and dmc.model_id=#{modelId,jdbcType=DECIMAL}
+           </if>
+               and dmc.model_id = dm.model_id
+       </where>
+    </select>
+</mapper>

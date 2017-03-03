@@ -1,0 +1,398 @@
+<#--
+ * description: 项目档案新建
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/2/15 10:20:00
+-->
+<#include "../include/header.html">
+<body>
+<style type="text/css">
+    span.red_text { color: red; font-weight: bold; }
+</style>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script>
+    var isedit = <#if RequestParameters.isedit?exists> ${RequestParameters.isedit} <#else>-1</#if>;
+    var projectId = <#if RequestParameters.projectId?exists> ${RequestParameters.projectId} <#else>-1</#if>;
+
+    viewModel = kendo.observable({
+        model: {
+            startDateActive : new Date(),
+            endDateActive : new Date("9999/12/31")
+        }
+    });
+    if(projectId !=-1 && isedit == 1){
+        $.ajax({
+            type   : "POST",
+            url: "${base.contextPath}/hpms/mdm/project/query",
+            data: { projectId : projectId },
+            success: function(json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    viewModel.model.set(k, row[k]);
+                }
+                $("#projectCode").attr("readonly",true).css("background", "#DDDDDD");
+                $("#projectName").attr("readonly",true).css("background", "#DDDDDD");
+                $("#projectContact").attr("readonly",true).css("background", "#DDDDDD");
+                $("#contactPhone").attr("readonly",true).css("background", "#DDDDDD");
+                $("#projectAddress").attr("readonly",true).css("background", "#DDDDDD");
+
+                $("#startDateActive").data("kendoDatePicker").readonly();
+                $("#startDateActive").css("background", "#DDDDDD");
+                $("#endDateActive").data("kendoDatePicker").readonly();
+                $("#endDateActive").css("background", "#DDDDDD");
+
+                $("#groupId").data("kendoComboBox").readonly(true);
+                $("input[name='groupId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                $("input[name='groupId_input']").css("background", "#DDDDDD");
+                $("input[name='groupId_input']").next().next().unbind();
+
+                $("#companyId").data("kendoComboBox").readonly(true);
+                $("input[name='companyId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                $("input[name='companyId_input']").css("background", "#DDDDDD");
+                $("input[name='companyId_input']").next().next().unbind();
+
+                $("#saveGrid").hide();
+                $("#closeWin").hide();
+            }
+        });
+    }else if(projectId !=-1 && isedit == 2){
+        $.ajax({
+            type   : "POST",
+            url: "${base.contextPath}/hpms/mdm/project/query",
+            data: { projectId : projectId },
+            success: function(json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    viewModel.model.set(k, row[k]);
+                }
+            }
+        });
+    }
+
+</script>
+
+
+    <div id="page-content">
+            <form class="form-horizontal">
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectCode"/></label>
+                        <div class="col-xs-5">
+                            <input id="projectCode" name="projectCode" type="text" pattern="^[0-9A-Z_]+$" required validationMessage="<@spring.message "hpms.mdm.project.codelimit"/>" data-bind="value:model.projectCode" class="k-textbox"
+                            style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#projectCode'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-5" >
+                            <span class="k-invalid-msg" data-for="projectCode"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectName"/></label>
+                        <div class="col-xs-5">
+                            <input id="projectName" name="projectName" type="text" required validationMessage="<@spring.message "hpms.mdm.project.projectName"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.projectName" class="k-textbox"
+                            style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#projectName'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="projectName"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.groupName"/></label>
+                        <div class="col-xs-5">
+                            <input id="groupId" name="groupId" type="text" required validationMessage="<@spring.message "hpms.mdm.project.groupName"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.groupId"
+                            style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#groupId'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="groupId"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.companyName"/></label>
+                        <div class="col-xs-5">
+                            <input id="companyId" name="companyId" type="text" required validationMessage="<@spring.message "hpms.mdm.project.companyName"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.companyId"
+                            style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#companyId'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="companyId"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectContact"/></label>
+                        <div class="col-xs-7">
+                            <input id="projectContact" type="text" data-bind="value:model.projectContact" class="k-textbox"
+                                   style="width: 94%;">
+                            <script>kendo.bind($('#projectContact'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.contactPhone"/></label>
+                        <div class="col-xs-7">
+                            <input id="contactPhone" type="text" pattern="^[0-9]{11}$" validationMessage="<@spring.message "hpms.phonevalidation"/>" data-bind="value:model.contactPhone" class="k-textbox"
+                                   style="width: 94%;">
+                            <script>kendo.bind($('#contactPhone'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="contactPhone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectAddress"/></label>
+                        <div class="col-xs-5">
+                            <input id="projectAddress" name="projectAddress" type="text" data-bind="value:model.projectAddress" class="k-textbox"
+                            style="width: 95%;">
+                            <script>kendo.bind($('#projectAddress'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.startDateActive"/></label>
+                        <div class="col-xs-7">
+                            <input id="startDateActive" name="startDateActive" type="text" required validationMessage="<@spring.message "hpms.mdm.project.startDateActive"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.startDateActive"
+                                   style="width: 94%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#startDateActive'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-8" >
+                            <span class="k-invalid-msg" data-for="startDateActive"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.endDateActive"/></label>
+                        <div class="col-xs-7">
+                            <input id="endDateActive" name="endDateActive" type="text" required validationMessage="<@spring.message "hpms.mdm.project.endDateActive"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.endDateActive" data-max="9999/12/31"
+                            style="width: 94%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#endDateActive'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-8" >
+                            <span class="k-invalid-msg" data-for="endDateActive"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-right" style="bottom: 20px;position: fixed; right: 85px; float: left; background: #fff;">
+                    <span class="btn btn-success" id="saveGrid" type="submit"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-success" id="closeWin" type="button"><i class="fa fa-times-circle-o" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+                </div>
+
+            </form>
+    </div>
+
+    <script type="text/javascript" >
+
+        $('#page-content').kendoValidator();
+        $("#groupId").kendoComboBox({
+            valuePrimitive: true,
+            dataTextField: "companyFullName",
+            dataValueField: "companyId",
+            dataSource: {
+                transport: {
+                    read:function(options) {
+                        $.ajax({
+                            type   : "POST",
+                            url: "${base.contextPath}/hpms/mdm/project/groupQuery",
+                            data: {},
+                            success: function(json) {
+                                options.success(json.rows);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        $("#companyId").kendoComboBox({
+            autoBind: false,
+            valuePrimitive: true,
+            cascadeFrom: "groupId",
+            cascadeFromField: "companyId",
+            filter: "contains",
+            dataTextField: "companyFullName",
+            dataValueField: "companyId",
+            dataSource: {
+                serverFiltering:true,
+                transport: {
+                    read: {
+                        url:"${base.contextPath}/hpms/mdm/project/companyQuery",
+                        type : "POST"
+                    },
+                    contentType : "application/json",
+                    parameterMap: function(options, type) {
+                        if (type === "read") {
+                            var filter = options.filter.filters[0]
+                            var map = {};
+                            map[filter.field] = filter.value;
+                            return map;
+                        }
+                    }
+                },
+                schema: {
+                    data: 'rows'
+                }
+            },
+            dataBound:function(){
+                if(projectId !=-1 && isedit == 1){
+                    this.readonly(true);
+                    $("input[name='companyId_input']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                    $("input[name='companyId_input']").css("background", "#DDDDDD");
+                    $("input[name='companyId_input']").next().next().unbind();
+                }
+            }
+        }) ;
+
+        $("#closeWin").click(function(){
+            if(isedit == 0){
+                window.parent.$("#newWin").data("kendoWindow").close();
+            }else if(isedit == 1){
+                window.parent.$("#viewWin").data("kendoWindow").close();
+            }else if(isedit == 2){
+                window.parent.$("#editWin").data("kendoWindow").close();
+            }
+        });
+        $("#saveGrid").click(function () {
+            if(viewModel.model.projectCode==''||viewModel.model.projectCode==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.projectCode"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(! /^[A-Z0-9_]+$/.test(viewModel.model.projectCode) ){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.projectCode"/><@spring.message "hpms.mdm.project.codelimit"/>'
+                })
+            }else if(viewModel.model.projectName==''||viewModel.model.projectName==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.projectName"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.groupId==''||viewModel.model.groupId==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.groupName"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.companyId==''||viewModel.model.companyId==null) {
+                kendo.ui.showInfoDialog({
+                    message: '<@spring.message "hpms.mdm.project.companyName"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(! (viewModel.model.contactPhone==''||viewModel.model.contactPhone==null) && ! (/^[0-9]{11}$/.test(viewModel.model.contactPhone)) ) {
+                kendo.ui.showInfoDialog({
+                    message: '<@spring.message "hpms.mdm.project.contactPhone"/><@spring.message "hpms.phonevalidation"/>'
+                })
+            }else if(viewModel.model.startDateActive==''||viewModel.model.startDateActive==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.startDateActive"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.endDateActive==''||viewModel.model.endDateActive==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.endDateActive"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else {
+                if(isedit == 0){
+                    viewModel.model.__status ='add';
+                }else if(isedit == 1){
+                    window.parent.$("#viewWin").data("kendoWindow").close();
+                }else if(isedit == 2){
+                    viewModel.model.__status ='update';
+                }
+                Hap.submitForm({
+                    url: '${base.contextPath}/hpms/mdm/project/submit',
+                    formModel: viewModel.model,
+                    success: function (data) {
+                        window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
+                        if(isedit == 0){
+                            window.parent.$("#newWin").data("kendoWindow").close();
+                        }else if(isedit == 2){
+                            window.parent.$("#editWin").data("kendoWindow").close();
+                        }
+                    }
+                });
+            }
+        });
+        //开始和结束日期校验
+        $(document).ready(function() {
+            function startChange() {
+                var startDate = start.value(),
+                    endDate = end.value();
+
+                if (startDate) {
+                    startDate = new Date(startDate);
+                    startDate.setDate(startDate.getDate());
+                    end.min(startDate);
+                } else if (endDate) {
+                    start.max(new Date(endDate));
+                } else {
+                    endDate = new Date();
+                    start.max(endDate);
+                    end.min(endDate);
+                }
+            }
+
+            function endChange() {
+                var endDate = end.value(),
+                    startDate = start.value();
+
+                if (endDate) {
+                    endDate = new Date(endDate);
+                    endDate.setDate(endDate.getDate());
+                    start.max(endDate);
+                } else if (startDate) {
+                    end.min(new Date(startDate));
+                } else {
+                    endDate = new Date();
+                    start.max(endDate);
+                    end.min(endDate);
+                }
+            }
+
+            var start = $("#startDateActive").kendoDatePicker({
+                change: startChange
+            }).data("kendoDatePicker");
+
+            var end = $("#endDateActive").kendoDatePicker({
+                change: endChange
+            }).data("kendoDatePicker");
+
+            start.max(end.value());
+            end.min(start.value());
+        });
+
+    </script>
+
+</body>
+</html>

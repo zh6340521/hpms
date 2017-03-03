@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.mdm.mapper.PaymentTermMapper">
+	<resultMap type="hpms.mdm.dto.PaymentTerm" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL"/>
+		<result column="PAYMENT_TERM_CODE" property="paymentTermCode" jdbcType="VARCHAR"/>
+		<result column="PAYMENT_TERM_NAME" property="paymentTermName" jdbcType="VARCHAR"/>
+		<result column="DAYS" property="days" jdbcType="DECIMAL"/>
+		<result column="AP_FLAG" property="apFlag" jdbcType="VARCHAR"/>
+		<result column="AP_FLAG_NAME" property="apFlagName" jdbcType="VARCHAR"/>
+		<result column="AR_FLAG" property="arFlag" jdbcType="VARCHAR"/>
+		<result column="AR_FLAG_NAME" property="arFlagName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 查询付款条件 -->
+    <select id="paymentTermQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.PaymentTerm">
+    	SELECT
+    		hmpt.PAYMENT_TERM_ID,
+    		hmpt.PAYMENT_TERM_CODE,
+    		hmpt.PAYMENT_TERM_NAME,
+    		hmpt.DAYS,
+    		hmpt.AP_FLAG,
+    		hmpt.AR_FLAG,
+    		hcvv1.MEANING AP_FLAG_NAME,
+    		hcvv2.MEANING AR_FLAG_NAME
+    	FROM HPMS_MDM_PAYMENT_TERM hmpt
+    	LEFT JOIN HPMS_CODE_VALUE_V hcvv1
+    	ON hmpt.AP_FLAG = hcvv1.VALUE AND hcvv1.CODE = 'SYS.YES_NO' AND hcvv1.LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V hcvv2
+        ON hmpt.AR_FLAG = hcvv2.VALUE AND hcvv2.CODE = 'SYS.YES_NO' AND hcvv2.LANG = #{request.locale, jdbcType = VARCHAR}
+    	WHERE 1 = 1
+        <if test = "paymentTermId != null"> AND hmpt.PAYMENT_TERM_ID = #{paymentTermId , jdbcType=DECIMAL} </if>
+        <if test = "paymentTermCode != null"> AND hmpt.PAYMENT_TERM_CODE like concat('%', concat(#{paymentTermCode,jdbcType=VARCHAR}, '%')) </if>
+    </select>
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.mdm.mapper.DiscountProMapper">
+	<resultMap type="hpms.mdm.dto.DiscountPro" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="DISCOUNT_PRO_ID" property="discountProId" jdbcType="DECIMAL"/>
+		<result column="DISCOUNT_PRO_CODE" property="discountProCode" jdbcType="VARCHAR"/>
+		<result column="DISCOUNT_PRO_NAME" property="discountProName" jdbcType="VARCHAR"/>
+		<result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+		<result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+		<result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
+		<result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR"/>
+		<result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL"/>
+		<result column="FEE_TYPE_NAME" property="feeTypeName" jdbcType="VARCHAR"/>
+		<result column="FEE_ID" property="feeId" jdbcType="DECIMAL"/>
+		<result column="FEE_NAME" property="feeName" jdbcType="VARCHAR"/>
+		<result column="DISCOUNT_TYPE" property="discountType" jdbcType="VARCHAR"/>
+		<result column="DISCOUNT_TYPE_NAME" property="discountTypeName" jdbcType="VARCHAR"/>
+		<result column="AMOUNT" property="amount" jdbcType="DECIMAL"/>
+		<result column="PERCENT" property="percent" jdbcType="DECIMAL"/>
+		<result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG_NAME" property="enableFlagName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 条件查询优惠方案 -->
+    <select id="discountProQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.DiscountPro">
+    	SELECT
+    		hmdp.DISCOUNT_PRO_ID,
+    		hmdp.DISCOUNT_PRO_CODE,
+    		hmdp.DISCOUNT_PRO_NAME,
+    		hmdp.COMPANY_ID,
+    		hmdp.PROJECT_ID,
+    		hmdp.FEE_TYPE_ID,
+    		hmdp.FEE_ID,
+    		hmdp.DISCOUNT_TYPE,
+    		hmdp.AMOUNT,
+    		hmdp.PERCENT,
+    		hmdp.DESCRIPTION,
+    		hmdp.ENABLE_FLAG,
+    		fcl.COMPANY_FULL_NAME COMPANY_NAME,
+    		hmp.PROJECT_NAME,
+    		hmft.FEE_TYPE_NAME,
+	        hmf.FEE_NAME,
+	        hcvv1.MEANING DISCOUNT_TYPE_NAME,
+	        hcvv2.MEANING ENABLE_FLAG_NAME
+    	FROM HPMS_MDM_DISCOUNT_PRO hmdp
+    	LEFT JOIN FND_COMPANY_B fc
+      	ON hmdp.COMPANY_ID = fc.COMPANY_ID
+      	LEFT JOIN FND_COMPANY_TL fcl
+        ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN HPMS_MDM_PROJECT hmp
+        ON hmdp.PROJECT_ID = hmp.PROJECT_ID
+        LEFT JOIN HPMS_MDM_FEE_TYPE hmft
+      	ON hmdp.FEE_TYPE_ID = hmft.FEE_TYPE_ID
+      	LEFT JOIN HPMS_MDM_FEE hmf
+        ON hmdp.FEE_ID = hmf.FEE_ID
+        LEFT JOIN HPMS_CODE_VALUE_V hcvv1
+    	ON hmdp.DISCOUNT_TYPE = hcvv1.VALUE AND hcvv1.CODE = 'HPMS_DISCOUNT_TYPE' AND hcvv1.LANG = #{request.locale, jdbcType = VARCHAR}
+    	LEFT JOIN HPMS_CODE_VALUE_V hcvv2
+    	ON hmdp.ENABLE_FLAG = hcvv2.VALUE AND hcvv2.CODE = 'MDM.ENABLE_FLAG' AND hcvv2.LANG = #{request.locale, jdbcType = VARCHAR}
+        WHERE 1 = 1
+        <if test = "discountProId != null"> AND hmdp.DISCOUNT_PRO_ID = #{discountProId , jdbcType=DECIMAL} </if>
+        <if test = "discountProCode != null"> AND hmdp.DISCOUNT_PRO_CODE like concat('%', concat(#{discountProCode,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "discountProName != null"> AND hmdp.DISCOUNT_PRO_NAME like concat('%', concat(#{discountProName,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "companyId != null"> AND hmdp.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
+        <if test = "projectId != null"> AND hmdp.PROJECT_ID = #{projectId , jdbcType=DECIMAL} </if>
+        <if test = "enableFlag != null"> AND hmdp.ENABLE_FLAG = #{enableFlag , jdbcType=VARCHAR} </if>
+    </select>
+</mapper>

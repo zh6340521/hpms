@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.bs.mapper.DataModelMapper">
+    <resultMap id="BaseResultMap" type="hpms.bs.dto.DataModel" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="model_id" property="modelId" jdbcType="DECIMAL" />
+        <result column="model_code" property="modelCode" jdbcType="VARCHAR" />
+        <result column="model_name" property="modelName" jdbcType="VARCHAR" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--查询数据库中数据表名-->
+    <select id="countTableName" parameterType="hpms.bs.dto.DataModel" resultMap="BaseResultMap">
+         SELECT dm.model_id,
+          dm.model_code,
+          dm.table_name
+         FROM hpms_data_model dm
+         <where>
+             1=1
+             <if test="modelId!=null">
+                 and dm.model_id !=#{modelId,jdbcType=DECIMAL}
+             </if>
+
+             <if test="tableName!=null">
+                 AND dm.table_name =#{tableName,jdbcType=VARCHAR}
+             </if>
+         </where>
+
+
+    </select>
+
+    <!--查询数据库中的编码-->
+    <select id="countModelCode" parameterType="hpms.bs.dto.DataModel" resultMap="BaseResultMap">
+        SELECT dm.model_id,
+        dm.model_code,
+        dm.table_name
+        FROM hpms_data_model dm
+        <where>
+            1=1
+            <if test="modelId!=null">
+                and dm.model_id !=#{modelId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="modelCode!=null">
+                AND dm.model_code =#{modelCode,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+
+    </select>
+
+    <!--查询数据模型-->
+    <select id="findDataModel" parameterType="hpms.bs.dto.DataModel" resultMap="BaseResultMap">
+         SELECT dm.model_id,
+        dm.model_code,
+        dm.model_name,
+        dm.table_name,
+        dm.object_version_number
+   FROM hpms_data_model dm
+    <where>
+        1=1
+        <if test="modelCode!=null">
+          and dm.model_code like concat('%',concat(#{modelCode,jdbcType=VARCHAR},'%'))
+        </if>
+
+        <if test="modelName!=null">
+          and dm.model_name like concat('%',concat(#{modelName,jdbcType=VARCHAR},'%'))
+        </if>
+
+        <if test="tableName!=null">
+            and dm.table_name like concat('%',concat(#{tableName,jdbcType=VARCHAR},'%'))
+        </if>
+    </where>
+    </select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.VersionStructureMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.VersionStructure" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="STRUCTURE_ID" property="structureId" jdbcType="DECIMAL" />
+        <result column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="STRUCTURE_NUMBER" property="structureNumber" jdbcType="VARCHAR" />
+        <result column="STRUCTURE_NAME" property="structureName" jdbcType="VARCHAR" />
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
+        <result column="BUSINESS_FORMAT" property="businessFormat" jdbcType="VARCHAR" />
+        <result column="STRUCTURE_DESCRIPTION" property="structureDescription" jdbcType="VARCHAR" />
+        <result column="PARENT_STRUCTURE_ID" property="parentStructureId" jdbcType="DECIMAL" />
+
+        <result column="parent_structure_name" property="parentStructureName" jdbcType="VARCHAR" />
+        <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+
+    <!--根据版本id查询结果数据-->
+    <select id="findVersionStructureByVersionId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+          SELECT vs.structure_id,
+           vs.version_id,
+           vs.structure_number,
+           vs.structure_name,
+           vs.property_id,
+           vs.business_format,
+           vs.parent_structure_id
+      FROM hpms_mdm_version_structure vs
+          <where>
+              1=1
+              and vs.version_id=#{versionId,jdbcType=DECIMAL}
+
+              <if test="structureNumber!=null">
+                  and vs.STRUCTURE_NUMBER=#{structureNumber,jdbcType=VARCHAR}
+              </if>
+
+              <if test="structureName!=null">
+                  and vs.STRUCTURE_NAME=#{structureName,jdbcType=VARCHAR}
+              </if>
+
+          </where>
+    </select>
+
+    <!--查询所有版本结构数据-树形查询-->
+    <select id="queryVersionStructure" parameterType="hpms.mdm.dto.VersionStructure" resultMap="BaseResultMap">
+      SELECT
+       vs.structure_id,
+       vs.version_id,
+       vs.structure_number,
+       vs.structure_name,
+       vs.property_id,
+       vs.business_format,
+       vs.parent_structure_id,
+       hmp.property_name,
+       vs.object_version_number,
+  (
+    SELECT
+       vs.structure_name
+    FROM
+      hpms_mdm_version_structure vs1
+    WHERE
+      vs1.structure_id = vs.parent_structure_id
+  )as parent_structure_name
+FROM
+  hpms_mdm_version_structure vs
+  left join hpms_mdm_property hmp
+  on vs.property_id = hmp.property_id
+        <where>
+            1=1
+            <if test="versionId!=null">
+                and vs.version_id=#{versionId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="structureNumber!=null">
+                and vs.STRUCTURE_NUMBER=#{structureNumber,jdbcType=VARCHAR}
+            </if>
+
+            <if test="structureName!=null">
+                and vs.STRUCTURE_NAME=#{structureName,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+    </select>
+</mapper>

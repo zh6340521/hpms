@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.BuildingVersionMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.BuildingVersion" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="VERSION_NUMBER" property="versionNumber" jdbcType="VARCHAR" />
+        <result column="VERSION_NAME" property="versionName" jdbcType="VARCHAR" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="VERSION_DESCRIPTION" property="versionDescription" jdbcType="VARCHAR"/>
+        <result column="DEFAULT_VERSION" property="defaultVersion" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+
+        <result column="company_full_name" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--查询建筑版本中默认版本信息-->
+    <select id="findDefaultVersion" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.BuildingVersion">
+        SELECT bv.version_id,
+               bv.default_version,
+               bv.company_id,
+               bv.project_id
+          FROM hpms_mdm_building_version bv
+
+          <where>
+              1=1
+              <if test="defaultVersion!=null">
+                  and bv.default_version = #{defaultVersion,jdbcType=VARCHAR}
+              </if>
+
+              <if test="versionId!=null">
+                  and bv.version_id != #{versionId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="companyId!=null">
+                  and bv.company_id = #{companyId,jdbcType=DECIMAL}
+              </if>
+
+              <if test="projectId!=null">
+                  and bv.project_id = #{projectId,jdbcType=DECIMAL}
+              </if>
+          </where>
+
+    </select>
+
+    <!--查询建筑版本数据-->
+    <select id="selectBuildingVersion" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.BuildingVersion">
+      SELECT   bv.version_id,
+               bv.version_number,
+               fc.company_full_name,
+               mp.project_name,
+               bv.version_name,
+               bv.version_description,
+               bv.default_version,
+               bv.company_id,
+               bv.project_id,
+               bv.object_version_number
+          FROM hpms_mdm_building_version bv,
+               fnd_company_tl            fc,
+               hpms_mdm_project         mp
+
+           <where>
+               1=1
+               <if test="companyId!=null">
+                   and bv.company_id=#{companyId,jdbcType=DECIMAL}
+               </if>
+
+               <if test="projectId!=null">
+                   and bv.project_id=#{projectId,jdbcType=DECIMAL}
+               </if>
+
+               <if test="versionId!=null">
+                   and bv.version_id=#{versionId,jdbcType=DECIMAL}
+               </if>
+
+               and bv.company_id = fc.company_id
+               and bv.project_id = mp.project_id
+               and fc.lang=#{request.locale,jdbcType=VARCHAR}
+           </where>
+    </select>
+
+
+ </mapper>

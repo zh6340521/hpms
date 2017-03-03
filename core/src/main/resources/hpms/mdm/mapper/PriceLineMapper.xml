@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.mdm.mapper.PriceLineMapper">
+	<resultMap type="hpms.mdm.dto.PriceLine" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="PRICE_LINE_ID" property="priceLineId" jdbcType="DECIMAL"/>
+		<result column="PRICE_HEADER_ID" property="priceHeaderId" jdbcType="DECIMAL"/>
+		<result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL"/>
+		<result column="FEE_TYPE_NAME" property="feeTypeName" jdbcType="VARCHAR"/>
+		<result column="FEE_ID" property="feeId" jdbcType="DECIMAL"/>
+		<result column="FEE_NAME" property="feeName" jdbcType="VARCHAR"/>
+		<result column="UNIT_PRICE" property="unitPrice" jdbcType="DECIMAL"/>
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR"/>
+        <result column="CURRENCY_NAME" property="currencyName" jdbcType="VARCHAR"/>
+        <result column="BILLING_METHOD" property="billingMethod" jdbcType="VARCHAR"/>
+        <result column="BILLING_METHOD_NAME" property="billingMethodName" jdbcType="VARCHAR"/>
+        <result column="CALCULATE_RULE_ID" property="calculateRuleId" jdbcType="DECIMAL"/>
+        <result column="RULE_NAME" property="ruleName" jdbcType="VARCHAR"/>
+        <result column="FEE_UOM" property="feeUom" jdbcType="VARCHAR"/>
+        <result column="FEE_UOM_NAME" property="feeUomName" jdbcType="VARCHAR"/>
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE"/>
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 条件查询定价表行 -->
+    <select id="priceLineQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.PriceLine">
+    	SELECT
+    		hmpl.PRICE_LINE_ID,
+    		hmpl.PRICE_HEADER_ID,
+    		hmpl.FEE_TYPE_ID,
+    		hmpl.FEE_ID,
+    		hmpl.UNIT_PRICE,
+    		hmpl.CURRENCY,
+    		hmpl.BILLING_METHOD,
+    		hmpl.CALCULATE_RULE_ID,
+    		hmpl.FEE_UOM,
+    		hmpl.START_DATE_ACTIVE,
+    		hmpl.END_DATE_ACTIVE,
+    		hmpl.ENABLE_FLAG,
+    		hmft.FEE_TYPE_NAME,
+	        hmf.FEE_NAME,
+	        hmcr.RULE_NAME,
+	        scvt1.MEANING CURRENCY_NAME,
+	        scvt2.MEANING BILLING_METHOD_NAME,
+	        scvt3.MEANING FEE_UOM_NAME
+    	FROM HPMS_MDM_PRICE_LINE hmpl
+    	LEFT JOIN HPMS_MDM_FEE_TYPE hmft
+      	ON hmpl.FEE_TYPE_ID = hmft.FEE_TYPE_ID
+      	LEFT JOIN HPMS_MDM_FEE hmf
+        ON hmpl.FEE_ID = hmf.FEE_ID
+        LEFT JOIN HPMS_MDM_CALCULATE_RULE hmcr
+        ON hmpl.CALCULATE_RULE_ID = hmcr.CALCULATE_RULE_ID
+        LEFT JOIN SYS_CODE_B scb1
+    	ON scb1.CODE = 'HPMS_MDM_PAYMENT_CURRENCY'
+        LEFT JOIN SYS_CODE_VALUE_B scvb1
+        ON hmpl.CURRENCY = scvb1.VALUE AND scb1.CODE_ID = scvb1.CODE_ID
+        LEFT JOIN SYS_CODE_VALUE_TL scvt1
+        ON (scvb1.CODE_VALUE_ID = scvt1.CODE_VALUE_ID AND scvt1.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN SYS_CODE_B scb2
+    	ON scb2.CODE = 'HPMS_BILL_METHOD'
+        LEFT JOIN SYS_CODE_VALUE_B scvb2
+        ON hmpl.BILLING_METHOD = scvb2.VALUE AND scb2.CODE_ID = scvb2.CODE_ID
+        LEFT JOIN SYS_CODE_VALUE_TL scvt2
+        ON (scvb2.CODE_VALUE_ID = scvt2.CODE_VALUE_ID AND scvt2.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN SYS_CODE_B scb3
+    	ON scb3.CODE = 'HPMS_UOM'
+        LEFT JOIN SYS_CODE_VALUE_B scvb3
+        ON hmpl.FEE_UOM = scvb3.VALUE AND scb3.CODE_ID = scvb3.CODE_ID
+        LEFT JOIN SYS_CODE_VALUE_TL scvt3
+        ON (scvb3.CODE_VALUE_ID = scvt3.CODE_VALUE_ID AND scvt3.LANG = #{request.locale, jdbcType = VARCHAR})
+        WHERE 1 = 1
+        <if test = "priceLineId != null"> AND hmpl.PRICE_HEADER_ID = #{priceLineId , jdbcType=DECIMAL} </if>
+        <if test = "priceHeaderId != null"> AND hmpl.PRICE_HEADER_ID = #{priceHeaderId , jdbcType=DECIMAL} </if>
+        <if test = "feeTypeId != null"> AND hmpl.FEE_TYPE_ID = #{feeTypeId , jdbcType=DECIMAL} </if>
+        <if test = "feeId != null"> AND hmpl.FEE_ID = #{feeId , jdbcType=DECIMAL} </if>
+        <if test = "billingMethod != null"> AND hmpl.BILLING_METHOD = #{billingMethod , jdbcType=VARCHAR} </if>
+    </select>
+</mapper>
