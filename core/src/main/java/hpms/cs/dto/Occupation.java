@@ -1,5 +1,6 @@
 package hpms.cs.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.GeneratedValue;
@@ -7,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author feng.liu01@hand-china.com 2017/03/01
@@ -73,21 +75,25 @@ public class Occupation extends BaseDTO {
     /**
      *服务开始日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date serviceDateFrom;
 
     /**
      *服务截止日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date serviceDateTo;
 
     /**
      *入伙日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date transferDate;
 
     /**
      *计费开始时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date feeDate;
 
     /**
@@ -98,6 +104,7 @@ public class Occupation extends BaseDTO {
     /**
      *退伙日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date moveoutDate;
 
     /**
@@ -108,6 +115,7 @@ public class Occupation extends BaseDTO {
     /**
      *计费结束日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date feeDateTo;
 
     /**
@@ -141,6 +149,9 @@ public class Occupation extends BaseDTO {
      */
     @Transient
     private String projectName;
+
+    @Transient
+    private List<OccProcedure> occProcedures;
 
     public void setOccupationId(Long occupationId) {
         this.occupationId = occupationId;
@@ -332,5 +343,13 @@ public class Occupation extends BaseDTO {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public List<OccProcedure> getOccProcedures() {
+        return occProcedures;
+    }
+
+    public void setOccProcedures(List<OccProcedure> occProcedures) {
+        this.occProcedures = occProcedures;
     }
 }

@@ -1,5 +1,5 @@
 <#--
-        * description: 入退伙首页
+        * description: 入退伙记录历史查看
         * version: 1.0
         * author: feng.liu01@hand-china.com
         * #{copyright}#
@@ -20,8 +20,12 @@
 </style>
 
 <script type="text/javascript">
+
     var viewModel = kendo.observable({
-        model: {},
+        model: {
+            sortname:"occupationId",
+            sortorder:"desc"
+        },
         createFunction: function () {
             $('#Grid').data('kendoGrid').addRow();
         },
@@ -34,70 +38,39 @@
     });
 
 
-    function occupation() {
-        var selected = $("#Grid").data("kendoGrid").selectedDataItems();
-        if (selected.length!=1){
-            kendo.ui.showInfoDialog({
-                title:$l('hap.tip.info'),
-                message:"<@spring.message 'hpms.mdm.occupation.onlyone'/>"
-            });
-            return;
-        }
-        if (selected[0].status!="OUT"){
-            kendo.ui.showInfoDialog({
-                title:$l('hap.tip.info'),
-                message:"<@spring.message 'hpms.mdm.occupation.selectout'/>"
-            });
-            return;
-        }
-        window.top.openTab(
-            "occupation_occu","<@spring.message 'hpms.mdm.occupation.in'/>",
-            "cs/occupation_occu.html?propertyId="+selected[0].propertyId);
-    }
-
     function look() {
+
         var selected = $("#Grid").data("kendoGrid").selectedDataItems();
         if (selected.length!=1){
             kendo.ui.showInfoDialog({
                 title:$l('hap.tip.info'),
-                message:"<@spring.message 'hpms.mdm.occupation.onlyone'/>"
+                message:'<@spring.message "hpms.mdm.occupation.onlyone"/>'
             });
             return;
         }
-        window.top.openTab(
-            "occupation_look","<@spring.message 'hpms.mdm.occupation.look'/>",
-            "cs/occupation_look.html?propertyId="+selected[0].propertyId);
-    }
 
-    function lookHistory() {
-        window.top.openTab(
-            "occupation_history","<@spring.message 'hpms.mdm.occupation.history'/>",
-            "cs/occupation_history.html");
-    }
-
-    function moveout() {
-        var selected = $("#Grid").data("kendoGrid").selectedDataItems();
-        if (selected.length!=1){
-            kendo.ui.showInfoDialog({
-                title:$l('hap.tip.info'),
-                message:"<@spring.message 'hpms.mdm.occupation.onlyone'/>"
-            });
-            return;
-        }
-        if (selected[0].status!="IN"){
-            kendo.ui.showInfoDialog({
-                title:$l('hap.tip.info'),
-                message:"<@spring.message 'hpms.mdm.occupation.selectin'/>"
-            });
-            return;
-        }
-        window.top.openTab(
-            "occupation_out","<@spring.message 'hpms.mdm.occupation.out'/>",
-            "cs/occupation_out.html?propertyId="+selected[0].propertyId);
+        $("#lookWindow").kendoWindow({
+            actions: ["Close"],
+            title: '<@spring.message "hpms.mdm.occupation.detail"/>',
+            draggable: true,
+            height: "550px",
+            width: "800px",
+            close: function(){
+                $("#lookWindow").empty();
+            },
+            content: "${base.contextPath}/cs/occupation_detail.html?occupationId="+selected[0].occupationId+"&projectId="+selected[0].projectId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#lookWindow").data("kendoWindow");
+        win.center().open();
     }
 
 </script>
 <body>
+
+<div id="lookWindow" style="display: none"></div>
+
 <div id="page-content">
     <div class="panel" style="padding: 0px;border:none;box-shadow: none;width: 80%;">
         <div class="form-horizontal" id="query-form">
@@ -105,7 +78,7 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.company"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "公司"/>：</label>
                             <div class="col-sm-8">
                                 <input id="companyId" type="text" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.companyId">
@@ -114,7 +87,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.project"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "项目"/>：</label>
                             <div class="col-sm-8">
                                 <input id="projectId" type="text" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.projectId">
@@ -123,7 +96,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customercode"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "业主编码"/>：</label>
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.customerCode" class="k-textbox">
@@ -135,7 +108,7 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.status"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "房屋状态"/>：</label>
                             <div class="col-sm-8">
                                 <input id="statusId" type="text" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.status">
@@ -144,7 +117,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertynumber"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "房屋编码"/>：</label>
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.propertyNumber" class="k-textbox">
@@ -158,29 +131,11 @@
         </div>
     </div>
 
-    <div class="pull-left" id="toolbar-btn" style="margin-bottom: 10px;">
+    <div class="pull-left" id="toolbar-btn" style="margin-bottom: 10px">
         <span class="btn btn-primary k-grid-add"
               style="float: left; margin-right: 5px;" onclick="look()">
             <i class="fa fa-plus-square" style="margin-right:3px;"></i>
             <@spring.message "hap.view"/>
-        </span>
-
-        <span class="btn btn-primary k-grid-add"
-              style="float: left; margin-right: 5px;" onclick="occupation()">
-            <i class="fa fa-pencil-square-o" style="margin-right:3px;"></i>
-            <@spring.message "hpms.mdm.occupation.in"/>
-        </span>
-
-        <span class="btn btn-primary k-grid-add"
-              style="float: left; margin-right: 5px;" onclick="moveout()">
-            <i class="fa fa-search" style="margin-right:3px;"></i>
-            <@spring.message "hpms.mdm.occupation.out"/>
-        </span>
-
-        <span class="btn btn-primary k-grid-add"
-              style="float: left; margin-right: 5px;" onclick="lookHistory()">
-            <i class="fa fa-search" style="margin-right:3px;"></i>
-            <@spring.message "hpms.mdm.occupation.lookhistory"/>
         </span>
 
         <span class="btn btn-primary k-grid-save-changes"
@@ -189,12 +144,10 @@
             <@spring.message "hap.query"/>
         </span>
 
-
     </div>
 
-
-    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <script>kendo.bind($('#query-form'), viewModel);</script>
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div style="clear:both">
         <div id="Grid"></div>
     </div>
@@ -282,18 +235,11 @@
     });
 
 
-    $('#query-form input').keydown(function (e) {
-        if (e.keyCode == 13) {
-            e.target.blur();
-            viewModel.queryResource(e);
-        }
-    });
-
     var BaseUrl = "${base.contextPath}/cs/occupation";
     dataSource = new kendo.data.DataSource({
         transport: {
             read: {
-                url: BaseUrl + "/queryProperty",
+                url: BaseUrl + "/query",
                 type: "POST",
                 dataType: "json"
             },
@@ -315,7 +261,8 @@
             model: {
                 id: "occupationId",
                 fields: {
-
+                    transferDate:{type:"date"},
+                    moveoutDate:{type:"date"}
                 }
             }
         }
@@ -336,60 +283,62 @@
         editable: false,
         columns: [
             {
-                field: "companyName",
-                title: '<@spring.message "hpms.mdm.occupation.company"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "projectName",
-                title: '<@spring.message "hpms.mdm.occupation.company"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "propertyNumber",
-                title: '<@spring.message "hpms.mdm.occupation.propertynumber"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "propertyName",
-                title: '<@spring.message "hpms.mdm.occupation.propertyname"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
                 field: "customerCode",
                 title: '<@spring.message "hpms.mdm.occupation.customercode"/>',
                 attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-                    var v = dataItem.status;
-                    if (v=="OUT")
-                        return "";
-                    else if (v=="IN")
-                        return dataItem.customerCode;
-                }
+                width: 100
             },
             {
                 field: "customerName",
                 title: '<@spring.message "hpms.mdm.occupation.customername"/>',
                 attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-                    var v = dataItem.status;
-                    if (v=="OUT")
-                        return "";
-                    else if (v=="IN")
-                        return dataItem.customerName;
-                }
+                width: 80
             },
+
+            {
+                field: "propertyNumber",
+                title: '<@spring.message "hpms.mdm.occupation.propertynumber"/>',
+                attributes: {style: "text-align:center"},
+                width: 100
+            },
+            {
+                field: "propertyName",
+                title: '<@spring.message "hpms.mdm.occupation.propertyname"/>',
+                attributes: {style: "text-align:center"},
+                width: 100
+            },
+            {
+                field: "transferDate",
+                title: '<@spring.message "hpms.mdm.occupation.transferdate"/>',
+                attributes: {style: "text-align:center"},
+                width: 80,
+                format:"{0:yyyy/MM/dd}"
+            },
+            {
+                field: "inTransactor",
+                title: '<@spring.message "hpms.mdm.occupation.intransactor"/>',
+                attributes: {style: "text-align:center"},
+                width: 80
+            },
+            {
+                field: "moveoutDate",
+                title: '<@spring.message "hpms.mdm.occupation.moveoutdate"/>',
+                attributes: {style: "text-align:center"},
+                width: 80,
+                format:"{0:yyyy/MM/dd}"
+            },
+            {
+                field: "outTransactor",
+                title: '<@spring.message "hpms.mdm.occupation.outtransactor"/>',
+                attributes: {style: "text-align:center"},
+                width: 80
+            },
+
             {
                 field: "status",
                 title: '<@spring.message "hpms.mdm.occupation.status"/>',
                 attributes: {style: "text-align:center"},
-                width: 120,
+                width: 60,
                 template:function (dataItem) {
                     var v = dataItem.status;
                     $.each(houseStatusData,function(i,n){
