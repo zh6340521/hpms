@@ -16,6 +16,7 @@
              var configValueId = '${RequestParameters.configValueId!0}';
              var companyId = '${RequestParameters.companyId!0}';
              var modelId = '${RequestParameters.modelId!0}';
+             var configId = '${RequestParameters.configId!0}';
 
 
              var viewModel = kendo.observable({
@@ -28,7 +29,8 @@
 
              //根据前界面传入的version进行查询
              $.ajax({
-                 url:'${base.contextPath}/bs/configvalue/query?configValueId='+configValueId,
+                 //url:'${base.contextPath}/bs/configvalue/query?configValueId='+configValueId+'&configId='+configId,
+                 url:'${base.contextPath}/bs/configvalue/queryByCache?configValueId='+configValueId+'&configId='+configId,
 
                  //将查询出的json数据set到viewmodel的model中
                  success: function (args) {

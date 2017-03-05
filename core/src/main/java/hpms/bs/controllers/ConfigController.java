@@ -88,4 +88,13 @@ public class ConfigController extends BaseController {
         configService.batchDelete(cf);
         return new ResponseData();
     }
+
+    @RequestMapping(value = "/bs/config/queryByCache")
+    @ResponseBody
+    public ResponseData queryByCache(Long configId,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        String cId = Long.toString(configId);
+        List<Config> dmList = configService.queryConfigCache(requestContext,cId);
+        return new ResponseData(dmList);
+    }
 }

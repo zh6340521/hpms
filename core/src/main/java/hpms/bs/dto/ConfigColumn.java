@@ -93,6 +93,10 @@ public class ConfigColumn extends BaseDTO {
     @Column
     private String columnStyle;
 
+
+
+
+
     public Long getConfigColumnId() {
         return configColumnId;
     }

@@ -100,10 +100,6 @@ public class DataModelController extends BaseController {
         IRequest requestContext = createRequestContext(request);
         String mId = Long.toString(modelId);
         List<DataModel> dmList = dataModelService.findDataModelbyModelId(requestContext,mId);
-       /* for(DataModel dm:dmList){
-            List<DataModelCol> dmcList = dm.getDataModelCol();
-            logger.info("1111*********************"+dmcList);
-        }*/
         return new ResponseData(dmList);
     }
 }

@@ -34,6 +34,14 @@ public interface IConfigService extends IBaseService<Config>,ProxySelf<IConfigSe
      */
     public void myBatchUpdate(IRequest requestCtx, List<Config> bvs) throws ValidationTableException;
 
+    /**
+     * 根据主键从缓存中查找数据
+     * @param requestCtx
+     * @param configId
+     * @return
+     */
+    public List<Config> queryConfigCache(IRequest requestCtx,String configId);
+
 
 
 }

@@ -7,8 +7,11 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.IBaseService;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.bs.dto.Config;
+import hpms.bs.dto.ConfigColumn;
+import hpms.bs.dto.ConfigValue;
 import hpms.bs.mapper.ConfigMapper;
 import hpms.bs.service.IConfigService;
+import hpms.cache.ConfigCache;
 import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +39,9 @@ public class ConfigServiceImpl extends BaseServiceImpl<Config> implements IConfi
 
     @Autowired
     private ConfigMapper configMapper;
+
+    @Autowired
+    private ConfigCache configCache;
 
     @Override
     public List<Config> selectAllConfig(IRequest requestContext, Config c,int page,int pageSize) {
@@ -80,8 +87,28 @@ public class ConfigServiceImpl extends BaseServiceImpl<Config> implements IConfi
             }
 
         }
+
+        logger.info("将数据同步到redis");
+        submitConfigDataRedis(cfs,requestCtx);
+
     }
 
+    @Override
+    public List<Config> queryConfigCache(IRequest requestCtx, String configId) {
+        List<Config> cList = new ArrayList<>();
+        Config config= configCache.getValue(configId);
+
+        cList.add(config);
+        return cList;
+    }
+
+    public void submitConfigDataRedis(List<Config> cfs,IRequest iRequest){
+        ConfigValue cv = new ConfigValue();
+        ConfigColumn cc = new ConfigColumn();
+        for(Config c:cfs){
+            configCache.updateConfigData(c,cv,cc);
+        }
+    }
 
     //根据公司id+配置编码确定唯一性
     public int uniqueconfigNumber(List<Config> clist,Long configId,Config c){

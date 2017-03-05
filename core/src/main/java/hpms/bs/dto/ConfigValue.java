@@ -2,12 +2,11 @@ package hpms.bs.dto;/**
  * Created by user1 on 2017/3/1.
  */
 
+import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -65,6 +64,18 @@ public class ConfigValue extends BaseDTO {
      */
     @Column
     private String enableFlag;
+
+    @Transient
+    @Children
+    private List<ConfigColumn> configColumnList;
+
+    public List<ConfigColumn> getConfigColumnList() {
+        return configColumnList;
+    }
+
+    public void setConfigColumnList(List<ConfigColumn> configColumnList) {
+        this.configColumnList = configColumnList;
+    }
 
     public Long getConfigValueId() {
         return configValueId;

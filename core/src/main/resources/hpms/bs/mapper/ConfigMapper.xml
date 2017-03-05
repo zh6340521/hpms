@@ -61,7 +61,7 @@
 
        and hc.company_id = ct.company_id
        and dm.model_id = hc.model_id
-       and ct.lang = #{request.locale,jdbcType=VARCHAR}
+       and ct.lang = 'zh_CN'
    </where>
 
     </select>

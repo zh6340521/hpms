@@ -2,9 +2,11 @@ package hpms.bs.dto;/**
  * Created by user1 on 2017/3/1.
  */
 
+import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -81,6 +83,18 @@ public class Config extends BaseDTO {
     private String companyFullName;//公司名称
     @Transient
     private String modelName;//模型名称
+
+    @Transient
+    @Children
+    private List<ConfigValue> configValueList;
+
+    public List<ConfigValue> getConfigValueList() {
+        return configValueList;
+    }
+
+    public void setConfigValueList(List<ConfigValue> configValueList) {
+        this.configValueList = configValueList;
+    }
 
     public String getModelName() {
         return modelName;
