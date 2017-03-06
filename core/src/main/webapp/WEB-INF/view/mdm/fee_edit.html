@@ -100,6 +100,7 @@
                for (var k in a0) {
                    newViewModel.model.set(k, a0[k]);
                }
+              // $("input[name='itemFlag']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
            }
        });
 
@@ -128,8 +129,8 @@
     	   $("#overdueRate").attr("disabled",true);
     	   $("#chargeDays").attr("disabled",true);
     	   $("#chargeDays").css("color", "#ababab");
-    	   //$("#itemFlag").attr("disabled",true);
-    	   $("#itemFlag").data("kendoCheckbox").enable(false);
+    	   $("#itemFlag").attr("disabled",true);
+
     	   $("#description").attr("disabled",true);
     	   $("#description").css("background", "rgb(255, 255, 255)");
 

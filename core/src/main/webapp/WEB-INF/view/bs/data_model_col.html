@@ -23,7 +23,7 @@
             //根据前界面传入的version进行查询
             $.ajax({
                 //url:'${base.contextPath}/bs/DataModel/query?modelId='+modelId,
-                url:'${base.contextPath}/bs/DataModel/queryByModelId?modelId='+modelId,
+                url:'${base.contextPath}/bs/DataModel/queryByCache?modelId='+modelId,
 
                 //将查询出的json数据set到viewmodel的model中
                 success: function (args) {
@@ -51,7 +51,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <div class="form-group required-input">
-                                        <label class="col-sm-4 control-label">编码</label>
+                                        <!--<label class="col-sm-4 control-label">编码</label>-->
+                                        <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.feetype.feetypecode"/></label>
                                         <div class="col-sm-8">
                                             <input name="modelCode" id="modelCode" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.modelCode"
                                                    class="k-textbox" required>
@@ -65,7 +66,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <div class="form-group required-input">
-                                        <label class="col-sm-4 control-label">模型名称</label>
+                                        <!--<label class="col-sm-4 control-label">模型名称</label>-->
+                                        <label class="col-sm-4 control-label"><@spring.message "hpms.bs.model_name"/></label>
                                         <div class="col-sm-8">
                                             <input name="modelName" id="modelName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.modelName"
                                                    class="k-textbox" required>
@@ -79,7 +81,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <div class="form-group required-input">
-                                        <label class="col-sm-4 control-label">数据表名</label>
+                                       <!-- <label class="col-sm-4 control-label">数据表名</label>-->
+                                        <label class="col-sm-4 control-label"><@spring.message "hpms.bs.tablename"/></label>
                                         <div class="col-sm-8">
                                             <input name="tableName" id="tableName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.tableName"
                                                    class="k-textbox" required>
@@ -129,6 +132,7 @@
                         read:  {
                             //将头表id传入后台
                             url: crudServiceBaseUrl + "/query?modelId=${RequestParameters.modelId!0}",
+
                             type : "POST",
                             dataType: "json"
                         },
@@ -204,11 +208,13 @@
 
                     command	: [{
                         name : "edit",
-                        text :'编辑'
+                        //text :'编辑'
+                        text :'<@spring.message "hap.edit"/>'
 
                     }],
                     attributes: {style: "text-align:center"},
-                    title		: "操作",
+                   // title		: "操作",
+                    title:'<@spring.message "hap.action"/>',
                     width		: "8%" ,
                     headerAttributes: {
                         style: "text-align: center"
@@ -217,7 +223,8 @@
                 },
                 {
                     field: "columnName",
-                    title: '字段名',
+                   // title: '字段名',
+                    title:'<@spring.message "lovitem.name"/>',
                     attributes: {style: "text-align:center"},
                     width: '18%',
                     editor: function(container, options) {
@@ -259,7 +266,8 @@
                 {
                     field: "columnType",
                     attributes: {style: "text-align:center"},
-                    title: '字段类型',
+                   // title: '字段类型',
+                    title:'<@spring.message "lovitem.field_type"/>',
                     width: 80,
                     editor: function(container, options){
                         var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
@@ -269,7 +277,8 @@
                 },
                 {
                     field: "columnLength",
-                    title: '长度',
+                   // title: '长度',
+                    title:'<@spring.message "hpms.bs.column_length"/>',
                     width: 80 ,
                     attributes: {style: "text-align:center"},
                     editor: function(container, options){
@@ -281,7 +290,8 @@
                 {
                     field: "columnNameAlias",
                     //name:"meaning",
-                    title: '别名',
+                    //title: '别名',
+                    title:'<@spring.message "hpms.bs.column_alias"/>',
                     width: '20%' ,
                     attributes: {style: "text-align:center"},
                     editor: function (container, options) {

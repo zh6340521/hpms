@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.SalesFinacialMapper">
+    <resultMap type="hpms.mdm.dto.SalesFinacial" id="BaseResultMap"
+		extends="com.hand.hap.mapper.StdMapper.STD">
+		<id column="SALES_FINACIAL_ID" property="salesFinacialId" jdbcType="DECIMAL" />
+		<result column="CUST_ID" property="custId" jdbcType="DECIMAL" />
+		<result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+		<result column="CREDIT_LINE" property="creditLine" jdbcType="DECIMAL"/>
+		<result column="DEPT_LEVEL" property="deptLevel" jdbcType="VARCHAR" />
+		<result column="RECEIVABLE_ACCOUNT" property="receivableAccount" jdbcType="VARCHAR" />
+		<result column="TAX_ACCOUNT" property="taxAccount" jdbcType="DATE" />
+		<result column="TAX_CODE" property="taxCode" jdbcType="VARCHAR" />
+		<result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+		<result column="PAYMENT_METHOD_ID" property="paymentMethodId" jdbcType="DECIMAL" />
+		<result column="BANK_ACCOUNT_ID" property="bankAccountId" jdbcType="DECIMAL"/>
+		<result column="PAYMENT_CURRENCY" property="paymentCurrency" jdbcType="VARCHAR" />
+		<result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE" />
+		<result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+		<result column="MEANING1" property="meaning1" jdbcType="VARCHAR" />
+		<result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR" />
+		<result column="PAYMENT_METHOD_NAME" property="paymentMethodName" jdbcType="VARCHAR" />
+		<result column="PAYMENT_TERM_NAME" property="paymentTermName" jdbcType="VARCHAR" />
+		</resultMap>
+		
+		<select id="selectByCustId" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.SalesFinacial">
+		    SELECT HMSF.SALES_FINACIAL_ID,
+		    HMSF.COMPANY_ID,
+		    FCB.COMPANY_FULL_NAME,
+            HMPM.PAYMENT_METHOD_NAME,
+            HMPT.PAYMENT_TERM_NAME,
+            HMSF.DEPT_LEVEL,
+            HMSF.RECEIVABLE_ACCOUNT,
+            HMSF.TAX_CODE,
+            HMSF.PAYMENT_METHOD_ID,
+            HMSF.PAYMENT_TERM_ID,
+            HMSF.PAYMENT_CURRENCY,
+            HCVV1.MEANING MEANING1
+        FROM HPMS_MDM_SALES_FINACIAL HMSF
+        LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM ON HMPM.PAYMENT_METHOD_ID = HMSF.PAYMENT_METHOD_ID
+        LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT ON HMPT.PAYMENT_TERM_ID = HMSF.PAYMENT_TERM_ID
+        LEFT JOIN FND_COMPANY_B FCB ON FCB.COMPANY_ID = HMSF.COMPANY_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+    ON HCVV1.CODE = 'HPMS_MDM_PAYMENT_CURRENCY'
+   AND HCVV1.VALUE = HMSF.PAYMENT_CURRENCY
+   AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+  			<where>
+  			   1=1
+  			     <if test="custId != null">
+  			         AND HMSF.CUST_ID = #{custId}
+  			     </if>
+  			</where>
+		</select>
+</mapper>

@@ -57,7 +57,8 @@ public class ConfigValueController extends BaseController {
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<ConfigValue> cfv){
         IRequest requestCtx = createRequestContext(request);
-        return new ResponseData(configValueService.batchUpdate(requestCtx, cfv));
+        configValueService.myBatchUpdate(requestCtx, cfv);
+        return new ResponseData(cfv);
     }
 
     /**
@@ -69,7 +70,19 @@ public class ConfigValueController extends BaseController {
     @RequestMapping(value = "/bs/configvalue/remove")
     @ResponseBody
     public ResponseData delete(HttpServletRequest request,@RequestBody List<ConfigValue> cfv){
-        configValueService.batchDelete(cfv);
+        IRequest requestContext = createRequestContext(request);
+        configValueService.deleteConfigValue(cfv,requestContext);
         return new ResponseData();
+    }
+
+
+    @RequestMapping(value = "/bs/configvalue/queryByCache")
+    @ResponseBody
+    public ResponseData queryByCache(Long configId,Long configValueId,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        String cId = Long.toString(configId);
+
+        List<ConfigValue> dmList = configValueService.queryConfigCache(requestContext,configValueId,cId);
+        return new ResponseData(dmList);
     }
 }

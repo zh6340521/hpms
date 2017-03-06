@@ -94,7 +94,7 @@ public class DataModelController extends BaseController {
         return new ResponseData();
     }
 
-    @RequestMapping(value = "/bs/DataModel/queryByModelId")
+    @RequestMapping(value = "/bs/DataModel/queryByCache")
     @ResponseBody
     public ResponseData queryByModelId(Long modelId,HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);

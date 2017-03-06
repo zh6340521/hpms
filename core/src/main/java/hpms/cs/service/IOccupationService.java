@@ -16,6 +16,39 @@ import java.util.List;
 
 public interface IOccupationService extends IBaseService<Occupation>, ProxySelf<IOccupationService> {
 
+    /**
+     * 分页查询
+     * @param request
+     * @param occupation
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     List<Occupation> propertyQuery(IRequest request, Occupation occupation, int pageNum, int pageSize);
 
+    /**
+     * 根据项目id查询一个 Occupation 对象
+     * @param request
+     * @param occupation
+     * @return
+     */
+    Occupation queryOne(IRequest request,Occupation occupation);
+
+    /**
+     * 插入或者更新 Occupation 对象
+     * @param request
+     * @param occupation
+     * @return
+     */
+    Occupation updateOccu(IRequest request,Occupation occupation);
+
+    /**
+     * 关联查询 Occupation
+     * @param requestContext
+     * @param dto
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    List<Occupation> selectOccupation(IRequest requestContext, Occupation dto, int page, int pageSize);
 }

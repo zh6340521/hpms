@@ -1,0 +1,353 @@
+<#--
+        * description: 入伙页面
+        * version: 1.0
+        * author: feng.liu01@hand-china.com
+        * #{copyright}#
+        *
+        -->
+
+<#include "../include/header.html">
+
+<style type="text/css">
+    span.red {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+
+<script type="text/javascript">
+
+    var propertyId = ${RequestParameters.propertyId!0};
+
+    var projectId = 0;
+
+    var viewModel = kendo.observable({
+        model: {},
+        procedures: [],
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+
+            if(viewModel.model.customerCode==''||viewModel.model.customerCode==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.customercode"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else if(viewModel.model.customerName==''||viewModel.model.customerName==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.customername"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else if(viewModel.model.serviceDateFrom==''||viewModel.model.serviceDateFrom==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.servicedatefrom"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else if(viewModel.model.serviceDateTo==''||viewModel.model.serviceDateTo==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.servicedateto"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else if(viewModel.model.transferDate==''||viewModel.model.transferDate==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.transferdate"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else if(viewModel.model.feeDate==''||viewModel.model.feeDate==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.feedate"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else {
+                var occProcedures=[];
+                for (var i = 0;i<viewModel.procedures.length;i++) {
+                    occProcedures.push({
+                        procedureType:"OCC",
+                        configProcedureId: viewModel.procedures[i],
+                        __status:'add'
+                    })
+                }
+
+                viewModel.model.set("occProcedures", occProcedures);
+                viewModel.model.set("__status", "add");
+                viewModel.model.set("status", "IN");
+                viewModel.model.set("inTransactor", "${Session.userName!''}");
+
+
+                $.ajax({
+                    url: '${base.contextPath}/cs/occupation/submit',
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data       : kendo.stringify(viewModel.model),
+                    success: function (args) {
+                        if(args.occupationId){
+                            kendo.ui.showInfoDialog({
+                                title:$l('hap.prompt'),
+                                message:$l('hap.tip.success')
+                            }).done(function (event) {
+                                window.top.closeTab("occupation_occu");
+
+                            });
+                        }
+                        else{
+                            alert("error")
+                        }
+                    },
+                    error: function () {
+                        alert("error");
+                    }
+                });
+            }
+
+
+        }
+    });
+
+    $.ajax({
+        url: '${base.contextPath}/cs/occupation/queryProperty?propertyId='+propertyId,
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var data = args.rows[0] || {};
+            for (var k in data) {
+                if (k =="projectId")
+                    projectId = data[k];
+                viewModel.model.set(k,data[k]);
+            }
+        }
+    });
+
+
+
+</script>
+<body>
+<div id="page-content">
+    <div class="panel" style="padding: 0px;border:none;box-shadow: none;width: 50%;">
+        <div class="form-horizontal" id="query-form">
+            <div class="panel-body">
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.company"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.companyName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.project"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.projectName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertynumber"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.propertyNumber" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertyname"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.propertyName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customercode"/>：</label>
+                            <div class="col-sm-8">
+                                <input disabled type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerCode" class="k-textbox">
+                                <span class="red">&nbsp;*</span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customername"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="customerNameId" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerName" >
+                                <span class="red">&nbsp;*</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.servicedatefrom"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="serviceDateFromId" style="width:150px;margin-right:5px;"
+                                      type="text" data-bind="value:model.serviceDateFrom" >
+                                <span class="red">*</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.servicedateto"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="serviceDateToId" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.serviceDateTo">
+                                <span class="red">*</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.transferdate"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="transferDateId" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.transferDate">
+                                <span class="red">*</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.feedate"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="feeDateId" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.feeDate">
+                                <span class="red">*</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div  class="row procedure" style="margin-bottom: 10px;margin-top: 10px">
+                </div>
+
+                <div class="row" style="margin-bottom: 10px">
+                    <div id="toolbar-btn" style="padding-bottom: 10px;">
+                        <span class="btn btn-primary k-grid-add"
+                              style="float: left;margin-left: 70px" data-bind="click:saveFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <@spring.message "hap.save"/>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+
+</div>
+
+<script type="text/javascript">
+
+    $("#serviceDateFromId").kendoDatePicker();
+    $("#serviceDateToId").kendoDatePicker();
+    $("#transferDateId").kendoDatePicker();
+    $("#feeDateId").kendoDatePicker();
+
+
+    $("#customerNameId").kendoLov({
+        //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
+        code:"HPMS_SELECT_CUSTOMER",
+        contextPath:'${base.contextPath}',
+        locale:'${base.locale}',
+        query:function (e) {
+
+        },
+        change:function (e) {
+            console.log(e.sender._dataItem)
+            viewModel.model.set("customerCode",e.sender._dataItem.customerNumber);
+            viewModel.model.set("customerId", e.sender._dataItem.customerId);
+
+        },
+        textField: 'fullName'
+    });
+
+    function myhtml(value1,text1,flag,value2,text2,i) {
+        var label = "&nbsp;";
+        if (i==0) {
+            label = "<@spring.message '手续材料'/>：";
+        }
+        var s = '<div class="row procedure" style="margin-bottom: 10px;">'+
+            '<div class="col-sm-6" style="padding: 0">'+
+            '<div class="form-group" style="margin: 0">'+
+            '<label class="col-sm-4 control-label" style="margin-top: -8px">'+label+'</label>'+
+            '<input value="'+value1+'" type="checkbox" style="margin-left: 20px"'+
+            'data-bind="checked:procedures" />'+
+            '<span>&nbsp;'+text1+'</span>'+
+            '</div></div>';
+
+        if (flag) {
+            s += '<div class="col-sm-6" style="padding: 0">'+
+                '<input  value="'+value2+'" type="checkbox"'+
+                'data-bind="checked:procedures" />'+
+                '<span>&nbsp;'+text2+'</span>'+
+                '</div>'+
+                '</div>';
+        } else {
+            s += '</div>';
+        }
+        return s;
+    }
+
+    $.ajax({
+        url: '${base.contextPath}/cs/projectProcedure/query?projectId='+projectId,
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var rows = args.rows;
+            for (var i = 0;i<rows.length;i++) {
+                var s = "";
+                if (i%2!=0)
+                    continue;
+                if (i==rows.length-1) {
+                    s = myhtml(rows[i].configProcedureId,rows[i].procedureName,false);
+                } else {
+                    s = myhtml(rows[i].configProcedureId,rows[i].procedureName,true,rows[i+1].configProcedureId,rows[i+1].procedureName,i);
+                }
+                $(".procedure:last").after(s);
+            }
+        }
+    });
+
+    kendo.bind($('#query-form'), viewModel);
+
+</script>
+</body>
+</html>

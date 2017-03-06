@@ -31,28 +31,44 @@ public class OccupationController extends BaseController {
     private IOccupationService service;
 
 
-    @RequestMapping(value = "/cs/occupation/query")
+    @RequestMapping(value = "/cs/occupation/queryProperty")
     @ResponseBody
-    public ResponseData query(Occupation dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+    public ResponseData queryProperty(Occupation dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         return new ResponseData(service.propertyQuery(requestContext, dto, page, pageSize));
+    }
+
+    @RequestMapping(value = "/cs/occupation/query")
+    @ResponseBody
+    public ResponseData query(Occupation dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                                      @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.selectOccupation(requestContext, dto, page, pageSize));
+    }
+
+    @RequestMapping(value = "/cs/occupation/queryOne")
+    @ResponseBody
+    public Occupation queryOne(Occupation dto, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        Occupation occupation = service.queryOne(requestContext, dto);
+        return occupation;
     }
 
 
 
     @RequestMapping(value = "/cs/occupation/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request, @RequestBody List<Occupation> dto,
+    public Occupation update(HttpServletRequest request, @RequestBody Occupation occupation,
                                BindingResult result) throws BaseException {
 
         IRequest requestCtx = createRequestContext(request);
-        if (result.hasErrors()) {
-            ResponseData rd = new ResponseData(false);
-            rd.setMessage(getErrorMessage(result, request));
-            return rd;
-        }
-        return new ResponseData(service.batchUpdate(requestCtx, dto));
+//        if (result.hasErrors()) {
+//            ResponseData rd = new ResponseData(false);
+//            rd.setMessage(getErrorMessage(result, request));
+//            return rd;
+//        }
+        return service.updateOccu(requestCtx,occupation);
     }
 
     @RequestMapping(value = "/cs/occupation/remove")

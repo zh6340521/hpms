@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.RelationMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.Relation">
+    <id column="RELATION_ID" property="relationId" jdbcType="DECIMAL" />
+        <result column="FROM_BP_ID" property="fromBpId" jdbcType="DECIMAL" />
+        <result column="TO_BP_ID" property="toBpId" jdbcType="DECIMAL" />
+        <result column="REL_TYPE" property="relType" jdbcType="VARCHAR" />
+        <result column="ICM_FLAG" property="icmFlag" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="VARCHAR" />
+        <result column="BP_ID" property="bpId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 查询紧急联系人是否存在-->
+    <select id="selectByCountIcmFlag" resultType="int"
+		parameterType="hpms.mdm.dto.Relation">
+        select count(0)
+  from hpms_mdm_relation hmr
+  left join hpms_mdm_bp_general hmbg
+    on hmr.from_bp_id = hmbg.bp_id
+ <where>
+   1=1
+    <if test="fromBpId != null">
+        and hmr.from_bp_id =  #{fromBpId,jdbcType=VARCHAR}
+    </if>
+   and hmr.icm_flag = 1
+ </where> 
+    </select>
+    <!-- 查询该联系人是否建立过关系 -->
+   <select id="queryByBpId" resultType="int" parameterType="hpms.mdm.dto.Relation">
+    	select count(0)
+  			from HPMS_MDM_RELATION HMR
+  			left join HPMS_MDM_BP_GENERAL HMBG
+   			 ON HMBG.BP_ID = HMR.TO_BP_ID
+    	<where>
+    	1=1
+    		<if test="fromBpId!=null">
+    			AND HMR.FROM_BP_ID = #{fromBpId}
+    		</if>
+    		<if test="toBpId!=null">
+    			AND HMR.TO_BP_ID = #{toBpId}
+    		</if>
+    	</where>
+   </select>
+</mapper>

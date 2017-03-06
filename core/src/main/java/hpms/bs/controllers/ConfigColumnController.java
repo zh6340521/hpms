@@ -57,7 +57,8 @@ public class ConfigColumnController extends BaseController {
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<ConfigColumn> cc){
         IRequest requestCtx = createRequestContext(request);
-        return new ResponseData(configColumnService.batchUpdate(requestCtx, cc));
+        configColumnService.myBatchUpdate(requestCtx,cc);
+        return new ResponseData(cc);
     }
 
     /**
@@ -69,7 +70,8 @@ public class ConfigColumnController extends BaseController {
     @RequestMapping(value = "/bs/configcolumn/remove")
     @ResponseBody
     public ResponseData delete(HttpServletRequest request,@RequestBody List<ConfigColumn> cc){
-        configColumnService.batchDelete(cc);
+        IRequest requestCtx = createRequestContext(request);
+        configColumnService.deleteConfigColumn(cc,requestCtx);
         return new ResponseData();
     }
 }

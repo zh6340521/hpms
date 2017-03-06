@@ -1,0 +1,417 @@
+<#include "../include/header.html">
+
+<body>
+<script src="${base.contextPath}/common/code?roundRule=HPMS_ROUND_RULE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?billMethod=HPMS_BILL_METHOD" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?transType=HPMS_TRANS_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?billingFreq=HPMS_BILLING_FREQ" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?enableFlag=MDM.ENABLE_FLAG" type="text/javascript"></script>
+<script type="text/javascript">
+  
+    var viewModel = kendo.observable({
+        model: {},
+        roundRuleData : roundRule,
+        billMethodData:billMethod,
+        transTypeData:transType,
+        billingFreqData:billingFreq,
+        enableFlagData:enableFlag,
+        editaction: "<@spring.message "hap.edit"/>",
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#Grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        },
+        resetForm: function (e) {
+            var formData = viewModel.model.toJSON();
+            for (k in formData) {
+                viewModel.model.set(k, null);
+            }
+        }
+    });
+    
+    var newViewModel = kendo.observable({
+        model: {},
+        saveFunction: function () {
+            newViewModel.model.__status = 'add';
+            Hap.submitForm({
+                url: '${base.contextPath}/mdm/equipment/submit',
+                formModel: newViewModel.model,
+                success: function (data) {
+                    $.each(newViewModel.model.toJSON(), function (i, item) {
+                        newViewModel.model.set(i, null);
+                    });
+                    $("#newWin").data("kendoWindow").close();
+                    $('#Grid').data('kendoGrid').dataSource.query();
+                }
+            });
+        },
+        resetForm: function (e) {
+            var formData = newViewModel.model.toJSON();
+            for (k in formData) {
+                newViewModel.model.set(k, null);
+            }
+        }
+    });
+</script>
+ <div id="content-container">
+    <div id="page-content">
+        <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+            <form class="form-horizontal" id="query-form">              
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.equipment.company"/>:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 60%" id="company"
+                                           data-bind="value:model.companyFullName,text:model.companyFullName" class="k-textbox">
+
+                                       <script>
+                                           $("#company").kendoDropDownList({
+                                               optionLabel: "--请选择--",
+                                               //valuePrimitive: true,
+                                               dataTextField: "companyFullName",
+                                               dataValueField: "companyFullName",
+                                               dataSource: {
+                                                   transport: {
+                                                       read:function(options) {
+                                                           $.ajax({
+                                                               type   : "POST",
+                                                               url: "/fnd/company/query",
+                                                               data: {},
+                                                               success: function(json) {
+                                                                   options.success(json.rows);
+
+                                                               }
+                                                           });
+                                                       }
+                                                   }
+                                               },
+                                               select:function(e){
+                                                   viewModel.model.set('companyFullName',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                               }
+
+                                           }).data("kendoDropDownList");
+                                           kendo.bind($('#company'), viewModel);</script>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.equipment.project"/>:</label>
+                                <div class="col-sm-8">
+                                   <input id="project" name="project" style="width: 60%" data-bind="text:model.projectName,value:model.projectName"/>
+                                   <script>
+                                    $("#project").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    //valuePrimitive: true,
+                                    dataTextField: "projectName",
+                                    dataValueField: "projectName",
+                                    dataSource: {
+                                    transport: {
+                                    read:function(options) {
+                                    $.ajax({
+                                    type   : "POST",
+                                    url: "/hpms/mdm/project/query",
+                                    data: {},
+                                    success: function(json) {
+                                    options.success(json.rows);
+
+                                    }
+                                    });
+                                    }
+                                    }
+                                    },
+                                    select:function(e){
+                                    viewModel.model.set('projectName',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                    }
+
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#project'), viewModel);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                   
+                
+                   <div class="row">
+                       <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.equipment.equipmentType"/>:</label>
+                                <div class="col-sm-8">
+                                    <input id="equipmentType" name="equipmentType" style="width: 60%" data-bind="text:model.typeName,value:model.typeName"/>
+                                    <script>
+                                        $("#equipmentType").kendoDropDownList({
+                                            optionLabel: "--请选择--",
+                                            //valuePrimitive: true,
+                                            dataTextField: "typeName",
+                                            dataValueField: "typeName",
+                                            dataSource: {
+                                                transport: {
+                                                    read:function(options) {
+                                                        $.ajax({
+                                                            type   : "POST",
+                                                            url: "/mdm/equipmentType/query",
+                                                            data: {},
+                                                            success: function(json) {
+                                                                options.success(json.rows);
+
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            },
+                                            select:function(e){
+                                                viewModel.model.set('typeName',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                            }
+
+                                        }).data("kendoDropDownList");
+                                        kendo.bind($('#equipmentType'), viewModel);
+                                        </script>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.equipment.equipmentCode"/>:</label>
+                               <div class="col-sm-8">
+                                    <input id="equipmentCode" class="k-textbox" name="equipmentCode" style="width: 60%" data-bind="text:model.equipmentCode,value:model.equipmentCode"/>
+                                   <script>
+                                       kendo.bind($('#equipmentCode'), viewModel);
+                                   </script>
+                                </div>                     
+                            </div>
+                        </div>                      
+                  </div> 
+
+             </div>
+                                                
+            </form>
+           
+        </div>
+        
+        <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+          <span type="button" onclick="newData()" class="btn btn-primary"
+              style="float:left;margin-right:5px"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+          <span class="btn btn-primary" style="float:left;width:70px;margin-right:5px;" data-bind="click:queryResource" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>      
+        </div>
+        <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+       
+        <div style="clear:both">
+            <div id="Grid"></div>
+        </div>
+   </div>
+
+</div>
+<div id="newWin" style="display: none"></div>
+<div id="editWin" style="display: none"></div>
+<div id="lookWin" style="display: none"></div>
+<script type="text/javascript">
+	$('#query-form input').keydown(function (e) {
+	    if (e.keyCode == 13) {
+	        e.target.blur();
+	        viewModel.queryResource(e);
+	    }
+	});
+	 
+
+</script>
+
+
+
+<script type="text/javascript">
+
+    var BaseUrl = _basePath;
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/hpms/mdm/equipment/query",
+                type: "POST",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/hpms/mdm/equipment/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/hpms/mdm/equipment/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/hpms/mdm/equipment/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "equipmentId",
+                fields: {
+
+                    
+                }
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        columnMenu		: 	true,
+        autoBind		: 	true,        
+        reorderable	: 	true,
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [ 
+                {
+                title: '操作栏',
+                width : 80,
+                locked: true,
+                lockable: false,
+                attributes : {
+                    style : "text-align:center"
+                },
+                template : function(rowdata) {
+                    var uid = rowdata.uid.toString();
+                    var singleDispatch = '<button type="button" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookEquipment('+rowdata.equipmentId+')"><span class="glyphicon glyphicon-search"></span></button>&nbsp;';
+                    var singleRecycle = '<button type="button"  class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="editEquipment('+rowdata.equipmentId+')"><span class="glyphicon glyphicon-edit"></span></button>';
+                    return singleDispatch + singleRecycle;
+                }  	
+      			},
+                {
+                field: "companyFullName",
+                title: '<@spring.message "hpms.mdm.equipment.company"/>',
+                width: 200
+            },
+            {
+                field: "projectName",
+                title: '<@spring.message "hpms.mdm.equipment.project"/>',
+                width: 150
+            },
+                    {
+                field: "typeName",
+                title: '<@spring.message "hpms.mdm.equipment.equipmentType"/>',
+                width: 150
+            },
+                  
+                    {
+                field: "equipmentCode",
+                title: '<@spring.message "hpms.mdm.equipment.equipmentCode"/>',
+                width: 150
+             
+            },
+             {
+                field: "equipmentName",
+                title: '<@spring.message "hpms.mdm.equipment.equipmentName"/>',
+                width: 150
+            },
+                    {
+                field: "equipmentSignificance",
+                title: '<@spring.message "hpms.mdm.equipment.significant"/>',
+                width: 120
+            },
+                    {
+                field: "meaning2",
+                title: '<@spring.message "hpms.mdm.equipment.equipmentStatus"/>',
+                width: 100 
+            }
+                
+        ],
+        editable: false
+    });
+    
+    Hap.autoResizeGrid("#Grid");
+
+   
+    
+    function newData() {
+        $("#newWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('hap.new'),
+            draggable: true,
+            height: "550px",
+            width: "750px",
+            close: function(){
+                $("#editWin").empty();
+            },
+            content: "${base.contextPath}/mdm/equipment_edit.html?isedit=0",
+            iframe: true,
+            modal: true
+        });
+        var win = $("#newWin").data("kendoWindow");
+        win.center().open();
+    }
+    
+    function editEquipment(equipmentId){
+
+    	$("#editWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('hap.edit'),
+            draggable: true,
+            height: "550px",
+            width: "750px",
+            close: function(){
+                $("#editWin").empty();
+            },
+            content: "${base.contextPath}/mdm/equipment_edit.html?isedit=1&&equipmentId="+equipmentId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#editWin").data("kendoWindow");
+        win.center().open();
+    }
+    
+    function lookEquipment(equipmentId){
+
+    	$("#lookWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('hap.view'),
+            draggable: true,
+            height: "550px",
+            width: "750px",
+            close: function(){
+                $("#editWin").empty();
+            },
+            content: "${base.contextPath}/mdm/equipment_edit.html?islook=1&&equipmentId="+equipmentId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#lookWin").data("kendoWindow");
+        win.center().open();
+    }
+
+    
+
+
+</script>
+</body>
+</html>

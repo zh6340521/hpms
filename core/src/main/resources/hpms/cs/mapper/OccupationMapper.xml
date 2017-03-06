@@ -2,7 +2,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="hpms.cs.mapper.OccupationMapper">
-    <resultMap id="BaseResultMap" type="hpms.cs.dto.Occupation">
+    <resultMap id="BaseResultMap" type="hpms.cs.dto.Occupation" extends="com.hand.hap.mapper.StdMapper.STD">
         <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL"/>
         <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
         <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
@@ -41,7 +41,13 @@
         hmp.PROPERTY_NAME,
         hmp.PROPERTY_NUMBER,
         fcl.COMPANY_FULL_NAME COMPANY_NAME,
-        hmp2.PROJECT_NAME
+        hmp2.PROJECT_NAME,
+        occ.CUSTOMER_ID,
+        occ.CUSTOMER_CODE,
+        occ.CUSTOMER_NAME,
+        occ.STATUS,
+        occ.OCCUPATION_ID,
+        occ.OBJECT_VERSION_NUMBER
         FROM HPMS_MDM_PROPERTY hmp
         LEFT JOIN FND_COMPANY_B fc
         ON hmp.COMPANY_ID = fc.COMPANY_ID
@@ -49,6 +55,17 @@
         ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
         LEFT JOIN HPMS_MDM_PROJECT hmp2
         ON hmp.PROJECT_ID = hmp2.PROJECT_ID
+        LEFT JOIN (
+            SELECT *
+            FROM HPMS_CS_OCCUPATION
+            WHERE
+            OCCUPATION_ID IN (
+                SELECT MAX (HPMS_CS_OCCUPATION.OCCUPATION_ID)
+                FROM HPMS_CS_OCCUPATION
+                GROUP BY HPMS_CS_OCCUPATION.PROPERTY_ID
+            )
+        ) occ
+        ON hmp.PROPERTY_ID = occ.PROPERTY_ID
         <where>
             <if test="companyId != null">
                 AND hmp.COMPANY_ID = #{companyId , jdbcType=DECIMAL}
@@ -62,7 +79,95 @@
             <if test="propertyNumber != null">
                 AND hmp.PROPERTY_NUMBER like concat('%',concat(#{propertyNumber,jdbcType=VARCHAR}, '%'))
             </if>
+
+            <if test="propertyId != null">
+                AND hmp.PROPERTY_ID = #{propertyId , jdbcType=DECIMAL}
+            </if>
+            <if test="status != null">
+                AND occ.STATUS = #{status , jdbcType=DECIMAL}
+            </if>
+            <if test="customerCode != null">
+                AND occ.CUSTOMER_CODE like concat('%',concat(#{customerCode,jdbcType=VARCHAR}, '%'))
+            </if>
         </where>
+        <if test="sortname !=null">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(sortname)"/>
+            order by ${_colName} ${sortorder}
+        </if>
+        <if test="sortname ==null">
+            order by PROPERTY_ID  desc
+        </if>
+    </select>
+
+
+    <select id="selectOccupation" parameterType="hpms.cs.dto.Occupation" resultMap="BaseResultMap">
+        SELECT
+            "occu".OCCUPATION_ID,
+            "occu".COMPANY_ID,
+            "occu".PROJECT_ID,
+            "occu".CUSTOMER_ID,
+            "occu".CUSTOMER_CODE,
+            "occu".CUSTOMER_NAME,
+            "occu".PROPERTY_ID,
+            "occu".PROPERTY_NUMBER,
+            "occu".PROPERTY_NAME,
+            "occu".ROOM_AREA,
+            "occu".SERVICE_DATE_FROM,
+            "occu".SERVICE_DATE_TO,
+            "occu".TRANSFER_DATE,
+            "occu".FEE_DATE,
+            "occu".IN_TRANSACTOR,
+            "occu".MOVEOUT_DATE,
+            "occu".OUT_TRANSACTOR,
+            "occu".FEE_DATE_TO,
+            "occu".MOVEOUT_REASON,
+            "occu".REMARKS,
+            "occu".MOVEOUT_FLAG,
+            "occu".STATUS,
+            "occu".OBJECT_VERSION_NUMBER,
+            "fcl".COMPANY_FULL_NAME COMPANY_NAME,
+            "pro".PROJECT_NAME
+        FROM
+            HPMS.HPMS_CS_OCCUPATION "occu"
+        LEFT JOIN FND_COMPANY_B "fc"
+            ON "occu".COMPANY_ID = "fc".COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL "fcl"
+            ON ("fc".COMPANY_ID = "fcl".COMPANY_ID AND "fcl".LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN HPMS_MDM_PROJECT "pro"
+            ON "occu".PROJECT_ID = "pro".PROJECT_ID
+        <where>
+            <if test="companyId != null">
+                AND "occu".COMPANY_ID = #{companyId , jdbcType=DECIMAL}
+            </if>
+            <if test="projectId != null">
+                AND "occu".PROJECT_ID = #{projectId , jdbcType=DECIMAL}
+            </if>
+            <if test="status != null">
+                AND "occu".STATUS = #{status , jdbcType=DECIMAL}
+            </if>
+            <if test="customerCode != null">
+                AND "occu".CUSTOMER_CODE like concat('%',concat(#{customerCode,jdbcType=VARCHAR}, '%'))
+            </if>
+
+            <if test="propertyNumber != null">
+                AND "occu".PROPERTY_NUMBER like concat('%',concat(#{propertyNumber,jdbcType=VARCHAR}, '%'))
+            </if>
+
+            <if test="propertyId != null">
+                AND "occu".PROPERTY_ID = #{propertyId , jdbcType=DECIMAL}
+            </if>
+
+            <if test="occupationId != null">
+                AND "occu".OCCUPATION_ID = #{occupationId , jdbcType=DECIMAL}
+            </if>
+        </where>
+        <if test="sortname !=null">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(sortname)"/>
+            order by ${_colName} ${sortorder}
+        </if>
+        <if test="sortname ==null">
+            order by OCCUPATION_ID  desc
+        </if>
     </select>
 
 
