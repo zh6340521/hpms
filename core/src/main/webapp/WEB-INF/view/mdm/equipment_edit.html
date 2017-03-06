@@ -1,0 +1,892 @@
+<#--
+        * description: 设备设施新建界面
+        * author:jun.guo@hand-china.com
+        * version: 1.0
+        *
+        -->
+<#include "../include/header.html">
+<body>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="${base.contextPath}/common/code?uom=HPMS_UOM" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?importance=HPMS_EQUIPMENT_IMPORTANCE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?equipmentStatus=HPMS_EQUIPMENT_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?maintenanceType=HPMS_MAINTENANCE_TYPE" type="text/javascript"></script>
+
+<script>
+    var isedit = '${RequestParameters.isedit!0}' == '1';
+    var islook = '${RequestParameters.islook!0}' == '1';
+    var equipmentId= <#if RequestParameters.equipmentId?exists>
+                  ${RequestParameters.equipmentId}
+                     <#else>-1</#if>;
+
+    newViewModel = kendo.observable({
+        model: {},
+        uomData:uom,
+        importanceData:importance,
+        statusData:equipmentStatus,
+        typeData:maintenanceType
+
+        
+    });
+
+
+
+            if(isedit==0&&!islook){
+                $(document).ready(function(){
+                    $("#fileUpload").hide();
+                    $("#fileDownload").hide();
+                    var companyparent = $("input[name='company']").parent();
+                    var companyparent1=companyparent.parent();
+                    companyparent1.append('<span style="color: #ff0000">*</span>');
+                    var projectparent = $("input[name='project']").parent();
+                    var projectparent1=projectparent.parent();
+                    projectparent1.append('<span style="color: #ff0000">*</span>');
+                    var equipmentTypeparent = $("input[name='equipmentType']").parent();
+                    var equipmentTypeparent1=equipmentTypeparent.parent();
+                    equipmentTypeparent1.append('<span style="color: #ff0000">*</span>');
+                    var equipmentNameparent = $("input[name='equipmentName']").parent();
+                    equipmentNameparent.append('<span style="color: #ff0000">*</span>');
+                });
+            }
+
+            if (isedit&&!islook) {
+                $(document).ready(function() {
+                    $("#company").data("kendoDropDownList").enable(false);
+                    $("#project").data("kendoDropDownList").enable(false);
+                    $("#equipmentType").data("kendoDropDownList").enable(false);
+                });
+                $.ajax({
+                    url    : '${base.contextPath}/hpms/mdm/equipment/query?equipmentId='+equipmentId,
+                    success: function (args) {
+                        var a0 = args.rows[0] || {};
+                        for (var k in a0) {
+                            newViewModel.model.set(k, a0[k]);
+                        }
+
+                    }
+                });
+
+            }
+
+            if (islook) {
+
+                $.ajax({
+                    url: '${base.contextPath}/hpms/mdm/equipment/query?equipmentId=' + equipmentId,
+                    success: function (args) {
+                        var a0 = args.rows[0] || {};
+                        for (var k in a0) {
+                            newViewModel.model.set(k, a0[k]);
+                        }
+
+                    }
+
+                });
+                    $(document).ready(function(){
+                        $("#fileUpload").hide();
+
+                        var s = $("#taskOrderFileGrid").find('span');
+                        $(s[0]).remove();
+
+                        $("input[name='company']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("input[name='project']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("input[name='equipmentType']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("#equipmentName").attr("disabled", true);
+                        $("#equipmentName").css("color", "#ababab");
+
+                        $("#equipmentBarcode").attr("disabled", true);
+                        $("#equipmentBarcode").css("color", "#ababab");
+                        $("#equipmentSerial").attr("disabled", true);
+                        $("#equipmentSerial").css("color", "#ababab");
+                        $("#equipmentAssetsNumber").attr("disabled", true);
+                        $("#equipmentAssetsNumber").css("color", "#ababab");
+                        $("#doorNo").attr("disabled", true);
+                        $("#doorNo").css("color", "#ababab");
+                        $("#purchasingDate").data("kendoDatePicker").enable(false);
+                        $("#equipmentSupplier").attr("disabled", true);
+                        $("#equipmentSupplier").css("color", "#ababab");
+                        $("#equipmentManufacture").attr("disabled", true);
+                        $("#equipmentManufacture").css("color", "#ababab");
+                        $("#equipmentModel").attr("disabled", true);
+                        $("#equipmentModel").css("color", "#ababab");
+                        $("#productionDate").data("kendoDatePicker").enable(false);
+                        $("#factoryNumber").attr("disabled", true);
+                        $("#factoryNumber").css("color", "#ababab");
+                        $("#installDate").data("kendoDatePicker").enable(false);
+                        $("#useDate").data("kendoDatePicker").enable(false);
+                        $("#guaranteeDate").data("kendoDatePicker").enable(false);
+                        $("#durableYear").attr("disabled", true);
+                        $("#durableYear").css("color", "#ababab");
+                        $("#indicativePrice").attr("disabled", true);
+                        $("#indicativePrice").css("color", "#ababab");
+                        $("#technicalParameter").attr("disabled", true);
+                        $("#technicalParameter").css("color", "#ababab");
+                        $("#equipmentPicture").attr("disabled", true);
+                        $("#equipmentPicture").css("color", "#ababab");
+                        $("input[name='metering']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("input[name='department']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("input[name='significant']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("input[name='equipmentStatus']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("input[name='maintenanceType']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        //$("input[name='parentEquipment']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                        $("#parentEquipment").data("kendoLov").enable(false);
+                        $("#selectPosition").prop("onclick",null).off("click");
+                    });
+
+
+            }
+
+
+</script>
+
+    <div id="page-content" style="margin-right:10%;">
+        <form class="form-horizontal" >
+            
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="
+                           text-align: right"><@spring.message "hpms.mdm.equipment.company"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="company" name="company" type="text" data-bind="value:model.companyId"
+                               style="width: 90%;" >
+                        <script>
+
+                        kendo.bind($('#company'), newViewModel);</script>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.project"/>:</label>
+                    <div class="col-xs-6">
+                      
+                               
+                        <input id="project" name="project" style="width: 90%" data-bind="text:model.projectId,value:model.projectId"/>
+                        <script>
+                        $("#project").kendoDropDownList({
+
+                            optionLabel: "--请选择--",
+                            //valuePrimitive: true,
+                            dataTextField: "projectName",
+                            dataValueField: "projectId",
+                            dataSource: {
+                                transport: {
+                                    read:function(options) {
+                                        $.ajax({
+                                            type   : "POST",
+                                            url: "/mdm/property/projectQuery",
+                                            data: {},
+                                            success: function(json) {
+                                               // console.log(json);
+                                                options.success(json.rows);
+                                            }
+                                        });
+                                    }
+                                }
+                            },
+                            select:function(e){
+                                newViewModel.model.set('projectId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+
+                                //console.log(newViewModel.model.projectId);
+                            }
+                   	      	                      
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#project'), newViewModel);
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentType"/>:</label>
+                    <div class="col-xs-6">
+                         <input id="equipmentType" name="equipmentType" type="text" data-bind="value:model.equipmentTypeId" style="width: 90%">
+                        <script>
+                        $("#equipmentType").kendoDropDownList({
+
+                            optionLabel: "--请选择--",
+                            valuePrimitive: true,
+                            dataTextField: "typeName",
+                            dataValueField: "equipmentTypeId",
+                            dataSource: {
+                                transport: {
+                                    read:function(options) {
+                                        $.ajax({
+                                            type   : "POST",
+                                            url: "/hpms/mdm/equipment/queryEquipmentType",
+                                            data: {},
+                                            success: function(json) {
+                                                options.success(json.rows);
+
+                                            }
+                                        });
+                                    }
+                                }
+                            },
+                            select:function(e){
+
+                                newViewModel.model.set('meaning1',e.dataItem.meaning);
+                                newViewModel.model.set('equipmentTypeId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                            }
+                   	      	                      
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#equipmentType'), newViewModel);</script>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-6 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipmenttype.typeattribute"/>:</label>
+                    <div class="col-xs-6">
+                        <input id="typeAttribute" type="text" data-bind="text:model.meaning1,value:model.meaning1" class="k-textbox"
+                               style="width: 90%;" name="typeAttribute">
+                        <script>
+                            $("#typeAttribute").attr("readonly",true).css("background", "#DDDDDD");
+                            kendo.bind($('#typeAttribute'), newViewModel);
+                        </script>
+                    </div>
+                </div>
+            </div>
+     <div style="clear:both"> 
+     </div> 
+     <div style="margin-left:10%;margin-top:10px">      
+         <span>设备信息</span> 
+    
+	     <div style="clear:both">
+	     </div>
+	     
+	     <div style="border: 1px solid;height:240px;padding-top:10px" >
+	     <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentName"/>:</label>
+                    <div class="col-xs-8">
+                    <input id="equipmentName" type="text" data-bind="value:model.equipmentName" class="k-textbox"
+                               style="width: 92%;" name="equipmentName">
+                    <script>
+                       kendo.bind($('#equipmentName'), newViewModel);
+                        </script>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentBarcode"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="equipmentBarcode" type="text" data-bind="value:model.equipmentBarcode" class="k-textbox"
+                            style="width: 92%;" name="equipmentBarcode">
+                        <script>                        
+                       
+                        kendo.bind($('#equipmentBarcode'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentSerial"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="equipmentSerial" type="text" data-bind="value:model.equipmentSerial" class="k-textbox"
+                            style="width: 92%;" name="equipmentSerial">
+                        <script>                        
+                       
+                        kendo.bind($('#equipmentSerial'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentAssetsNumber"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="equipmentAssetsNumber" type="text" data-bind="value:model.assetsNumber" class="k-textbox"
+                            style="width: 92%;" name="equipmentAssetsNumber">
+                        <script>                        
+                       
+                        kendo.bind($('#equipmentAssetsNumber'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.doorNo"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="doorNo" type="text" data-bind="value:model.doorNo" class="k-textbox"
+                            style="width: 92%;" name="doorNo">
+                        <script>                        
+                       
+                        kendo.bind($('#doorNo'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentUom"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="metering" name="metering"  data-bind="text:model.meaning,value:model.equipmentUom" style="width: 92%">
+                        <script>
+                            $("#metering").kendoDropDownList({
+
+                            optionLabel: "--请选择--",
+                            dataTextField: "meaning",
+                            template: function(dataItem){
+                                return dataItem['meaning'] || ''
+                            },
+                            dataValueField: "value",
+                            dataSource: uom,
+                            select : function(e){
+                                var dataItem = this.dataItem(e.item);
+                                newViewModel.model.set('equipmentUom',dataItem.value);
+                            }
+                   	      	                      
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#metering'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.org"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="department" name="department"  data-bind="text:model.name,value:model.orgId" style="width: 92%">
+                        <script>
+                            $("#department").kendoDropDownList({
+
+                            });
+                            if(newViewModel.model.companyId==null){
+                                $("input[name='department']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                            }else{
+                                $("#department").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    dataTextField: "name",
+                                    dataValueField: "unitId",
+                                    dataSource: {
+                                        serverFiltering: true,
+                                        transport: {
+                                            read:function(options) {
+
+                                                $.ajax({
+                                                    type   : "POST",
+                                                    url: "${base.contextPath}/hr/unit/query?companyId="+newViewModel.model.companyId,
+                                                    //data: { companyId : companyId },
+                                                    success: function(json) {
+                                                        options.success(json.rows);
+
+                                                    }
+                                                });
+
+                                            }
+                                        }
+                                    },
+                                    select:function(e){
+                                        newViewModel.model.set('orgId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                    }
+
+                                }).data("kendoDropDownList");
+                            }
+
+                            $("#company").kendoDropDownList({
+                                optionLabel: "--请选择--",
+                                //valuePrimitive: true,
+                                dataTextField: "companyFullName",
+                                dataValueField: "companyId",
+                                dataSource: {
+                                    transport: {
+                                        read:function(options) {
+                                            $.ajax({
+                                                type   : "POST",
+                                                url: "/mdm/property/companyQuery",
+                                                data: {},
+                                                success: function(json) {
+                                                    options.success(json.rows);
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                },
+                                select:function (e) {
+                                    newViewModel.model.set('companyId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                    console.log(newViewModel.model.companyId);
+                                    if(newViewModel.model.companyId==null||newViewModel.model.companyId==''){
+                                        $("input[name='department']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+
+                                    }else{
+
+                                        $("#department").kendoDropDownList({
+                                            optionLabel: "--请选择--",
+                                            dataTextField: "name",
+                                            dataValueField: "unitId",
+                                            dataSource: {
+                                                serverFiltering: true,
+                                                transport: {
+                                                    read:function(options) {
+
+                                                        $.ajax({
+                                                            type   : "POST",
+                                                            url: "${base.contextPath}/hr/unit/query?companyId="+newViewModel.model.companyId,
+                                                            //data: { companyId : companyId },
+                                                            success: function(json) {
+                                                                options.success(json.rows);
+
+                                                            }
+                                                        });
+
+                                                    }
+                                                }
+                                            },
+                                            select:function(e){
+                                                newViewModel.model.set('orgId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                            }
+
+                                        }).data("kendoDropDownList");
+                                    }
+
+                                }
+
+
+                            }).data("kendoDropDownList");
+
+                            kendo.bind($('#department'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.significant"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="significant" name="significant"  data-bind="text:model.meaning,value:model.equipmentSignificance" style="width: 92%">
+                        <script>
+                        $("#significant").kendoDropDownList({
+
+                            optionLabel: "--请选择--",
+                            dataTextField: "meaning",
+                            template: function(dataItem){
+                                return dataItem['meaning'] || ''
+                            },
+                            dataValueField: "value",
+                            dataSource: importance,
+                            select : function(e){
+                                var dataItem = this.dataItem(e.item);
+                                newViewModel.model.set('equipmentSignificance',dataItem.value);
+                            }
+                   	      	                      
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#significant'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentStatus"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="equipmentStatus" name="equipmentStatus"  data-bind="text:model.meaning,value:model.equipmentStatus" style="width: 92%">
+                        <script>
+                        $("#equipmentStatus").kendoDropDownList({
+
+                            optionLabel: "--请选择--",
+                            dataTextField: "meaning",
+                            template: function(dataItem){
+                                return dataItem['meaning'] || ''
+                            },
+                            dataValueField: "value",
+                            dataSource: equipmentStatus,
+                            select : function(e){
+                                var dataItem = this.dataItem(e.item);
+                                newViewModel.model.set('equipmentStatus',dataItem.value);
+                            }
+                   	      	                      
+                        }).data("kendoDropDownList"); 
+                        kendo.bind($('#equipmentStatus'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.purchasingDate"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="purchasingDate" class="k-datepicker" name="purchasingDate" type="text" data-bind="value:model.purchasingDate" style="width: 92%">
+                        <script>
+                        $("#purchasingDate").kendoDatePicker({
+                        	format: "yyyy-MM-dd",
+                        	
+                        }).data("kendoDatePicker");
+                        kendo.bind($('#purchasingDate'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+	     </div>
+     
+     </div>
+     
+     
+     <div style="clear:both"> 
+     </div> 
+     <div style="margin-left:10%;margin-top:10px">      
+         <span>供应商信息</span> 
+    
+	     <div style="clear:both">
+	     </div>
+	     
+	     <div style="border: 1px solid;height:300px;padding-top:10px" >
+	     <div class="col-xs-6">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentSupplier"/>:</label>
+                    <div class="col-xs-8">
+                    <input id="equipmentSupplier" type="text" data-bind="value:model.equipmentSupplier" class="k-textbox"
+                               style="width: 92%;" name="equipmentSupplier">
+                    <script>
+                       kendo.bind($('#equipmentSupplier'), newViewModel);
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentManufacture"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="equipmentManufacture" type="text" data-bind="value:model.equipmentManufacture" class="k-textbox"
+                            style="width: 92%;" name="equipmentManufacture">
+                        <script>                        
+                       
+                        kendo.bind($('#equipmentManufacture'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentModel"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="equipmentModel" type="text" data-bind="value:model.equipmentModel" class="k-textbox"
+                            style="width: 92%;" name="equipmentModel">
+                        <script>                        
+                       
+                        kendo.bind($('#equipmentModel'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.productionDate"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="productionDate" name="equipType" type="text" data-bind="value:model.productionDate" style="width: 92%">
+                        <script>
+                        $("#productionDate").kendoDatePicker({
+                        	format: "{0:yyyy-MM-dd}"
+                        }).data("kendoDatePicker"); 
+                        kendo.bind($('#productionDate'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.factoryNumber"/>:</label>
+                    <div class="col-xs-8">  
+                     <input id="factoryNumber" type="text" data-bind="value:model.factoryNumber" class="k-textbox"
+                            style="width: 92%;" name="factoryNumber">
+                        <script>                        
+                       
+                        kendo.bind($('#factoryNumber'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.installDate"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="installDate" name="installDate" type="text" data-bind="value:model.installDate" style="width: 92%">
+                        <script>
+                        $("#installDate").kendoDatePicker({
+                        	format: "{0:yyyy-MM-dd}"
+                        }).data("kendoDatePicker"); 
+                        kendo.bind($('#installDate'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.useDate"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="useDate" name="useDate" type="text" data-bind="value:model.useDate" style="width: 92%">
+                        <script>
+                        $("#useDate").kendoDatePicker({
+                        	format: "{0:yyyy-MM-dd}"
+                        }).data("kendoDatePicker"); 
+                        kendo.bind($('#useDate'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.guaranteeDate"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="guaranteeDate" name="guaranteeDate" type="text" data-bind="value:model.guaranteeDate" style="width: 92%">
+                        <script>
+                        $("#guaranteeDate").kendoDatePicker({
+                        	format: "{0:yyyy-MM-dd}"
+                        }).data("kendoDatePicker");
+
+                        kendo.bind($('#guaranteeDate'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.durableYear"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="durableYear" name="durableYear" class="k-textbox" type="text" data-bind="value:model.durableYear" style="width: 92%">
+                        <script>
+                        
+                        kendo.bind($('#durableYear'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.maintenanceType"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="maintenanceType" name="maintenanceType" type="text" data-bind="value:model.maintenanceType" style="width: 92%">
+                        <script>
+                        $("#maintenanceType").kendoDropDownList({
+
+                            optionLabel: "--请选择--",
+                            dataTextField: "meaning",
+                            template: function(dataItem){
+                                return dataItem['meaning'] || ''
+                            },
+                            dataValueField: "value",
+                            dataSource: maintenanceType,
+                            select : function(e){
+                                var dataItem = this.dataItem(e.item);
+                                newViewModel.model.set('maintenanceType',dataItem.value);
+                            }
+                  	      	                      
+                       }).data("kendoDropDownList");  
+                        kendo.bind($('#maintenanceType'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.indicativePrice"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="indicativePrice" name="indicativePrice" class="k-textbox" type="text" data-bind="value:model.indicativePrice" style="width: 92%">
+                        <script>
+                         
+                        kendo.bind($('#indicativePrice'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.technicalParameter"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="technicalParameter" name="technicalParameter" class="k-textbox" type="text" data-bind="value:model.technicalParameter" style="width: 92%">
+                        <script>
+                   
+                        kendo.bind($('#technicalParameter'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.equipmentPicture"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="equipmentPicture" name="equipmentPicture" type="text" class="k-textbox" data-bind="value:model.equipmentPicture" style="width: 92%">
+                        <script>
+                        
+                        kendo.bind($('#equipmentPicture'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+	     </div>
+     
+     </div>
+     
+     <div style="clear:both"> 
+     </div> 
+     <div style="margin-left:10%;margin-top:10px">      
+         <span>位置信息</span> 
+    
+	     <div style="clear:both">
+	     </div>
+	     <div style="border: 1px solid;height:50px;padding-top:10px" >
+	      <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.parentEquipment"/>:</label>
+                    <div class="col-xs-8">
+                         <input id="parentEquipment" name="parentEquipment" type="text" data-bind="value:model.parentEquipmentId,text:model.parentEquipmentName" style="width: 92%">
+                        <script>
+                            $("#parentEquipment").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "HPMS_EQUIPMENT_USEFUL")},{
+                                query:function(e){
+                                    e.param['equipmentId'] = newViewModel.model.equipmentId;
+                                },
+                                select: function(e) {
+                                    newViewModel.model.set('parentEquipmentId',e.item.equipmentId);
+                                }
+                            }));
+                        kendo.bind($('#parentEquipment'), newViewModel);</script>
+                    </div>
+                </div>
+            </div>
+             <div class="col-xs-6" >
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"
+                           style="text-align: right"><@spring.message "hpms.mdm.equipment.version"/>:</label>
+                    <div class="col-xs-8">
+
+		            <span class="k-widget k-lov k-header" style="width: 92%";>
+					       <span tabindex="-1" unselectable="on" class="k-dropdown-wrap k-state-default">
+					          <input id="position" class="k-input" type="text" autocomplete="off" title="" role="lov" aria-expanded="false"  aria-disabled="false" readonly="readonly" style="width: 100%;">
+					              <span unselectable="on" class="k-icon k-i-close" title="clear" role="button" tabindex="-1">
+					              </span>
+					          <span id="selectPosition" unselectable="on" class="k-select" aria-label="select" role="button" tabindex="-1" onclick="newData()">
+						           <span class="k-icon k-i-search">
+						           </span>
+					          </span>
+					       </span>
+					</span>
+
+					<div id="newWin" style="display: none"></div>
+					<script>
+						function newData() {
+					        $("#newWin").kendoWindow({
+					            actions: ["Close"],
+					            title: $l('位置'),
+					            draggable: true,
+					            height: "350px",
+					            width: "450px",
+					            close: function(){
+					                $("#editWin").empty();
+					            },
+					            content: "${base.contextPath}/mdm/position.html",
+					            iframe: true,
+					            modal: true
+					        });
+					        var win = $("#newWin").data("kendoWindow");
+					        win.center().open();
+					    }
+			        	kendo.bind($('#position'),newViewModel);
+			        </script>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+	 </div>
+            <div style="clear:both">
+     </div> 
+     <div id="fileUpload" style="margin-left:9%;margin-top:10px">
+         <!--<span class="btn btn-primary" id="upload" type="submit"><@spring.message "附件上传"/></span>-->
+
+	     <div style="clear:both">
+	     </div>
+	     <#include "../mdm/fileUpload.html">
+	 </div>
+            <div style="clear:both">
+            </div>
+            <div id="fileDownload" style="margin-left:10%;margin-top:10px">
+
+                <div style="float: right">
+                <#include "../mdm/fileDownload.html">
+                </div>
+            </div>
+            <div style="clear:both">
+            </div>
+
+            <div  align="center" style="clear:both; background: #fff;margin-left:10%;margin-top:50px" id="button">
+    	      <span class="btn btn-success" id="saveGrid" type="submit"><@spring.message "hap.save"/></span>
+    	      <span class="btn btn-success" id="closeWin" type="button"><@spring.message "hap.cancel"/></span>
+	        </div>
+        </form>
+    </div>
+<style>
+    
+   input::-webkit-outer-spin-button,  
+   input::-webkit-inner-spin-button {  
+    -webkit-appearance: none;  
+   }  
+</style>
+<script>
+
+    $("#page-content").kendoValidator();
+    $("#closeWin").click(function(){
+    	if (isedit) {
+            window.parent.$("#editWin").data("kendoWindow").close();
+        } else {
+            window.parent.$("#newWin").data("kendoWindow").close();
+        }
+    });
+    $("#saveGrid").click(function () {
+      if(newViewModel.model.companyId==''||newViewModel.model.companyId==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "hpms.mdm.equipment.company"/>不能为空'
+            })
+        }else if(newViewModel.model.projectId==''||newViewModel.model.projectId==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "hpms.mdm.equipment.project"/>不能为空'
+            })
+        }else if(newViewModel.model.equipmentTypeId==''||newViewModel.model.equipmentTypeId==null){
+          kendo.ui.showInfoDialog({
+              message:'<@spring.message "hpms.mdm.equipment.equipmentType"/>不能为空'
+          })
+        }else if(newViewModel.model.equipmentName==''||newViewModel.model.equipmentName==null){
+          kendo.ui.showInfoDialog({
+              message:'<@spring.message "hpms.mdm.equipment.equipmentName"/>不能为空'
+          })
+        }else {
+
+            newViewModel.model.__status = isedit ? 'update' : 'add';
+            Hap.submitForm({
+                url: '${base.contextPath}/hpms/mdm/equipment/submit',
+                formModel: newViewModel.model,
+                success: function (data) {
+                    window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
+                    if (isedit) {
+                        window.parent.$("#editWin").data("kendoWindow").close();
+                    } else {
+                        window.parent.$("#newWin").data("kendoWindow").close();
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

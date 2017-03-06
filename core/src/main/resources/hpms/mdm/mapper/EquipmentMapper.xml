@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.EquipmentMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.Equipment">
+        <result column="EQUIPMENT_ID" property="equipmentId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_CODE" property="equipmentCode" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_NAME" property="equipmentName" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_BARCODE" property="equipmentBarcode" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_SERIAL" property="equipmentSerial" jdbcType="VARCHAR" />
+        <result column="ASSETS_NUMBER" property="assetsNumber" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_UOM" property="equipmentUom" jdbcType="VARCHAR" />
+        <result column="DOOR_NO" property="doorNo" jdbcType="VARCHAR" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="ORG_ID" property="orgId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_SIGNIFICANCE" property="equipmentSignificance" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_STATUS" property="equipmentStatus" jdbcType="VARCHAR" />
+        <result column="PURCHASING_DATE" property="purchasingDate" jdbcType="DATE" />
+        <result column="EQUIPMENT_SUPPLIER" property="equipmentSupplier" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_MANUFACTURE" property="equipmentManufacture" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_MODEL" property="equipmentModel" jdbcType="VARCHAR" />
+        <result column="PRODUCTION_DATE" property="productionDate" jdbcType="DATE" />
+        <result column="FACTORY_NUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+        <result column="INSTALL_DATE" property="installDate" jdbcType="DATE" />
+        <result column="USE_DATE" property="useDate" jdbcType="DATE" />
+        <result column="MAINTENANCE_TYPE" property="maintenanceType" jdbcType="VARCHAR" />
+        <result column="DURABLE_YEAR" property="durableYear" jdbcType="DECIMAL" />
+        <result column="GUARANTEE_DATE" property="guaranteeDate" jdbcType="DATE" />
+        <result column="INDICATIVE_PRICE" property="indicativePrice" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_ATTACHMENT" property="equipmentAttachment" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_PICTURE" property="equipmentPicture" jdbcType="VARCHAR" />
+        <result column="TECHNICAL_PARAMETER" property="technicalParameter" jdbcType="VARCHAR" />
+        <result column="PARENT_EQUIPMENT_ID" property="parentEquipmentId" jdbcType="DECIMAL" />
+        <result column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_PICTURE_FILE_NAME" property="equipmentPictureFileName" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_PICTURE_CONTENT_TYPE" property="equipmentPictureContentType" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_PICTURE_FILE_SIZE" property="equipmentPictureFileSize" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_PICTURE_UPDATED_AT" property="equipmentPictureUpdatedAt" jdbcType="DATE" />
+        <result column="CHANGE_EQUIPMENT_ID" property="changeEquipmentId" jdbcType="DECIMAL" />
+        <result column="CHANGE_REASON" property="changeReason" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="TYPE_NAME" property="typeName" jdbcType="VARCHAR" />
+        <result column="company_full_name" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="MEANING1" property="meaning1" jdbcType="VARCHAR"/>
+        <result column="MEANING2" property="meaning2" jdbcType="VARCHAR"/>
+        <result column="PARENT_EQUIPMENT_NAME" property="parentEquipmentName" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="EquipmentTypeMap" type="hpms.mdm.dto.EquipmentType" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL"/>
+
+        <result column="TYPE_NAME" property="typeName" jdbcType="VARCHAR"/>
+        <result column="MEANING1" property="meaning" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+
+    <!--查询设备设施台账-->
+    <select id="queryEquipment" parameterType="hpms.mdm.dto.Equipment" resultMap="BaseResultMap">
+        SELECT HME.EQUIPMENT_ID,
+        HME.EQUIPMENT_TYPE_ID,
+        HME.EQUIPMENT_CODE,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_BARCODE,
+        HME.EQUIPMENT_SERIAL,
+        HME.ASSETS_NUMBER,
+        HME.EQUIPMENT_UOM,
+        HME.DOOR_NO,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.ORG_ID,
+        HME.EQUIPMENT_SIGNIFICANCE,
+        HME.EQUIPMENT_STATUS,
+        HME.PURCHASING_DATE,
+        HME.EQUIPMENT_SUPPLIER,
+        HME.EQUIPMENT_MANUFACTURE,
+        HME.EQUIPMENT_MODEL,
+        HME.PRODUCTION_DATE,
+        HME.FACTORY_NUMBER,
+        HME.INSTALL_DATE,
+        HME.USE_DATE,
+        HME.MAINTENANCE_TYPE,
+        HME.DURABLE_YEAR,
+        HME.GUARANTEE_DATE,
+        HME.INDICATIVE_PRICE,
+        HME.EQUIPMENT_ATTACHMENT,
+        HME.EQUIPMENT_PICTURE,
+        HME.TECHNICAL_PARAMETER,
+        HME.PARENT_EQUIPMENT_ID,
+        HME.VERSION_ID,
+        HME.EQUIPMENT_PICTURE_FILE_NAME,
+        HME.EQUIPMENT_PICTURE_CONTENT_TYPE,
+        HME.EQUIPMENT_PICTURE_FILE_SIZE,
+        HME.EQUIPMENT_PICTURE_UPDATED_AT,
+        HME.CHANGE_EQUIPMENT_ID,
+        HME.CHANGE_REASON,
+        HME.PROGRAM_ID,
+        HME.REQUEST_ID,
+        FCB.company_full_name,
+        HMP.PROJECT_NAME,
+        HMET.TYPE_NAME,
+        HCVV.MEANING MEANING1,
+        HCVV1.MEANING MEANING2,
+        HME2.EQUIPMENT_NAME PARENT_EQUIPMENT_NAME,
+        HOU.NAME
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HME.EQUIPMENT_TYPE_ID = HMET.EQUIPMENT_TYPE_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HMPS_METER_ATTRIBUTE'
+        AND HCVV.VALUE = HMET.TYPE_ATTRIBUTE
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+        ON HCVV1.CODE = 'HPMS_EQUIPMENT_STATUS'
+        AND HCVV1.VALUE = HME.EQUIPMENT_STATUS
+        AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME2
+        ON HME2.EQUIPMENT_ID=HME.PARENT_EQUIPMENT_ID
+        LEFT JOIN hr_org_unit_b HOU
+        ON HOU.UNIT_ID=HME.ORG_ID
+
+
+        <where>
+            1=1
+            <if test="equipmentCode!=null">
+                and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="equipmentId!=null">
+                and HME.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="companyFullName!=null">
+                and FCB.company_full_name=#{companyFullName,jdbcType=VARCHAR}
+            </if>
+
+            <if test="projectName!=null">
+                and HMP.PROJECT_NAME=#{projectName,jdbcType=VARCHAR}
+            </if>
+
+            <if test="typeName!=null">
+                and HMET.TYPE_NAME=#{typeName,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+
+    <!--查询有效设备-->
+    <select id="queryUsefulEquipment"  parameterType="hpms.mdm.dto.Equipment" resultMap="BaseResultMap">
+        SELECT HMET.TYPE_NAME TYPE_NAME,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_ID
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HME.EQUIPMENT_TYPE_ID = HMET.EQUIPMENT_TYPE_ID
+        <where>
+            1=1
+            AND HME.EQUIPMENT_STATUS!='D'
+            <if test="equipmentId!=null">
+                and HME.EQUIPMENT_Id!=#{equipmentId,jdbcType=DECIMAL}
+            </if>
+            <if test="typeName!=null">
+                and HMET.TYPE_NAME=#{typeName,jdbcType=VARCHAR}
+            </if>
+            <if test="equipmentName!=null">
+                and HME.EQUIPMENT_NAME=#{equipmentName,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+    </select>
+
+    <!--查询有效设备类型-->
+    <select id="queryEquipmentType" parameterType="hpms.mdm.dto.EquipmentType" resultMap="EquipmentTypeMap">
+        SELECT HMET.TYPE_NAME TYPE_NAME,
+        HMET.EQUIPMENT_TYPE_ID EQUIPMENT_TYPE_ID,
+        HCVV.MEANING MEANING1
+        FROM HPMS_MDM_EQUIPMENT_TYPE HMET
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HMPS_METER_ATTRIBUTE'
+        AND HCVV.VALUE = HMET.TYPE_ATTRIBUTE
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+
+        <where>
+            1=1
+            AND HMET.ENABLE_FLAG='Y'
+
+        </where>
+
+    </select>
+
+
+
+
+</mapper>
