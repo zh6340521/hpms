@@ -42,7 +42,7 @@ public class PriceLine extends BaseDTO{
 	private String feeName;//费项名称
 	@NotNull
 	@Column
-	private Long unitPrice;//单价
+	private Float unitPrice;//单价
 	@NotEmpty
 	@Column
 	private String currency;//币种
@@ -105,10 +105,10 @@ public class PriceLine extends BaseDTO{
 	public void setFeeName(String feeName) {
 		this.feeName = feeName;
 	}
-	public Long getUnitPrice() {
+	public Float getUnitPrice() {
 		return unitPrice;
 	}
-	public void setUnitPrice(Long unitPrice) {
+	public void setUnitPrice(Float unitPrice) {
 		this.unitPrice = unitPrice;
 	}
 	public String getCurrency() {

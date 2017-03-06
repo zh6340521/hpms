@@ -20,9 +20,9 @@
 	        font-weight: bold;
     	}
 	</style>
-	<script src="/core/common/code?billingMethodData=HPMS_BILL_METHOD" type="text/javascript"></script>
-	<script src="/core/common/code?currencyData=HPMS_MDM_PAYMENT_CURRENCY" type="text/javascript"></script>
-	<script src="/core/common/code?feeUomData=HPMS_UOM" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?billingMethodData=HPMS_BILL_METHOD" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?currencyData=HPMS_MDM_PAYMENT_CURRENCY" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?feeUomData=HPMS_UOM" type="text/javascript"></script>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
         model: {},
@@ -256,7 +256,8 @@
 		            buttonCount: 5
 		        },
 	       		columns : [
-	       		{command : [{name:"edit"},{name:"destroy"}], 
+	       		{command : [{name:"edit"},{name:"delete",
+                        text:"<span class='fa fa-trash-o'></span>"}], 
 			        		title: '<@spring.message "hap.action"/>', 
 			        		attributes: {style: "text-align:center"},
 			        		width: "9%"

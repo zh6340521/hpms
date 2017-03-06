@@ -20,8 +20,8 @@
 	        font-weight: bold;
     	}
 	</style>
-	<script src="/core/common/code?enableFlagData=MDM.ENABLE_FLAG" type="text/javascript"></script>
-	<script src="/core/common/code?discountTypeData=HPMS_DISCOUNT_TYPE" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?enableFlagData=MDM.ENABLE_FLAG" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?discountTypeData=HPMS_DISCOUNT_TYPE" type="text/javascript"></script>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
         model: {},
@@ -511,7 +511,7 @@
 	                width      : "7%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input id="amount" class="k-input k-textbox k-valid" type="text" name="amount"/>');
+                        var editor = $('<input id="amount" required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="amount"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}
@@ -521,7 +521,7 @@
 	                width      : "6%",
 	                attributes  : {style: "text-align:center"},
 	                editor: function(container, options){
-                        var editor = $('<input id="percent" class="k-input k-textbox k-valid" type="text" name="percent"/>');
+                        var editor = $('<input id="percent" required validationMessage="<@spring.message "hpms.notempty"/>" class="k-input k-textbox k-valid" type="text" name="percent"/>');
                         editor.css('width','100%');
                         container.append(editor);
                 	}

@@ -20,7 +20,7 @@
 	        font-weight: bold;
     	}
 	</style>
-	<script src="/core/common/code?isData=SYS.YES_NO" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?isData=SYS.YES_NO" type="text/javascript"></script>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
         model: {},
@@ -148,8 +148,8 @@
 	                    		daysValidation: function (input) {
 	                    			if (input.is("[name='days']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
-	                                        input.attr("data-daysValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
+	                                    if (! /^(0|[1-9]\d*)$/.test(input.val()) ){
+	                                        input.attr("data-daysValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber2'/>");
 	                                        return false;
 	                                    }
 	                                }
