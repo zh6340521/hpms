@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.BpGeneralMapper">
+         <resultMap type="hpms.mdm.dto.BpGeneral" id="BaseResultMap"
+		extends="com.hand.hap.mapper.StdMapper.STD">
+		<id column="BP_ID" property="bpId" jdbcType="DECIMAL" />
+		<result column="BP_NUMBER" property="bpNumber" jdbcType="VARCHAR" />
+		<result column="BP_NAME" property="bpName" jdbcType="VARCHAR" />
+		<result column="FULL_NAME" property="fullName" jdbcType="VARCHAR"/>
+		<result column="PERSON_TITLE" property="personTitle"
+			jdbcType="VARCHAR" />
+		<result column="COMPANY_NAME" property="companyName"
+			jdbcType="VARCHAR" />
+		<result column="COMPANY_TYPE" property="companyType" jdbcType="VARCHAR" />
+		<result column="PERSON_GENDER" property="personGender" jdbcType="VARCHAR" />
+		<result column="PERSON_BIRTHDAY" property="personBirthday" jdbcType="DATE" />
+		<result column="CONTACT_NAME" property="contactName" jdbcType="VARCHAR" />
+		<result column="CONTACT_MOBILE" property="contactMobile" jdbcType="VARCHAR" />
+		<result column="OFFICE_NUMBER" property="officeNumber" jdbcType="VARCHAR" />
+		<result column="CONTACT_TEL" property="contactTel" jdbcType="VARCHAR" />
+		<result column="CONTACT_EMAIL" property="contactEmail" jdbcType="VARCHAR" />
+		<result column="FAX" property="fax" jdbcType="VARCHAR" />
+		<result column="HABITATION_CARD" property="habitationCard" jdbcType="VARCHAR" />
+		<result column="CREDENTIAL_NUMBER" property="credentialNumber" jdbcType="VARCHAR" />
+		<result column="CREDENTIAL_TYPE" property="credentialType" jdbcType="VARCHAR" />
+		<result column="COUNTRY" property="country" jdbcType="VARCHAR" />
+		<result column="NATION" property="nation" jdbcType="VARCHAR" />
+		<result column="RESIDENZA" property="residenza" jdbcType="VARCHAR" />
+		<result column="PLACE_OF_ORIGIN" property="placeOfOrigin" jdbcType="VARCHAR" />
+		<result column="MESSAGE_FLAG" property="messageFlag" jdbcType="VARCHAR" />
+		<result column="AVATAR_FILE_NAME" property="avatarFileName" jdbcType="VARCHAR" />
+		<result column="AVATAR_CONTENT_TYPE" property="avatarContentType" jdbcType="VARCHAR" />
+		<result column="AVATAR_FILE_SIZE" property="avatarFileSize" jdbcType="DECIMAL" />
+		<result column="AVATAR_UPDATED_AT" property="avatarUpdatedAt" jdbcType="DATE" />
+		<result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber"
+			jdbcType="DECIMAL" />
+		<result column="GROUP_ID" property="groupId" jdbcType="DECIMAL" />
+		<result column="CUSTOMER_NUMBER" property="customerNumber"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_TYPE" property="customerType"
+			jdbcType="VARCHAR" />
+			<result column="CUSTOMER_ID" property="customerId"
+			jdbcType="DECIMAL" />
+			<result column="FROM_BP_ID" property="fromBpId" jdbcType="DECIMAL" />
+			<result column="TO_BP_ID" property="toBpId" jdbcType="DECIMAL" />
+			<result column="RELATION_ID" property="relationId" jdbcType="DECIMAL" />
+		<result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
+		<result column="MEANING3" property="meaning3" jdbcType="VARCHAR" />
+		<result column="MEANING" property="meaning" jdbcType="VARCHAR" />
+		<result column="MEANING4" property="meaning4" jdbcType="VARCHAR" />
+		<result column="ICM_FLAG" property="icmFlag" jdbcType="VARCHAR" />
+		<result column="REL_TYPE" property="relType" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectByCustomerId" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.BpGeneral">
+	 SELECT HMBG.BP_ID,
+	   HMC.CUSTOMER_ID,
+       HMC.CUSTOMER_ID,
+       HMC.CUSTOMER_TYPE,
+       HMC.CUSTOMER_NUMBER,
+       HMC.GROUP_ID,
+       HMBG.FULL_NAME,
+       HMBG.PERSON_GENDER,
+       HMBG.CONTACT_MOBILE,
+       HMBG.PERSON_BIRTHDAY,
+       HMBG.CREDENTIAL_TYPE,
+       HMBG.CREDENTIAL_NUMBER,
+       HMBG.CONTACT_TEL,
+       HMBG.OFFICE_NUMBER,
+       HMBG.COUNTRY,
+       HMBG.NATION,
+       HMBG.PLACE_OF_ORIGIN,
+       HMBG.RESIDENZA,
+       HMBG.CONTACT_EMAIL,
+       HMBG.FAX,
+       HMBG.COMPANY_NAME,
+       HMBG.COMPANY_TYPE
+  FROM HPMS_MDM_BP_GENERAL HMBG
+  LEFT JOIN HPMS_MDM_CUSTOMER HMC
+    ON HMBG.BP_ID = HMC.BP_ID
+    <where>
+      1=1
+        <if test="customerId != null">
+		      AND HMC.CUSTOMER_ID = #{customerId}
+		</if>
+	</where> 
+	</select>
+	
+	<select id="queryBpgeneral" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.BpGeneral">
+	  SELECT hmbg.bp_id,
+       hmbg.full_name,
+       hmbg.contact_mobile,
+       hmbg.credential_type,
+       hmbg.credential_number,
+       NVL(HCVV2.MEANING, HCVV3.MEANING) MEANING
+  FROM hpms_mdm_bp_general hmbg
+  left join hpms_mdm_customer hmc
+    on hmc.bp_id = hmbg.bp_id
+  LEFT JOIN HPMS_CODE_VALUE_V HCVV2
+    ON HCVV2.CODE = 'HPMS_MDM_CREDENTIAL_TYPE'
+   AND HCVV2.VALUE = hmbg.CREDENTIAL_TYPE
+   AND HCVV2.LANG = #{request.locale,jdbcType=VARCHAR}
+  LEFT JOIN HPMS_CODE_VALUE_V HCVV3
+    ON HCVV3.CODE = 'HPMS_MDM_CUS_DOCUMENT_TYPE'
+   AND HCVV3.VALUE = hmbg.CREDENTIAL_TYPE
+   AND HCVV3.LANG = #{request.locale,jdbcType=VARCHAR}
+   <where>
+      1=1
+      <if test="fullName != null">
+		      AND hmbg.full_name LIKE concat('%', concat(#{fullName,jdbcType=VARCHAR}, '%'))
+		   </if>
+		   <if test="contactMobile != null">
+		      AND hmbg.contact_mobile LIKE concat('%', concat(#{contactMobile,jdbcType=VARCHAR}, '%'))
+		   </if>
+		   AND hmbg.full_name is not null
+   </where>
+	</select>
+	
+	
+	<select id="selectByRetaion" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.BpGeneral">
+	   select HMBG.BP_ID,
+       HMR.RELATION_ID,
+       HMBG.CONTACT_MOBILE,
+       HMBG.FULL_NAME,
+       HMBG.PERSON_GENDER,
+       HMBG.CREDENTIAL_NUMBER,
+       HMBG.CREDENTIAL_TYPE,
+       HMR.ICM_FLAG,
+       HMR.REL_TYPE,
+       HCVV4.MEANING MEANING4,
+       NVL(HCVV2.MEANING, HCVV3.MEANING) MEANING
+  from HPMS_MDM_RELATION HMR
+  left join HPMS_MDM_BP_GENERAL HMBG
+    ON HMBG.BP_ID = HMR.TO_BP_ID
+  LEFT JOIN HPMS_CODE_VALUE_V HCVV2
+    ON HCVV2.CODE = 'HPMS_MDM_CREDENTIAL_TYPE'
+   AND HCVV2.VALUE = HMBG.CREDENTIAL_TYPE
+   AND HCVV2.LANG = #{request.locale,jdbcType=VARCHAR}
+  LEFT JOIN HPMS_CODE_VALUE_V HCVV3
+    ON HCVV3.CODE = 'HPMS_MDM_CUS_DOCUMENT_TYPE'
+   AND HCVV3.VALUE = HMBG.CREDENTIAL_TYPE
+   AND HCVV3.LANG = #{request.locale,jdbcType=VARCHAR}
+  LEFT JOIN HPMS_CODE_VALUE_V HCVV4
+    ON HCVV4.CODE = 'HPMS_MDM_RELATION_TYPE'
+   AND HCVV4.VALUE = HMR.REL_TYPE
+   AND HCVV4.LANG = #{request.locale,jdbcType=VARCHAR}
+ <where>
+ 1=1
+                        <if test="fromBpId!=null">
+                        	AND HMR.FROM_BP_ID = #{fromBpId}  
+                        </if>
+                        <if test="toBpId!=null">
+                        	AND HMR.TO_BP_ID = #{toBpId}
+                        </if>
+                        </where>
+	</select>
+	
+	<select id="queryCountByIcmFlag"  resultType="int"
+		parameterType="hpms.mdm.dto.Fee">
+	   SELECT COUNT(1)
+		FROM HPMS_MDM_FEE HMF		
+        <where>
+            1=1                       
+            <if test="feeCode!=null">
+                and HMF.FEE_CODE = #{feeCode,jdbcType=VARCHAR}              
+            </if>       
+        </where>  
+        </select>
+</mapper>

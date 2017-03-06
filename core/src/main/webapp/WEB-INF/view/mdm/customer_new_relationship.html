@@ -1,0 +1,117 @@
+<#-- * description: 客户档案新增人员关系界面 * version: 1.0 *
+author:huifang.zhou@hand-china.com * --> 
+<#include "../include/header.html">
+<html>
+<body>
+<script
+	src="${base.contextPath}/common/code?credentialType=HPMS_MDM_CREDENTIAL_TYPE"
+	type="text/javascript"></script>
+<script
+	src="${base.contextPath}/common/code?relType=HPMS_MDM_RELATION_TYPE"
+	type="text/javascript"></script>
+<script>
+var isedit = '${RequestParameters.isedit!0}' == '1';
+     var fromBpId = '${RequestParameters.fromBpId!0}';
+     var bpId = '${RequestParameters.bpId!0}';
+     console.log(bpId)
+     console.log(fromBpId)
+     var viewModel = kendo.observable({
+			     model : {},
+			})
+			
+			
+	kendo.bind($('#personnel'), viewModel);
+</script>
+<div id="page-content">
+		<div id="personnel">
+							<div class="pull-center">
+								<label class="col-sm-4 control-label">关系类型:</label> <input id="relType"
+									type="text" style="width: 200px;"
+									data-bind="text:model.meaning,value:model.relType">
+									<script>
+										$("#relType")
+												.kendoDropDownList(
+														{
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : relType,
+															select : function(e) {
+																var dataItem = this
+																		.dataItem(e.item);
+																viewModel.model.set('relType',dataItem.value);
+															}
+														}).data("kendoDropDownList");
+									</script>
+							</div>
+					<div class="row" style="margin-bottom: 32px;margin-top: 10px;">
+							<div class="pull-center">
+								<label class="col-sm-4 control-label" style="margin-left: 6px;">紧急联系人:</label> <input id="icmFlag"
+									type="checkbox" data-bind="value:model.icmFlag"/>
+									<script>
+									 $("#icmFlag").kendoCheckbox({
+                        					checkedValue:'1',
+                							uncheckedValue:'0'
+                        			});
+                        			</script>
+							</div>
+					</div>
+					<div class="pull-right" id="toolbar-btn" style="padding-bottom: 32px;margin-right: 20px;">
+					<span class="btn btn-success" id="saveGrid" type="submit" onclick="savePersonnel()"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-success" id="closeWin" type="submit" onclick="closeReation()"><i class="fa fa-times-circle-o" style="margin-right: 3px;"></i><@spring.message "hap.cancel"/></span>
+					</div>
+					
+					</div>
+					</div>
+	
+	<script>
+	
+	
+	            function savePersonnel() {
+							viewModel.model.set("fromBpId",fromBpId);
+							viewModel.model.set("toBpId",bpId);
+							var modelvalue = kendo.stringify(viewModel.model);
+							var json = JSON.parse(modelvalue); 
+							viewModel.model.__status = 'add';
+                       $.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/Relation/submitReation",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+        							window.parent.$('#bpRetaionGrid').data('kendoGrid').dataSource;
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+												closeReation();
+											} else {
+												kendo.ui.showInfoDialog({
+													message : data.message
+												});
+											}
+      						}});
+						}; 
+						
+						
+						
+						//点击取消  关闭改窗口
+						function closeReation(){
+						    window.parent.$("#editRelation").data("kendoWindow").close();
+						}
+						
+						if(isedit==0){
+						$(document).ready(function(){
+						   viewModel.model.set("icmFlag",0);
+        				   viewModel.model.set("personGender","未知");
+        				   })
+						}
+	</script>
+</body>
+</html>

@@ -1,0 +1,1685 @@
+<#-- * description: 客户档案新增页面 * version: 1.0 *
+author:huifang.zhou@hand-china.com * --> 
+<#include "../include/header.html">
+<html>
+<body>
+<script
+	src="${base.contextPath}/common/code?customerType=HPMS_MDM_CUSTOMER_TYPE"
+	type="text/javascript"></script>
+<script
+	src="${base.contextPath}/common/code?credentialType=HPMS_MDM_CREDENTIAL_TYPE"
+	type="text/javascript"></script>
+<script
+	src="${base.contextPath}/common/code?cusDocumentType=HPMS_MDM_CUS_DOCUMENT_TYPE"
+	type="text/javascript"></script>
+<script
+	src="${base.contextPath}/common/code?relType=HPMS_MDM_RELATION_TYPE"
+	type="text/javascript"></script>
+<script
+	src="${base.contextPath}/common/code?paymentCurrency=HPMS_MDM_PAYMENT_CURRENCY"
+	type="text/javascript"></script>
+	
+
+		<script type="text/javascript">
+        var islook = '${RequestParameters.islook!0}' == '1';
+        var isedit = '${RequestParameters.isedit!0}' == '1';
+        var custBpId = '${RequestParameters.bpId!0}';
+        var enableFlag = '${RequestParameters.enableFlag!0}';
+			var viewModel = kendo.observable({
+				model : {},
+			})
+			var viewModelPersonage = kendo.observable({
+				model : {},
+				resetForm : function(e) {
+					var formData = viewModelPersonage.model.toJSON();
+					for ( var k in formData) {
+						viewModelPersonage.model.set(k, null);
+					}
+				}
+			})
+			
+			var viewModelCompany = kendo.observable({
+				model : {},
+				resetForm : function(e) {
+					var formData = viewModelCompany.model.toJSON();
+					for ( var k in formData) {
+						viewModelCompany.model.set(k, null);
+					}
+				}
+			})
+			var viewModelSales = kendo.observable({
+				model : {},
+				resetForm : function(e) {
+					var formData = viewModelSales.model.toJSON();
+					for ( var k in formData) {
+						viewModelSales.model.set(k, null);
+					}
+				}
+			})
+			var viewModelPersonnel = kendo.observable({
+			    model : {},
+			    resetForm : function(e) {
+					var formData = viewModelPersonnel.model.toJSON();
+					for ( var k in formData) {
+						viewModelPersonnel.model.set(k, null);
+					}
+				}
+			})
+			var  viewModelRelationship = kendo.observable({
+			    model : {},
+			    resetForm : function(e) {
+					var formData = viewModelRelationship.model.toJSON();
+					for ( var k in formData) {
+						viewModelRelationship.model.set(k, null);
+					}
+				}
+			})
+			
+			var viewModelbpGender = kendo.observable({
+			     model : {},
+			     queryResource: function (e) {
+            $('#retaionGrid').data('kendoGrid').dataSource.page(1);
+       	 },
+			})
+			$(document).ready(function() {
+				$("#tabstrip").kendoTabStrip({
+					animation : {
+						open : {
+							effects : "fadeIn"
+						}
+					}
+				});
+			});
+			
+			kendo.bind($('#query-form'), viewModel);
+		</script>
+		
+	<div id="newContact" style="display: none"></div>
+    <div id="editRelation" style="display: none"></div>
+	<div id="content-container">
+		<div id="page-content">
+			<div class="panel"
+				style="padding: 0px; border: none; box-shadow: none;">
+				<form class="form-horizontal" id="query-form"
+					style="margin-top: 1px;">
+					<div class="row" style="margin-bottom: 10px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.customer.customertype"/></label> <input
+									id="customerType" name="customerType" style="width: 200px"
+									data-bind="text:model.meaning,value:model.customerType" />
+								<script>
+									$("#customerType")
+											.kendoDropDownList(
+													{
+														optionLabel : "--请选择--",
+														dataTextField : "meaning",
+														dataValueField : "value",
+														template : function(
+																dataItem) {
+															return dataItem['meaning']
+																	|| ''
+														},
+														dataSource : customerType,
+														select : function(e) {
+															var dataItem = this.dataItem(e.item);
+															viewModel.model.set('customerType',dataItem.value);
+															var csType = viewModel.model.customerType;
+															if ("PERSON" == csType) {
+																company.style.display = "none";
+																personage.style.display = "block";
+																relation.style.display = "block";
+																
+															} else if ("COMPANY" == csType) {
+																personage.style.display = "none";
+																relation.style.display = "none";
+																company.style.display = "block";
+															}
+														}
+													}).data("kendoDropDownList");
+													kendo.bind($('#customerType'), viewModel);
+								</script>
+
+							</div>
+						</div>
+
+						<!-- 名称 -->
+						<div class="col-sm-3">
+							<div class="pull-right">
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.customer.customernumber"/></label> <input
+									id="customerNumber" type="text" style="width: 200px;"
+									data-bind="value:model.customerNumber" class="k-textbox" disabled>
+									<script>kendo.bind($('#customerNumber'), viewModel);</script>
+							</div>
+						</div>
+
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">所属集团</label> <input
+									id="groupId" style="width: 200px;" 
+									 data-bind="value:model.groupId">
+								<script>
+									 $("#groupId").kendoComboBox({
+		  									valuePrimitive: true,
+											  dataTextField: "companyFullName",
+     									     dataValueField: "companyId",
+     									     dataSource: {
+                   						 transport: {
+                  				  	read:function(options) {
+								      $.ajax({
+						  		      type   : "POST",
+						   		     url: "${base.contextPath}/mdm/property/groupQuery",
+								        data: {}, 
+						   		     success: function(json) {
+						      		    options.success(json.rows);
+						        }
+						      });
+    					}
+                	} 
+          }
+		});
+													kendo.bind($('#groupId'), viewModel);
+								</script>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			
+		</div>
+
+
+
+		<!-- =================================== tab页 ============================================== -->
+		<div id="tabstrip" style="padding: 1px;">
+			<ul class="nav nav-tabs" id="mytab">
+				<li id="bpGenerals" class="k-state-active"><a>一般信息</a></li>
+				<li id="sale" class="k-state-disabled"><a>销售财务信息</a></li>
+				<li id="relation" class="k-state-disabled"><a>人员关系</a></li>
+			</ul>
+
+			<!-- =================================== 第一个tab页  ============================================== -->
+			<div style="height: 100%; clear: both; padding-top: 12px;">
+				<div id="general_information_grid">
+					<div id="personage">
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label" style="margin-left: 23px;">姓名:</label> 
+									<input type="text" id="fullName" style="width: 200px;" data-bind="value:model.fullName" class="k-textbox" /> 
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label" style="margin-left: 62px;">性别:</label>
+									<input id="sexID" name="sexID" type="radio" class="gender" value="男" data-bind="checked:model.personGender" style="margin-left: 1px;" />男 
+									<input id="sexID" name="sexID" type="radio" class="gender" value="女" style="margin-left: 10px;" data-bind="checked:model.personGender" />女
+									<input id="sexID" checked name="sexID" type="radio" class="gender" value="未知" style="margin-left: 10px;" data-bind="checked:model.personGender" />未知
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label">移动电话:</label> 
+									<input id="contactMobile" type="text" pattern="^[0-9]{11}$" validationMessage="<@spring.message "hpms.phonevalidation"/>" data-bind="value:model.contactPhone" class="k-textbox"
+                                   style="width: 200px;">
+									<script>
+									</script>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">出生年月:</label> <input
+										type="date" style="width: 200px;" id="startTime"
+										data-bind="value:model.personBirthday">
+									<script type="text/javascript">
+										$("#startTime").kendoDatePicker({
+											format : "yyyy-MM-dd"
+										});
+									</script>
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialtype"/>:</label> <input
+										id="credentialType" name="credentialType"
+										style="width: 200px;"
+										data-bind="value:model.credentialType" />
+									<script>
+										$("#credentialType").kendoDropDownList({
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															valuePrimitive: true,
+															dataSource : credentialType,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelPersonage.model.set('credentialType',dataItem.value);
+															}
+														}).data("kendoDropDownList");
+									</script>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>:</label> <input
+										id="credentialNumber" type="text" style="width: 200px;"
+										data-bind="value:model.credentialNumber" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label">固定电话:</label> <input
+										id="contactTel" type="text" style="width: 200px;"
+										data-bind="value:model.contactTel" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">办公电话:</label> <input
+										id="officeNumber" type="text" style="width: 200px;"
+										data-bind="value:model.officeNumber" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label"
+										style="margin-left: 23px;">国籍:</label> <input type="text"
+										id="country" style="width: 200px;"
+										data-bind="value:model.country" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">名族:</label> <input
+										id="nation" type="text" style="width: 200px;"
+										data-bind="value:model.nation" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label"
+										style="margin-left: 23px;">籍贯:</label> <input type="text"
+										id="placeOfOrigin" style="width: 200px;"
+										data-bind="value:model.placeOfOrigin" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">户口所在地:</label> <input
+										id="residenza" type="text" style="width: 200px;"
+										data-bind="value:model.residenza" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 11px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label">电子邮箱:</label> <input
+										id="contactEmail" type="text" style="width: 200px;"
+										data-bind="value:model.contactEmail" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">传真:</label> <input
+										id="fax" type="text" style="width: 200px;"
+										data-bind="value:model.fax" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="pull-right" id="toolbar-Personage"
+							style="padding-bottom: 3px;">
+							<span class="btn btn-success" id="savePersonage" type="submit" onclick="submitPersonage()"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+                            <span class="btn btn-success" id="cancel" type="button" data-bind="click:resetForm"><i class="fa fa-times-circle-o" style="margin-right: 3px;"></i><@spring.message "hap.cancel"/></span>
+                            <span type="submit" id="editPersonage" class="btn btn-primary" onclick="editPersonage()" style="margin-right: 10px;display: none;">编辑</span>
+							<span class="btn btn-success" id="updatePersonage" type="submit" onclick="updatePersonage()" style="display: none;"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+						</div>
+					</div>
+					<script>
+									kendo.bind($('#personage'),viewModelPersonage);
+					</script>
+					
+					<div id="company" style="display: none;">
+						<div class="row" style="margin-bottom: 32px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label">企业名称:</label> <input id="companyName"
+										type="text" style="width: 200px;"
+										data-bind="value:model.companyName" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">企业类型:</label> <input id="companyType"
+										type="text" style="width: 200px;"
+										data-bind="value:model.companyType" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 32px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label">固定电话:</label> <input id="Tel"
+										type="text" style="width: 200px;"
+										data-bind="value:model.contactTel" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">移动电话:</label> <input id="contactMo"
+										type="text" style="width: 200px;"
+										data-bind="value:model.contactMobile" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 33px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialtype"/>:</label> <input
+										id="cusDocumentType" name="cusDocumentType"
+										style="width: 200px;"
+										data-bind="text:model.meaning,value:model.credentialType" />
+									<script>
+										$("#cusDocumentType").kendoDropDownList(
+														{
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															valuePrimitive: true,
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : cusDocumentType,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelCompany.model.set('credentialType',dataItem.value);
+															}
+														}).data("kendoDropDownList");
+									</script>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>:</label> <input id="credNumber"
+										type="text" style="width: 200px;"
+										data-bind="value:model.credentialNumber" class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 32px;">
+							<div class="col-sm-3">
+								<div class="pull-left">
+									<label class="col-sm-4 control-label">电子邮箱:</label> <input id="Email"
+										type="text" style="width: 200px;"
+										data-bind="value:model.contactEmail" class="k-textbox" />
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="pull-right">
+									<label class="col-sm-4 control-label">传真:</label> <input id="faxs"
+										type="text" style="width: 200px;" data-bind="value:model.fax"
+										class="k-textbox">
+								</div>
+							</div>
+						</div>
+						<div class="pull-right" id="toolbar-btn" style="padding-bottom: 32px;">
+							<span class="btn btn-success" id="saveCompany" type="submit" onclick="submitCompany()"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+                            <span class="btn btn-success" id="resetCompany" type="button" data-bind="click:resetForm"><i class="fa fa-times-circle-o" style="margin-right: 3px;"></i><@spring.message "hap.cancel"/></span>
+							<span type="submit" id="editCompany" class="btn btn-primary" onclick="editCompany()" style="margin-right: 10px;display: none;">编辑</span>
+							<span class="btn btn-success" id="updateCompany" type="submit" onclick="updateCompany()" style="display: none;"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+						</div>
+					</div>
+					<script>
+									kendo.bind($('#company'),viewModelCompany);
+					</script>
+				</div>
+			</div>
+
+			<!-- =================================== 第二个tab页  ============================================== -->
+			<div style="height: 100%; clear: both; padding-top: 20px;">
+				<div id="sales_information_grid">
+				<div id="sales" >
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">所属公司:</label> <input
+									id="companyId" type="text" style="width: 200px;" required data-bind="value:model.companyId" />
+								<script>
+									$("#companyId").kendoComboBox(
+													{
+														autoBind : false,
+														valuePrimitive : true,
+														cascadeFrom : "groupId",
+
+														cascadeFromField : "companyId",
+														filter : "contains",
+														dataTextField : "companyFullName",
+														dataValueField : "companyId",
+														dataSource : {
+															serverFiltering : true,
+															transport : {
+																read : {
+																	url : "/core/hpms/mdm/project/companyQuery",
+																	type : "POST"
+																},
+																contentType : "application/json",
+																parameterMap : function(options,type) {
+																	if (type === "read") {
+																		var filter = options.filter.filters[0]
+																		var map = {};
+																		map[filter.field] = filter.value;
+																		return map;
+																	}
+																}
+															},
+															schema : {
+																data : 'rows'
+															}
+														}
+													});
+								</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+								<label class="col-sm-4 control-label">催款等级:</label> <input
+									type="text" style="width: 200px;"
+									data-bind="value:model.deptLevel" class="k-textbox">
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">应收科目:</label> <input
+									type="text" style="width: 200px;"
+									data-bind="value:model.receivableAccount" class="k-textbox" />
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+								<label class="col-sm-4 control-label">税码:</label> <input
+									type="text" style="width: 200px;"
+									data-bind="value:model.taxCode" class="k-textbox">
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">付款条件:</label> <input id="paymentTermId"
+									type="text" style="width: 200px;"
+									data-bind="value:model.paymentTermId"/>
+									<script>
+									    $("#paymentTermId").kendoComboBox({
+		  									valuePrimitive: true,
+										dataTextField: "paymentTermName",
+										dataValueField: "paymentTermId",
+										dataSource: {
+ 							            transport: {
+ 					                   	read:function(options) {
+									    $.ajax({
+								        type   : "POST",
+								        url: "${base.contextPath}/mdm/paymentTerm/paymentTermQuery",
+							        	data: {}, 
+								        success: function(json) {
+									          options.success(json.rows);
+						              }
+						         });
+    					    }
+                	    } 
+                          }
+		               });
+									</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+								<label class="col-sm-4 control-label">付款方法:</label> <input id="paymentMethodId"
+									type="text" style="width: 200px;"
+									data-bind="value:model.paymentMethodId">
+									<script>
+									    $("#paymentMethodId").kendoComboBox({
+		  									valuePrimitive: true,
+		  									dataTextField: "paymentMethodName",
+          									dataValueField: "paymentMethodId",
+          								    dataSource: {
+                   							 transport: {
+                    							read:function(options) {
+						     						 $.ajax({
+						        						type   : "POST",
+						        						url: "${base.contextPath}/mdm/paymentMethod/paymentMethodQuery",
+						       							data: {}, 
+						        						success: function(json) {
+						          						 options.success(json.rows);
+						        }
+						      });
+    					}
+                	} 
+          }
+		});
+									</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 30px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">付款币种:</label> <input id="paymentCurrency"
+									type="text" style="width: 200px;"
+									data-bind="value:model.paymentCurrency"/>
+									<script>
+										$("#paymentCurrency").kendoDropDownList({
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : paymentCurrency,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelSales.model.set('paymentCurrency',dataItem.value);
+															}
+														}).data("kendoDropDownList");
+									</script>
+							</div>
+						</div>
+					</div>
+					<div class="pull-right" id="toolbar-btn"
+						style="padding-bottom: 30px;">
+					<span class="btn btn-success" id="saveGrid" type="submit" onclick="saveSales()"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-success" id="closeWin" type="button" data-bind="click:resetForm"><i class="fa fa-times-circle-o" style="margin-right: 3px;"></i><@spring.message "hap.cancel"/></span>
+					</div>
+					</div>
+					<div id="salesFical" style="clear: both; display: none;">
+						<div id="saleGrid"></div>
+					</div>
+				</div>
+			</div>
+			<script>kendo.bind($('#sales_information_grid'), viewModelSales);</script>
+			<!-- =================================== 第三个tab页  ============================================== -->
+			<div style="height: 100%; clear: both; padding-top: 20px;">
+				<div id="personnel_relationship_grid">
+				<div id="personnel">
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label" style="margin-left: 23px;">姓名:</label>
+								<input type="text" style="width: 200px; margin-left: 10px;" id="name"
+									data-bind="value:model.fullName" class="k-textbox" />
+									<script>kendo.bind($('#name'), viewModelbpGender);</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label" style="margin-left: 62px;">性别:</label> 
+									<input id="sex" name="sex" type="radio" value="男" data-bind="checked:model.personGender" style="margin-left: 1px;" />男 
+									<input id="sex" name="sex" type="radio" value="女" style="margin-left: 10px;" data-bind="checked:model.personGender" />女
+									<input id="sex" checked name="sex" type="radio" value="未知" style="margin-left: 10px;" data-bind="checked:model.personGender" />未知
+									<script>kendo.bind($('#sex'), viewModelbpGender);</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">移动电话:</label> <input id="tel"
+									type="text" style="width: 200px; margin-left: 11px;"
+									data-bind="value:model.contactMobile" class="k-textbox" />
+									<script>kendo.bind($('#tel'), viewModelbpGender);</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialtype"/>:</label> <input
+										id="credential" name="credential"
+										style="width: 200px;"
+										data-bind="text:model.meaning,value:model.credentialType" />
+									<script>
+										$("#credential").kendoDropDownList({
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															valuePrimitive: true,
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : credentialType,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelbpGender.model.set('credentialType',dataItem.value);
+															}
+														}).data(
+														"kendoDropDownList");
+														kendo.bind($('#credential'), viewModelbpGender);
+									</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>:</label> <input id="crNumber"
+									type="text" style="width: 200px; margin-left: 11px;"
+									data-bind="value:model.credentialNumber" class="k-textbox" />
+									<script>kendo.bind($('#crNumber'), viewModelbpGender);</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+								<label class="col-sm-4 control-label">关系类型:</label> <input id="relType"
+									type="text" style="width: 200px;"
+									data-bind="text:model.meaning,value:model.relType">
+									<script>
+										$("#relType")
+												.kendoDropDownList(
+														{
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : relType,
+															select : function(e) {
+																var dataItem = this
+																		.dataItem(e.item);
+																viewModelRelationship.model.set('relType',dataItem.value);
+															}
+														}).data(
+														"kendoDropDownList");
+										kendo.bind($('#relType'), viewModelRelationship);
+									</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">紧急联系人:</label> <input id="icmFlag"
+									type="checkbox" data-bind="value:model.icmFlag"/>
+									<script>
+									 $("#icmFlag").kendoCheckbox({
+                        					checkedValue:'1',
+                							uncheckedValue:'0'
+                        			});
+									kendo.bind($('#icmFlag'), viewModelRelationship);</script>
+							</div>
+						</div>
+					</div>
+					<div class="pull-right" id="toolbar-btn"
+						style="padding-bottom: 32px;">
+					<span class="btn btn-success" id="saveGrid" type="submit" onclick="submitPersonnel()"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-success" id="closeWin" type="button" onclick="close()"><i class="fa fa-times-circle-o" style="margin-right: 3px;"></i><@spring.message "hap.cancel"/></span>
+					</div>
+				</div>
+			<div id="retaions" style="display: none;">
+			<div class="pull-left" id="query" style="padding-bottom: 10px;">
+				<label class="col-sm-4 control-label" style="margin-left: -15px;">关系人名字</label> 
+				<input id="Name" type="text" style="width: 140px; margin-left: -15px;" data-bind="value:model.fullName" class="k-textbox" />
+				<label class="col-sm-4 control-label">移动电话</label> 
+				<input id="phone" type="text" style="width: 140px; margin-left: -10px;" data-bind="value:model.contactMobile" class="k-textbox" />
+			    <span class="btn btn-primary" data-bind="click:queryResource" style="width: 30px;margin-left: 4px;" type="submit">查询</span>
+			    <span type="submit" class="btn btn-primary" onclick="savePeople(custBpId)" id="savePeople"
+								style="margin-left: 5px;">新建联系人</span>
+			    <div style="clear: both"></div>
+		    </div>
+		    <script>kendo.bind($('#query'), viewModelbpGender);</script>
+		    <div style="clear: both">
+		        <div id="retaionGrid"></div>
+		    </div>
+		    <script>kendo.bind($('#query'), viewModelbpGender);</script>
+		    <div class="row" style="margin-bottom: 32px;"></div>
+		    <div style="clear: both">
+		        <div id="bpRetaionGrid"></div>
+		    </div>
+		    <script>kendo.bind($('#bpRetaionGrid'), viewModelRelationship);</script>
+			</div>
+			</div>
+		</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+	$('#query').keydown(function (e) {
+	    if (e.keyCode == 13) {
+	        e.target.blur();
+	        viewModelbpGender.queryResource(e);
+	    }
+	});
+	 var crudServiceBaseUrl = '${base.contextPath}',
+     dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl + "/hpms/mdm/SalesFinacial/queryByCustId?custId="+${RequestParameters.customerId!0},
+                        type    : "POST",
+                        dataType: "json"
+                    },
+                    update: {
+                    url: crudServiceBaseUrl + "/hpms/mdm/SalesFinacial/salesFinacialSubmit",
+                    contentType: "application/json",
+                    type: "POST",
+                },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModelSales.model.toJSON(), options);
+                        }
+                    }
+                },batch: true,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "salesFinacialId",
+                        fields: {
+ 							meaning1:{type:"string"},
+                        }
+                    }
+                }
+            });
+            
+    var companyData = [];
+	var paymentTermIdData = [];
+	var paymentMethodData = [];
+	//销售信息grid
+	var saleGrid = $("#saleGrid").kendoGrid({
+        dataSource: dataSource,
+        navigatable: false,
+		height: '100%',
+		resizable: true,
+		scrollable: "multiple,rowbox",
+		reorderable: true,
+		sortable   : true, 
+		selectable : "row",
+	    editable: "inline",
+		columnMenu: true,
+        columns : [ 
+        {command : [{name:"edit"}], 
+	     title: '<@spring.message "hap.action"/>', 
+		 attributes: {style: "text-align:center"},
+		  width: 100
+		},{
+            field : "companyId",
+	                title      : "<@spring.message 'hpms.mdm.property.company'/>", 
+	                width      : 150,
+	                attributes : {style: "text-align:center"},
+	                template: function(dataItem){
+	                
+	                	if (companyData.length==0){
+	                		return dataItem['companyFullName']|| '';
+	                	}
+	                	var v = dataItem.companyId;
+	                    $.each(companyData,function(i,n){
+	                        if (n.companyId==v){
+	                        	v=n.companyFullName;
+	                        }
+	                    });
+                    	return v || "";
+	                
+	                
+					//	return dataItem['companyFullName']|| '' 
+		           	},
+		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/property/companyQuery',
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			companyData = data.rows
+			    	      		}
+			    	      	 }); 
+				        	$('<input style="width: 50;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+		                         .appendTo(container).kendoDropDownList({
+		                             dataTextField: "companyFullName",
+		                             dataValueField: "companyId",
+		                             valuePrimitive: true,
+		                             dataSource: companyData,
+		                             select:function(e){
+			                        	 $.ajax({
+						    	      		url : '${base.contextPath}/mdm/property/groupQuery?companyId='+options.model.companyId,
+						    	      		type : 'POST',
+						    	      		contentType : "application/json;charset=utf-8",
+						    	      		cache : false,
+						    	      		dataType : 'json',
+						    	      		async : false,
+						    	      		schema : {
+																data : 'rows'
+															}
+			    	      	 			});
+		                             }
+		                    });
+				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
+		            }
+            },
+            {
+                field: "deptLevel",
+                title: '催款等级',
+                width: 120
+            },
+            {
+                field: "receivableAccount",
+                title: '应收科目',
+                width: 120
+            },
+            {
+                field: "taxCode",
+                title: '税码',
+                width: 120
+            },
+            {
+                field: "paymentTermId",
+                title: '付款条件',
+                attributes: {style: "text-align:center"},
+                width: 120,
+                template: function(dataItem){
+	                	if (paymentTermIdData.length==0){
+	                		return dataItem['paymentTermName']|| '';
+	                	}
+	                	var v = dataItem.paymentTermId;
+	                    $.each(paymentTermIdData,function(i,n){
+	                        if (n.paymentTermId==v){
+	                        	v=n.paymentTermName;
+	                        }
+	                    });
+                    	return v || "";
+	                
+	                
+					//	return dataItem['companyFullName']|| '' 
+		           	},
+		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/paymentTerm/paymentTermQuery',
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			paymentTermIdData = data.rows
+			    	      		}
+			    	      	 }); 
+			    	    $('<input style="width: 50;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+		                         .appendTo(container).kendoDropDownList({
+		                             dataTextField: "paymentTermName",
+		                             dataValueField: "paymentTermId",
+		                             valuePrimitive: true,
+		                             dataSource: paymentTermIdData,
+		                             select:function(e){
+			                        	 $.ajax({
+						    	      		url : '${base.contextPath}/mdm/paymentTerm/paymentTermQuery?paymentTermId='+options.model.paymentTermId,
+						    	      		type : 'POST',
+						    	      		contentType : "application/json;charset=utf-8",
+						    	      		cache : false,
+						    	      		dataType : 'json',
+						    	      		async : false,
+						    	      		schema : {
+																data : 'rows'
+															}
+			    	      	 			});
+		                             }
+		                    });
+		            }
+            },
+            {
+                field: "paymentMethodId",
+                title: '付款方法',
+                attributes: {style: "text-align:center"},
+                width: 120,
+                template: function(dataItem){
+	                	if (paymentMethodData.length==0){
+	                		return dataItem['paymentMethodName']|| '';
+	                	}
+	                	var v = dataItem.paymentMethodId;
+	                    $.each(paymentMethodData,function(i,n){
+	                        if (n.paymentMethodId==v){
+	                        	v=n.paymentMethodName;
+	                        }
+	                    });
+                    	return v || "";
+	                
+	                
+					//	return dataItem['companyFullName']|| '' 
+		           	},
+		           	editor: function(container, options){
+		           			$.ajax({
+			    	      		url : '${base.contextPath}/mdm/paymentMethod/paymentMethodQuery',
+			    	      		type : 'POST',
+			    	      		contentType : "application/json;charset=utf-8",
+			    	      		cache : false,
+			    	      		dataType : 'json',
+			    	      		async : false,
+			    	      		success : function(data) {
+			    	      			paymentMethodData = data.rows
+			    	      		}
+			    	      	 }); 
+			    	    $('<input style="width: 50;" required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+		                         .appendTo(container).kendoDropDownList({
+		                             dataTextField: "paymentMethodName",
+		                             dataValueField: "paymentMethodId",
+		                             valuePrimitive: true,
+		                             dataSource: paymentMethodData,
+		                             select:function(e){
+			                        	 $.ajax({
+						    	      		url : '${base.contextPath}/mdm/paymentMethod/paymentMethodQuery?paymentMethodId='+options.model.paymentMethodId,
+						    	      		type : 'POST',
+						    	      		contentType : "application/json;charset=utf-8",
+						    	      		cache : false,
+						    	      		dataType : 'json',
+						    	      		async : false,
+						    	      		schema : {
+																data : 'rows'
+															}
+			    	      	 			});
+		                             }
+		                    });
+		            }
+					//	return dataItem['companyFullName']|| '' 
+            },
+            {
+                field: "paymentCurrency",
+                title: '付款币种',
+                attributes: {style: "text-align:center"},
+                width: 120,
+                template:function (dataItem) {
+                    var v = dataItem.paymentCurrency;
+                    $.each(paymentCurrency,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    });
+                    return v || "";
+                },
+                editor:function (container, options) {
+                    $('<input required style="width: 90%;" ' +
+                        ' validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
+                        'name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            dataTextField:"meaning",
+                            dataValueField:"value",
+                            valuePrimitive:true,
+                            dataSource: paymentCurrency
+                        });
+                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
+                }
+            }
+        ]
+    }).data("kendoGrid");
+    
+    var crudServiceBaseUrl = '${base.contextPath}',
+     FicalsdataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl + "/hpms/mdm/BpGeneral/queryBpGeneral",
+                        type    : "POST",
+                        dataType: "json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return Hap.prepareQueryParameter(viewModelbpGender.model.toJSON(), options);
+                        }
+                    }
+                },batch: true,
+                serverPaging: true,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "relationId",
+                        fields: {
+ 							meaning:{type:"string"}
+                        }
+                    }
+                }
+            });
+    //一般信息表
+    var retaionGrid = $("#retaionGrid").kendoGrid({
+        dataSource: FicalsdataSource,
+        navigatable: false,
+        height: '100%',
+        autoBind:false,
+        resizable: true,
+        scrollable: true,
+        selectable : 'multiple, rowbox',
+        columns : [
+	       		{
+                field      : "操作",
+                name:"edit",
+                width      : 50 ,
+                template : function(rowdata) {
+                    var uid = rowdata.uid.toString();
+                    var singleRecycle = '<button type="button" id="recycle" class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateReation('+rowdata.bpId+',\''+ custBpId+ '\')"><span class="glyphicon glyphicon-edit"></span></button>';
+                    return singleRecycle;
+                },
+                attributes  : {style: "text-align:center"}
+            },
+            {
+            
+                field: "fullName",
+                title: "客户",
+                width: 120
+            },
+            {
+                field: "contactMobile",
+                title: '移动电话',
+                width: 120
+            },
+            {
+                field: "meaning",
+                title: '<@spring.message "hpms.mdm.bpGeneral.credentialtype"/>',
+                width: 120
+            },
+            {
+                field: "credentialNumber",
+                title: '<@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>',
+                width: 120
+            }
+        ]
+    }).data("kendoGrid");
+    
+    
+    
+    
+    
+    var crudServiceBaseUrl = '${base.contextPath}',
+     ReationdataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl + "/hpms/mdm/BpGeneral/queryByReation?fromBpId="+custBpId,
+                        type    : "POST",
+                        dataType: "json"
+                    },
+                    parameterMap: function (options, type) {
+                        if (type !== "read" && options.models) {
+                            var datas = Hap.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            var p = Hap.prepareQueryParameter("", options);
+                        	p.bpId = custBpId;
+                        	return p;
+                        }
+                    }
+                },
+                batch: true,
+                pageSize: 5,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "relationId",
+                        fields: {
+ 							meaning:{type:"string"},
+ 							meaning4:{type:"string"},
+ 							icmFlag: {defaultValue: '1',type: 'boolean',checkedValue:'1',uncheckedValue:'0'}
+                        }
+                    }
+                }
+            });
+    //人员关系grid
+    var bpRetaionGrid = $("#bpRetaionGrid").kendoGrid({
+        dataSource: ReationdataSource,
+        navigatable: false,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        selectable : 'multiple, rowbox',
+        pageable: {
+            pageSizes: [5, 10, 20, 50],
+            refresh: true,
+            buttonCount: 5
+        },
+        columns: [
+            {
+                field      : "操作",
+                name:"edit",
+                width      : 50 ,
+                template : function(rowdata) {
+                    var uid = rowdata.uid.toString();
+                    var singleRecycle = '<button type="button" id="recycle" class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateCantact('+custBpId+',\''+ rowdata.bpId+ '\')"><span class="glyphicon glyphicon-edit"></span></button>';
+                    return singleRecycle;
+                },
+                attributes  : {style: "text-align:center"}
+            },
+            {
+            
+                field: "fullName",
+                title: "联系人",
+                width: 120
+            },
+            {
+                field: "contactMobile",
+                title: '移动电话',
+                width: 120
+            },
+            {
+                field: "meaning",
+                title: '<@spring.message "hpms.mdm.bpGeneral.credentialtype"/>',
+                width: 120
+            },
+            {
+                field: "credentialNumber",
+                title: '<@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>',
+                width: 120
+            },
+            {
+                field: "meaning4",
+                title: '关系类型',
+                width: 120
+            },
+            {
+                field: "icmFlag",
+                title: '紧急联系人',
+                width: 120,
+                attributes: {style: "text-align:center"}
+            }
+        ]
+    }).data("kendoGrid");
+		  
+          var customerId;
+          var bpId;
+    			    //选择客户类型为个人的一般信息的保存
+					function submitPersonage() {
+					if(viewModel.model.groupId==''||viewModel.model.groupId==null){
+            				kendo.ui.showInfoDialog({
+                				message:'所属集团不能为空'
+           				 })
+        			}else if(viewModelPersonage.model.fullName==''||viewModelPersonage.model.fullName==null){
+            			kendo.ui.showInfoDialog({
+                			message:'姓名不能为空'
+            				})
+       				}else if(viewModelPersonage.model.contactMobile==''||viewModelPersonage.model.contactMobile==null){
+            			kendo.ui.showInfoDialog({
+                			message:'移动电话不能为空'
+            				})
+       				}else if(viewModelPersonage.model.credentialType==''||viewModelPersonage.model.credentialType==null){
+            			kendo.ui.showInfoDialog({
+                			message:'证件类型不能为空'
+            				})
+       				}else if(viewModelPersonage.model.credentialNumber==''||viewModelPersonage.model.credentialNumber==null){
+            			kendo.ui.showInfoDialog({
+                			message:'证件号码不能为空'
+            				})
+       				}else {
+							var CustomerType = viewModel.model.customerType;
+							var modelzilei = kendo.stringify(viewModelPersonage.model);
+							
+							var modelvalue = kendo.stringify(viewModel.model);
+							var json = JSON.parse(modelvalue); 
+							var jsonzilei = JSON.parse(modelzilei);
+							json.bpGeneral = jsonzilei;
+							viewModelPersonage.model.__status = 'add';
+							$.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/BpGeneral/submit",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+												window.parent.$('#grid').data('kendoGrid').dataSource.page(1);
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+												enableTabTrue();
+												enablePlanTrip();
+												lookPersonage();
+												viewModel.set("customerNumber",data.rows[0].customerNumber);
+												customerId = data.rows[0].customerId;
+												bpId = data.rows[0].bpId;
+											} else {
+												kendo.ui.showInfoDialog({
+													message : '失败!'
+												});
+											}
+      						}});
+						 }
+						};
+						
+						
+						//选择客户类型为公司的一般信息的保存
+						function submitCompany() {
+							var CustomerType = viewModel.model.customerType;
+							var CustomerNumber = viewModel.model.customerNumber;
+							
+							
+							var modelzilei = kendo.stringify(viewModelCompany.model);
+							var modelvalue = kendo.stringify(viewModel.model);
+							var json = JSON.parse(modelvalue); 
+							var jsonzilei = JSON.parse(modelzilei);
+							json.bpGeneral = jsonzilei;
+							viewModelPersonage.model.__status = 'add';
+							$.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/BpGeneral/submit",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(comData){
+											 if (comData.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												}); 
+												window.parent.$('#grid').data('kendoGrid').dataSource.page(1);
+												customerId = comData.rows[0].customerId;
+												viewModel.set("customerNumber",data.rows[0].customerNumber);
+												enableTabTrue();
+												enablePlanTrip();
+												lookCompany();
+											} else {
+												kendo.ui.showInfoDialog({
+													message : '失败!'
+												});
+											}
+      						}});
+						};
+						
+						
+						//选择客户类型为个人的人员关系的保存
+						function submitPersonnel() {
+							viewModelRelationship.model.set("fromBpId",bpId);
+							var modelzilei = kendo.stringify(viewModelbpGender.model);
+							var modelvalue = kendo.stringify(viewModelRelationship.model);
+							var json = JSON.parse(modelvalue); 
+							var jsonzilei = JSON.parse(modelzilei);
+							json.bpGeneral = jsonzilei;
+							viewModelRelationship.model.__status = 'add';
+							$.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/Relation/submit",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+											} else {
+												kendo.ui.showInfoDialog({
+													message : data.message
+												});
+											}
+      						}});
+						}; 
+			//销售财务保存
+		   function saveSales() {
+		         viewModelSales.model.set("custId",customerId);
+		         var modelvalue = kendo.stringify(viewModelSales.model);
+                 var json = JSON.parse(modelvalue); 
+                 viewModelSales.model.__status = 'add';
+            $.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/BpGeneral/submitSales",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+											} else {
+												kendo.ui.showInfoDialog({
+													message : '失败!'
+												});
+											}
+      						}});
+                   };
+                   
+            //选择公司时的一般信息from的修改       
+            function updateCompany(){
+               		var modelvalue = kendo.stringify(viewModelCompany.model);
+               		var json = JSON.parse(modelvalue); 
+                    viewModelCompany.model.__status = 'update';
+                    $.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/BpGeneral/updateBpGeneral?bpId="+custBpId,
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+												lookCompany();
+											} else {
+												kendo.ui.showInfoDialog({
+													message : '失败!'
+												});
+											}
+      						}});
+            };
+            
+            
+            
+            //选择个人时的一般信息from的修改       
+            function updatePersonage(){
+               		var modelvalue = kendo.stringify(viewModelPersonage.model);
+               		var json = JSON.parse(modelvalue); 
+                    viewModelPersonage.model.__status = 'update';
+                    $.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/BpGeneral/updateBpGeneral?bpId="+custBpId,
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+												lookPersonage();
+											} else {
+												kendo.ui.showInfoDialog({
+													message : '失败!'
+												});
+											}
+      						}});
+            }
+			//启用Tab页	
+			function enableTabTrue(){
+					$('#sale').removeClass('k-state-disabled');
+			    	$('#relation').removeClass('k-state-disabled');
+			}
+			//禁用头部from			
+			function enablePlanTrip(){
+			    $("#customerType").data("kendoDropDownList").enable(false);
+    	   		$("#customerType").css("background", "#DDDDDD");
+    	   		$("#customerNumber").attr("disabled",true);
+    	   		$("#customerNumber").css("color", "#ababab");
+    	   		$("#groupId").data("kendoComboBox").readonly(true);
+    	   		$("#cancel").attr("disabled",true);	
+		  };
+		  //禁用一般信息from
+		  function lookCompany(){
+		  $("#customerType").data("kendoDropDownList").enable(false);
+		  	    //$("#customerType").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+    	       $("#customerType").css("background", "#DDDDDD");
+    	       $("#customerNumber").attr("disabled",true);
+    	       $("#customerNumber").css("color", "#DDDDDD");
+    	 	   $("#groupId").data("kendoComboBox").enable(false);
+    	   	   $("#companyName").attr("disabled",true);
+    	   	   $("#companyName").css("color", "#ababab");
+    	   	   $("#companyType").attr("disabled",true);
+    	   	   $("#companyType").css("color", "#ababab");
+    	   	   $("#contactMo").attr("disabled",true);
+    	   	   $("#contactMo").css("color", "#ababab");
+    	   	   $("#Tel").attr("disabled",true);
+    	   	   $("#Tel").css("color", "#ababab");
+		       $("#cusDocumentType").data("kendoDropDownList").enable(false);
+    	   	   $("#cusDocumentType").css("background", "#DDDDDD");
+    	   	   $("#credNumber").attr("disabled",true);
+    	   	   $("#credNumber").css("color", "#ababab");
+    	   	   $("#Email").attr("disabled",true);
+    	   	   $("#Email").css("color", "#ababab");
+    	   	   $("#faxs").attr("disabled",true);
+    	   	   $("#faxs").css("color", "#ababab");
+		  };
+		  //客户类型为个人的时候,一般信息tab页中的字段禁用
+		  function lookPersonage(){
+		   $("#customerType").data("kendoDropDownList").enable(false);
+		   $("#customerType").css("background", "#DDDDDD");
+    	  $("#customerNumber").attr("disabled",true);
+    	  $("#customerNumber").css("color", "#DDDDDD");
+    	 	$("#groupId").data("kendoComboBox").enable(false);
+		       $("#fullName").attr("disabled",true);
+    	   	   $("#fullName").css("color", "#ababab");
+    	   	   $(".gender").attr("disabled",true);
+    	   	   $(".gender").css("color", "#ababab");
+    	   	   $("#contactMobile").attr("disabled",true);
+    	   	   $("#contactMobile").css("color", "#ababab");
+    	   	   $("#startTime").attr("disabledDates",true);
+    	   	   $("#startTime").css("color", "#ababab");
+    	   	   $("#credentialType").data("kendoDropDownList").enable(false);
+    	   	   $("#credentialType").css("background", "#DDDDDD");
+    	   	   $("#credentialNumber").attr("disabled",true);
+    	   	   $("#credentialNumber").css("color", "#ababab");
+    	   	   $("#contactTel").attr("disabled",true);
+    	   	   $("#contactTel").css("color", "#ababab");
+    	   	   $("#officeNumber").attr("disabled",true);
+    	   	   $("#officeNumber").css("color", "#ababab");
+    	   	   $("#country").attr("disabled",true);
+    	   	   $("#country").css("color", "#ababab");
+    	   	   $("#nation").attr("disabled",true);
+    	   	   $("#nation").css("color", "#ababab");
+    	   	   $("#placeOfOrigin").attr("disabled",true);
+    	   	   $("#placeOfOrigin").css("color", "#ababab");
+    	   	   $("#residenza").attr("disabled",true);
+    	   	   $("#residenza").css("color", "#ababab");
+    	   	   $("#contactEmail").attr("disabled",true);
+    	   	   $("#contactEmail").css("color", "#ababab");
+    	   	   $("#fax").attr("disabled",true);
+    	   	   $("#fax").css("color", "#ababab");
+		  };
+		  
+		  //点击编辑,不再禁用选择个人时的from
+		  function editCompany(){
+    	   	   $("#companyName").attr("disabled",false);
+    	   	   $("#companyName").css("color", "#000000");
+    	   	   $("#companyType").attr("disabled",false);
+    	   	   $("#companyType").css("color", "#000000");
+    	   	   $("#contactMo").attr("disabled",false);
+    	   	   $("#contactMo").css("color", "#000000");
+    	   	   $("#Tel").attr("disabled",false);
+    	   	   $("#Tel").css("color", "#000000");
+		       $("#cusDocumentType").data("kendoDropDownList").enable(true);
+    	   	   $("#credNumber").attr("disabled",false);
+    	   	   $("#credNumber").css("color", "#000000");
+    	   	   $("#Email").attr("disabled",false);
+    	   	   $("#Email").css("color", "#000000");
+    	   	   $("#faxs").attr("disabled",false);
+    	   	   $("#faxs").css("color", "#000000");
+		  }
+		  
+		  
+		  
+		  function editPersonage(){
+		       $("#fullName").attr("disabled",false);
+    	   	   $("#fullName").css("color", "#000000");
+    	   	   $(".gender").attr("disabled",false);
+    	   	   $(".gender").css("color", "#000000");
+    	   	   $("#contactMobile").attr("disabled",false);
+    	   	   $("#contactMobile").css("color", "#000000");
+    	   	   $("#startTime").attr("disabledDates",false);
+    	   	   $("#startTime").css("color", "#000000");
+    	   	   $("#credentialType").data("kendoDropDownList").enable(true);
+    	   	   $("#credentialType").css("background", "#000000");
+    	   	   $("#credentialNumber").attr("disabled",false);
+    	   	   $("#credentialNumber").css("color", "#000000");
+    	   	   $("#contactTel").attr("disabled",false);
+    	   	   $("#contactTel").css("color", "#000000");
+    	   	   $("#officeNumber").attr("disabled",false);
+    	   	   $("#officeNumber").css("color", "#000000");
+    	   	   $("#country").attr("disabled",false);
+    	   	   $("#country").css("color", "#000000");
+    	   	   $("#nation").attr("disabled",false);
+    	   	   $("#nation").css("color", "#000000");
+    	   	   $("#placeOfOrigin").attr("disabled",false);
+    	   	   $("#placeOfOrigin").css("color", "#000000");
+    	   	   $("#residenza").attr("disabled",false);
+    	   	   $("#residenza").css("color", "#000000");
+    	   	   $("#contactEmail").attr("disabled",false);
+    	   	   $("#contactEmail").css("color", "#000000");
+    	   	   $("#fax").attr("disabled",false);
+    	   	   $("#fax").css("color", "#000000");
+		  }
+		  if (islook) {
+      		 $.ajax({
+           	   url    : '${base.contextPath}/hpms/mdm/BpGeneral/queryBycustomerId?customerId=${RequestParameters.customerId!0}',
+           	   success: function (args) {
+	            var a0 = args.rows[0] || {};
+	            
+	            enableTabTrue();
+	            viewModel.model.set("customerType",args.rows[0].customerType);
+	            viewModel.model.set("customerNumber",args.rows[0].customerNumber);
+	            viewModel.model.set("groupId",args.rows[0].groupId);
+	            console.log(enableFlag)
+	            var customerType = viewModel.model.customerType;
+	            if ("COMPANY" == customerType) {
+				   $("#company").show();
+				   $("#relation").hide();
+				   $("#personage").hide();
+				   $("#sales").hide();
+				   $("#saleGrid").parent().show();
+				   if(enableFlag == "Y"){
+				   	$("#editCompany").show();
+				   	$("#updateCompany").show();
+				   }else if(enableFlag=="N"){
+				   	$("#editCompany").hide();
+				   	$("#updateCompany").hide();
+				   	$("#savePeople").hide();
+				   	$("[class='k-button k-button-icontext k-grid-edit']").hide();
+				  }
+				   $("#saveCompany").hide();
+				   $("#resetCompany").hide();
+					for (var k in a0) {
+	                viewModelCompany.model.set(k, a0[k]);
+	             	}
+	             	lookCompany();
+				}else if("PERSON" == customerType){
+					$("#personage").show();
+					$("#relation").show();
+					$("#company").hide();
+					$("#saleGrid").parent().show();
+					$("#retaions").show();
+					$("#personnel").hide();
+					if(enableFlag == "Y"){
+						$("#editPersonage").show();
+						$("#updatePersonage").show();
+				 }else if(enableFlag == "N"){
+						$("#editPersonage").hide();
+						$("#updatePersonage").hide();
+						$("[class='k-button k-button-icontext k-grid-edit']").hide();
+					}
+					$("#cancel").hide();
+					$("#savePersonage").hide();
+					$("#sales").hide();
+				   	for (var k in a0) {
+	                	viewModelPersonage.model.set(k, a0[k]);
+	             	}
+	             	lookPersonage();
+				}
+	        }
+       });
+       };
+       
+       
+       
+       //新建联系人
+       function savePeople(custBpId){
+          $("#newContact").kendoWindow({
+            actions: ["Close"],
+            title: $l('编辑关系人'),
+            draggable: true,
+            height: "300px",
+            width: "630px",
+            close: function(){
+               //$("#editWin").empty();
+            },
+            content: "${base.contextPath}/mdm/customer_new_contact.html?isedit=0&fromBpId="+custBpId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#newContact").data("kendoWindow");
+        win.center().open();
+       };
+       
+       
+       
+       //修改联系人
+       function updateCantact(custBpId,bpId){
+          $("#newContact").kendoWindow({
+            actions: ["Close"],
+            title: $l('编辑关系人'),
+            draggable: true,
+            height: "300px",
+            width: "630px",
+            close: function(){
+               //$("#editWin").empty();
+            },
+            content: "${base.contextPath}/mdm/customer_new_contact.html?isedit=1&fromBpId="+custBpId+"&bpId="+bpId,
+            iframe: true,
+            modal: true
+        });
+        console.log("11111"+bpId);
+        var win = $("#newContact").data("kendoWindow");
+        win.center().open();
+       };
+       
+       function close(){
+          window.parent.$("#newDialog").data("kendoWindow").close();
+       };
+       
+       //新建关系
+       function updateReation(bpId,custBpId){
+          $("#editRelation").kendoWindow({
+            actions: ["Close"],
+            title: $l('新建关系'),
+            draggable: true,
+            height: "180px",
+            width: "330px",
+            close: function(){
+               //$("#editWin").empty();
+            },
+            content: "${base.contextPath}/mdm/customer_new_relationship.html?isedit=0&bpId="+bpId+"&fromBpId="+custBpId,
+            iframe: true,
+            modal: true
+        });
+        var win = $("#editRelation").data("kendoWindow");
+        win.center().open();
+       }
+       
+       
+       
+       if(isedit==0&&!islook){
+	   $(document).ready(function(){
+           var itemCount=null;
+           $.ajax({
+               url    : '${base.contextPath}/hpms/mdm/Relation/itemNumQuery',
+               success: function (args) {
+                   itemCount=args;
+
+               }
+           });
+	        if(itemCount!=0){
+                $("#icmFlag").attr("disabled",true);
+	        }
+        	viewModelRelationship.model.set("icmFlag",0);
+        	viewModelbpGender.model.set("personGender","未知");
+        	viewModelPersonage.model.set("personGender","未知");
+
+	    });
+   }
+	</script>
+</body>
+</html>
