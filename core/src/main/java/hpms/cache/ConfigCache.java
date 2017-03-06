@@ -74,7 +74,7 @@ public class ConfigCache extends HashStringRedisCache<Config> {
     //将数据存入redis
     public void updateConfigData(Config cf, ConfigValue cv, ConfigColumn cc){
 
-        logger.info("查询出三张表的数据");
+        logger.info("查询出主表的数据");
         List<Config> cfList = configMapper.findAllConfig(cf);
 
 

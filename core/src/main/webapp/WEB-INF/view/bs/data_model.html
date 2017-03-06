@@ -53,19 +53,22 @@
 
                     <div class="row">
                         <div class="from-group col-md-4" style="margin-bottom:10px">
-                            <label class="col-md-5 control-label">编码</label>
+                           <!-- <label class="col-md-5 control-label">编码</label>-->
+                            <label class="col-md-5 control-label"><@spring.message "hpms.mdm.feetype.feetypecode"/></label>
                             <div class="col-md-7">
                                 <input type="text" class="k-textbox" name="modelCode"  data-bind="value:model.modelCode" style="width: 90%;"/>
                             </div>
                         </div>
                         <div class="from-group col-md-4" style="margin-bottom:10px">
-                            <label class="col-md-5 control-label">模型名称</label>
+                            <!--<label class="col-md-5 control-label">模型名称</label>-->
+                            <label class="col-md-5 control-label"><@spring.message "hpms.bs.model_name"/></label>
                             <div class="col-md-7">
                                 <input type="text" class="k-textbox" name="modelName"  data-bind="value:model.modelName" style="width: 90%;"/>
                             </div>
                         </div>
                         <div class="from-group col-md-4" style="margin-bottom:10px">
-                            <label class="col-md-5 control-label">数据表名</label>
+                            <!--<label class="col-md-5 control-label">数据表名</label>-->
+                            <label class="col-md-5 control-label"><@spring.message "hpms.bs.tablename"/></label>
                             <div class="col-md-7">
                                 <input type="text" class="k-textbox" name="tableName"  data-bind="value:model.tableName" style="width: 90%;"/>
                             </div>
@@ -80,11 +83,11 @@
                         <span class="btn btn-primary k-grid-add"
                               style="float: left; margin-right: 5px;"
                               data-bind="click:createFunction">
-                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>新建</span>
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
                         <span class="btn btn-primary k-grid-save-changes"
                               style="float: left; margin-right: 5px;"
                               data-bind="click:queryResource">
-                            <i class="fa fa-search" style="margin-right:3px;"></i>查询</span>
+                            <i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
                 </div>
             </div>
 
@@ -210,14 +213,15 @@
                             }
                         },{
                             name : "edit",
-                            text :'编辑'
+                            text :'<@spring.message "hap.edit"/>'
 
                         },{
                             name:"delete",
                             text:"<span class='fa fa-trash-o'></span>",
                         }],
                         attributes: {style: "text-align:center"},
-                        title		: "操作",
+                       // title		: "操作",
+                        title:'<@spring.message "hap.action"/>',
                         width		: "16%" ,
                         headerAttributes: {
                             style: "text-align: center"
@@ -226,7 +230,8 @@
                     },
                     {
                         field: "modelCode",
-                        title: '编码',
+                       // title: '编码',
+                        title:'<@spring.message "hpms.mdm.fee.feecode"/>',
                         width: '17%' ,
                         attributes: {style: "text-align:center"},
 
@@ -246,7 +251,8 @@
                     },
                     {
                         field: "modelName",
-                        title: '模型名称',
+                       // title: '模型名称',
+                        title:'<@spring.message "hpms.bs.model_name"/>',
                         width: '17%' ,
                         attributes: {style: "text-align:center"},
 
@@ -259,7 +265,8 @@
                     {
                         field: "tableName",
                         //name:"meaning",
-                        title: '数据库表名',
+                       // title: '数据库表名',
+                        title:'<@spring.message "hpms.bs.tablename"/>',
                         width: '18%' ,
                         attributes: {style: "text-align:center"},
                         editor: function(container, options) {
