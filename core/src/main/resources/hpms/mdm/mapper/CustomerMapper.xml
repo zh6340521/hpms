@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.CustomerMapper">
+	<resultMap type="hpms.mdm.dto.Customer" id="BaseResultMap"
+		extends="com.hand.hap.mapper.StdMapper.STD">
+		<id column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL" />
+		<result column="BP_ID" property="bpId" jdbcType="DECIMAL" />
+		<result column="GROUP_ID" property="groupId" jdbcType="DECIMAL" />
+		<result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+		<result column="CUSTOMER_NUMBER" property="customerNumber"
+			jdbcType="VARCHAR" />
+		<result column="CUSTOMER_TYPE" property="customerType"
+			jdbcType="VARCHAR" />
+		<result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+		<result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+		<result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+		<result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber"
+			jdbcType="DECIMAL" />
+			
+			
+		<result column="FULL_NAME" property="fullName" jdbcType="VARCHAR"/>
+		<result column="CONTACT_MOBILE" property="contactMobile" jdbcType="VARCHAR" />
+		<result column="CREDENTIAL_NUMBER" property="credentialNumber" jdbcType="VARCHAR" />
+		<result column="MEANING1" property="meaning1" jdbcType="VARCHAR" />
+		<result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
+		<result column="MEANING3" property="meaning3" jdbcType="VARCHAR" />
+		<result column="MEANING" property="meaning" jdbcType="VARCHAR" />
+			
+	</resultMap>
+
+	<select id="selectByColumnName" resultMap="BaseResultMap"
+		parameterType="hpms.mdm.dto.Customer">
+		select CUST.ENABLE_FLAG,
+		CUST.CUSTOMER_NUMBER,
+		CUST.CUSTOMER_ID,
+		BP.FULL_NAME,
+		BP.BP_ID,
+		CUST.CUSTOMER_TYPE,
+		BP.CONTACT_MOBILE,
+		BP.CREDENTIAL_NUMBER,
+		HCVV1.MEANING MEANING1,
+		HCVV2.MEANING MEANING2,
+		HCVV3.MEANING MEANING3,
+		NVL(HCVV2.MEANING,HCVV3.MEANING) MEANING
+		from HPMS_MDM_CUSTOMER CUST
+		LEFT JOIN
+		HPMS_MDM_BP_GENERAL BP
+		ON CUST.BP_ID = BP.BP_ID
+		LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+        ON HCVV1.CODE = 'HPMS_MDM_CUSTOMER_TYPE'
+        AND HCVV1.VALUE = CUST.CUSTOMER_TYPE
+        AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV2
+     	ON HCVV2.CODE = 'HPMS_MDM_CREDENTIAL_TYPE'
+    	AND HCVV2.VALUE = BP.CREDENTIAL_TYPE
+   	 	AND HCVV2.LANG = #{request.locale,jdbcType=VARCHAR}
+   	 	LEFT JOIN HPMS_CODE_VALUE_V HCVV3
+      	ON HCVV3.CODE = 'HPMS_MDM_CUS_DOCUMENT_TYPE'
+      	AND HCVV3.VALUE = BP.CREDENTIAL_TYPE
+      	AND HCVV3.LANG = #{request.locale,jdbcType=VARCHAR}
+		<where>
+		1=1
+		   <if test="customerNumber != null">
+		      AND CUST.CUSTOMER_NUMBER LIKE 
+		      concat('%', concat(#{customerNumber,jdbcType=VARCHAR}, '%'))
+		      
+		   </if>
+		   <if test="fullName != null">
+		      AND BP.FULL_NAME LIKE concat('%', concat(#{fullName,jdbcType=VARCHAR}, '%'))
+		   </if>
+		   <if test="contactMobile != null">
+		      AND BP.CONTACT_MOBILE LIKE concat('%', concat(#{contactMobile,jdbcType=VARCHAR}, '%'))
+		   </if>
+		   <if test="credentialNumber != null">
+		      AND BP.CREDENTIAL_NUMBER LIKE concat('%', concat(#{credentialNumber,jdbcType=VARCHAR}, '%'))
+		   </if>
+		</where>
+	</select>
+	
+	
+	<select id="selectByMaxCustomerNumber" resultType="java.lang.Long">
+	     SELECT MAX(HMC.CUSTOMER_NUMBER) FROM HPMS_MDM_CUSTOMER HMC
+	</select>
+	<update id="updateByEnableFlag"  parameterType="hpms.mdm.dto.Customer">
+		update hpms_mdm_customer hmc
+   set hmc.enable_flag = 'N'
+   	<where>
+   		1=1           
+   		<if test="customerId!=null">
+   			and hmc.customer_id = #{customerId}
+   		</if>
+   		</where>
+	</update>
+</mapper>

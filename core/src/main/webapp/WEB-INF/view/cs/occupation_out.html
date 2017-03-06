@@ -1,0 +1,265 @@
+<#--
+        * description: 退伙页面
+        * version: 1.0
+        * author: feng.liu01@hand-china.com
+        * #{copyright}#
+        *
+        -->
+
+<#include "../include/header.html">
+
+<style type="text/css">
+    span.red {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+
+<script type="text/javascript">
+
+    var propertyId = ${RequestParameters.propertyId!0};
+
+
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#Grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+
+            if(viewModel.model.moveoutDate==''||viewModel.model.moveoutDate==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.moveoutdate"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else if(viewModel.model.feeDateTo==''||viewModel.model.feeDateTo==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.occupation.feedateto"/><@spring.message "hap.error.nullexception"/>'
+                })
+            } else {
+                viewModel.model.set("__status", "update");
+                viewModel.model.set("status", "OUT");
+                viewModel.model.set("outTransactor", "${Session.userName!''}");
+
+                $.ajax({
+                    url: '${base.contextPath}/cs/occupation/submit',
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data       : kendo.stringify(viewModel.model),
+                    success: function (args) {
+                        if(args.occupationId){
+                            kendo.ui.showInfoDialog({
+                                title:$l('hap.prompt'),
+                                message:$l('hap.tip.success')
+                            }).done(function (event) {
+                                window.top.closeTab("occupation_out");
+
+                            });
+                        }
+                        else{
+                            alert("error")
+                        }
+                    },
+                    error: function () {
+                        alert("error");
+                    }
+                });
+            }
+
+
+        },
+        queryResource: function (e) {
+            $('#Grid').data('kendoGrid').dataSource.page(1);
+        }
+    });
+
+    $.ajax({
+        url: '${base.contextPath}/cs/occupation/queryProperty?propertyId='+propertyId,
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var data = args.rows[0] || {};
+            for (var k in data) {
+                viewModel.model.set(k,data[k]);
+            }
+        }
+    });
+
+
+
+</script>
+<body>
+<div id="page-content">
+    <div class="panel" style="padding: 0px;border:none;box-shadow: none;width: 50%;">
+        <div class="form-horizontal" id="query-form">
+            <div class="panel-body">
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.company"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.companyName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.project"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.projectName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertynumber"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.propertyNumber" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertyname"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.propertyName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customercode"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerCode" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customername"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.moveoutdate"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="moveoutDateId" style="width:150px;margin-right:5px;"
+                                      type="text" data-bind="value:model.moveoutDate" >
+                                <span class="red">*</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.feedateto"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="feeDateToId" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.feeDateTo">
+                                <span class="red">*</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.moveoutflag"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="moveoutFlagId" type="text" style="margin-right:5px;margin-top: 5px"
+                                       data-bind="value:model.moveoutFlag">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-12" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-2 control-label"><@spring.message "退伙原因"/>：</label>
+                            <div class="col-sm-10">
+                                <input type="text" style="margin-right:5px;width:90%;"
+                                       data-bind="value:model.moveoutReason" class="k-textbox">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-12" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-2 control-label"><@spring.message "备注"/>：</label>
+                            <div class="col-sm-10">
+                                <input type="text" style="margin-right:5px;width:90%;"
+                                       data-bind="value:model.remarks" class="k-textbox">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px">
+                    <div id="toolbar-btn" style="padding-bottom: 10px;">
+                        <span class="btn btn-primary k-grid-add"
+                              style="float: left;margin-left: 70px" data-bind="click:saveFunction">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <@spring.message "hap.save"/>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    kendo.bind($('#toolbar-btn'), viewModel);
+
+    $("#moveoutDateId").kendoDatePicker();
+    $("#feeDateToId").kendoDatePicker();
+
+    $("#moveoutFlagId").kendoCheckbox();
+
+
+    kendo.bind($('#query-form'), viewModel);
+
+</script>
+</body>
+</html>

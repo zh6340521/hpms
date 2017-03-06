@@ -98,6 +98,10 @@
         <property name="sqlId" value="hpms.bs.mapper.DataModelMapper.select"/>-->
     </bean>
 
+    <!--将类型配置数据存入redis fuchun.hu@hand-china.com 2017年3月5日 13:46:02-->
+    <bean id="configCache" class="hpms.cache.ConfigCache">
+        <property name="name" value="configData"/>
+    </bean>
 
 
     <bean id="resourceCustomizationCache" class="com.hand.hap.cache.impl.ResourceCustomizationCache">
@@ -144,6 +148,8 @@
                 <ref bean="lovCache"/>
                 <ref bean="codeCache"/>
                 <ref bean="resourceCustomizationCache"/>
+                <ref bean="dataModelCache"/>
+                <ref bean="configCache"/>
 
                 <!--add by yyz -->
                 <ref bean="hap_extend_rules"/>

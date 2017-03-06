@@ -2,9 +2,11 @@ package hpms.bs.dto;/**
  * Created by user1 on 2017/3/1.
  */
 
+import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -22,7 +24,7 @@ public class Config extends BaseDTO {
     config_number         VARCHAR2(50) not null,
     config_name           VARCHAR2(240) not null,
     company_id            NUMBER not null,
-    model_name            VARCHAR2(50) not null,
+    model_id              NUMBER not null,
     column_name           VARCHAR2(30) not null,
     enable_flag           VARCHAR2(1) default 'Y',
     description           VARCHAR2(4000),*/
@@ -57,7 +59,7 @@ public class Config extends BaseDTO {
      * 模型名称
      */
     @Column
-    private String modelName;
+    private Long modelId;
 
     /**
      * 字段名
@@ -79,6 +81,28 @@ public class Config extends BaseDTO {
 
     @Transient
     private String companyFullName;//公司名称
+    @Transient
+    private String modelName;//模型名称
+
+    @Transient
+    @Children
+    private List<ConfigValue> configValueList;
+
+    public List<ConfigValue> getConfigValueList() {
+        return configValueList;
+    }
+
+    public void setConfigValueList(List<ConfigValue> configValueList) {
+        this.configValueList = configValueList;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
     public String getCompanyFullName() {
         return companyFullName;
@@ -120,12 +144,12 @@ public class Config extends BaseDTO {
         this.companyId = companyId;
     }
 
-    public String getModelName() {
-        return modelName;
+    public Long getModelId() {
+        return modelId;
     }
 
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
+    public void setModelId(Long modelId) {
+        this.modelId = modelId;
     }
 
     public String getColumnName() {

@@ -1,0 +1,368 @@
+<#--
+        * description: 单个入退伙记录查看详情首页
+        * version: 1.0
+        * author: feng.liu01@hand-china.com
+        * #{copyright}#
+        *
+        -->
+
+<#include "../include/header.html">
+
+<script
+        src="${base.contextPath}/common/code?houseStatusData=HPMS_HOUSE_STATUS&ynData=SYS.YES_NO">
+</script>
+
+<script type="text/javascript">
+
+    var occupationId = ${RequestParameters.occupationId!0};
+    var projectId = ${RequestParameters.projectId!0};
+
+    var viewModel = kendo.observable({
+        procedures: [],
+        model: {}
+    });
+
+    $.ajax({
+        url: '${base.contextPath}/cs/occupation/query?occupationId='+occupationId,
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var data = args.rows[0] || {};
+            for (var k in data) {
+                if (k=="moveoutFlag") {
+                    var v = data[k];
+                    $.each(ynData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                        }
+                    });
+                    viewModel.model.set(k,v);
+                } else if (k=="status") {
+                    var d = data[k];
+                    $.each(houseStatusData,function(i,n){
+                        if((n.value||'').toLowerCase() == (d||'').toLowerCase()){
+                            d = n.meaning;
+                        }
+                    });
+                    viewModel.model.set(k,d);
+                } else {
+                    viewModel.model.set(k,data[k]);
+                }
+            }
+        }
+    });
+
+    $.ajax({
+        url: '${base.contextPath}/cs/occProcedure/query?occupationId='+occupationId,
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var data = args.rows || [];
+            $.each(data,function(i,n){
+                viewModel.procedures.push(n.configProcedureId+"")
+            });
+        }
+    });
+
+</script>
+<body>
+<div id="page-content">
+
+    <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+        <div class="form-horizontal" id="query-form">
+            <div class="panel-body">
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.company"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.companyName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.project"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.projectName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customercode"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerCode" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customername"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertynumber"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.propertyNumber" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.propertyname"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.propertyName" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.servicedatefrom"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" style="width:150px;margin-right:5px;background-color: #F1F1F1;"
+                                       type="text" data-bind="value:model.serviceDateFrom" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message ""/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.serviceDateTo" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.feedate"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.feeDate" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.feedateto"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.feeDateTo" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.transferdate"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.transferDate" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.intransactor"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.inTransactor" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.moveoutdate"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.moveoutDate" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.outtransactor"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.outTransactor" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.moveoutflag"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.moveoutFlag" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.status"/>：</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" style="background-color: #F1F1F1;width:150px;margin-right:5px;"
+                                       data-bind="value:model.status" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-12" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-2 control-label"><@spring.message "hpms.mdm.occupation.moveoutreason"/>：</label>
+                            <div class="col-sm-10">
+                                <input type="text" style="background-color: #F1F1F1;margin-right:5px;width:85%;"
+                                       data-bind="value:model.moveoutReason" class="k-textbox" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-12" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-2 control-label"><@spring.message "hpms.mdm.occupation.remarks"/>：</label>
+                            <div class="col-sm-10">
+                                <input type="text" style="background-color: #F1F1F1;margin-right:5px;width:85%;"
+                                       data-bind="value:model.remarks" class="k-textbox" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div  class="row procedure" style="margin-bottom: 10px;margin-top: 10px">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    function myhtml(value1,text1,flag,value2,text2,i) {
+        var label = "&nbsp;";
+        if (i==0) {
+            label = "<@spring.message 'hpms.mdm.occupation.procedure'/>：";
+        }
+        var s = '<div class="row procedure" style="margin-bottom: 10px;">'+
+            '<div class="col-sm-6" style="padding: 0">'+
+            '<div class="form-group" style="margin: 0">'+
+            '<label class="col-sm-4 control-label" style="margin-top: -8px">'+label+'</label>'+
+            '<input value="'+value1+'" type="checkbox" style="margin-left: 20px;"'+
+            'data-bind="checked:procedures" disabled />'+
+            '<span>&nbsp;'+text1+'</span>'+
+            '</div></div>';
+
+        if (flag) {
+            s += '<div class="col-sm-6" style="padding: 0">'+
+                '<input  value="'+value2+'" type="checkbox"'+
+                'data-bind="checked:procedures" disabled />'+
+                '<span>&nbsp;'+text2+'</span>'+
+                '</div>'+
+                '</div>';
+        } else {
+            s += '</div>';
+        }
+        return s;
+    }
+
+    $.ajax({
+        url: '${base.contextPath}/cs/projectProcedure/query?projectId='+projectId,
+        type: "POST",
+        dataType: "json",
+        async:false,
+        contentType: "application/json",
+        success: function (args) {
+            var rows = args.rows;
+            for (var i = 0;i<rows.length;i++) {
+                var s = "";
+                if (i%2!=0)
+                    continue;
+                if (i==rows.length-1) {
+                    s = myhtml(rows[i].configProcedureId,rows[i].procedureName,false);
+                } else {
+                    s = myhtml(rows[i].configProcedureId,rows[i].procedureName,true,rows[i+1].configProcedureId,rows[i+1].procedureName,i);
+                }
+                $(".procedure:last").after(s);
+            }
+        }
+    });
+
+    kendo.bind($('#query-form'), viewModel);
+
+</script>
+
+</body>
+</html>

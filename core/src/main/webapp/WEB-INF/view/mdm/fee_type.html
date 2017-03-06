@@ -63,24 +63,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="margin-left: 0px;margin-bottom: 10px">
-                    <div id="toolbar-btn" style="padding-bottom: 10px;">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="pull-left" id="toolbar-btn" style="margin-bottom: 10px;">
                         <span class="btn btn-primary k-grid-add"
                               style="float: left; margin-right: 5px;" data-bind="click:createFunction">
                             <i class="fa fa-plus-square" style="margin-right:3px;"></i>
                             <@spring.message "hap.new"/>
                         </span>
-                        <span class="btn btn-primary k-grid-save-changes"
-                              style="float: left; margin-right: 5px;" data-bind="click:queryResource">
+        <span class="btn btn-primary k-grid-save-changes"
+              style="float: left; margin-right: 5px;" data-bind="click:queryResource">
                             <i class="fa fa-search" style="margin-right:3px;"></i>
                             <@spring.message "hap.query"/>
                         </span>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
 
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <script>kendo.bind($('#query-form'), viewModel);</script>

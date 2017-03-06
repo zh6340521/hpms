@@ -14,4 +14,6 @@ import java.util.List;
 
 public interface OccupationMapper extends Mapper<Occupation> {
     List<Occupation> propertyQuery(Occupation occupation);
+
+    List<Occupation> selectOccupation(Occupation occupation);
 }

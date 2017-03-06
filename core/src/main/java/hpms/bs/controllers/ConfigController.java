@@ -7,12 +7,16 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.bs.dto.Config;
 import hpms.bs.service.IConfigService;
+import hpms.utils.ValidationTableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,6 +33,8 @@ public class ConfigController extends BaseController {
 
     @Autowired
     private IConfigService configService;
+
+    private Logger logger = LoggerFactory.getLogger(ConfigController.class);
     /**
      *
      * 查询
@@ -57,7 +63,17 @@ public class ConfigController extends BaseController {
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<Config> cf){
         IRequest requestCtx = createRequestContext(request);
-        return new ResponseData(configService.batchUpdate(requestCtx, cf));
+        try {
+            configService.myBatchUpdate(requestCtx, cf);
+        } catch (ValidationTableException e) {
+            logger.info("捕获消息并进行抛出");
+            ResponseData rd = new ResponseData(false);
+            String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+                    RequestContextUtils.getLocale(request));
+            rd.setMessage(errorMessage);
+            return rd;
+        }
+        return new ResponseData(cf);
     }
 
     /**
@@ -71,5 +87,14 @@ public class ConfigController extends BaseController {
     public ResponseData delete(HttpServletRequest request,@RequestBody List<Config> cf){
         configService.batchDelete(cf);
         return new ResponseData();
+    }
+
+    @RequestMapping(value = "/bs/config/queryByCache")
+    @ResponseBody
+    public ResponseData queryByCache(Long configId,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        String cId = Long.toString(configId);
+        List<Config> dmList = configService.queryConfigCache(requestContext,cId);
+        return new ResponseData(dmList);
     }
 }

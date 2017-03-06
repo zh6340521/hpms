@@ -1,0 +1,254 @@
+<#-- * description: 客户档案新增人员关系界面 * version: 1.0 *
+author:huifang.zhou@hand-china.com * --> 
+<#include "../include/header.html">
+<html>
+<body>
+<script
+	src="${base.contextPath}/common/code?credentialType=HPMS_MDM_CREDENTIAL_TYPE"
+	type="text/javascript"></script>
+<script
+	src="${base.contextPath}/common/code?relType=HPMS_MDM_RELATION_TYPE"
+	type="text/javascript"></script>
+<script>
+     var isedit = '${RequestParameters.isedit!0}' == '1';
+     var fromBpId = '${RequestParameters.fromBpId!0}';
+     var tobpId = '${RequestParameters.bpId!0}';
+     var viewModelbpGender = kendo.observable({
+			     model : {},
+			})
+	var viewModelRelationship = kendo.observable({
+			     model : {},
+			})
+</script>
+<div id="page-content">
+		<div id="personnel">
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label" style="margin-left: 23px;">姓名:</label>
+								<input type="text" style="width: 180px; margin-left: 10px;" id="name"
+									data-bind="value:model.fullName" class="k-textbox" />
+									<script>kendo.bind($('#name'), viewModelbpGender);</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label" style="margin-left: 62px;">性别:</label> 
+									<input id="sex" name="sex" type="radio" value="男" data-bind="checked:model.personGender" style="margin-left: 1px;" />男 
+									<input id="sex" name="sex" type="radio" value="女" style="margin-left: 10px;" data-bind="checked:model.personGender" />女
+									<input id="sex" checked name="sex" type="radio" value="未知" style="margin-left: 10px;" data-bind="checked:model.personGender" />未知
+									<script>kendo.bind($('#sex'), viewModelbpGender);</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">移动电话:</label> <input id="tel"
+									type="text" style="width: 180px; margin-left: 11px;"
+									data-bind="value:model.contactMobile" class="k-textbox" />
+									<script>kendo.bind($('#tel'), viewModelbpGender);</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialtype"/>:</label> <input
+										id="credential" name="credential"
+										style="width: 180px;"
+										data-bind="text:model.meaning,value:model.credentialType" />
+									<script>
+										$("#credential").kendoDropDownList({
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : credentialType,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelbpGender.model.set('credentialType',dataItem.value);
+															}
+														}).data(
+														"kendoDropDownList");
+														kendo.bind($('#credential'), viewModelbpGender);
+									</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">证件号码:</label> <input id="crNumber"
+									type="text" style="width: 180px; margin-left: 11px;"
+									data-bind="value:model.credentialNumber" class="k-textbox" />
+									<script>kendo.bind($('#crNumber'), viewModelbpGender);</script>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="pull-right">
+								<label class="col-sm-4 control-label">关系类型:</label> <input id="relType"
+									type="text" style="width: 180px;"
+									data-bind="text:model.meaning,value:model.relType">
+									<script>
+										$("#relType")
+												.kendoDropDownList(
+														{
+															optionLabel : "--请选择--",
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(
+																	dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : relType,
+															select : function(e) {
+																var dataItem = this
+																		.dataItem(e.item);
+																viewModelRelationship.model.set('relType',dataItem.value);
+															}
+														}).data("kendoDropDownList");
+										kendo.bind($('#relType'), viewModelRelationship);
+									</script>
+							</div>
+						</div>
+					</div>
+					<div class="row" style="margin-bottom: 32px;">
+						<div class="col-sm-3">
+							<div class="pull-left">
+								<label class="col-sm-4 control-label">紧急联系人:</label> <input id="icmFlag"
+									type="checkbox" data-bind="value:model.icmFlag"/>
+									<script>
+									 $("#icmFlag").kendoCheckbox({
+                        					checkedValue:'1',
+                							uncheckedValue:'0'
+                        			});
+									kendo.bind($('#icmFlag'), viewModelRelationship);</script>
+							</div>
+						</div>
+					</div>
+					<div class="pull-right" id="toolbar-btn"
+						style="padding-bottom: 32px;">
+					<span class="btn btn-success" id="saveFrom" type="submit" onclick="submitPersonnel()"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+					<span class="btn btn-success" id="updateFrom" type="submit" onclick="updatePersonnel()" style="display:none;"><i class="fa fa-save" style="margin-right: 10px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-success" id="closeWin" type="submit" onclick="closePersonnel()"><i class="fa fa-times-circle-o" style="margin-right: 3px;"></i><@spring.message "hap.cancel"/></span>
+					</div>
+				</div>
+	</div>
+	
+	
+	<script>
+	
+				//新建联系人的保存
+	            function submitPersonnel() {
+							viewModelRelationship.model.set("fromBpId",fromBpId);
+							var modelzilei = kendo.stringify(viewModelbpGender.model);
+							var modelvalue = kendo.stringify(viewModelRelationship.model);
+							var json = JSON.parse(modelvalue); 
+							var jsonzilei = JSON.parse(modelzilei);
+							json.bpGeneral = jsonzilei;
+							if(viewModelRelationship.model.__status = 'add'){
+								$.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/Relation/submit",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+												closePersonnel();
+												window.parent.$('#bpRetaionGrid').data('kendoGrid').dataSource.page(1);
+											}else{
+											     kendo.ui.showInfoDialog({
+													message : data.message
+												});
+											}
+      						}});
+							
+						}
+						}; 
+						
+						//编辑联系人的修改
+						function updatePersonnel(){
+							var modelzilei = kendo.stringify(viewModelbpGender.model);
+							var modelvalue = kendo.stringify(viewModelRelationship.model);
+							var json = JSON.parse(modelvalue); 
+							var jsonzilei = JSON.parse(modelzilei);
+							json.bpGeneral = jsonzilei;
+							if(viewModelRelationship.model.__status = 'update'){
+								$.ajax({ 
+    							url: "${base.contextPath}/hpms/mdm/Relation/updateReation",
+    							type:"POST",
+    							dataType:"json",
+    							contentType:"application/json",
+    							data:  kendo.stringify(json),
+    				 			success: function(data){
+											if (data.success) {
+												kendo.ui.showInfoDialog({
+													message : '成功!'
+												});
+												window.parent.$('#bpRetaionGrid').data('kendoGrid').dataSource.page(1);
+												closePersonnel();
+											}else{
+											     kendo.ui.showInfoDialog({
+													message : "失败!"
+												});
+											}
+      						}});
+						}
+						};
+						//关闭弹出框
+						function closePersonnel(){
+						 	window.parent.$("#newContact").data("kendoWindow").close();
+						}
+						
+						
+						
+	if(isedit==0){
+	   $(document).ready(function(){
+           var itemCount=null;
+           $.ajax({
+               url    : '${base.contextPath}/hpms/mdm/Relation/itemNumQuery?fromBpId='+fromBpId+"&toBpId="+tobpId,
+               success: function (args) {
+                   itemCount=args;
+
+               }
+           });
+	        if(itemCount!=0){
+                $("#icmFlag").attr("disabled",true);
+	        }
+        	viewModelRelationship.model.set("icmFlag",0);
+        	viewModelbpGender.model.set("personGender","未知");
+
+	    });
+   };
+   
+   var relation;
+   var Id;
+   if(isedit==1){
+      $("#updateFrom").show();
+      $("#saveFrom").hide();
+   		 $.ajax({
+           	   url    : '${base.contextPath}/hpms/mdm/BpGeneral/queryByReation?fromBpId='+fromBpId+"&toBpId="+tobpId,
+           	   success: function (data) {
+	            var datas = data.rows[0] || {};
+	            viewModelRelationship.model.set("relType",data.rows[0].relType);
+	            viewModelRelationship.model.set("icmFlag",data.rows[0].icmFlag);
+	            relation = viewModelRelationship.model.set("relationId",data.rows[0].relationId);
+	            Id = viewModelbpGender.model.set("bpId",data.rows[0].bpId);
+					for (var k in datas) {
+	                viewModelbpGender.model.set(k, datas[k]);
+	             	}
+	        }
+       });
+   }
+   
+	</script>
+</body>
+</html>
