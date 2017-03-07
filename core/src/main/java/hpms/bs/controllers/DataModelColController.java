@@ -10,6 +10,7 @@ import hpms.bs.service.IDataModelColService;
 import hpms.utils.ValidationTableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -57,8 +59,16 @@ public class DataModelColController extends BaseController {
      */
     @RequestMapping(value = "/bs/DataModelCol/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<DataModelCol> dms){
+    public ResponseData update(HttpServletRequest request,@RequestBody List<DataModelCol> dms,BindingResult result){
         IRequest requestCtx = createRequestContext(request);
+        //后台验证传递的参数
+		Locale locale = RequestContextUtils.getLocale(request);
+		getValidator().validate(dms, result);
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }
         try {
             dataModelColService.myBatchUpdate(requestCtx,dms);
         } catch (ValidationTableException e) {

@@ -31,4 +31,12 @@ public interface IConfigColumnService extends IBaseService<ConfigColumn>,ProxySe
      * @return
      */
     public int deleteConfigColumn(List<ConfigColumn> ccs,IRequest iRequest);
+
+    /**
+     * 根据主键查询缓存数据
+     * @param iRequest
+     * @param configValueId
+     * @return
+     */
+    public List<ConfigColumn> findConfigColumnByCache(IRequest iRequest,Long configValueId,Long configId);
 }

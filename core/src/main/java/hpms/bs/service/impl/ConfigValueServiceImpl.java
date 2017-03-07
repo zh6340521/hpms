@@ -100,6 +100,14 @@ public class ConfigValueServiceImpl extends BaseServiceImpl<ConfigValue> impleme
         return c;
     }
 
+    @Override
+    public List<ConfigValue> queryConfigCacheByConfigId(IRequest requestCtx, Long configId) {
+        String cId = Long.toString(configId);
+        Config config = configCache.getValue(cId);
+        List<ConfigValue> cvList = config.getConfigValueList();
+        return cvList;
+    }
+
     //将数据同步到redis
     public void submitConfigValueData(List<ConfigValue> cvs,IRequest iRequest){
 

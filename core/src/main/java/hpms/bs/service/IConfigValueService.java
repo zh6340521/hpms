@@ -40,4 +40,11 @@ public interface IConfigValueService extends IBaseService<ConfigValue>,ProxySelf
      * @return
      */
     public int deleteConfigValue(List<ConfigValue> cfs,IRequest iRequest);
+
+    /**
+     * 根据key查询redis中的数据
+     * @param configId
+     * @return
+     */
+    public List<ConfigValue> queryConfigCacheByConfigId(IRequest requestCtx,Long configId);
 }
