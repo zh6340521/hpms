@@ -52,7 +52,7 @@ public class FeeList extends BaseDTO{
 	@Transient
 	private String feeName;//收费项目名称
 	@Column
-	private Long unitPrice;//单价
+	private Float unitPrice;//单价
 	@Column
 	private String feeUom;//单位
 	@Column
@@ -68,13 +68,13 @@ public class FeeList extends BaseDTO{
 	@Column
 	private Long presentRecord;//本次抄表数
 	@Column
-	private Long grossAmount;//总额
+	private Float grossAmount;//总额
 	@Column
-	private Long adjAmount;//折扣
+	private Float adjAmount;//折扣
 	@Column
-	private Long overduePayment;//违约金
+	private Float overduePayment;//违约金
 	@Column
-	private Long totalAmount;//应收合计
+	private Float totalAmount;//应收合计
 	@Column
 	@JsonFormat(pattern="yyyy-MM-dd")
 	@JsonSerialize(using = DateToStringSerializer.class, as = Date.class)
@@ -189,10 +189,10 @@ public class FeeList extends BaseDTO{
 	public void setFeeName(String feeName) {
 		this.feeName = feeName;
 	}
-	public Long getUnitPrice() {
+	public Float getUnitPrice() {
 		return unitPrice;
 	}
-	public void setUnitPrice(Long unitPrice) {
+	public void setUnitPrice(Float unitPrice) {
 		this.unitPrice = unitPrice;
 	}
 	public String getFeeUom() {
@@ -237,28 +237,28 @@ public class FeeList extends BaseDTO{
 	public void setPresentRecord(Long presentRecord) {
 		this.presentRecord = presentRecord;
 	}
-	public Long getGrossAmount() {
+	public Float getGrossAmount() {
 		return grossAmount;
 	}
-	public void setGrossAmount(Long grossAmount) {
+	public void setGrossAmount(Float grossAmount) {
 		this.grossAmount = grossAmount;
 	}
-	public Long getAdjAmount() {
+	public Float getAdjAmount() {
 		return adjAmount;
 	}
-	public void setAdjAmount(Long adjAmount) {
+	public void setAdjAmount(Float adjAmount) {
 		this.adjAmount = adjAmount;
 	}
-	public Long getOverduePayment() {
+	public Float getOverduePayment() {
 		return overduePayment;
 	}
-	public void setOverduePayment(Long overduePayment) {
+	public void setOverduePayment(Float overduePayment) {
 		this.overduePayment = overduePayment;
 	}
-	public Long getTotalAmount() {
+	public Float getTotalAmount() {
 		return totalAmount;
 	}
-	public void setTotalAmount(Long totalAmount) {
+	public void setTotalAmount(Float totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 	public Date getAccruedDate() {

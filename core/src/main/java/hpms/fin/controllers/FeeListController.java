@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
@@ -22,7 +21,6 @@ import hpms.fin.dto.FeeList;
 import hpms.fin.dto.FeeListNew;
 import hpms.fin.service.IFeeListService;
 import hpms.mdm.dto.BuildingVersion;
-import hpms.utils.ValidationTableException;
 /**
  * 
  * @name FeeListController
@@ -69,16 +67,29 @@ public class FeeListController extends BaseController{
 	
 	@RequestMapping(value = "/fin/feeList/preview" , method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData feeListPreview(@RequestBody List<FeeListNew> FeeListNews , HttpServletRequest request) throws Exception{
+	public ResponseData feeListPreview(@ModelAttribute FeeListNew feeListNew , HttpServletRequest request) throws Exception{
 		IRequest requestContext = createRequestContext(request);
-		try{
-			return new ResponseData(feeListService.feeListPreview(FeeListNews.get(0), requestContext));
-		}catch (ValidationTableException e){
+		//try{
+			//return new ResponseData(feeListService.feeListPreview(FeeListNews.get(0), requestContext));
+			if(feeListNew.getFeeId()!=null){
+				List<FeeList> feeLists = feeListService.feeListQuery(requestContext,null,1,100);
+				return new ResponseData(feeLists);
+			}else{
+				return null;
+			}
+		/*}catch (ValidationTableException e){
 	        ResponseData responseData = new ResponseData(false);
 	        String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
 	                RequestContextUtils.getLocale(request));
 	        responseData.setMessage(errorMessage);
 	        return responseData;
-        }
+        }*/
+	}
+	@RequestMapping(value = "/fin/feeList/feeListSubmit" , method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData feeListSubmit(@RequestBody List<FeeList> feeLists , HttpServletRequest request) throws Exception{
+		IRequest requestContext = createRequestContext(request);
+		feeListService.feeListSubmit(requestContext,feeLists);
+		return null;
 	}
 }

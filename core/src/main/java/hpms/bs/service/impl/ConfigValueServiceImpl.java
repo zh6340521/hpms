@@ -75,6 +75,7 @@ public class ConfigValueServiceImpl extends BaseServiceImpl<ConfigValue> impleme
         Config config = configCache.getValue(configId);
         List<ConfigValue> cvs = config.getConfigValueList();
 
+        logger.info("查询该头id下对应的所有行表数据");
         if(!cvs.isEmpty()&&cvs.size()!=0){
             for(ConfigValue cv:cvs){
                 if(cv.getConfigValueId().equals(configValueId)||cv.getConfigValueId()==configValueId){
@@ -99,6 +100,14 @@ public class ConfigValueServiceImpl extends BaseServiceImpl<ConfigValue> impleme
         return c;
     }
 
+    @Override
+    public List<ConfigValue> queryConfigCacheByConfigId(IRequest requestCtx, Long configId) {
+        String cId = Long.toString(configId);
+        Config config = configCache.getValue(cId);
+        List<ConfigValue> cvList = config.getConfigValueList();
+        return cvList;
+    }
+
     //将数据同步到redis
     public void submitConfigValueData(List<ConfigValue> cvs,IRequest iRequest){
 
@@ -110,7 +119,7 @@ public class ConfigValueServiceImpl extends BaseServiceImpl<ConfigValue> impleme
             cf.setConfigId(cv.getConfigId());
             cc.setConfigValueId(cv.getConfigValueId());
 
-            //查询对应的头表对象
+            logger.info("查询对应的头表对象");
             List<Config> cfs = configMapper.select(cf);
             if(!cfs.isEmpty()&&cfs.size()!=0){
                  c1 = cfs.get(0);

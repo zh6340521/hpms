@@ -6,39 +6,6 @@
 -->
 <#include "../include/header.html">
 <body>
-    <style type="text/css">
-		.k-textbox {
-			width: 180px;
-    		height: 25px;
-		}
-		.inputbox{
-			width: 180px;
-    		height: 25px;
-		}
-	</style>
-	<script src="/core/common/code?feeStatusData=HPMS_FEE_LIST_TPYE" type="text/javascript"></script>
-	<script src="/core/common/code?transTypeData=HPMS_TRANS_TYPE" type="text/javascript"></script>
-	<script type="text/javascript">
-	var viewModel = kendo.observable({
-        model: {},
-        creatFunction: function(){
-            $('#fee_list_grid').data('kendoGrid').saveChanges();
-        },
-        queryResource    : function (e) {
-            $('#fee_list_grid').data('kendoGrid').dataSource.page(1);
-        },
-        resetForm : function (e) {
-            var formData = viewModel.model.toJSON();
-            for (var k in formData) {
-                viewModel.model.set(k, null);
-            }
-        }
-    });
-
-    function newData() {
-    	parent.openTab('fee_list','应收费用清单新建','fin/fee_list_create.html?isedit=0')
-    };
-	</script>
 <div id="page-content">
 	<div id="treeview"></div> 
 		

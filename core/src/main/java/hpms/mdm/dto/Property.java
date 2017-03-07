@@ -58,9 +58,9 @@ public class Property extends BaseDTO{
 	@Column
 	private String deptArea;//所属片区
 	@Column
-	private Long floorArea;//占地面积
+	private Float floorArea;//占地面积
 	@Column 
-	private Long greenArea;//绿化面积
+	private Float greenArea;//绿化面积
 	@Column 
 	private String postalCode;//邮政编码
 	@Column 
@@ -95,11 +95,11 @@ public class Property extends BaseDTO{
 	@Column
 	private String roomOrientation;//房屋朝向
 	@Column
-	private Long roomArea;//建筑面积
+	private Float roomArea;//建筑面积
 	@Column
-	private Long useArea;//使用面积
+	private Float useArea;//使用面积
 	@Column
-	private Long feeArea;//收费面积
+	private Float feeArea;//收费面积
 	@Column
 	private String roomDecoration;//装修情况
 	@Column
@@ -107,15 +107,15 @@ public class Property extends BaseDTO{
 	@Column
 	private String parkingType;//车位类型
 	@Column
-	private Long parkingLength;//车位长度
+	private Float parkingLength;//车位长度
 	@Column
-	private Long parkingWidth;//车位宽度
+	private Float parkingWidth;//车位宽度
 	@Column
-	private Long parkingArea;//车位面积
+	private Float parkingArea;//车位面积
 	@Column
 	private String publicSpaceType;//公共区域类型
 	@Column
-	private Long publicSpaceArea;//公共区域面积
+	private Float publicSpaceArea;//公共区域面积
 	@Column
 	private String roomStatus;//房屋状态
 	@Column
@@ -226,16 +226,16 @@ public class Property extends BaseDTO{
 	public void setDeptArea(String deptArea) {
 		this.deptArea = deptArea;
 	}
-	public Long getFloorArea() {
+	public Float getFloorArea() {
 		return floorArea;
 	}
-	public void setFloorArea(Long floorArea) {
+	public void setFloorArea(Float floorArea) {
 		this.floorArea = floorArea;
 	}
-	public Long getGreenArea() {
+	public Float getGreenArea() {
 		return greenArea;
 	}
-	public void setGreenArea(Long greenArea) {
+	public void setGreenArea(Float greenArea) {
 		this.greenArea = greenArea;
 	}
 	public String getPostalCode() {
@@ -334,22 +334,22 @@ public class Property extends BaseDTO{
 	public void setRoomOrientation(String roomOrientation) {
 		this.roomOrientation = roomOrientation;
 	}
-	public Long getRoomArea() {
+	public Float getRoomArea() {
 		return roomArea;
 	}
-	public void setRoomArea(Long roomArea) {
+	public void setRoomArea(Float roomArea) {
 		this.roomArea = roomArea;
 	}
-	public Long getUseArea() {
+	public Float getUseArea() {
 		return useArea;
 	}
-	public void setUseArea(Long useArea) {
+	public void setUseArea(Float useArea) {
 		this.useArea = useArea;
 	}
-	public Long getFeeArea() {
+	public Float getFeeArea() {
 		return feeArea;
 	}
-	public void setFeeArea(Long feeArea) {
+	public void setFeeArea(Float feeArea) {
 		this.feeArea = feeArea;
 	}
 	public String getRoomDecoration() {
@@ -370,22 +370,22 @@ public class Property extends BaseDTO{
 	public void setParkingType(String parkingType) {
 		this.parkingType = parkingType;
 	}
-	public Long getParkingLength() {
+	public Float getParkingLength() {
 		return parkingLength;
 	}
-	public void setParkingLength(Long parkingLength) {
+	public void setParkingLength(Float parkingLength) {
 		this.parkingLength = parkingLength;
 	}
-	public Long getParkingWidth() {
+	public Float getParkingWidth() {
 		return parkingWidth;
 	}
-	public void setParkingWidth(Long parkingWidth) {
+	public void setParkingWidth(Float parkingWidth) {
 		this.parkingWidth = parkingWidth;
 	}
-	public Long getParkingArea() {
+	public Float getParkingArea() {
 		return parkingArea;
 	}
-	public void setParkingArea(Long parkingArea) {
+	public void setParkingArea(Float parkingArea) {
 		this.parkingArea = parkingArea;
 	}
 	public String getPublicSpaceType() {
@@ -394,10 +394,10 @@ public class Property extends BaseDTO{
 	public void setPublicSpaceType(String publicSpaceType) {
 		this.publicSpaceType = publicSpaceType;
 	}
-	public Long getPublicSpaceArea() {
+	public Float getPublicSpaceArea() {
 		return publicSpaceArea;
 	}
-	public void setPublicSpaceArea(Long publicSpaceArea) {
+	public void setPublicSpaceArea(Float publicSpaceArea) {
 		this.publicSpaceArea = publicSpaceArea;
 	}
 	public String getRoomStatus() {

@@ -66,7 +66,6 @@
                 viewModel.model.set("occProcedures", occProcedures);
                 viewModel.model.set("__status", "add");
                 viewModel.model.set("status", "IN");
-                viewModel.model.set("customerId", 10001);
                 viewModel.model.set("inTransactor", "${Session.userName!''}");
 
 
@@ -179,7 +178,7 @@
                         <div class="form-group" style="margin: 0">
                             <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customercode"/>：</label>
                             <div class="col-sm-8">
-                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                <input disabled type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.customerCode" class="k-textbox">
                                 <span class="red">&nbsp;*</span>
 
@@ -191,8 +190,8 @@
                         <div class="form-group" style="margin: 0">
                             <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customername"/>：</label>
                             <div class="col-sm-8">
-                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
-                                       data-bind="value:model.customerName" class="k-textbox">
+                                <input id="customerNameId" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.customerName" >
                                 <span class="red">&nbsp;*</span>
                             </div>
                         </div>
@@ -279,6 +278,24 @@
     $("#serviceDateToId").kendoDatePicker();
     $("#transferDateId").kendoDatePicker();
     $("#feeDateId").kendoDatePicker();
+
+
+    $("#customerNameId").kendoLov({
+        //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
+        code:"HPMS_SELECT_CUSTOMER",
+        contextPath:'${base.contextPath}',
+        locale:'${base.locale}',
+        query:function (e) {
+
+        },
+        change:function (e) {
+            console.log(e.sender._dataItem)
+            viewModel.model.set("customerCode",e.sender._dataItem.customerNumber);
+            viewModel.model.set("customerId", e.sender._dataItem.customerId);
+
+        },
+        textField: 'fullName'
+    });
 
     function myhtml(value1,text1,flag,value2,text2,i) {
         var label = "&nbsp;";

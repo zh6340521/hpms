@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -65,6 +66,9 @@ public class BuildingVersionController extends BaseController {
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<BuildingVersion> bv,BindingResult result){
         IRequest requestCtx = createRequestContext(request);
+        //后台验证传递的参数
+		Locale locale = RequestContextUtils.getLocale(request);
+		getValidator().validate(bv, result);
         if (result.hasErrors()) {
             ResponseData rd = new ResponseData(false);
             rd.setMessage(getErrorMessage(result, request));

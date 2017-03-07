@@ -56,9 +56,9 @@ public class DiscountPro extends BaseDTO{
 	@Transient
 	private String discountTypeName;//折扣类型名称
 	@Column
-	private Long amount;//优惠金额
+	private Float amount;//优惠金额
 	@Column
-	private Long percent;//百分比
+	private Float percent;//百分比
 	@Column
 	private String description;//描述
 	@Column
@@ -143,16 +143,16 @@ public class DiscountPro extends BaseDTO{
 	public void setDiscountTypeName(String discountTypeName) {
 		this.discountTypeName = discountTypeName;
 	}
-	public Long getAmount() {
+	public Float getAmount() {
 		return amount;
 	}
-	public void setAmount(Long amount) {
+	public void setAmount(Float amount) {
 		this.amount = amount;
 	}
-	public Long getPercent() {
+	public Float getPercent() {
 		return percent;
 	}
-	public void setPercent(Long percent) {
+	public void setPercent(Float percent) {
 		this.percent = percent;
 	}
 	public String getDescription() {

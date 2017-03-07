@@ -54,7 +54,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <div class="form-group required-input">
-                                        <label class="col-sm-4 control-label">编码</label>
+                                        <!--<label class="col-sm-4 control-label">编码</label>-->
+                                        <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.fee.feecode"/></label>
                                         <div class="col-sm-8">
                                             <input name="versionNumber" id="versionNumber" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.versionNumber"
                                                    class="k-textbox" required>
@@ -68,7 +69,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <div class="form-group required-input">
-                                        <label class="col-sm-4 control-label">版本名称</label>
+                                        <!--<label class="col-sm-4 control-label">版本名称</label>-->
+                                        <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.fee.feecode"/></label>
                                         <div class="col-sm-8">
                                             <input name="versionName" id="versionName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.versionName"
                                                    class="k-textbox" required>
@@ -82,7 +84,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <div class="form-group required-input">
-                                        <label class="col-sm-4 control-label">版本描述</label>
+                                       <!-- <label class="col-sm-4 control-label">版本描述</label>-->
+                                        <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.building.versiondesc"/></label>
                                         <div class="col-sm-8">
                                             <input name="versionDescription" id="versionDescription" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.versionDescription"
                                                    class="k-textbox" required>
@@ -107,8 +110,10 @@
     <!--****************************版本结构tab*****************************-->
     <div class="col-sm-12" style="margin-top: 10px;">
         <ul class="nav nav-tabs" id="mytab">
-            <li class="active"><a href="#maintain" data-toggle="tab">版本结构</a></li>
-            <li class=""><a href="#showTreeUnit" data-toggle="tab" onclick="querydata()">树形结构</a></li>
+            <!--<li class="active"><a href="#maintain" data-toggle="tab">版本结构</a></li>-->
+            <li class="active"><a href="#maintain" data-toggle="tab"><@spring.message "hpms.mdm.build.version_structure"/></a></li>
+            <!--<li class=""><a href="#showTreeUnit" data-toggle="tab" onclick="querydata()">树形结构</a></li>-->
+            <li class=""><a href="#showTreeUnit" data-toggle="tab" onclick="querydata()"><@spring.message "hpms.mdm.build.tree_structure"/></a></li>
         </ul>
         <div id="tabContent" class="tab-content">
 
@@ -181,10 +186,11 @@
                     scrollable: false,
                     editable: false,
                     columns: [
-                        {field: "structureNumber", title: "结构编码"},
-                        {field: "structureName", title: "结构名称"},
-                        {field: "propertyName", title: "建筑实体"},
-                        {field: "businessFormat", title: "建筑类型"}
+                        //结构编码  结构名称  建筑实体 建筑类型
+                        {field: "structureNumber", title: '<@spring.message "hpms.mdm.build.structure_number"/>'},
+                        {field: "structureName", title: '<@spring.message "hpms.mdm.build.structure_name"/>'},
+                        {field: "propertyName", title: '<@spring.message "hpms.mdm.build.entity"/>'},
+                        {field: "businessFormat", title: '<@spring.message "hpms.mdm.build.type"/>'}
                     ]
 
                 }).data("kendoTreeList");
@@ -293,9 +299,11 @@
                     {
                         command	: [{
                             name : "edit",
-                            text :'编辑'
+                            //text :'编辑'
+                            text:'<@spring.message "hap.edit"/>',
                         }],
-                        title		: "操作",
+                       // title		: "操作",
+                        title:'<@spring.message "hap.action"/>',
                         width		: "8%" ,
                         attributes: {style: "text-align:center"},
                         headerAttributes: {
@@ -305,12 +313,13 @@
                     },
                     {
                         field: "structureNumber",
-                        title: '结构编码',
+                        //title: '结构编码',
+                        title:'<@spring.message "hpms.mdm.build.structure_number"/>',
                         width: '13%' ,
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {
                             //alert(options.field);
-                            $('<input type="text" required validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                            $('<input type="text" required validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
                             /*//根据是否存在主键id来判断是新增还是编辑
                             if (options.model.structureId != "") {
                                 container.html(options.model.structureNumber);
@@ -326,7 +335,8 @@
                     },
                     {
                         field: "structureName",
-                        title: '结构名称',
+                       // title: '结构名称',
+                        title:'<@spring.message "hpms.mdm.build.structure_name"/>',
                         width: '17%' ,
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {
@@ -340,7 +350,8 @@
                     },
                     {
                         field: "parentStructureId",
-                        title: '父结构',
+                       // title: '父结构',
+                        title: '<@spring.message "hpms.mdm.build.parent_structure"/>',
                         width: 140,
                         headerAttributes: {
                             "class": "table-header-cell",
@@ -369,7 +380,8 @@
                         width: '17%' ,
                         attributes: {style: "text-align:center"},*/
                         field: "propertyId",
-                        title: '建筑实体',
+                       // title: '建筑实体',
+                        title:'<@spring.message "hpms.mdm.build.entity"/>',
                         width: 140,
                         headerAttributes: {
                             "class": "table-header-cell",
@@ -394,7 +406,8 @@
                     {
                         field: "businessFormat",
                         //name:"meaning",
-                        title: '建筑类型',
+                        //title: '建筑类型',
+                        title:'<@spring.message "hpms.mdm.build.type"/>',
                         width: '20%' ,
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {

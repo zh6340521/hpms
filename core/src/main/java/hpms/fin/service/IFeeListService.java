@@ -36,4 +36,6 @@ public interface IFeeListService extends IBaseService<FeeList>, ProxySelf<IFeeLi
 
 	List<FeeList> feeListPreview(FeeListNew feeListNew, IRequest requestContext)throws Exception;
 
+	void feeListSubmit(IRequest requestContext, List<FeeList> feeLists);
+
 }

@@ -29,6 +29,7 @@ import hpms.fin.mapper.FeeListMapper;
 import hpms.fin.service.IFeeListService;
 import hpms.mdm.dto.BuildingVersion;
 import hpms.mdm.dto.CalRuleLine;
+import hpms.mdm.dto.CalculateElement;
 import hpms.mdm.dto.CalculateRule;
 import hpms.mdm.dto.Fee;
 import hpms.mdm.dto.FeeType;
@@ -37,6 +38,7 @@ import hpms.mdm.dto.Property;
 import hpms.mdm.dto.VersionStructure;
 import hpms.mdm.mapper.BuildingVersionMapper;
 import hpms.mdm.mapper.CalRuleLineMapper;
+import hpms.mdm.mapper.CalculateElementMapper;
 import hpms.mdm.mapper.CalculateRuleMapper;
 import hpms.mdm.mapper.FeeMapper;
 import hpms.mdm.mapper.FeeTypeMapper;
@@ -79,6 +81,8 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 	private CalculateRuleMapper calculateRuleMapper;
 	@Autowired
 	private CalRuleLineMapper calRuleLineMapper;
+	@Autowired
+	private CalculateElementMapper calculateElementMapper;
 	private static List<VersionStructure> returnList = new ArrayList<VersionStructure>();
 	@Override
 	public List<FeeList> feeListQuery(IRequest requestContext, FeeList feeList, int page, int pageSize) {
@@ -165,7 +169,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 				ConfigValue configValue = new ConfigValue();
 				configValue.setConfigValueId(property.getPropertyType());
 				configValue = configValuesMapper.selectOne(configValue);
-				if(!(configValue.getConfigValueNumber().equals(""))){
+				if(!(configValue.getConfigValueNumber().equals("CN03"))){
 					continue;
 				}
 				Occupation occupation = new Occupation();
@@ -261,11 +265,41 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 							codeValue.setCodeId(code.getCodeId());
 							codeValue = codeValueMapper.selectOne(codeValue);
 							feeList.setTransTypeName(codeValue.getMeaning());
-							feeList.setAdjAmount(Long.parseLong("0"));
-							feeList.setOverduePayment(Long.parseLong("0"));
-							
+							feeList.setAdjAmount(Float.parseFloat("0"));
+							feeList.setOverduePayment(Float.parseFloat("0"));
+							if(fee.getBillingMethod().equals("FIXED")){
+								feeList.setGrossAmount(feeList.getUnitPrice()*Long.parseLong("1"));
+							}else if(fee.getBillingMethod().equals("CALCULATED")){
+								if(fee.getFeeName().equals("物业费")){
+									CalculateRule calculateRule = new CalculateRule(); 
+									calculateRule.setCalculateRuleId(priceLine.getCalculateRuleId());
+									calculateRule = calculateRuleMapper.selectOne(calculateRule);
+									CalRuleLine calRuleLine = new CalRuleLine();
+									calRuleLine.setCalculateRuleId(calculateRule.getCalculateRuleId());
+									List<CalRuleLine> calRuleLines = calRuleLineMapper.select(calRuleLine);
+									for (CalRuleLine calRuleLine2 : calRuleLines) {
+										CalculateElement calculateElement = new CalculateElement(); 
+										calculateElement.setCalculateElementId(calRuleLine2.getCalculateElementId());
+										calculateElement = calculateElementMapper.selectOne(calculateElement);
+										if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+											feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1"));
+											break;
+										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+											feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1"));
+											break;
+										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+											feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1"));
+											break;
+										}
+									}
+								}else{
+									throw new ValidationTableException("收费项目未定价", null);
+								}
+							}
+							feeList.setTotalAmount(feeList.getGrossAmount());
+							feeList.setGenerateDate(new Date());
+							feeLists.add(feeList);
 						}
-						
 					}else{
 						for (int i = 0; i < feeListNew.getNum(); i++) {
 							FeeList feeList = new FeeList();
@@ -313,8 +347,40 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 							codeValue.setCodeId(code.getCodeId());
 							codeValue = codeValueMapper.selectOne(codeValue);
 							feeList.setTransTypeName(codeValue.getMeaning());
-							feeList.setAdjAmount(Long.parseLong("0"));
-							feeList.setOverduePayment(Long.parseLong("0"));
+							feeList.setAdjAmount(Float.parseFloat("0"));
+							feeList.setOverduePayment(Float.parseFloat("0"));
+							if(fee.getBillingMethod().equals("FIXED")){
+								feeList.setGrossAmount(feeList.getUnitPrice()*Long.parseLong("1"));
+							}else if(fee.getBillingMethod().equals("CALCULATED")){
+								if(fee.getFeeName().equals("物业费")){
+									CalculateRule calculateRule = new CalculateRule(); 
+									calculateRule.setCalculateRuleId(priceLine.getCalculateRuleId());
+									calculateRule = calculateRuleMapper.selectOne(calculateRule);
+									CalRuleLine calRuleLine = new CalRuleLine();
+									calRuleLine.setCalculateRuleId(calculateRule.getCalculateRuleId());
+									List<CalRuleLine> calRuleLines = calRuleLineMapper.select(calRuleLine);
+									for (CalRuleLine calRuleLine2 : calRuleLines) {
+										CalculateElement calculateElement = new CalculateElement(); 
+										calculateElement.setCalculateElementId(calRuleLine2.getCalculateElementId());
+										calculateElement = calculateElementMapper.selectOne(calculateElement);
+										if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+											feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1"));
+											break;
+										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+											feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1"));
+											break;
+										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+											feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1"));
+											break;
+										}
+									}
+								}else{
+									throw new ValidationTableException("收费项目未定价", null);
+								}
+							}
+							feeList.setTotalAmount(feeList.getGrossAmount());
+							feeList.setGenerateDate(new Date());
+							feeLists.add(feeList);
 						}
 					}
 				}
@@ -392,18 +458,36 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					}else{
 						feeList.setFeeQuantity(Long.parseLong("1"));
 					}
-					feeList.setAdjAmount(Long.parseLong("0"));
-					feeList.setOverduePayment(Long.parseLong("0"));
+					feeList.setAdjAmount(Float.parseFloat("0"));
+					feeList.setOverduePayment(Float.parseFloat("0"));
 					if(fee.getBillingMethod().equals("FIXED")){
 						feeList.setGrossAmount(feeList.getUnitPrice()*feeList.getFeeQuantity());
 					}else if(fee.getBillingMethod().equals("CALCULATED")){
-						CalculateRule calculateRule = new CalculateRule(); 
-						calculateRule.setCalculateRuleId(priceLine.getCalculateRuleId());
-						calculateRule = calculateRuleMapper.selectOne(calculateRule);
-						CalRuleLine calRuleLine = new CalRuleLine();
-						calRuleLine.setCalculateRuleId(calculateRule.getCalculateRuleId());
-						List<CalRuleLine> calRuleLines = calRuleLineMapper.select(calRuleLine);
-						
+						if(fee.getFeeName().equals("物业费")){
+							CalculateRule calculateRule = new CalculateRule(); 
+							calculateRule.setCalculateRuleId(priceLine.getCalculateRuleId());
+							calculateRule = calculateRuleMapper.selectOne(calculateRule);
+							CalRuleLine calRuleLine = new CalRuleLine();
+							calRuleLine.setCalculateRuleId(calculateRule.getCalculateRuleId());
+							List<CalRuleLine> calRuleLines = calRuleLineMapper.select(calRuleLine);
+							for (CalRuleLine calRuleLine2 : calRuleLines) {
+								CalculateElement calculateElement = new CalculateElement(); 
+								calculateElement.setCalculateElementId(calRuleLine2.getCalculateElementId());
+								calculateElement = calculateElementMapper.selectOne(calculateElement);
+								if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+									feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*feeList.getFeeQuantity());
+									break;
+								}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+									feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*feeList.getFeeQuantity());
+									break;
+								}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+									feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*feeList.getFeeQuantity());
+									break;
+								}
+							}
+						}else{
+							throw new ValidationTableException("收费项目未定价", null);
+						}
 					}
 					feeList.setTotalAmount(feeList.getGrossAmount());
 					feeList.setGenerateDate(new Date());
@@ -464,4 +548,12 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
        return calendar.getTime();
    }
+
+	@Override
+	public void feeListSubmit(IRequest requestContext, List<FeeList> feeLists) {
+		for (FeeList feeList : feeLists) {
+			feeList.setFeeStatus("CREATED");
+			feeListMapper.insertSelective(feeList);
+		}
+	}
 }

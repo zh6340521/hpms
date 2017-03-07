@@ -16,8 +16,8 @@
     		height: 25px;
 		}
 	</style>
-	<script src="/core/common/code?feeStatusData=HPMS_FEE_LIST_TPYE" type="text/javascript"></script>
-	<script src="/core/common/code?transTypeData=HPMS_TRANS_TYPE" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?feeStatusData=HPMS_FEE_LIST_TPYE" type="text/javascript"></script>
+	<script src="${base.contextPath}/common/code?transTypeData=HPMS_TRANS_TYPE" type="text/javascript"></script>
 	<script type="text/javascript">
 	var viewModel = kendo.observable({
         model: {},
@@ -120,11 +120,58 @@
         <span  data-bind="click:queryResource" class="btn btn-primary" style="float:left;"><@spring.message "hap.query"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+	<div id="fee_list_form2" style="clear:both;padding-bottom:10px;padding-top:20px;">
+		<form class="form-horizontal" id="pool_form2" role="form" style="margin-top: 5px;">
+			<div class="row">
+				<div class="from-group col-md-4" style="margin-bottom:10px">
+					<label class="col-md-5 control-label">计提总额</label>
+				    <div class="col-md-7">
+				    	<input id = "grossAmount" type="text" class="k-textbox" name="grossAmount" data-bind="value:model.grossAmount" style="width: 90%;"/>
+				    </div>
+				</div>
+				<div class="from-group col-md-4" style="margin-bottom:10px">
+					<label class="col-md-5 control-label">折扣总额</label>
+					<div class="col-md-7">
+						<input id = "adjAmount" type="text" class="k-textbox" name="adjAmount" data-bind="value:model.adjAmount" style="width: 90%;"/>
+					</div>
+				</div>
+				<div class="from-group col-md-4" style="margin-bottom:10px">
+					<label class="col-md-5 control-label">应收总额</label>
+				    <div class="col-md-7">
+				      <input id = "amount" type="text" class="k-textbox" name="amount"  data-bind="value:model.amount" style="width: 90%;">
+				    </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="from-group col-md-4" style="margin-bottom:10px">
+					<label class="col-md-5 control-label">计提日期</label>
+				    <div class="col-md-7">
+				        <input data-role="datepicker" name="countedDate"  data-bind="value:model.countedDate" style="width: 90%;"/> 
+				    </div>
+				</div>
+				<div class="from-group col-md-4" style="margin-bottom:10px">
+					<label class="col-md-5 control-label">备注</label>
+				    <div class="col-md-7">
+				    	<input type="text" class="k-textbox" name="remark" data-bind="value:model.remark" style="width: 90%;"/>
+				    </div>
+				</div>
+				<div class="from-group col-md-4" style="margin-bottom:10px">
+					<span  onclick="updateData2('WITHDRAWING')" class="btn btn-primary" style="float:left;margin-right:5px;">确定</span>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script>kendo.bind($('#fee_list_form2'), viewModel);</script>
 	<div style="clear:both">
         <div id="fee_list_grid" ></div>
     </div>
 </div>
 	<script type="text/javascript" >
+	
+		$("#fee_list_form2").hide();
+		$("#grossAmount").attr("readonly",true).css("background", "#DDDDDD");
+		$("#adjAmount").attr("readonly",true).css("background", "#DDDDDD");
+		$("#amount").attr("readonly",true).css("background", "#DDDDDD");
 		
 		$('#fee_list_form input').keydown(function (e) {
 		    if (e.keyCode == 13) {
@@ -274,7 +321,10 @@
 	            model : {
 	                id    : "feeListId",
 	                fields: {
-	                	accruedDate: {type:"date"}
+	                	accruedDate: {type:"date"},
+	                	dateTo: {type:"date"},
+	                	generateDate: {type:"date"},
+	                	countedDate: {type:"date"}
 	                }
 	            }
 	        }
@@ -286,7 +336,7 @@
 	        resizable  : true,
 	        scrollable : true,
 	        editable   : false,
-	        selectable : "multiple,rowbox",
+	        selectable : "single,rowbox",
 	        reorderable: true,
 	        sortable   : true,
 	        columnMenu : true, //实现右击可以隐藏显示列
@@ -395,11 +445,13 @@
 	        	field      : "accruedDate",
                 title      : "计费日期起", 
                 width      : 120,
+                format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "dateTo",
                 title      : "计费日期止", 
                 width      : 120,
+                format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "remark",
@@ -425,11 +477,13 @@
 	        	field      : "generateDate",
                 title      : "生成日期", 
                 width      : 120,
+                format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "countedDate",
                 title      : "计提日期", 
                 width      : 120,
+                format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        }]
 			
@@ -443,12 +497,33 @@
          	     var checked = grid.selectedDataItems();
                  if(!checked.length)
                  {
+                 	kendo.ui.showInfoDialog({
+	            		message: $l('hap.tip.selectrow')
+	            	});
                  	return;
                  }
-                 $.each(checked,function(i,v){
-             	    requestData.push({feeListId:v.feeListId});      	
-                 })
-
+                 if(operation=="WITHDRAWING"){
+	    		 	$.each(checked,function(i,v){
+	    		 		if(v.feeStatus=="CANCELLED"){
+	    		 			kendo.ui.showInfoDialog({
+                                title:$l('hap.tip.info'),
+                                message:"已撤销的单子不能进行计提操作，请重新选择！"
+                            })
+                            return;
+	    		 		}else{
+		                 	viewModel.model.set("grossAmount",v.grossAmount);
+		                 	viewModel.model.set("adjAmount",v.adjAmount);
+		                 	viewModel.model.set("amount",v.grossAmount+v.adjAmount);
+		             	    requestData.push({feeListId:v.feeListId});
+		             	    $("#fee_list_form2").show();
+	             	    }      	
+                 	})
+                 	return;
+	    		 }else{
+		    		 $.each(checked,function(i,v){
+	             	    requestData.push({feeListId:v.feeListId});      	
+	                 })
+	    		 }
                  $.ajax({
                  	url        : _basePath+"/fin/feeList/feeListUpdate?operation="+operation,
                  	data       : kendo.stringify(requestData),
@@ -463,6 +538,49 @@
                                 message:$l('hap.tip.success')
                             }).done(function(e){
                             	$("#fee_list_grid").data('kendoGrid').dataSource.read(1);
+                            })
+                        } 
+                    	else{
+                    		kendo.ui.showInfoDialog({
+                                title:$l('hap.error'),
+                                message:data.message
+                            }).done(function(e){
+                            	$("#fee_list_grid").data('kendoGrid').dataSource.read(1);
+                            })
+                    	}
+                     	
+                 	},
+                 	error      : function () {
+                    	alert("error");
+                 	}
+             	  });
+                  
+            }
+            
+            function updateData2(operation){
+         	     //拿到选中的项
+         	     var requestData = [];
+         	     var checked = grid.selectedDataItems();
+	    		 $.each(checked,function(i,v){
+             	    requestData.push({feeListId:v.feeListId,countedDate:viewModel.model.countedDate,remark:viewModel.model.remark});      	
+                 })
+                 $.ajax({
+                 	url        : _basePath+"/fin/feeList/feeListUpdate?operation="+operation,
+                 	data       : kendo.stringify(requestData),
+                 	type       : 'post',
+                 	contentType: "application/json",
+                 	cache      : false,
+                 	dataType   : 'json',
+                 	success    : function (data) {
+                 		if (data.success) {   
+                    		kendo.ui.showInfoDialog({
+                                title:$l('hap.tip.info'),
+                                message:$l('hap.tip.success')
+                            }).done(function(e){
+                            	viewModel.model.set("countedDate",null);
+                            	viewModel.model.set("remark","");
+                            	$("#fee_list_grid").data('kendoGrid').dataSource.read(1);
+                            	$("#fee_list_form2").hide();
                             })
                         } 
                     	else{

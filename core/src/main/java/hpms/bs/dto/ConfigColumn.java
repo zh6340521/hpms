@@ -4,10 +4,7 @@ package hpms.bs.dto;/**
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -93,9 +90,26 @@ public class ConfigColumn extends BaseDTO {
     @Column
     private String columnStyle;
 
+    @Transient
+    private String vaildateMessage;  //存放必输提示信息
+    @Transient
+    private int columnNumber;//字符编号
 
+    public int getColumnNumber() {
+        return columnNumber;
+    }
 
+    public void setColumnNumber(int columnNumber) {
+        this.columnNumber = columnNumber;
+    }
 
+    public String getVaildateMessage() {
+        return vaildateMessage;
+    }
+
+    public void setVaildateMessage(String vaildateMessage) {
+        this.vaildateMessage = vaildateMessage;
+    }
 
     public Long getConfigColumnId() {
         return configColumnId;

@@ -58,7 +58,8 @@
                              <div class="col-sm-4">
                                  <div class="row">
                                      <div class="form-group required-input">
-                                         <label class="col-sm-5 control-label">编码</label>
+                                         <!--<label class="col-sm-5 control-label">编码</label>-->
+                                         <label class="col-sm-5 control-label"><@spring.message "hpms.mdm.calculaterule.rulecode"/></label>
                                          <div class="col-sm-7">
                                              <input name="configValueNumber" id="configValueNumber" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.configValueNumber"
                                                     class="k-textbox" required>
@@ -73,7 +74,8 @@
                              <div class="col-sm-4">
                                  <div class="row">
                                      <div class="form-group required-input">
-                                         <label class="col-sm-5 control-label">类型名称</label>
+                                        <!-- <label class="col-sm-5 control-label">类型名称</label>-->
+                                         <label class="col-sm-5 control-label"><@spring.message "hpms.mdm.equipmenttype.typename"/></label>
                                          <div class="col-sm-7">
                                              <input name="configValueName" id="configValueName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.configValueName"
                                                     class="k-textbox" required>
@@ -199,14 +201,16 @@
 
                      command	: [{
                          name : "edit",
-                         text :'编辑'
+                       //  text :'编辑'
+                         text :'<@spring.message "hap.edit"/>'
 
                      },{
                          name:"delete",
                          text:"<span class='fa fa-trash-o'></span>",
                      }],
                      attributes: {style: "text-align:center"},
-                     title		: "操作",
+                    // title		: "操作",
+                     title:'<@spring.message "hap.action"/>',
                      width		: "4%" ,
                      headerAttributes: {
                          style: "text-align: center"
@@ -216,7 +220,8 @@
                  {
                      field: "columnName",
                      //name:"meaning",
-                     title: '字段名',
+                     //title: '字段名',
+                     title:'<@spring.message "hpms.bs.column_name"/>',
                      width: '6%' ,
                      attributes: {style: "text-align:center"},
                      editor: function(container, options) {
@@ -262,7 +267,8 @@
                  {
                      field: "columnType",
                      attributes: {style: "text-align:center"},
-                     title: '字段类型',
+                     //title: '字段类型',
+                     title:'<@spring.message "lovitem.field_type"/>',
                      width: '6%',
                      editor: function(container, options){
                          var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
@@ -272,7 +278,8 @@
                  },
                  {
                      field: "columnLength",
-                     title: '长度',
+                     //title: '长度',
+                     title:'<@spring.message "hpms.bs.column_length"/>',
                      width: '6%' ,
                      attributes: {style: "text-align:center"},
                      editor: function(container, options){
@@ -284,7 +291,8 @@
                  {
                      field: "columnNameAlias",
                      //name:"meaning",
-                     title: '别名',
+                     //title: '别名',
+                     title:'<@spring.message "hpms.bs.column_alias"/>',
                      width: '6%' ,
                      attributes: {style: "text-align:center"},
                      editor: function (container, options) {
@@ -298,7 +306,8 @@
                  {
                      field: "columnStyle",
                      attributes: {style: "text-align:center"},
-                     title: '字符样式',
+                   //  title: '字符样式',
+                     title:'<@spring.message "hpms.bs.column_style"/>',
                      width: 80,
                      template: function(dataItem){//模板函数，相当于文本框渲染
                          //将field的数据和下拉框内的数据进行绑定
@@ -330,12 +339,13 @@
                  },
                  {field: "requiredFlag",
                      width: '5%',
-                     title: '是否必输',
+                     title: '<@spring.message "hpms.bs.column_requireflag"/>',
                      attributes: {style: "text-align:center"}
                  },
                  {field: "enableFlag",
                      width: '5%',
-                     title: '是否启用',
+                    // title: '是否启用',
+                     title:'<@spring.message "hap.enableflag"/>',
                      attributes: {style: "text-align:center"}
                  }
 

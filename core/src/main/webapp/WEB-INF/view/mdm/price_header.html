@@ -302,7 +302,19 @@
 		            buttonCount: 5
 		        },
 	       		columns : [
-	       		{command : [{name:"edit"}], 
+	       		{command : [{
+                        name:"detail",
+                        text:"<i class='fa fa-search'></i>",
+                        click:function (e) {
+                            e.preventDefault();
+                            var tr = $(e.target).closest("tr");
+                            var data = this.dataItem(tr);
+                            window.top.openTab(
+                                "price_header"+data.priceCode,data.priceCode,
+                                "mdm/price_line.html?priceHeaderId="+data.priceHeaderId);
+
+                        }
+                    },{name:"edit"}], 
 			        		title: '<@spring.message "hap.action"/>', 
 			        		attributes: {style: "text-align:center"},
 			        		width: "9%"
@@ -311,11 +323,6 @@
 	                title      : "<@spring.message 'hpms.mdm.priceheader.pricecode'/>", 
 	                width      : "13%",
 	                attributes  : {style: "text-align:center"},
-	                template   :function(e){
-		                	return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="parent.openTab(\'price_header'+e.priceCode+'\',\''+e.priceCode+'\', \'mdm/price_line.html?priceHeaderId='+e.priceHeaderId+'\')">'               
-									+ e.priceCode
-									+ '</a>'
-                    },
 	                editor: function(container, options){
                         var editor = $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" name="priceCode"/>'+'<span class="red">&nbsp;&nbsp;*</span>');
                         editor.css('width','90%');

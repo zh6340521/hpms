@@ -122,7 +122,7 @@
     		hmp.ENABLE_FLAG,
     		fcl.COMPANY_FULL_NAME COMPANY_NAME,
     		hmp2.PROJECT_NAME,
-    		hmcv.CONFIG_VALUE_NAME
+    		hcv.CONFIG_VALUE_NAME
     	FROM HPMS_MDM_PROPERTY hmp
     	LEFT JOIN FND_COMPANY_B fc
         ON hmp.COMPANY_ID = fc.COMPANY_ID
@@ -130,8 +130,8 @@
         ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
         LEFT JOIN HPMS_MDM_PROJECT hmp2
         ON hmp.PROJECT_ID = hmp2.PROJECT_ID
-        LEFT JOIN HPMS_MDM_CONFIG_VALUE hmcv
-        ON hmp.PROPERTY_TYPE = hmcv.CONFIG_VALUE_ID
+        LEFT JOIN HPMS_CONFIG_VALUE hcv
+        ON hmp.PROPERTY_TYPE = hcv.CONFIG_VALUE_ID
         WHERE 1 = 1
         <if test = "propertyId != null"> AND hmp.PROPERTY_ID = #{propertyId , jdbcType=DECIMAL} </if>
         <if test = "companyId != null"> AND hmp.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
@@ -198,12 +198,16 @@
     </select>
     <!-- 查询有效的建筑类型 -->
     <select id="propertyTypeQuery" resultMap="configValueResultMap" parameterType="hpms.bs.dto.ConfigValue">
-    	SELECT HMCV.CONFIG_VALUE_ID,
-       		   HMCV.CONFIG_VALUE_NAME
-          FROM HPMS_MDM_CONFIG_VALUE HMCV
+    	SELECT HCV.CONFIG_VALUE_ID,
+       		   HCV.CONFIG_VALUE_NAME
+          FROM HPMS_DATA_MODEL HDM
+          LEFT JOIN HPMS_CONFIG HC
+          ON HDM.MODEL_ID = HC.MODEL_ID AND HDM.TABLE_NAME = 'HPMS_MDM_PROPERTY' AND HC.ENABLE_FLAG = 'Y'
+          LEFT JOIN HPMS_CONFIG_VALUE HCV
+          ON HC.CONFIG_ID = HCV.CONFIG_ID AND HCV.ENABLE_FLAG = 'Y'
           WHERE 1=1
           <if test="companyId != null">
-         		AND COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+         		AND HC.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
           </if>
     </select>
 </mapper>

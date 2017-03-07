@@ -74,7 +74,7 @@ public class ConfigCache extends HashStringRedisCache<Config> {
     //将数据存入redis
     public void updateConfigData(Config cf, ConfigValue cv, ConfigColumn cc){
 
-        logger.info("查询出三张表的数据");
+        logger.info("查询出主表的数据");
         List<Config> cfList = configMapper.findAllConfig(cf);
 
 
@@ -109,9 +109,11 @@ public class ConfigCache extends HashStringRedisCache<Config> {
                 Iterator cc1List = ccList.iterator();
 
                 List<ConfigColumn> ConfigColumnList = new ArrayList<>();
+                int number = 1;
                 while(cc1List.hasNext()){
                     Object configColumn = cc1List.next();
 
+                    ((ConfigColumn)configColumn).setColumnNumber(number++);
                     logger.info("判断第二张表的id和第三张表是否相等");
                     if(((ConfigColumn)configColumn).getConfigValueId().equals(((ConfigValue)configValue).getConfigValueId())){
                         ConfigColumnList.add((ConfigColumn)configColumn);

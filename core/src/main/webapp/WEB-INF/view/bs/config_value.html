@@ -55,7 +55,8 @@
                                 <div class="col-sm-4">
                                     <div class="row">
                                         <div class="form-group required-input">
-                                            <label class="col-sm-5 control-label">公司</label>
+                                            <!--<label class="col-sm-5 control-label">公司</label>-->
+                                            <label class="col-sm-5 control-label"><@spring.message "hpms.mdm.property.company"/></label>
                                             <div class="col-sm-7">
                                                 <input name="companyFullName" id="companyFullName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.companyFullName"
                                                        class="k-textbox" required>
@@ -66,7 +67,8 @@
 
                                     <div class="row">
                                         <div class="form-group required-input">
-                                            <label class="col-sm-5 control-label">模型名称</label>
+                                            <!--<label class="col-sm-5 control-label">模型名称</label>-->
+                                            <label class="col-sm-5 control-label"><@spring.message "hpms.bs.model_name"/></label>
                                             <div class="col-sm-7">
                                                 <input name="modelName" id="modelName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.modelName"
                                                        class="k-textbox" required>
@@ -80,7 +82,8 @@
                                 <div class="col-sm-4">
                                     <div class="row">
                                         <div class="form-group required-input">
-                                            <label class="col-sm-5 control-label">配置编码</label>
+                                            <!--<label class="col-sm-5 control-label">配置编码</label>-->
+                                            <label class="col-sm-5 control-label"><@spring.message "hpms.bs.config_number"/></label>
                                             <div class="col-sm-7">
                                                 <input name="configNumber" id="configNumber" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.configNumber"
                                                        class="k-textbox" required>
@@ -91,7 +94,8 @@
 
                                     <div class="row">
                                         <div class="form-group required-input">
-                                            <label class="col-sm-5 control-label">字段名</label>
+                                            <!--<label class="col-sm-5 control-label">字段名</label>-->
+                                            <label class="col-sm-5 control-label"><@spring.message "hpms.bs.column_name"/></label>
                                             <div class="col-sm-7">
                                                 <input name="columnName" id="columnName" type="text" style="width: 100%; background-color:#DDDDDD" disabled="disabled" data-bind="value:model.columnName"
                                                        class="k-textbox" required>
@@ -231,14 +235,16 @@
                             }
                         },{
                             name : "edit",
-                            text :'编辑'
+                            //text :'编辑'
+                            text:'<@spring.message "hap.edit"/>',
 
                         },{
                             name:"delete",
                             text:"<span class='fa fa-trash-o'></span>",
                         }],
                         attributes: {style: "text-align:center"},
-                        title		: "操作",
+                      //  title		: "操作",
+                        title:'<@spring.message "hap.action"/>',
                         width		: "4%" ,
                         headerAttributes: {
                             style: "text-align: center"
@@ -247,7 +253,8 @@
                     },
                     {
                         field: "configValueNumber",
-                        title: '编码',
+                       // title: '编码',
+                        title:'<@spring.message "hpms.mdm.fee.feecode"/>',
                         attributes: {style: "text-align:center"},
                         width: '8%',
 
@@ -257,7 +264,7 @@
                                 container.html(options.model.configValueNumber);
                                 container.removeClass('k-edit-cell');
                             } else {
-                                var editor =  $('<input type="text" required validationMessage="只允许输入大写字母、数字及下划线" pattern="^[0-9A-Z_]+$"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                                var editor =  $('<input type="text" required validationMessage="<@spring.message "hpms.vaildate.message"/>" pattern="^[0-9A-Z_]+$"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
                                 editor.css('width','100%');
                                 container.append(editor);
                             }
@@ -267,7 +274,8 @@
                     {
                         field: "configValueName",
                         attributes: {style: "text-align:center"},
-                        title: '类型名称',
+                      //  title: '类型名称',
+                        title:'<@spring.message "hpms.mdm.equipmenttype.typename"/>',
                         width: '8%',
                         editor: function (container, options) {
                             //alert(options.field);
