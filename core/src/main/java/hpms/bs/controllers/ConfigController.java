@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -61,8 +63,16 @@ public class ConfigController extends BaseController {
      */
     @RequestMapping(value = "/bs/config/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<Config> cf){
+    public ResponseData update(HttpServletRequest request,@RequestBody List<Config> cf,BindingResult result){
         IRequest requestCtx = createRequestContext(request);
+        //后台验证传递的参数
+		Locale locale = RequestContextUtils.getLocale(request);
+		getValidator().validate(cf, result);
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }
         try {
             configService.myBatchUpdate(requestCtx, cf);
         } catch (ValidationTableException e) {

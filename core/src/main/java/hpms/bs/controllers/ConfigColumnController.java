@@ -9,13 +9,16 @@ import hpms.bs.dto.ConfigColumn;
 import hpms.bs.service.IConfigColumnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -55,8 +58,17 @@ public class ConfigColumnController extends BaseController {
      */
     @RequestMapping(value = "/bs/configcolumn/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<ConfigColumn> cc){
+    public ResponseData update(HttpServletRequest request,@RequestBody List<ConfigColumn> cc,BindingResult result){
         IRequest requestCtx = createRequestContext(request);
+        //后台验证传递的参数
+		Locale locale = RequestContextUtils.getLocale(request);
+		getValidator().validate(cc, result);
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }
+
         configColumnService.myBatchUpdate(requestCtx,cc);
         return new ResponseData(cc);
     }
@@ -74,4 +86,13 @@ public class ConfigColumnController extends BaseController {
         configColumnService.deleteConfigColumn(cc,requestCtx);
         return new ResponseData();
     }
+
+    @RequestMapping(value = "/bs/configcolumn/queryByCache")
+    @ResponseBody
+    public ResponseData queryByCache(Long configValueId,Long configId,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        List<ConfigColumn> ccList = configColumnService.findConfigColumnByCache(requestContext,configValueId,configId);
+        return new ResponseData(ccList);
+    }
+
 }

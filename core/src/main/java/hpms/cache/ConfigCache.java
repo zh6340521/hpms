@@ -111,7 +111,8 @@ public class ConfigCache extends HashStringRedisCache<Config> {
                 List<ConfigColumn> ConfigColumnList = new ArrayList<>();
                 while(cc1List.hasNext()){
                     Object configColumn = cc1List.next();
-
+                    int number = 1;
+                    ((ConfigColumn)configColumn).setColumnNumber(number++);
                     logger.info("判断第二张表的id和第三张表是否相等");
                     if(((ConfigColumn)configColumn).getConfigValueId().equals(((ConfigValue)configValue).getConfigValueId())){
                         ConfigColumnList.add((ConfigColumn)configColumn);
