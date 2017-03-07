@@ -46,7 +46,13 @@ public class RelationController extends BaseController{
 			return new ResponseData(relation);
     }
     
-    
+    /**
+     * 是否建立过关系
+     * @param request
+     * @param relations
+     * @param result
+     * @return
+     */
     @RequestMapping(value = "/hpms/mdm/Relation/submitReation")
     @ResponseBody
     public ResponseData submitRelation(HttpServletRequest request,@RequestBody Relation relations,BindingResult result){
@@ -63,16 +69,27 @@ public class RelationController extends BaseController{
 		return new ResponseData(relation);
 }
     
-    
+    /**
+     * 是否存在紧急联系人
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/hpms/mdm/Relation/itemNumQuery")
     @ResponseBody
-    public Long itemNumQuery(HttpServletRequest request) {
-        Long itemNum = relationMapper.selectByCountIcmFlag();
+    public int itemNumQuery(HttpServletRequest request,int fromBpId) {
+    	IRequest requestCtx = createRequestContext(request);
+        int itemNum = relationService.selectByCountIcmFlag(requestCtx,fromBpId);
         return itemNum;
     }
     
     
-    
+    /**
+     * 修改人员关系
+     * @param request
+     * @param relations
+     * @param result
+     * @return
+     */
     @RequestMapping(value = "/hpms/mdm/Relation/updateReation")
     @ResponseBody
     public ResponseData updateReation(HttpServletRequest request,@RequestBody Relation relations,BindingResult result){

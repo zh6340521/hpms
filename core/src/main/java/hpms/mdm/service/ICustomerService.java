@@ -24,9 +24,9 @@ public interface ICustomerService extends IBaseService<Customer>,ProxySelf<ICust
 	
 	/**
 	 * 修改记录状态
-	 * @param customer
+	 * @param id
 	 * @return 
 	 */
-	public void updateByEnableFlag(IRequest requestContext,Customer customer);
+	public String queryByEnableFlag(Long customerId);
     
 }

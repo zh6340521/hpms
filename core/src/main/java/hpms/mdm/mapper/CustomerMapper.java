@@ -2,6 +2,8 @@ package hpms.mdm.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.hand.hap.mybatis.common.Mapper;
 
 import hpms.mdm.dto.Customer;
@@ -35,10 +37,11 @@ public interface CustomerMapper extends Mapper<Customer>{
     public Long selectByMaxCustomerNumber();
     
     /**
-     * 修改记录状态
+     * 查看记录状态
      * @param customer
+     * @return 
      * @Author huifang.zhou@hand-china.com
      */
-    public void updateByEnableFlag(Customer customer);
+    public String queryByEnableFlag(@Param(value="customerId")Long customerId);
 	
 }

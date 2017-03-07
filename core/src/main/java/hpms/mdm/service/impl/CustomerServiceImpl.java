@@ -43,8 +43,8 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer> implements IC
 
 
 	@Override
-	public void updateByEnableFlag(IRequest requestContext,Customer customer) {
-		customerMapper.updateByEnableFlag(customer);
+	public String queryByEnableFlag(Long customerId) {
+		return customerMapper.queryByEnableFlag(customerId);
 	}
 
  

@@ -25,15 +25,17 @@ author:huifang.zhou@hand-china.com * -->
 					<div class="row" style="margin-bottom: 32px;">
 						<div class="col-sm-3">
 							<div class="pull-left">
-								<label class="col-sm-4 control-label" style="margin-left: 23px;">姓名:</label>
+								<label class="col-sm-4 control-label" style="margin-left: 23px;"><@spring.message "hpms.mdm.bpgeneral.name"/>:</label>
 								<input type="text" style="width: 180px; margin-left: 10px;" id="name"
-									data-bind="value:model.fullName" class="k-textbox" />
+									data-bind="value:model.fullName" name="name" class="k-textbox" required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+									<span style="color: red">*</span>
+									<span class="k-invalid-msg" data-for="name"></span>
 									<script>kendo.bind($('#name'), viewModelbpGender);</script>
 							</div>
 						</div>
 						<div class="col-sm-3">
 							<div class="pull-left">
-								<label class="col-sm-4 control-label" style="margin-left: 62px;">性别:</label> 
+								<label class="col-sm-4 control-label" style="margin-left: 62px;"><@spring.message "employee.gender"/>:</label> 
 									<input id="sex" name="sex" type="radio" value="男" data-bind="checked:model.personGender" style="margin-left: 1px;" />男 
 									<input id="sex" name="sex" type="radio" value="女" style="margin-left: 10px;" data-bind="checked:model.personGender" />女
 									<input id="sex" checked name="sex" type="radio" value="未知" style="margin-left: 10px;" data-bind="checked:model.personGender" />未知
@@ -44,18 +46,32 @@ author:huifang.zhou@hand-china.com * -->
 					<div class="row" style="margin-bottom: 32px;">
 						<div class="col-sm-3">
 							<div class="pull-left">
-								<label class="col-sm-4 control-label">移动电话:</label> <input id="tel"
-									type="text" style="width: 180px; margin-left: 11px;"
-									data-bind="value:model.contactMobile" class="k-textbox" />
-									<script>kendo.bind($('#tel'), viewModelbpGender);</script>
+								<label class="col-sm-4 control-label"><@spring.message "employee.mobile"/>:</label> 
+								<input id="tel" type="text" name="tel" style="width: 180px; margin-left: 11px;" data-bind="value:model.contactMobile"/>
+									<span style="color: red">*</span>
+									<script>
+										document.getElementById('tel').onblur=function(){
+                        					var tt= /^1[0-9]{10}$/;
+                        					if(tt.test(this.value)){
+                        					//alert('正整数');
+                        					}else{
+                        					//alert('非正整数');
+                        					var $parent = $("input[name='tel']").parent();
+                        					$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="tel" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"请输入有效的移动电话"+'</span>');
+                        					viewModelPersonage.model.set('tel',null);
+                            }
+
+                        }
+                        kendo.bind($('#tel'), viewModelbpGender);</script>
 							</div>
 						</div>
 						<div class="col-sm-3">
 							<div class="pull-right">
-									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialtype"/>:</label> <input
-										id="credential" name="credential"
-										style="width: 180px;"
-										data-bind="text:model.meaning,value:model.credentialType" />
+									<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpGeneral.credentialtype"/>:</label> 
+									<input id="credential" name="credential" style="width: 180px;"
+										data-bind="text:model.meaning,value:model.credentialType" required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+									<span style="color: red">*</span>
+									<span class="k-invalid-msg" data-for="credential"></span>
 									<script>
 										$("#credential").kendoDropDownList({
 															optionLabel : "--请选择--",
@@ -81,22 +97,42 @@ author:huifang.zhou@hand-china.com * -->
 					<div class="row" style="margin-bottom: 32px;">
 						<div class="col-sm-3">
 							<div class="pull-left">
-								<label class="col-sm-4 control-label">证件号码:</label> <input id="crNumber"
-									type="text" style="width: 180px; margin-left: 11px;"
-									data-bind="value:model.credentialNumber" class="k-textbox" />
-									<script>kendo.bind($('#crNumber'), viewModelbpGender);</script>
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.bpgeneral.credentialnumber"/>:</label> 
+								<input id="crNumber" name="crNumber" type="text" style="width: 180px; margin-left: 11px;"
+									data-bind="value:model.credentialNumber" class="k-textbox"/>
+									<span style="color: red">*</span>
+									<script>
+										document.getElementById('crNumber').onblur=function(){
+										var type = viewModelbpGender.model.credentialType;
+										console.log(type)
+										if(type == "IDENTIFICATION_CARDS"){
+											var tt= /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+                        					if(tt.test(this.value)){
+                        					//alert('正整数');
+                        					}else{
+                        					//alert('非正整数');
+                        					var $parent = $("input[name='crNumber']").parent();
+                        					$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="crNumber" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"证件号码不正确"+'</span>');
+                        					viewModelbpGender.model.set('crNumber',null);
+                            }
+										}
+
+                        }
+                        kendo.bind($('#crNumber'), viewModelbpGender);</script>
 							</div>
 						</div>
 						<div class="col-sm-3">
 							<div class="pull-right">
-								<label class="col-sm-4 control-label">关系类型:</label> <input id="relType"
-									type="text" style="width: 180px;"
-									data-bind="text:model.meaning,value:model.relType">
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.relation.reltype"/>:</label> 
+								<input id="relType" type="text" style="width: 180px;" name="relType"
+									data-bind="text:model.meaning,value:model.relType" required validationMessage="<@spring.message 'hpms.notempty'/>">
+									<span style="color: red">*</span>
+									<span class="k-invalid-msg" data-for="crNumber"></span>
 									<script>
 										$("#relType")
 												.kendoDropDownList(
 														{
-															optionLabel : "--请选择--",
+															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
 															dataTextField : "meaning",
 															dataValueField : "value",
 															template : function(
@@ -106,8 +142,7 @@ author:huifang.zhou@hand-china.com * -->
 															},
 															dataSource : relType,
 															select : function(e) {
-																var dataItem = this
-																		.dataItem(e.item);
+																var dataItem = this.dataItem(e.item);
 																viewModelRelationship.model.set('relType',dataItem.value);
 															}
 														}).data("kendoDropDownList");
@@ -119,8 +154,8 @@ author:huifang.zhou@hand-china.com * -->
 					<div class="row" style="margin-bottom: 32px;">
 						<div class="col-sm-3">
 							<div class="pull-left">
-								<label class="col-sm-4 control-label">紧急联系人:</label> <input id="icmFlag"
-									type="checkbox" data-bind="value:model.icmFlag"/>
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.relation.icmflag"/>:</label> <input id="icmFlag"
+									type="checkbox" name="icmFlag" data-bind="value:model.icmFlag"/>
 									<script>
 									 $("#icmFlag").kendoCheckbox({
                         					checkedValue:'1',
@@ -141,9 +176,31 @@ author:huifang.zhou@hand-china.com * -->
 	
 	
 	<script>
+	$('#personnel').kendoValidator();
 	
 				//新建联系人的保存
 	            function submitPersonnel() {
+	            	if(viewModelbpGender.model.fullName==''||viewModelbpGender.model.fullName==null){
+            				kendo.ui.showInfoDialog({
+                				message:'姓名不能为空'
+           				 })
+        			}else if(viewModelbpGender.model.contactMobile==''||viewModelbpGender.model.contactMobile==null){
+            			kendo.ui.showInfoDialog({
+                			message:'移动电话不能为空'
+            				})
+       				}else if(viewModelRelationship.model.relType==''||viewModelRelationship.model.relType==null){
+            			kendo.ui.showInfoDialog({
+                			message:'关系类型不能为空'
+            				})
+       				}else if(viewModelbpGender.model.credentialType==''||viewModelbpGender.model.credentialType==null){
+            			kendo.ui.showInfoDialog({
+                			message:'证件类型不能为空'
+            				})
+       				}else if(viewModelbpGender.model.credentialNumber==''||viewModelbpGender.model.credentialNumber==null){
+            			kendo.ui.showInfoDialog({
+                			message:'证件号码不能为空'
+            				})
+       				}else {
 							viewModelRelationship.model.set("fromBpId",fromBpId);
 							var modelzilei = kendo.stringify(viewModelbpGender.model);
 							var modelvalue = kendo.stringify(viewModelRelationship.model);
@@ -160,7 +217,7 @@ author:huifang.zhou@hand-china.com * -->
     				 			success: function(data){
 											if (data.success) {
 												kendo.ui.showInfoDialog({
-													message : '成功!'
+													message : '<@spring.message "hap.tip.success"/>'
 												});
 												closePersonnel();
 												window.parent.$('#bpRetaionGrid').data('kendoGrid').dataSource.page(1);
@@ -170,7 +227,7 @@ author:huifang.zhou@hand-china.com * -->
 												});
 											}
       						}});
-							
+							}
 						}
 						}; 
 						
@@ -191,7 +248,7 @@ author:huifang.zhou@hand-china.com * -->
     				 			success: function(data){
 											if (data.success) {
 												kendo.ui.showInfoDialog({
-													message : '成功!'
+													message : '<@spring.message "hap.tip.success"/>'
 												});
 												window.parent.$('#bpRetaionGrid').data('kendoGrid').dataSource.page(1);
 												closePersonnel();
@@ -214,15 +271,14 @@ author:huifang.zhou@hand-china.com * -->
 	   $(document).ready(function(){
            var itemCount=null;
            $.ajax({
-               url    : '${base.contextPath}/hpms/mdm/Relation/itemNumQuery?fromBpId='+fromBpId+"&toBpId="+tobpId,
-               success: function (args) {
-                   itemCount=args;
-
-               }
-           });
-	        if(itemCount!=0){
-                $("#icmFlag").attr("disabled",true);
-	        }
+             			  url    : '${base.contextPath}/hpms/mdm/Relation/itemNumQuery?fromBpId='+fromBpId,
+           			      success: function (args) {
+                          var itemCount = args;
+	       				  if(itemCount!=0){
+               			  $("input[name='icmFlag']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+	       			}
+                      }
+                 });
         	viewModelRelationship.model.set("icmFlag",0);
         	viewModelbpGender.model.set("personGender","未知");
 
@@ -240,11 +296,22 @@ author:huifang.zhou@hand-china.com * -->
 	            var datas = data.rows[0] || {};
 	            viewModelRelationship.model.set("relType",data.rows[0].relType);
 	            viewModelRelationship.model.set("icmFlag",data.rows[0].icmFlag);
+	            var icmFlag = data.rows[0].icmFlag;
 	            relation = viewModelRelationship.model.set("relationId",data.rows[0].relationId);
 	            Id = viewModelbpGender.model.set("bpId",data.rows[0].bpId);
 					for (var k in datas) {
 	                viewModelbpGender.model.set(k, datas[k]);
 	             	}
+           $.ajax({
+             			  url    : '${base.contextPath}/hpms/mdm/Relation/itemNumQuery?fromBpId='+fromBpId,
+           			      success: function (args) {
+                          var itemCount = args;
+                          console.log(icmFlag)
+	       				  if(icmFlag==0&&itemCount!=0){
+               			  $("input[name='icmFlag']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+	       			}
+                      }
+                 }); 
 	        }
        });
    }

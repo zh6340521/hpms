@@ -16,4 +16,6 @@ public interface IRelationService extends IBaseService<Relation>,ProxySelf<IRela
 	public void updateReation(IRequest request,Relation relation);
 	//查询是否建立过关系
 	public int queryByBpId(IRequest requestContext,Relation relation);
+	
+	public int selectByCountIcmFlag(IRequest requestContext,int fromBpId);
 }

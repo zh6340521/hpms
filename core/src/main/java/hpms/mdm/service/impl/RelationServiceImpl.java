@@ -42,4 +42,10 @@ public class RelationServiceImpl extends BaseServiceImpl<Relation> implements IR
 		return relationMapper.queryByBpId(relation);
 	}
 
+
+	@Override
+	public int selectByCountIcmFlag(IRequest requestContext,int fromBpId) {
+		return relationMapper.selectByCountIcmFlag(fromBpId);
+	}
+
 }
