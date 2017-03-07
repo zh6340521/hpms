@@ -169,7 +169,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 				ConfigValue configValue = new ConfigValue();
 				configValue.setConfigValueId(property.getPropertyType());
 				configValue = configValuesMapper.selectOne(configValue);
-				if(!(configValue.getConfigValueNumber().equals(""))){
+				if(!(configValue.getConfigValueNumber().equals("CN03"))){
 					continue;
 				}
 				Occupation occupation = new Occupation();

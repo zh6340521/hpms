@@ -198,12 +198,16 @@
     </select>
     <!-- 查询有效的建筑类型 -->
     <select id="propertyTypeQuery" resultMap="configValueResultMap" parameterType="hpms.bs.dto.ConfigValue">
-    	SELECT HMCV.CONFIG_VALUE_ID,
-       		   HMCV.CONFIG_VALUE_NAME
-          FROM HPMS_MDM_CONFIG_VALUE HMCV
+    	SELECT HCV.CONFIG_VALUE_ID,
+       		   HCV.CONFIG_VALUE_NAME
+          FROM HPMS_DATA_MODEL HDM
+          LEFT JOIN HPMS_CONFIG HC
+          ON HDM.MODEL_ID = HC.MODEL_ID AND HDM.TABLE_NAME = 'HPMS_MDM_PROPERTY' AND HC.ENABLE_FLAG = 'Y'
+          LEFT JOIN HPMS_CONFIG_VALUE HCV
+          ON HC.CONFIG_ID = HCV.CONFIG_ID AND HCV.ENABLE_FLAG = 'Y'
           WHERE 1=1
           <if test="companyId != null">
-         		AND COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+         		AND HC.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
           </if>
     </select>
 </mapper>

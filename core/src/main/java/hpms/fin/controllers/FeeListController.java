@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
@@ -22,7 +21,6 @@ import hpms.fin.dto.FeeList;
 import hpms.fin.dto.FeeListNew;
 import hpms.fin.service.IFeeListService;
 import hpms.mdm.dto.BuildingVersion;
-import hpms.utils.ValidationTableException;
 /**
  * 
  * @name FeeListController
