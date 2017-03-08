@@ -337,12 +337,30 @@
                                  });
                      }
                  },
-                 {field: "requiredFlag",
+                 {
+                     field: "sqlId",
+                     width: '8%',
+                     title: '<@spring.message "lov.sqlid"/>',
+                     attributes: {style: "text-align:center"},
+                     editor: function (container, options) {
+                         //根据是否存在主键id来判断是新增还是编辑
+                         if (options.model.columnStyle != "LIST") {
+                             container.removeClass('k-edit-cell');
+                         } else {
+                             var editor =  $('<input type="text"   name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                             editor.css('width','100%');
+                             container.append(editor);
+                         }
+                     }
+                 },
+                 {
+                     field: "requiredFlag",
                      width: '5%',
                      title: '<@spring.message "hpms.bs.column_requireflag"/>',
                      attributes: {style: "text-align:center"}
                  },
-                 {field: "enableFlag",
+                 {
+                     field: "enableFlag",
                      width: '5%',
                     // title: '是否启用',
                      title:'<@spring.message "hap.enableflag"/>',

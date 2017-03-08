@@ -58,6 +58,7 @@ function showFormElements(data,formName) {
 
     //循环当前行div，加在当前行div中
     for (var i = 0; i < data.rows.length; i++) {
+       // alert(data.rows[i].sqlId);
 
         if (data.rows[i].columnStyle == "TEXT")//text
         {
@@ -66,27 +67,97 @@ function showFormElements(data,formName) {
                 '<div class="form-group">' +
                 '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                 '<div class="col-sm-7">'+
-                '<input class="k-textbox" id="'+ data.rows[i].columnNameAlias+'"' +
-                'name="'+ data.rows[i].columnNameAlias+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].columnNameAlias+'" style="width: 70%;" />'+
+                '<input class="k-textbox" id="'+ data.rows[i].configColumnId+'"' +
+                'name="'+ data.rows[i].configColumnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;" />'+
                '</div>'+
                 '<div  style="margin-left:52%">'+
-                '<span data-for="'+ data.rows[i].columnNameAlias+'" class=".k-invalid-msg"></span>'+
+                '<span data-for="'+ data.rows[i].configColumnId+'" class=".k-invalid-msg"></span>'+
                 '</div>'+
                 '</div>'+
                 '</div>'
             );
-        }else if(data.rows[i].columnStyle == "DECIMAL"){  //DECIMAL
+        }else if(data.rows[i].columnStyle == "DECIMAL")//只能输入小数
+        {
             $("#" + formName).append(
                 '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
                 '<div class="form-group">' +
                 '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                 '<div class="col-sm-7">'+
-                '<input onblur="validateNumber(this)" class="k-textbox" id="'+ data.rows[i].columnNameAlias+'"' +
-                'name="'+ data.rows[i].columnNameAlias+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].columnNameAlias+'" style="width: 70%;" />'+
+                '<input onblur="validateDecimal(this)" class="k-textbox" id="'+ data.rows[i].configColumnId+'"' +
+                'name="'+ data.rows[i].configColumnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;" />'+
                 '</div>'+
                 '</div>'+
                 '</div>'
             );
+        }else if(data.rows[i].columnStyle == "NUMBER") //只能输入整数
+        {
+            $("#" + formName).append(
+                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                '<div class="form-group">' +
+                '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                '<div class="col-sm-7">'+
+                '<input onblur="validateNumber(this)" class="k-textbox" id="'+ data.rows[i].configColumnId+'"' +
+                'name="'+ data.rows[i].configColumnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;" />'+
+                '</div>'+
+                '</div>'+
+                '</div>'
+            );
+        }
+        else if(data.rows[i].columnStyle == "DATE")  //日期格式
+        {
+            $("#" + formName).append(
+                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                '<div class="form-group">' +
+                '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                '<div class="col-sm-7">'+
+                 '<input type="date" style="width: 200px;" id="'+ data.rows[i].configColumnId+'" data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
+                /*'<input onblur="validateNumber(this)" class="k-textbox" id="'+ data.rows[i].configColumnId+'"' +
+                'name="'+ data.rows[i].configColumnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;" />'+*/
+                '<script type="text/javascript">'+
+                '$("#"+"'+ data.rows[i].configColumnId+'").kendoDatePicker({ format : "yyyy-MM-dd"});'+
+                '</script>'+
+                '</div>'+
+                '</div>'+
+                '</div>'
+            );
+        }
+        else if(data.rows[i].columnStyle == "LIST")  //下拉框
+        {
+            $("#" + formName).append(
+                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                '<div class="form-group">' +
+                '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                '<div class="col-sm-7">'+
+                '<input type="date" style="width: 200px;" id="'+ data.rows[i].configColumnId+'" data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
+
+                '<script type="text/javascript">'+
+                 '$("#"+"'+ data.rows[i].configColumnId+'").kendoComboBox({'+
+                   'valuePrimitive: true,'+
+                    'dataTextField: "email",'+
+                    'dataValueField: "userId",'+
+                    'dataSource: {'+
+                    'transport: {'+
+                    ' read:function(options) {'+
+                    ' $.ajax({'+
+                    ' type   : "POST",'+
+                    ' url: "/configcolumn/code/queryBySqlId?configColumnId='+data.rows[i].configColumnId+'",'+
+                      'success: function(json) { options.success(json.rows);}'+
+                    '});'+
+                    '}'+
+                    '}'+
+                    '},'+
+                    ' });'+
+
+                '</script>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'
+            );
+
+
+
+
+
         }
         /*else if(data.rows[i].columnStyle=="LIST")//combobox
          {
@@ -122,12 +193,25 @@ function showFormElements(data,formName) {
 }
 
 //校验输入框内只能输入小数
-function validateNumber(self){
+function validateDecimal(self){
     var reg =/^\d+\.\d+$/;
 
     if (! reg.test(self.value)) {
         kendo.ui.showErrorDialog({
             message: "只能输入小数"
+        }).done(function (e) {
+            self.value= "";
+        })
+    }
+}
+
+//校验输入框内只能输入整数
+function validateNumber(self){
+    var reg =/^[0-9]*[1-9][0-9]*$/;
+
+    if (! reg.test(self.value)) {
+        kendo.ui.showErrorDialog({
+            message: "只能输入整数"
         }).done(function (e) {
             self.value= "";
         })
@@ -145,91 +229,5 @@ function validateNumber(self){
  dataSource: dataSource
  });
  }*/
-function showDate(data, defaultValue) {
-    //设置默认值
-    var code = GetQueryString("code");
-    var header = getHeader(code);
-    var dsId = header.dsId;
-    var paramId = param.queryParamsId;
-    var defaultValues = [];
-    // var defaultValue="";
-    var defaultType = param.defaultType;
-    if (defaultValue != null) {
-    }
-    else if (param.defaultValue == "" || param.defaultValue == null) {
-        defaultValue = new Date();
-    }
-    else {
-        if (defaultType == "SQL") {
-            defaultValues = getSqlDefaultValue(paramId, dsId);
-            if (defaultValues.length != undefined && defaultValues.length > 0) {
-                defaultValue = new Date(defaultValues[0].id);
-            }
-        }
-        else if (defaultType == "STRING") {
-            defaultValue = new Date(param.defaultValue);
-        }
-    }
-    $("#" + param.paramsName).kendoDatePicker({
-        culture: "zh-CN",
-        format: "yyyy-MM-dd",
-        value: defaultValue
-    });
-}
 
-//获取url参数
-function GetQueryString(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    var search = window.location.search;
-    search = decodeURI(search);
-    var r = search.substr(1).match(reg);
-    if (r != null)return unescape(r[2]);
-    return null;
-}
-
-//获取header
-function getHeader(code) {
-    var headerInformation = getHeaderInformation(code);
-    if (headerInformation.success == false) {
-        kendo.ui.showInfoDialog({
-            message: headerInformation.message
-        });
-        return null;
-    }
-    else {
-        var headers = headerInformation.rows;
-        var header = headers[0];
-        return header;
-    }
-}
-
-
-function getContentSource(trxDetailId) {
-    var dataSource = [];
-    $.ajax({
-        url: _basePath + "/task/taskOrder/trxDetailQuery",
-        type: 'POST',
-        data: {
-            "trxDetailId": trxDetailId
-        },
-        async: false,
-        success: function (data) {
-            if (data.success) {
-                dataSource = data.rows;
-            }
-            else {
-                kendo.ui.showInfoDialog({
-                    message: data.message
-                });
-                dataSource = [];
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            kendo.ui.showInfoDialog({
-                message: error
-            })
-        }
-    });
-    return dataSource;
-}
 
