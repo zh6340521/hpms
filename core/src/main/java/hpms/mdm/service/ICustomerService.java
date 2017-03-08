@@ -8,6 +8,13 @@ import com.hand.hap.system.service.IBaseService;
 
 import hpms.mdm.dto.Customer;
 
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name ICustomerService
+ * @description：客户档案接口
+ * @date 2017/2/27
+ */
 public interface ICustomerService extends IBaseService<Customer>,ProxySelf<ICustomerService>{
 	
 	
@@ -24,9 +31,9 @@ public interface ICustomerService extends IBaseService<Customer>,ProxySelf<ICust
 	
 	/**
 	 * 修改记录状态
-	 * @param customer
+	 * @param id
 	 * @return 
 	 */
-	public void updateByEnableFlag(IRequest requestContext,Customer customer);
+	public String queryByEnableFlag(Long customerId);
     
 }

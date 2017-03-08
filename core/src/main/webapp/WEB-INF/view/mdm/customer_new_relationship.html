@@ -13,8 +13,6 @@ author:huifang.zhou@hand-china.com * -->
 var isedit = '${RequestParameters.isedit!0}' == '1';
      var fromBpId = '${RequestParameters.fromBpId!0}';
      var bpId = '${RequestParameters.bpId!0}';
-     console.log(bpId)
-     console.log(fromBpId)
      var viewModel = kendo.observable({
 			     model : {},
 			})
@@ -25,14 +23,16 @@ var isedit = '${RequestParameters.isedit!0}' == '1';
 <div id="page-content">
 		<div id="personnel">
 							<div class="pull-center">
-								<label class="col-sm-4 control-label">关系类型:</label> <input id="relType"
-									type="text" style="width: 200px;"
-									data-bind="text:model.meaning,value:model.relType">
+								<label class="col-sm-4 control-label"><@spring.message "hpms.mdm.relation.reltype"/>:</label> 
+								<input id="relType" type="text" style="width: 180px;" name="relType"
+									data-bind="text:model.meaning,value:model.relType"  required validationMessage="<@spring.message 'hpms.notempty'/>">
+									<span style="color: red">*</span>
+									<span class="k-invalid-msg" data-for="relType"></span>
 									<script>
 										$("#relType")
 												.kendoDropDownList(
 														{
-															optionLabel : "--请选择--",
+															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
 															dataTextField : "meaning",
 															dataValueField : "value",
 															template : function(
@@ -51,7 +51,7 @@ var isedit = '${RequestParameters.isedit!0}' == '1';
 							</div>
 					<div class="row" style="margin-bottom: 32px;margin-top: 10px;">
 							<div class="pull-center">
-								<label class="col-sm-4 control-label" style="margin-left: 6px;">紧急联系人:</label> <input id="icmFlag"
+								<label class="col-sm-4 control-label" style="margin-left: -5px;"><@spring.message "hpms.mdm.relation.icmflag"/>:</label> <input id="icmFlag" name="icmFlag"
 									type="checkbox" data-bind="value:model.icmFlag"/>
 									<script>
 									 $("#icmFlag").kendoCheckbox({
@@ -71,8 +71,13 @@ var isedit = '${RequestParameters.isedit!0}' == '1';
 	
 	<script>
 	
-	
+	$('#personnel').kendoValidator();
 	            function savePersonnel() {
+	            if(viewModel.model.relType==''||viewModel.model.relType==null){
+            				kendo.ui.showInfoDialog({
+                				message:'<@spring.message "hpms.mdm.relation.reltype"/><@spring.message "hpms.mdm.notnull"/>'
+           				 })
+       				}else {
 							viewModel.model.set("fromBpId",fromBpId);
 							viewModel.model.set("toBpId",bpId);
 							var modelvalue = kendo.stringify(viewModel.model);
@@ -85,18 +90,19 @@ var isedit = '${RequestParameters.isedit!0}' == '1';
     							contentType:"application/json",
     							data:  kendo.stringify(json),
     				 			success: function(data){
-        							window.parent.$('#bpRetaionGrid').data('kendoGrid').dataSource;
+        							window.parent.$('#bpRetaionGrid').dataSource.page(dataSource._page);
 											if (data.success) {
 												kendo.ui.showInfoDialog({
-													message : '成功!'
+													message : '<@spring.message "hap.tip.success"/>'
 												});
-												closeReation();
 											} else {
 												kendo.ui.showInfoDialog({
 													message : data.message
 												});
 											}
+											
       						}});
+      						}
 						}; 
 						
 						
@@ -106,12 +112,21 @@ var isedit = '${RequestParameters.isedit!0}' == '1';
 						    window.parent.$("#editRelation").data("kendoWindow").close();
 						}
 						
-						if(isedit==0){
-						$(document).ready(function(){
-						   viewModel.model.set("icmFlag",0);
-        				   viewModel.model.set("personGender","未知");
+				
+				if(isedit==0){
+					$(document).ready(function(){
+          				 $.ajax({
+             			 url    : '${base.contextPath}/hpms/mdm/Relation/itemNumQuery?fromBpId='+fromBpId,
+           			      success: function (args) {
+                          var itemCount = args;
+	       				  if(itemCount!=0){
+               			  $("input[name='icmFlag']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+	       			}
+                      }
+                 });
+					viewModel.model.set("icmFlag",0);
         				   })
-						}
+						};
 	</script>
 </body>
 </html>

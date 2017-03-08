@@ -48,7 +48,7 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
     private ConfigMapper configMapper;
 
     //字段是必输时的显示字段
-    public final static String vaildate_message = "required validationMessage='必输'";
+    public final static String vaildate_message = "required";
 
     private Logger logger = LoggerFactory.getLogger(ConfigColumnServiceImpl.class);
 

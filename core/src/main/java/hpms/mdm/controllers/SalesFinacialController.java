@@ -16,6 +16,14 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.mdm.dto.SalesFinacial;
 import hpms.mdm.service.ISalesFinacialService;
+
+/**
+ * @author huofang.zhou@hand-china.com
+ * @version 1.0
+ * @name SalesFinacialController
+ * @description:销售信息controller
+ * @date 2017/2/27
+ */
 @Controller
 public class SalesFinacialController extends BaseController{
 	@Autowired

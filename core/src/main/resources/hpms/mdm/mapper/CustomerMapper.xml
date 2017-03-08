@@ -29,6 +29,11 @@
 		<result column="MEANING" property="meaning" jdbcType="VARCHAR" />
 			
 	</resultMap>
+	
+	
+	<resultMap type="hpms.mdm.dto.Customer" id="ResultMap">
+		<result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+	</resultMap>
 
 	<select id="selectByColumnName" resultMap="BaseResultMap"
 		parameterType="hpms.mdm.dto.Customer">
@@ -83,14 +88,13 @@
 	<select id="selectByMaxCustomerNumber" resultType="java.lang.Long">
 	     SELECT MAX(HMC.CUSTOMER_NUMBER) FROM HPMS_MDM_CUSTOMER HMC
 	</select>
-	<update id="updateByEnableFlag"  parameterType="hpms.mdm.dto.Customer">
-		update hpms_mdm_customer hmc
-   set hmc.enable_flag = 'N'
+	<select id="queryByEnableFlag" resultType="java.lang.String" parameterType="java.lang.Long">
+		select hmc.enable_flag from hpms_mdm_customer hmc
    	<where>
    		1=1           
    		<if test="customerId!=null">
    			and hmc.customer_id = #{customerId}
    		</if>
    		</where>
-	</update>
+	</select>
 </mapper>
