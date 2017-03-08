@@ -39,4 +39,13 @@ public interface IConfigColumnService extends IBaseService<ConfigColumn>,ProxySe
      * @return
      */
     public List<ConfigColumn> findConfigColumnByCache(IRequest iRequest,Long configValueId,Long configId);
+
+    /**
+     * 利用反射查询sqlId对应的数据
+     * @param request
+     * @param sqlId
+     * @param obj
+     * @return
+     */
+    List<?> selectDatas(IRequest request, String sqlId, Object obj);
 }
