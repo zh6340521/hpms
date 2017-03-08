@@ -504,10 +504,10 @@
                  }
                  if(operation=="WITHDRAWING"){
 	    		 	$.each(checked,function(i,v){
-	    		 		if(v.feeStatus=="CANCELLED"){
+	    		 		if(v.feeStatus!="CREATED"){
 	    		 			kendo.ui.showInfoDialog({
                                 title:$l('hap.tip.info'),
-                                message:"已撤销的单子不能进行计提操作，请重新选择！"
+                                message:"该单子状态不能进行计提操作，请重新选择！"
                             })
                             return;
 	    		 		}else{

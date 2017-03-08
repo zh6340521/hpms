@@ -23,18 +23,14 @@
 	                	structureId: {},
 	                	versionId: {}
 	                }},
-	    saveFunction: function () {
-            $('#fee_list_grid').data('kendoGrid').saveChanges();
-            alert("2222");
-        },
         queryResource    : function (e) {
         	if(viewModel.model.creationPeriod==null){
 				viewModel.model.set("num",null);
 			}
-			$("#fee").show();
+            $('#fee_list_grid').data('kendoGrid').dataSource.page(1); 
+            $("#fee").show();
 			$("#ee").show();
 			$("#aa").hide();
-            $('#fee_list_grid').data('kendoGrid').dataSource.page(1);
         },
         resetForm : function (e) {
             var formData = viewModel.model.toJSON();
@@ -180,7 +176,16 @@
                 cache      : false,
                 dataType   : 'json', 
 		        success: function(json) {
-		        	parent.closeTab("fee_list");
+		        	if(json.success){
+			        	kendo.ui.showInfoDialog({
+	    	            	message:'<@spring.message "hap.tip.success"/>'
+	    	            }).done(function(e){
+	    	            	parent.closeTab("fee_list");
+	    	            	window.top.tab.reload("Fee list");
+	    	            	
+                       	})
+			        	
+		        	}
 		        }
 	      	});
       	}
@@ -334,37 +339,64 @@
 	                type    : "POST",
 	                dataType: "json"
 	            },
-	            create: {
-                    url: _basePath + "/fin/feeList/feeListSubmit",
-                    contentType: "application/json",
-                    type: "POST",
-                    success : function(e){
-                    },
-                    error:function(e){
-                    	alert(e);
-                    }
-                },
-                update: {
-                    url: _basePath + "/fin/feeList/feeListSubmit",
-                    contentType: "application/json",
-                    type: "POST",
-                    success : function(e){
-                    	alert(e);
-                    },
-                    error:function(e){
-                    	alert(e);
-                    }
-                },
 	            parameterMap: function (options, type) {
 	                if (type !== "read" && options.models) {
 	                    var datas = Hap.prepareSubmitParameter(options, type)
 	                    return kendo.stringify(datas);
 	                } else if (type === "read") {
-	                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+	                	var model = viewModel.model.toJSON();
+	                    var map = {};
+	                    if(model.companyId){
+	                        map.companyId = model.companyId;
+	                    }
+	                    if(model.projectId){
+	                        map.projectId = model.projectId
+	                    }
+	                    if(model.structureId){
+	                        map.structureId = model.structureId
+	                    }
+	                    if(model.versionId){
+	                        map.versionId = model.versionId
+	                    }
+	                    if(model.structureName){
+	                        map.structureName = model.structureName
+	                    }
+	                    if(model.feeTypeId){
+	                        map.feeTypeId = model.feeTypeId
+	                    }
+	                    if(model.feeId){
+	                        map.feeId = model.feeId
+	                    }
+	                    if(model.creationPeriod){
+	                        map.creationPeriod = model.creationPeriod
+	                    }
+	                    if(model.num){
+	                        map.num = model.num
+	                    }
+	                    if(model.feeListDate){
+	                        map.feeListDate = new Date(model.feeListDate);
+	                    }
+	                    if(model.number){
+	                        map.number = model.number
+	                    }
+	                    return map;
 	                }
 	            }
 	        },
 	        batch       : true,
+	        requestEnd: function(e) {
+    			 	if (e.response.success && e.type == "read") {
+    			 		if(e.response.rows[0].beff!=null&&e.response.rows[0].beff!=""){
+    			 			kendo.ui.showInfoDialog({
+    	                       		message:''+e.response.rows[0].beff+'未入伙'
+    	                       })
+    			 		}
+   					}else if(e.response.success==false){
+   						$("#fee").hide();
+						$("#ee").hide();
+						$("#aa").show();
+   					}
+    		},
 	        serverPaging: true,
 	        pageSize    : 10,
 	        schema      : {
@@ -376,7 +408,14 @@
 	                	accruedDate: {type:"date"},
 	                	dateTo: {type:"date"},
 	                	generateDate: {type:"date"},
-	                	countedDate: {type:"date"}
+	                	countedDate: {type:"date"},
+	                	unitPrice: {type:"float"},
+	                	grossAmount: {type:"float"},
+	                	adjAmount: {type:"float"},
+	                	overduePayment: {type:"float"},
+	                	totalAmount: {type:"float"},
+	                	presentRecord: {type:"float"},
+	                	lastRecord: {type:"float"}
 	                }
 	            }
 	        }
