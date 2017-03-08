@@ -21,6 +21,14 @@ import hpms.mdm.dto.Relation;
 import hpms.mdm.mapper.RelationMapper;
 import hpms.mdm.service.IRelationService;
 
+
+/**
+ * @author huofang.zhou@hand-china.com
+ * @version 1.0
+ * @name RelationController
+ * @description:人员关系controller
+ * @date 2017/2/27
+ */
 @Controller
 public class RelationController extends BaseController{
 	@Autowired

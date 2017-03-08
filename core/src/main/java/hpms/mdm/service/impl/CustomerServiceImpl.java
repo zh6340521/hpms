@@ -14,6 +14,15 @@ import hpms.mdm.dto.Customer;
 import hpms.mdm.mapper.CustomerMapper;
 import hpms.mdm.service.ICustomerService;
 
+
+
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name CustomerServiceImpl
+ * @description:客户档案
+ * @date 2017/2/27
+ */
 @Service
 @Transactional
 public class CustomerServiceImpl extends BaseServiceImpl<Customer> implements ICustomerService{

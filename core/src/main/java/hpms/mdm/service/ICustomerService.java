@@ -8,6 +8,13 @@ import com.hand.hap.system.service.IBaseService;
 
 import hpms.mdm.dto.Customer;
 
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name ICustomerService
+ * @description：客户档案接口
+ * @date 2017/2/27
+ */
 public interface ICustomerService extends IBaseService<Customer>,ProxySelf<ICustomerService>{
 	
 	

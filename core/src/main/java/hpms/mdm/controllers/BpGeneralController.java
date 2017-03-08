@@ -29,7 +29,13 @@ import hpms.mdm.service.IBpGeneralService;
 import hpms.mdm.service.ISalesFinacialService;
 
 
-
+/**
+ * @author huofang.zhou@hand-china.com
+ * @version 1.0
+ * @name BpGeneralController
+ * @description:一般信息controller
+ * @date 2017/2/22
+ */
 @Controller
 public class BpGeneralController extends BaseController{
 	

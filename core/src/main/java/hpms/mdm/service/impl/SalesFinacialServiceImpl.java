@@ -12,6 +12,14 @@ import hpms.mdm.dto.SalesFinacial;
 import hpms.mdm.mapper.SalesFinacialMapper;
 import hpms.mdm.service.ISalesFinacialService;
 
+
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name SalesFinacialServiceImpl
+ * @description:销售信息
+ * @date 2017/2/27
+ */
 @Service
 @Transactional
 public class SalesFinacialServiceImpl extends BaseServiceImpl<SalesFinacial> implements ISalesFinacialService{

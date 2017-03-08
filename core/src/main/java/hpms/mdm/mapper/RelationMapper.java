@@ -6,6 +6,13 @@ import com.hand.hap.mybatis.common.Mapper;
 
 import hpms.mdm.dto.Relation;
 
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name RelationMapper
+ * @description:销售信息mapper
+ * @date 2017/2/22
+ */
 public interface RelationMapper extends Mapper<Relation>{
 	
 	/**

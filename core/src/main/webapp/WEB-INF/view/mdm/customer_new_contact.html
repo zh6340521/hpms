@@ -47,7 +47,7 @@ author:huifang.zhou@hand-china.com * -->
 						<div class="col-sm-3">
 							<div class="pull-left">
 								<label class="col-sm-4 control-label"><@spring.message "employee.mobile"/>:</label> 
-								<input id="tel" type="text" name="tel" style="width: 180px; margin-left: 11px;" data-bind="value:model.contactMobile"/>
+								<input id="tel" type="text" name="tel" style="width: 180px; margin-left: 11px;" data-bind="value:model.contactMobile" class="k-textbox"/>
 									<span style="color: red">*</span>
 									<script>
 										document.getElementById('tel').onblur=function(){
@@ -58,7 +58,7 @@ author:huifang.zhou@hand-china.com * -->
                         					//alert('非正整数');
                         					var $parent = $("input[name='tel']").parent();
                         					$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="tel" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"请输入有效的移动电话"+'</span>');
-                        					viewModelPersonage.model.set('tel',null);
+                        					viewModelbpGender.model.set('contactMobile',null);
                             }
 
                         }
@@ -74,7 +74,7 @@ author:huifang.zhou@hand-china.com * -->
 									<span class="k-invalid-msg" data-for="credential"></span>
 									<script>
 										$("#credential").kendoDropDownList({
-															optionLabel : "--请选择--",
+															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
 															dataTextField : "meaning",
 															dataValueField : "value",
 															template : function(
@@ -129,8 +129,7 @@ author:huifang.zhou@hand-china.com * -->
 									<span style="color: red">*</span>
 									<span class="k-invalid-msg" data-for="crNumber"></span>
 									<script>
-										$("#relType")
-												.kendoDropDownList(
+										$("#relType").kendoDropDownList(
 														{
 															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
 															dataTextField : "meaning",
@@ -182,23 +181,23 @@ author:huifang.zhou@hand-china.com * -->
 	            function submitPersonnel() {
 	            	if(viewModelbpGender.model.fullName==''||viewModelbpGender.model.fullName==null){
             				kendo.ui.showInfoDialog({
-                				message:'姓名不能为空'
+                				message:'<@spring.message "hpms.mdm.bpgeneral.name"/><@spring.message "hpms.mdm.notnull"/>'
            				 })
         			}else if(viewModelbpGender.model.contactMobile==''||viewModelbpGender.model.contactMobile==null){
             			kendo.ui.showInfoDialog({
-                			message:'移动电话不能为空'
-            				})
-       				}else if(viewModelRelationship.model.relType==''||viewModelRelationship.model.relType==null){
-            			kendo.ui.showInfoDialog({
-                			message:'关系类型不能为空'
+                			message:'<@spring.message "employee.mobile"/><@spring.message "hpms.mdm.notnull"/>'
             				})
        				}else if(viewModelbpGender.model.credentialType==''||viewModelbpGender.model.credentialType==null){
             			kendo.ui.showInfoDialog({
-                			message:'证件类型不能为空'
+                			message:'<@spring.message "hpms.mdm.bpGeneral.credentialtype"/><@spring.message "hpms.mdm.notnull"/>'
             				})
        				}else if(viewModelbpGender.model.credentialNumber==''||viewModelbpGender.model.credentialNumber==null){
             			kendo.ui.showInfoDialog({
-                			message:'证件号码不能为空'
+                			message:'<@spring.message "hpms.mdm.bpgeneral.credentialnumber"/><@spring.message "hpms.mdm.notnull"/>'
+            				})
+       				}else if(viewModelRelationship.model.relType==''||viewModelRelationship.model.relType==null){
+            			kendo.ui.showInfoDialog({
+                			message:'<@spring.message "hpms.mdm.relation.reltype"/><@spring.message "hpms.mdm.notnull"/>'
             				})
        				}else {
 							viewModelRelationship.model.set("fromBpId",fromBpId);
@@ -233,6 +232,27 @@ author:huifang.zhou@hand-china.com * -->
 						
 						//编辑联系人的修改
 						function updatePersonnel(){
+							if(viewModelbpGender.model.fullName==''||viewModelbpGender.model.fullName==null){
+            				kendo.ui.showInfoDialog({
+                				message:'<@spring.message "hpms.mdm.bpgeneral.name"/><@spring.message "hpms.mdm.notnull"/>'
+           				 })
+        			}else if(viewModelbpGender.model.contactMobile==''||viewModelbpGender.model.contactMobile==null){
+            			kendo.ui.showInfoDialog({
+                			message:'<@spring.message "employee.mobile"/><@spring.message "hpms.mdm.notnull"/>'
+            				})
+       				}else if(viewModelbpGender.model.credentialType==''||viewModelbpGender.model.credentialType==null){
+            			kendo.ui.showInfoDialog({
+                			message:'<@spring.message "hpms.mdm.bpGeneral.credentialtype"/><@spring.message "hpms.mdm.notnull"/>'
+            				})
+       				}else if(viewModelbpGender.model.credentialNumber==''||viewModelbpGender.model.credentialNumber==null){
+            			kendo.ui.showInfoDialog({
+                			message:'<@spring.message "hpms.mdm.bpgeneral.credentialnumber"/><@spring.message "hpms.mdm.notnull"/>'
+            				})
+       				}else if(viewModelRelationship.model.relType==''||viewModelRelationship.model.relType==null){
+            			kendo.ui.showInfoDialog({
+                			message:'<@spring.message "hpms.mdm.relation.reltype"/><@spring.message "hpms.mdm.notnull"/>'
+            				})
+       				}else {
 							var modelzilei = kendo.stringify(viewModelbpGender.model);
 							var modelvalue = kendo.stringify(viewModelRelationship.model);
 							var json = JSON.parse(modelvalue); 
@@ -258,6 +278,7 @@ author:huifang.zhou@hand-china.com * -->
 												});
 											}
       						}});
+						}
 						}
 						};
 						//关闭弹出框

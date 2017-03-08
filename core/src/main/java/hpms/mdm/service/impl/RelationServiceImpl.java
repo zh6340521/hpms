@@ -13,6 +13,13 @@ import hpms.mdm.mapper.BpGeneralMapper;
 import hpms.mdm.mapper.RelationMapper;
 import hpms.mdm.service.IRelationService;
 
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name RelationServiceImpl
+ * @description:人员关系
+ * @date 2017/2/27
+ */
 @Service
 @Transactional
 public class RelationServiceImpl extends BaseServiceImpl<Relation> implements IRelationService{
