@@ -331,7 +331,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 										}
 									}
 								}else{
-									throw new ValidationTableException("收费项目未定价", null);
+									throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 								}
 							}
 							feeList.setTotalAmount(feeList.getGrossAmount());
@@ -449,7 +449,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 										
 									}
 								}else{
-									throw new ValidationTableException("收费项目未定价", null);
+									throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 								}
 							}
 							feeList.setTotalAmount(feeList.getGrossAmount());
@@ -568,7 +568,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 								}
 							}
 						}else{
-							throw new ValidationTableException("收费项目未定价", null);
+							throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 						}
 					}
 					feeList.setTotalAmount(feeList.getGrossAmount());
@@ -582,11 +582,11 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					feeLists.get(0).setBeff(sb.toString().substring(0, sb.toString().length()-1));
 				}
 			}else{
-				throw new ValidationTableException("未找到入伙房间，无法生成相应费用清单", null);
+				throw new ValidationTableException("hpms.fin.feelist.was_not_found_on_board_room", null);
 			}
 			return feeLists;
 		}else{
-			throw new ValidationTableException("收费项目未定价", null);
+			throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 		}
 	}
 	
