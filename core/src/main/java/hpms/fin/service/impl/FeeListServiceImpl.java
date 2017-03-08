@@ -242,9 +242,9 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 								feeList.setFeePeriod(df.format(cal.getTime()));
 							}else{
 								Calendar cal1 = Calendar.getInstance();
-								cal1.setTime(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()));
-								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()));
-								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo())));
+								cal1.setTime(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo())));
 								feeList.setFeePeriod(df.format(cal1.getTime()));
 							}
 							feeList.setFeeTypeId(feeListNew.getFeeTypeId());//赋值项目类型和收费项目
@@ -359,9 +359,9 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 								feeList.setFeePeriod(df.format(cal.getTime()));
 							}else{
 								Calendar cal1 = Calendar.getInstance();
-								cal1.setTime(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()));
-								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()));
-								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo())));
+								cal1.setTime(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo())));
 								feeList.setFeePeriod(df.format(cal1.getTime()));
 							}
 							feeList.setFeeTypeId(feeListNew.getFeeTypeId());//赋值项目类型和收费项目
