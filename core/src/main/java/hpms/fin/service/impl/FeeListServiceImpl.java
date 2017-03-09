@@ -216,8 +216,10 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					List<FeeList> feeLists2 = feeListMapper.select(feeList2);
 					if(feeLists2.size()>0){
 						for (int i = 0; i < feeLists2.size(); i++) {
-							feeList2 = feeLists2.get(0);
-							if(feeLists2.get(i).getCreationDate().after(feeList2.getCreationDate())){
+							if(i == 0){
+								feeList2 = feeLists2.get(0);
+							}
+							if(feeLists2.get(i).getDateTo().after(feeList2.getDateTo())){
 								feeList2 = feeLists2.get(i);
 							}
 						}
@@ -479,31 +481,6 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					}
 					feeList.setOccupationId(occupation.getOccupationId());//收费对象
 					feeList.setCustomerName(occupation.getCustomerName());//客户名称
-					/*FeeList feeList2 = new FeeList();
-					feeList2.setOccupationId(occupation.getOccupationId());
-					List<FeeList> feeLists2 = feeListMapper.select(feeList2);
-					if(feeLists2.size()>0){
-						for (int i = 0; i < feeLists2.size(); i++) {
-							feeList2 = feeLists2.get(0);
-							if(feeLists2.get(i).getCreationDate().after(feeList2.getCreationDate())){
-								feeList2 = feeLists2.get(i);
-							}
-						}
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(feeList2.getDateTo());
-						cal.add(Calendar.DATE, 1);
-						feeList.setAccruedDate(cal.getTime());
-						feeList.setDateTo(cal.getTime());
-						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
-						feeList.setFeePeriod(df.format(cal.getTime()));
-					}else{
-						feeList.setAccruedDate(occupation.getFeeDate());
-						feeList.setDateTo(occupation.getFeeDate());
-						Calendar cal = Calendar.getInstance();
-						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
-						cal.setTime(occupation.getFeeDate());
-						feeList.setFeePeriod(df.format(cal.getTime()));
-					}*/
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(feeListNew.getFeeListDate());
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");

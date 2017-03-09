@@ -1,5 +1,7 @@
 package hpms.fin.dto;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -283,11 +285,64 @@ public class Test {
        daysAgo = dft.format(cal.getTime());
        return daysAgo;
    }
+   public static Long daysBetween(String smdate,String bdate) throws ParseException{  
+       SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");  
+       Calendar cal = Calendar.getInstance();    
+       cal.setTime(sdf.parse(smdate));    
+       long time1 = cal.getTimeInMillis();                 
+       cal.setTime(sdf.parse(bdate));    
+       long time2 = cal.getTimeInMillis();         
+       long between_days=(time2-time1)/(1000*3600*24);  
+           
+      return Long.parseLong(String.valueOf(between_days));     
+   }
+   
+   public static Long temp(String YYMM) throws ParseException{   
+	   String strDate = YYMM;
+	   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+	   Calendar calendar = Calendar.getInstance();   
+	   Date date = sdf.parse(strDate); 
+	   calendar.setTime(date);   
+	   int day = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);   
+	   return Long.parseLong(String.valueOf(day));
+
+	}
 	public static void main(String[] args) throws ParseException {
 		System.out.println(getNowTime());
 		System.out.println(isFirstDayOfMonth());
 		System.out.println(getMaxMonthDate());
 		System.out.println(getPerFirstDayOfMonth());
+		StringBuffer sb = new StringBuffer();
+		sb.append("101,");
+		System.out.println(sb.toString().substring(0, sb.toString().length()-1));
+		/*SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+        Date d1=sdf.parse("2012-09-08 10:10:10");  
+        Date d2=sdf.parse("2012-09-15 00:00:00");  
+        //System.out.println(daysBetween(d1,d2));  
+*/  
+        System.out.println(daysBetween("2012-09-08","2012-09-15"));
+        System.out.println(temp("2012-09-08"));
+        System.out.println((float)((Math.round(8.457)*100)/100));
+        float price=(float)1.3333;
+        DecimalFormat decimalFormat=new DecimalFormat(".00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+        String p= decimalFormat.format(price);
+        System.out.println(p);
+        float   f   =   (float)34;  
+        BigDecimal b = new BigDecimal(f);  
+        float f1   =   b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue(); 
+        System.out.println(f1);
+        
+        Date date = new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSS");
+
+              String  formDate =sdf.format(date);
+
+               System.out.println(formDate);
+
+               String no = formDate.substring(10);
+
+               System.out.println(no);
 	}
 
 }
