@@ -2,18 +2,15 @@ package hpms.bs.controllers;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
-import com.hand.hap.system.dto.BaseDTO;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.bs.dto.Sequence;
 import hpms.bs.service.ISequenceService;
-import net.sf.ehcache.bootstrap.BootstrapCacheLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Iterator;
 import java.util.List;
 
 /**
