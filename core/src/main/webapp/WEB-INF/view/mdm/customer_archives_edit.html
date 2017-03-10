@@ -13,6 +13,12 @@ author:huifang.zhou@hand-china.com * -->
 	src="${base.contextPath}/common/code?cusDocumentTypeData=HPMS_MDM_CUS_DOCUMENT_TYPE"
 	type="text/javascript"></script>
 <script
+	src="${base.contextPath}/common/code?nationality=HPMS_MDM_PEOPLE_NATIONALITY"
+	type="text/javascript"></script>
+	<script
+	src="${base.contextPath}/common/code?nation=HPMS_MDM_NATION"
+	type="text/javascript"></script>
+<script
 	src="${base.contextPath}/common/code?relType=HPMS_MDM_RELATION_TYPE"
 	type="text/javascript"></script>
 <script
@@ -81,8 +87,8 @@ author:huifang.zhou@hand-china.com * -->
 			var viewModelbpGender = kendo.observable({
 			     model : {},
 			     queryResource: function (e) {
-            $('#retaionGrid').data('kendoGrid').dataSource.page(1);
-       	 },
+           		 $('#retaionGrid').data('kendoGrid').dataSource.page(1);
+       	 		},
 			})
 			$(document).ready(function() {
 				$("#tabstrip").kendoTabStrip({
@@ -163,7 +169,7 @@ author:huifang.zhou@hand-china.com * -->
 								<script>
 									 $("#groupId").kendoComboBox({
 		  									valuePrimitive: true,
-											  dataTextField: "companyFullName",
+											 dataTextField: "companyFullName",
      									     dataValueField: "companyId",
      									     dataSource: {
                    						 transport: {
@@ -223,7 +229,7 @@ author:huifang.zhou@hand-china.com * -->
 					</div>
 					<div class="row" style="margin: 11px;">
 					<div class="col-xs-5" style="margin-left: -11px;">
-									<label class="col-xs-3 control-label" style="margin-left: -17px;margin-right: -8px;"><@spring.message "employee.gender"/>:</label> 
+									<label class="col-xs-3 control-label" style="margin-left: -17px;margin-right: -8px;"><@spring.message "employee.mobile"/>:</label> 
 									<div class="col-xs-7">
 									<input id="contactMobile"  type="text" data-bind="value:model.contactMobile" name="contactMobile" class="k-textbox" style="width: 93%;">
                                    <span style="color: red">*</span>
@@ -287,9 +293,8 @@ author:huifang.zhou@hand-china.com * -->
 									<script>
 										document.getElementById('credentialNumber').onblur=function(){
 										var type = viewModelPersonage.model.credentialType;
-										console.log(type)
 										if(type == "IDENTIFICATION_CARDS"){
-											var tt= /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+											var tt= /^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{4}$/;
                         					if(tt.test(this.value)){
                         					//alert('正整数');
                         					}else{
@@ -323,14 +328,59 @@ author:huifang.zhou@hand-china.com * -->
 					<div class="col-xs-5" style="margin-left: -5px;">
 									<label class="col-xs-3 control-label" style="margin-left: -30px;text-align: right;"><@spring.message "hpms.mdm.bpgeneral.country"/>:</label> 
 									<div class="col-xs-7">
-									<input type="text" id="country" style="width: 93%;" data-bind="value:model.country" class="k-textbox"/>
+									<input id="country" name="country" style="width: 93%;" data-bind="value:model.country"/>
 									</div>
+									<script>
+										$("#country").kendoDropDownList({
+															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
+															valuePrimitive: true,
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : nationality,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelPersonage.model.set('country',dataItem.value);
+																var type = viewModelPersonage.model.country;
+																console.log(type)
+																if("CHINA" == type){
+																	$("#nation").data("kendoDropDownList").enable(true);
+																}else{
+																	$("#nation").data("kendoDropDownList").enable(false);
+																}
+															}
+														}).data("kendoDropDownList");
+									</script>
 					</div>
 					<div class="col-xs-5" style="margin-left: 19px;">
 									<label class="col-xs-3 control-label" style="margin-right: -45px;"><@spring.message "hpms.mdm.bpgeneral.nation"/>:</label>
 								<div class="col-xs-7">
-									<input type="text" id="nation" style="width: 90%;" data-bind="value:model.nation" class="k-textbox"/>
+									<input id="nation" name="nation" style="width: 90%;" data-bind="value:model.nation"/>
 									</div>
+									<script>
+										$("#nation").kendoDropDownList({
+															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
+															valuePrimitive: true,
+															dataTextField : "meaning",
+															dataValueField : "value",
+															template : function(dataItem) {
+																return dataItem['meaning']
+																		|| ''
+															},
+															dataSource : nation,
+															select : function(e) {
+																var dataItem = this.dataItem(e.item);
+																viewModelPersonage.model.set('nation',dataItem.value);
+															},
+															dataBound:function(){
+																$("#nation").data("kendoDropDownList").enable(false);
+          													}
+														}).data("kendoDropDownList");
+										
+									</script>
 					</div>
 					</div>
 					<div class="row" style="margin: 11px;">
@@ -375,7 +425,7 @@ author:huifang.zhou@hand-china.com * -->
 					<div id="company" style="display: none;">
 					<div class="row" style="margin: 32px;">
 					<div class="col-xs-5" style="margin-left: -5px;">
-									<label class="col-xs-3 control-label" style="margin-left: -30px;text-align: right;"><@spring.message "hpms.mdm.bpgeneral.companytype"/>:</label> 
+									<label class="col-xs-3 control-label" style="margin-left: -30px;text-align: right;"><@spring.message "hpms.mdm.bpgeneral.companyname"/>:</label> 
 									<div class="col-xs-7">
 									<input type="text" id="companyName" style="width: 90%;" data-bind="value:model.companyName" class="k-textbox" required validationMessage="<@spring.message 'hpms.notempty'/>"/>
 									<span style="color: red">*</span>
@@ -383,7 +433,7 @@ author:huifang.zhou@hand-china.com * -->
 									<span class="k-invalid-msg" data-for="companyName"></span>
 					</div>
 					<div class="col-xs-5" style="margin-left: 35px;">
-									<label class="col-xs-3 control-label" style="margin-right: -23px;"><@spring.message "hpms.mdm.bpgeneral.companyType"/>:</label>
+									<label class="col-xs-3 control-label" style="margin-right: -23px;text-align: right;"><@spring.message "hpms.mdm.bpgeneral.companyType"/>:</label>
 								<div class="col-xs-7">
 									<input type="text" id="companyType" name="companyType" style="width: 90%;" data-bind="value:model.companyType"  required validationMessage="<@spring.message 'hpms.notempty'/>"/>
 									<span style="color: red">*</span>
@@ -433,7 +483,7 @@ author:huifang.zhou@hand-china.com * -->
                         					//alert('非正整数');
                         					var $parent = $("input[name='contactMo']").parent();
                         					$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="contactMo" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"请输入有效的移动电话"+'</span>');
-                        					viewModelPersonage.model.set('contactMo',null);
+                        					viewModelCompany.model.set('contactMobile',null);
                             }
 
                         }
@@ -467,7 +517,7 @@ author:huifang.zhou@hand-china.com * -->
 									</script>
 					</div>
 					<div class="col-xs-5" style="margin-left: 35px;">
-									<label class="col-xs-3 control-label" style="margin-right: -23px;"><@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>:</label>
+									<label class="col-xs-3 control-label" style="margin-right: -23px;text-align: right;"><@spring.message "hpms.mdm.bpGeneral.credentialnumber"/>:</label>
 								<div class="col-xs-7">
 									<input type="text" id="credNumber" name="credNumber" style="width: 90%;" data-bind="value:model.credentialNumber" class="k-textbox"  required validationMessage="<@spring.message 'hpms.notempty'/>"/>
 										<span style="color: red">*</span>
@@ -484,7 +534,7 @@ author:huifang.zhou@hand-china.com * -->
 									</div>
 					</div>
 					<div class="col-xs-5" style="margin-left: 35px;">
-									<label class="col-xs-3 control-label" style="margin-right: -23px;"><@spring.message "company.fax"/>:</label>
+									<label class="col-xs-3 control-label" style="margin-right: -23px;text-align: right;"><@spring.message "company.fax"/>:</label>
 								<div class="col-xs-7">
 									<input type="text" id="faxs" style="width: 90%;" data-bind="value:model.fax"  class="k-textbox"/>
 									</div>
@@ -776,8 +826,7 @@ author:huifang.zhou@hand-china.com * -->
 									</div>
 									<span class="k-invalid-msg" data-for="relType"></span>
 									<script>
-										$("#relType")
-												.kendoDropDownList(
+										$("#relType").kendoDropDownList(
 														{
 															optionLabel : "<@spring.message "hpms.mdm.equipmenttype.select"/>",
 															dataTextField : "meaning",
@@ -1661,9 +1710,9 @@ author:huifang.zhou@hand-china.com * -->
     	   	   $("#contactTel").css("color", "#DDDDDD");
     	   	   $("#officeNumber").attr("disabled",true);
     	   	   $("#officeNumber").css("color", "#DDDDDD");
-    	   	   $("#country").attr("disabled",true);
+    	   	   $("#country").data("kendoDropDownList").enable(false);
     	   	   $("#country").css("color", "#DDDDDD");
-    	   	   $("#nation").attr("disabled",true);
+    	   	   $("#nation").data("kendoDropDownList").enable(false);
     	   	   $("#nation").css("color", "#DDDDDD");
     	   	   $("#placeOfOrigin").attr("disabled",true);
     	   	   $("#placeOfOrigin").css("color", "#DDDDDD");
@@ -1715,9 +1764,9 @@ author:huifang.zhou@hand-china.com * -->
     	   	   $("#contactTel").css("color", "#000000");
     	   	   $("#officeNumber").attr("disabled",false);
     	   	   $("#officeNumber").css("color", "#000000");
-    	   	   $("#country").attr("disabled",false);
+    	   	   $("#country").data("kendoDropDownList").enable(true);
     	   	   $("#country").css("color", "#000000");
-    	   	   $("#nation").attr("disabled",false);
+    	   	   $("#nation").data("kendoDropDownList").enable(true);
     	   	   $("#nation").css("color", "#000000");
     	   	   $("#placeOfOrigin").attr("disabled",false);
     	   	   $("#placeOfOrigin").css("color", "#000000");

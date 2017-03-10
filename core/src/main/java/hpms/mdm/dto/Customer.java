@@ -86,6 +86,17 @@ public class Customer extends BaseDTO{
     private Long objectVersionNumber;
     
     /**
+     * 客户名称
+     */
+    @Transient
+    private String customerName;
+    public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+	/**
      * 姓名
      */
     @Transient
