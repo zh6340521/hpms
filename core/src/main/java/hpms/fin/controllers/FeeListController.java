@@ -51,7 +51,14 @@ public class FeeListController extends BaseController{
 		List<FeeList> feeLists = feeListService.feeListQuery(requestContext,feeList,page,pageSize);
 		return new ResponseData(feeLists);
 	}
-	
+	/**
+     * 计提、撤销操作更新feeList 
+     *
+     * @param feeLists 封装参数对象
+     * @param request   请求
+     * @param operation 动作标识
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
 	@RequestMapping(value = "/fin/feeList/feeListUpdate" , method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData feeListUpdate(@RequestBody List<FeeList> feeLists , String operation ,  HttpServletRequest request){
@@ -59,14 +66,26 @@ public class FeeListController extends BaseController{
 		feeLists = feeListService.feeListUpdate(requestContext ,feeLists ,operation);
 		return new ResponseData(feeLists);
 	}
-	
+	/**
+     * 查询建筑结构树形图结果集 
+     *
+     * @param buildingVersion 封装参数对象
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
 	@RequestMapping(value = "/fin/feeList/structureQuery" , method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData structureQuery(@ModelAttribute BuildingVersion buildingVersion , HttpServletRequest request){
 		IRequest requestContext = createRequestContext(request);
 		return new ResponseData(feeListService.structureQuery(buildingVersion, requestContext));
 	}
-	
+	/**
+     * 根据相应的条件查询相关联的费用清单 
+     *
+     * @param feeListNew 封装参数对象
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
 	@RequestMapping(value = "/fin/feeList/preview" , method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData feeListPreview(@ModelAttribute FeeListNew feeListNew , HttpServletRequest request) throws Exception{
@@ -77,12 +96,6 @@ public class FeeListController extends BaseController{
 			}else{
 				return new ResponseData(false);
 			}
-			/*if(feeListNew.getFeeId()!=null){
-				List<FeeList> feeLists = feeListService.feeListQuery(requestContext,null,1,100);
-				return new ResponseData(feeLists);
-			}else{
-				return null;
-			}*/
 		}catch (ValidationTableException e){
 	        ResponseData responseData = new ResponseData(false);
 	        String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
@@ -91,6 +104,13 @@ public class FeeListController extends BaseController{
 	        return responseData;
         }
 	}
+	/**
+     * 费用清单信息保存
+     *
+     * @param feeLists 封装参数对象
+     * @param request   请求
+     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+     */
 	@RequestMapping(value = "/fin/feeList/feeListSubmit" , method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData feeListSubmit(@RequestBody List<FeeList> feeLists , HttpServletRequest request) throws Exception{

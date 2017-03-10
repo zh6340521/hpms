@@ -29,13 +29,37 @@ public interface IFeeListService extends IBaseService<FeeList>, ProxySelf<IFeeLi
      * @return List<FeeList> 所有符合的结果集
      */
 	List<FeeList> feeListQuery(IRequest requestContext, FeeList feeList, int page, int pageSize);
-
+	/**
+     * 计提、撤销操作更新feeList 
+     * @author chengye.hu@hand-china.com
+     * @param requestContext  请求
+     * @param feeLists  封装参数对象
+     * @param operation 动作标识
+     * @return List<FeeList> 所有符合的结果集
+     */
 	List<FeeList> feeListUpdate(IRequest requestContext, List<FeeList> feeLists, String operation);
-
+	/**
+     * 查询建筑结构树形图结果集
+     * @author chengye.hu@hand-china.com
+     * @param requestContext  请求
+     * @param buildingVersion  封装参数对象
+     * @return List<FeeList> 所有符合的结果集
+     */
 	List<VersionStructure> structureQuery(BuildingVersion buildingVersion, IRequest requestContext);
-
+	/**
+     * 根据相应的条件查询相关联的费用清单 
+     * @author chengye.hu@hand-china.com
+     * @param requestContext  请求
+     * @param feeListNew  封装参数对象
+     * @return List<FeeList> 所有符合的结果集
+     */
 	List<FeeList> feeListPreview(FeeListNew feeListNew, IRequest requestContext)throws Exception;
-
+	/**
+     * 费用清单信息保存
+     * @author chengye.hu@hand-china.com
+     * @param requestContext  请求
+     * @param feeLists  封装参数对象
+     */
 	void feeListSubmit(IRequest requestContext, List<FeeList> feeLists);
 
 }

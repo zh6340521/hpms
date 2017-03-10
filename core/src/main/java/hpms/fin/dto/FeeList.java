@@ -1,18 +1,12 @@
 package hpms.fin.dto;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.activiti.rest.common.util.DateToStringSerializer;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.hand.hap.system.dto.BaseDTO;
+import org.activiti.rest.common.util.DateToStringSerializer;
+
+import javax.persistence.*;
+import java.util.Date;
 /**
  * 
  * @name FeeList
@@ -21,7 +15,7 @@ import com.hand.hap.system.dto.BaseDTO;
  * @version 1.0
  */
 @Table(name = "hpms_fin_fee_list")
-public class FeeList extends BaseDTO{
+public class FeeList extends BaseDTO implements Comparable<FeeList>{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@Column
@@ -347,5 +341,9 @@ public class FeeList extends BaseDTO{
 	public void setBeff(String beff) {
 		this.beff = beff;
 	}
-	
+
+	@Override
+	public int compareTo(FeeList o) {
+		return this.totalAmount.compareTo(o.getTotalAmount());
+	}
 }
