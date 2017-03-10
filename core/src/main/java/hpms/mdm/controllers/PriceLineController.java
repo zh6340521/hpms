@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
@@ -28,6 +29,7 @@ import hpms.mdm.service.ICalculateRuleService;
 import hpms.mdm.service.IFeeService;
 import hpms.mdm.service.IFeeTypeService;
 import hpms.mdm.service.IPriceLineService;
+import hpms.utils.ValidationTableException;
 /**
  * 
  * @name PriceLineController
@@ -80,6 +82,21 @@ public class PriceLineController extends BaseController{
             rd.setMessage(getErrorMessage(result, request));
             return rd;
         }else{
+        	try{
+	        	PriceLine priceLine4 = new PriceLine();
+	        	for (PriceLine priceLine3 : priceLines) {
+	        		priceLine4.setFeeId(priceLine3.getFeeId());
+	        		if(priceLineService.select(requestContext, priceLine4, 1, 100).size()>0){
+	        			throw new ValidationTableException("hpms.fin.feelist.fee_exist_erorr", null);
+	        		}
+				}
+        	}catch (ValidationTableException e){
+    	        ResponseData responseData = new ResponseData(false);
+    	        String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+    	                RequestContextUtils.getLocale(request));
+    	        responseData.setMessage(errorMessage);
+    	        return responseData;
+            }
         	priceLines = priceLineService.batchUpdate(requestContext, priceLines);
         	PriceLine priceLine = new PriceLine();
         	List<PriceLine> priceLines2 = new ArrayList<PriceLine>();
