@@ -27,6 +27,7 @@
 		<result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
 		<result column="MEANING3" property="meaning3" jdbcType="VARCHAR" />
 		<result column="MEANING" property="meaning" jdbcType="VARCHAR" />
+		<result column="CUSTOMERNAME" property="customerName" jdbcType="VARCHAR" />
 			
 	</resultMap>
 	
@@ -48,7 +49,8 @@
 		HCVV1.MEANING MEANING1,
 		HCVV2.MEANING MEANING2,
 		HCVV3.MEANING MEANING3,
-		NVL(HCVV2.MEANING,HCVV3.MEANING) MEANING
+		NVL(HCVV2.MEANING,HCVV3.MEANING) MEANING,
+		NVL(BP.FULL_NAME,BP.COMPANY_NAME) CUSTOMERNAME
 		from HPMS_MDM_CUSTOMER CUST
 		LEFT JOIN
 		HPMS_MDM_BP_GENERAL BP

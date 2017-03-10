@@ -138,6 +138,7 @@ function NewDialog() {
                         fields: {
                         	meaning1:{type:"string"},
                         	meaning:{type:"string"},
+                        	customerName:{type:"string"},
                         	enableFlag: {defaultValue: 'Y',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'}
                         }
                     }
@@ -166,9 +167,9 @@ function NewDialog() {
                     var singleDispatch = '<button type="button" id="lookFee" class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookCustomer('+rowdata.customerId+',\''+ rowdata.bpId+'\',\''+ rowdata.enableFlag+ '\')"><span class="glyphicon glyphicon-search"></span></button>&nbsp;';
                     var singleRecycle;
                     if (rowdata.enableFlag == "Y") {
-						singleRecycle = '<button type="button" id="recycle" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.failure"/>'+' onclick="failureCustomer('+rowdata.customerId+')"><span class="fa fa-times-circle"></span></button>';
+						singleRecycle = '<button type="button" id="recycle" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.failure"/>'+' onclick="failureCustomer('+rowdata.customerId+')"><span class="glyphicon glyphicon-remove"></span></button>';
 					}else if(rowdata.enableFlag == "N"){
-						singleRecycle = '<button type="button" id="recycle" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.failure"/>'+' onclick="startCustomer('+rowdata.customerId+')"><span class="fa fa-times-circle"></span></button>';
+						singleRecycle = '<button type="button" id="recycle" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.failure"/>'+' onclick="startCustomer('+rowdata.customerId+')"><span class="glyphicon glyphicon-ok"></span></button>';
 					}
                    		return singleDispatch + singleRecycle;
                 }
@@ -180,7 +181,7 @@ function NewDialog() {
                 width: 120
             },
             {
-                field: "fullName",
+                field: "customerName",
                 title: '<@spring.message "hpms.mdm.bpGeneral.fullname"/>',
                 width: 130
             },
