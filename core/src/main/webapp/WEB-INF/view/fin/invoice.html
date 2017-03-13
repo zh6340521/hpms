@@ -52,6 +52,7 @@
 
                 $('#saveForm').hide();
                 $('#selectRoom').attr("disabled", true);
+                //$('#addrow').attr("disabled", true);
             });
 
 
@@ -344,13 +345,15 @@
 
             document.getElementById('invoiceamount').onblur=function(){
                 var curbalance=newViewModel.model.curbalance;
-                if(parseFloat(this.value)>parseFloat(curbalance)){
-                    kendo.ui.showInfoDialog({
-                        message : '<@spring.message "超出范围"/>'
-                    });
-                    newViewModel.model.set('invoiceAmount',null);
-                }else{
-                    newViewModel.model.set('balance',-(parseFloat(curbalance)-parseFloat(this.value)));
+                if(curbalance!=null&&curbalance!=''){
+                    if(parseFloat(this.value)>parseFloat(curbalance)){
+                        kendo.ui.showInfoDialog({
+                            message : '<@spring.message "超出范围"/>'
+                        });
+                        newViewModel.model.set('invoiceAmount',null);
+                    }else{
+                        newViewModel.model.set('balance',-(parseFloat(curbalance)-parseFloat(this.value)));
+                    }
                 }
             }
 
@@ -516,25 +519,21 @@
                     buttonCount: 5
                 },
                 toolbar   : [{
-                   template : '<span onclick="createFunction()" class="btn btn-primary">新建</span>'
+                   template : '<botton id="addrow"  class="btn btn-primary" onclick="createFunction()"> <span>新建</span></botton>'
                 }],
                columns    : [{
                     field      : "lineNumner",
                     title      : "<@spring.message 'hpms.fin.invoice.lineNumber'/>",
                     width      : 80,
                     attributes  : {style: "text-align:center"},
-                   /* template: function(dataItem) {
+                    template: function(dataItem) {
                         //console.log(dataItem['lineNumner']);
                         return dataItem['lineNumner']||'';
                     },
                     editor: function(container, options){
                             container.html(options.model.lineNumner);
                             container.removeClass('k-edit-cell');
-                    }*/
-                   template: "<span class='row-number'></span>",
-                   width:45,
-                   locked: true,
-                   lockable: false
+                    }
 
                },{
                     field      : "feeName",
@@ -735,20 +734,7 @@
                 }],
                editable: {
                    createAt:"bottom"
-               },
-               dataBound: function(e) {
-                   var view = this.dataSource.view();
-                   this.items().each(function (index, row) {
-                       kendo.bind(row, view[index]);
-                   });
-                   var rows = this.items();
-                   $(rows).each(function () {
-                       var index =(dataSource._page-1)*dataSource._pageSize+$(this).index() + 1;
-                       var rowLabel = $(this).find(".row-number");
-                       $(rowLabel).html(index);
-                   });
                }
-
 
 
            }).data("kendoGrid");
@@ -756,13 +742,6 @@
             Hap.autoResizeGrid("#invoice_grid");
 
             function newTree(){
-
-                if(newViewModel.model.companyId==null||newViewModel.model.projectId==null){
-                        $('#selectRoom').attr("disabled", true);
-                    }else{
-                        $('#selectRoom').removeAttr("disabled");
-                }
-
 
                 $("#property_tree").kendoWindow({
                     actions: ["Close"],
@@ -781,195 +760,230 @@
 
             function createFunction(){
                 $('#invoice_grid').data('kendoGrid').addRow();
+                //document.getElementById("addrow").disabled=true;
+                $('#addrow').removeAttr("onclick");
             }
 
 
             var dataSource1;
             function submitInvoiceLine() {
-                if(dataSource1==null){
-                    var items=dataSource.data();
-
-                    //items[items.length-2].
-                    if(items.length==1){
-                        viewModel.model.set('lineNumner',1);
-                    }else{
-                        viewModel.model.set('lineNumner',items[items.length-2].lineNumner+1);
-                        viewModel.model.set('invoiceId',items[items.length-2].invoiceId);
-                    }
-
-                    //viewModel.model.set('invoiceId',items[items.length-2].invoiceId);
-                    viewModel.model.set('feeId',items[items.length-1].feeId);
-                    viewModel.model.set('accountNum',items[items.length-1].accountNum);
-                    viewModel.model.set('costCenter',items[items.length-1].costCenter);
-                    viewModel.model.set('profitCenter',items[items.length-1].profitCenter);
-                    viewModel.model.set('lineAmount',items[items.length-1].lineAmount);
-                    viewModel.model.set('taxCode',items[items.length-1].taxCode);
-                    viewModel.model.set('taxAmount',items[items.length-1].taxAmount);
-                    viewModel.model.set('description',items[items.length-1].description);
-                    //newViewModel.model.set('occupationId',10017);
-                    //newViewModel.model.set('payableCode',"A01YF201703020023");
-                    newViewModel.model.set('curbalance',items[items.length-1].lineAmount);
-                    newViewModel.model.set('balance',-(items[items.length-1].lineAmount));
-                    newViewModel.model.set('taxAmount',(items[items.length-1].taxAmount));
-                    newViewModel.model.set('invoiceAmount',0);
-
-                    if(items.length==1){
-                        var invoiceLineMessage = kendo.stringify(viewModel.model);
-                        var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
-                        var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
-                        var json = JSON.parse(invoiceLineMessage);
-
-                        json.invoice=jsonInvoiceHeader;
-
-                    }else{
-                        var invoiceLineMessage = kendo.stringify(viewModel.model);
-
-                        var json = JSON.parse(invoiceLineMessage);
-
-                    }
+                if(newViewModel.model.paymentTermId==null||newViewModel.model.paymentTermId==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "hpms.fin.invoice.paymentterm"/>不能为空'
+                    })
+                }else if(newViewModel.model.paymentMethodId==null||newViewModel.model.paymentMethodId==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "hpms.fin.invoice.paymentmethod"/>不能为空'
+                    })
+                }else if(newViewModel.model.accountDate==null||newViewModel.model.accountDate==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "hpms.fin.invoice.accountdate"/>不能为空'
+                    })
+                }else if(newViewModel.model.companyId==null||newViewModel.model.companyId==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "hpms.mdm.property.company"/>不能为空'
+                    })
+                }else if(newViewModel.model.projectId==null||newViewModel.model.projectId==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "hpms.mdm.property.project"/>不能为空'
+                    })
+                }else if(newViewModel.model.invoiceDate==null||newViewModel.model.invoiceDate==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "hpms.fin.invoice.invoiceDate"/>不能为空'
+                    })
+                }else if(newViewModel.model.occupationId==null||newViewModel.model.occupationId==''){
+                    kendo.ui.showInfoDialog({
+                        message:'<@spring.message "选择房间"/>'
+                    })
                 }else{
-                    var items=dataSource1.data();
+                    if(dataSource1==null){
+                        var items=dataSource.data();
 
-                    //items[items.length-2].
-                    if(items.length==1){
-                        viewModel.model.set('lineNumner',1);
+                        //items[items.length-2].
+                        if(items.length==1){
+                            viewModel.model.set('lineNumner',1);
+                        }else{
+                            viewModel.model.set('lineNumner',items[items.length-2].lineNumner+1);
+                            viewModel.model.set('invoiceId',items[items.length-2].invoiceId);
+                        }
+
+                        //viewModel.model.set('invoiceId',items[items.length-2].invoiceId);
+                        viewModel.model.set('feeId',items[items.length-1].feeId);
+                        viewModel.model.set('accountNum',items[items.length-1].accountNum);
+                        viewModel.model.set('costCenter',items[items.length-1].costCenter);
+                        viewModel.model.set('profitCenter',items[items.length-1].profitCenter);
+                        viewModel.model.set('lineAmount',items[items.length-1].lineAmount);
+                        viewModel.model.set('taxCode',items[items.length-1].taxCode);
+                        viewModel.model.set('taxAmount',items[items.length-1].taxAmount);
+                        viewModel.model.set('description',items[items.length-1].description);
+                        //newViewModel.model.set('occupationId',10017);
+                        //newViewModel.model.set('payableCode',"A01YF201703020023");
+                        newViewModel.model.set('curbalance',items[items.length-1].lineAmount);
+                        newViewModel.model.set('balance',-(items[items.length-1].lineAmount));
+                        newViewModel.model.set('taxAmount',(items[items.length-1].taxAmount));
+                        newViewModel.model.set('invoiceAmount',0);
+
+                        if(items.length==1){
+                            var invoiceLineMessage = kendo.stringify(viewModel.model);
+                            var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
+                            var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
+                            var json = JSON.parse(invoiceLineMessage);
+
+                            json.invoice=jsonInvoiceHeader;
+
+                        }else{
+                            var invoiceLineMessage = kendo.stringify(viewModel.model);
+
+                            var json = JSON.parse(invoiceLineMessage);
+
+                        }
                     }else{
-                        viewModel.model.set('lineNumner',items[items.length-2].lineNumner+1);
-                        viewModel.model.set('invoiceId',items[items.length-2].invoiceId);
+                        var items=dataSource1.data();
+
+                        //items[items.length-2].
+                        if(items.length==1){
+                            viewModel.model.set('lineNumner',1);
+                        }else{
+                            viewModel.model.set('lineNumner',items[items.length-2].lineNumner+1);
+                            viewModel.model.set('invoiceId',items[items.length-2].invoiceId);
+                        }
+                        var balance=0;
+                        var taxAmount=0;
+                        for(var i=0;i<items.length;i++){
+                            balance=parseFloat(items[i].lineAmount)+balance;
+                            taxAmount=parseFloat(items[i].taxAmount)+taxAmount;
+                        }
+
+                        newViewModel.model.set('curbalance',balance);
+
+                        newViewModel.model.set('balance',-balance);
+                        newViewModel.model.set('taxAmount',taxAmount);
+                        newViewModel.model.set('invoiceAmount',0);
+
+                        viewModel.model.set('feeId',items[items.length-1].feeId);
+                        viewModel.model.set('accountNum',items[items.length-1].accountNum);
+                        viewModel.model.set('costCenter',items[items.length-1].costCenter);
+                        viewModel.model.set('profitCenter',items[items.length-1].profitCenter);
+                        viewModel.model.set('lineAmount',items[items.length-1].lineAmount);
+                        viewModel.model.set('taxCode',items[items.length-1].taxCode);
+                        viewModel.model.set('taxAmount',items[items.length-1].taxAmount);
+                        viewModel.model.set('description',items[items.length-1].description);
+
+
+                        if(items.length==1){
+                            var invoiceLineMessage = kendo.stringify(viewModel.model);
+                            var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
+                            var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
+                            var json = JSON.parse(invoiceLineMessage);
+
+                            json.invoice=jsonInvoiceHeader;
+
+                        }else{
+                            var invoiceLineMessage = kendo.stringify(viewModel.model);
+                            var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
+                            var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
+                            var json = JSON.parse(invoiceLineMessage);
+
+                            json.invoice=jsonInvoiceHeader;
+
+                        }
                     }
-                    var balance=0;
-                    var taxAmount=0;
-                    for(var i=0;i<items.length;i++){
-                        balance=parseFloat(items[i].lineAmount)+balance;
-                        taxAmount=parseFloat(items[i].taxAmount)+taxAmount;
-                    }
-
-                    newViewModel.model.set('curbalance',balance);
-
-                    newViewModel.model.set('balance',-balance);
-                    newViewModel.model.set('taxAmount',taxAmount);
-                    newViewModel.model.set('invoiceAmount',0);
-
-                    viewModel.model.set('feeId',items[items.length-1].feeId);
-                    viewModel.model.set('accountNum',items[items.length-1].accountNum);
-                    viewModel.model.set('costCenter',items[items.length-1].costCenter);
-                    viewModel.model.set('profitCenter',items[items.length-1].profitCenter);
-                    viewModel.model.set('lineAmount',items[items.length-1].lineAmount);
-                    viewModel.model.set('taxCode',items[items.length-1].taxCode);
-                    viewModel.model.set('taxAmount',items[items.length-1].taxAmount);
-                    viewModel.model.set('description',items[items.length-1].description);
 
 
-                    if(items.length==1){
-                        var invoiceLineMessage = kendo.stringify(viewModel.model);
-                        var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
-                        var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
-                        var json = JSON.parse(invoiceLineMessage);
-
-                        json.invoice=jsonInvoiceHeader;
-
-                    }else{
-                        var invoiceLineMessage = kendo.stringify(viewModel.model);
-                        var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
-                        var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
-                        var json = JSON.parse(invoiceLineMessage);
-
-                        json.invoice=jsonInvoiceHeader;
-
-                    }
-                }
+                    $.ajax({
+                        url: "${base.contextPath}/hpms/fin/invoice/line/submit",
+                        type:"POST",
+                        dataType:"json",
+                        contentType:"application/json",
+                        data:  kendo.stringify(json),
+                        success: function(data){
 
 
-                $.ajax({
-                    url: "${base.contextPath}/hpms/fin/invoice/line/submit",
-                    type:"POST",
-                    dataType:"json",
-                    contentType:"application/json",
-                    data:  kendo.stringify(json),
-                    success: function(data){
-
-
-                        if (data.success) {
-                            //viewModel.model.set('invoiceId',data.rows[0].invoiceId);
-                            //console.log(data.rows[0].invoiceId);
-                            invoiceId=data.rows[0].invoiceId;
-                            dataSource1 = new kendo.data.DataSource({
-                                transport   : {
-                                    read        : {
-                                        url     : _basePath+"/hpms/fin/invoice/line/query?invoiceId="+invoiceId,
-                                        type    : "POST",
-                                        dataType: "json"
-                                    },
-                                    parameterMap: function (options, type) {
-                                        if (type !== "read" && options.models) {
-                                            var datas = Hap.prepareSubmitParameter(options, type)
-                                            return kendo.stringify(datas);
-                                        } else if (type === "read") {
-                                            return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
-
-                                        }
-                                    }
-                                },
-                                batch       : true,
-                                serverPaging: true,
-                                pageSize    : 10,
-                                schema      : {
-                                    data  : 'rows',
-                                    total : 'total',
-                                    model : {
-                                        id    : "invoiceLineId",
-                                        fields: {
-                                            invoiceId:{
-
-                                            },
-                                            lineNumner:{
-
-                                            },
-                                            feeName:{
-
-                                            },
-                                            feeId:{
-
-                                            },
-                                            accountNum:{
-
-                                            },
-                                            costCenter:{
-
-                                            },
-                                            profitCenter:{
-
-                                            },
-                                            lineAmount:{
-
-                                            },
-                                            taxCode:{
-
-                                            },
-                                            taxAmount:{
-
-                                            },
-                                            description:{
+                            if (data.success) {
+                                //viewModel.model.set('invoiceId',data.rows[0].invoiceId);
+                                //console.log(data.rows[0].invoiceId);
+                                invoiceId=data.rows[0].invoiceId;
+                                dataSource1 = new kendo.data.DataSource({
+                                    transport   : {
+                                        read        : {
+                                            url     : _basePath+"/hpms/fin/invoice/line/query?invoiceId="+invoiceId,
+                                            type    : "POST",
+                                            dataType: "json"
+                                        },
+                                        parameterMap: function (options, type) {
+                                            if (type !== "read" && options.models) {
+                                                var datas = Hap.prepareSubmitParameter(options, type)
+                                                return kendo.stringify(datas);
+                                            } else if (type === "read") {
+                                                return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
 
                                             }
+                                        }
+                                    },
+                                    batch       : true,
+                                    serverPaging: true,
+                                    pageSize    : 10,
+                                    schema      : {
+                                        data  : 'rows',
+                                        total : 'total',
+                                        model : {
+                                            id    : "invoiceLineId",
+                                            fields: {
+                                                invoiceId:{
 
+                                                },
+                                                lineNumner:{
+
+                                                },
+                                                feeName:{
+
+                                                },
+                                                feeId:{
+
+                                                },
+                                                accountNum:{
+
+                                                },
+                                                costCenter:{
+
+                                                },
+                                                profitCenter:{
+
+                                                },
+                                                lineAmount:{
+
+                                                },
+                                                taxCode:{
+
+                                                },
+                                                taxAmount:{
+
+                                                },
+                                                description:{
+
+                                                }
+
+                                            }
                                         }
                                     }
-                                }
-                            });
-                            $('#invoice_grid').data('kendoGrid').setDataSource(dataSource1);
-                            $('#invoice_grid').data('kendoGrid').dataSource.page(1);
-                            $('#saveForm').show();
-                            kendo.ui.showInfoDialog({
-                                message : '<@spring.message "hap.tip.success"/>'
-                            });
+                                });
+                                $('#invoice_grid').data('kendoGrid').setDataSource(dataSource1);
+                                $('#invoice_grid').data('kendoGrid').dataSource.page(1);
+                                $('#saveForm').show();
+                                $('#addrow').attr("onclick","createFunction();");
+                                //document.getElementById("addrow").disabled=false;
+                                kendo.ui.showInfoDialog({
+                                    message : '<@spring.message "hap.tip.success"/>'
+                                });
 
-                        } else {
-                            kendo.ui.showInfoDialog({
-                                message : data.message
-                            });
-                        }
-                    }});
+                            } else {
+                                kendo.ui.showInfoDialog({
+                                    message : data.message
+                                });
+                            }
+                        }});
+
+                }
 
             }
             
