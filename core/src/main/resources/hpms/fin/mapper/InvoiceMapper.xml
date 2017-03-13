@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.fin.mapper.InvoiceMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.Invoice">
+        <result column="INVOICE_ID" property="invoiceId" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="PAYABLE_CODE" property="payableCode" jdbcType="VARCHAR" />
+        <result column="INVOICE_TYPE" property="invoiceType" jdbcType="VARCHAR" />
+        <result column="INVOICE_DATE" property="invoiceDate" jdbcType="DATE" />
+        <result column="INVOICE_NUM" property="invoiceNum" jdbcType="VARCHAR" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_DATE" property="accountDate" jdbcType="DATE" />
+        <result column="ACCOUNT_PERIOD" property="accountPeriod" jdbcType="VARCHAR" />
+        <result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+        <result column="PAYMENT_METHOD_ID" property="paymentMethodId" jdbcType="DECIMAL" />
+        <result column="TRANS_TYPE" property="transType" jdbcType="VARCHAR" />
+        <result column="INVOICE_AMOUNT" property="invoiceAmount" jdbcType="DECIMAL" />
+        <result column="TAX_AMOUNT" property="taxAmount" jdbcType="DECIMAL" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR" />
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+
+    <!--查询应付信息-->
+    <select id="queryInvoice" parameterType="hpms.fin.dto.Invoice" resultMap="BaseResultMap">
+        SELECT
+        HFI.INVOICE_ID,
+        HFI.COMPANY_ID,
+        HFI.PROJECT_ID,
+        HFI.PAYABLE_CODE,
+        HFI.INVOICE_TYPE,
+        HFI.INVOICE_DATE,
+        HFI.INVOICE_NUM,
+        HFI.OCCUPATION_ID,
+        HFI.ACCOUNT_DATE,
+        HFI.ACCOUNT_PERIOD,
+        HFI.PAYMENT_TERM_ID,
+        HFI.PAYMENT_METHOD_ID,
+        HFI.TRANS_TYPE,
+        HFI.INVOICE_AMOUNT,
+        HFI.TAX_AMOUNT,
+        HFI.ENABLE_FLAG,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HCO.PROPERTY_NUMBER,
+        HCO.PROPERTY_NAME,
+        HCO.CUSTOMER_NAME,
+        HMPT.PAYMENT_TERM_NAME,
+        HMPM.PAYMENT_METHOD_NAME
+
+        FROM HPMS_FIN_INVOICE HFI
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HFI.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HMP.PROJECT_ID = HFI.PROJECT_ID
+        LEFT JOIN HPMS_CS_OCCUPATION HCO
+        ON HCO.OCCUPATION_ID = HFI.OCCUPATION_ID
+        LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT
+        ON HMPT.PAYMENT_TERM_ID = HFI.PAYMENT_TERM_ID
+        LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
+        ON HMPM.PAYMENT_METHOD_ID = HFI.PAYMENT_METHOD_ID
+
+        <where>
+            1=1
+            <if test="invoiceId!=null">
+                and HFI.INVOICE_ID = #{invoiceId,jdbcType=DECIMAL}
+            </if>
+        </where>
+
+    </select>
+
+    <!--根据建筑实体查询客户入住信息-->
+    <select id="queryOccupation" parameterType="hpms.fin.dto.Invoice" resultMap="BaseResultMap">
+        select HCO.CUSTOMER_NAME,HCO.PROPERTY_NAME,HCO.PROPERTY_NUMBER,HCO.OCCUPATION_ID
+        from ( SELECT *
+        FROM HPMS_CS_OCCUPATION
+        WHERE
+        OCCUPATION_ID IN (
+        SELECT MAX (HPMS_CS_OCCUPATION.OCCUPATION_ID)
+        FROM HPMS_CS_OCCUPATION
+        GROUP BY HPMS_CS_OCCUPATION.PROPERTY_ID
+        )
+        ) HCO
+        LEFT JOIN HPMS_MDM_VERSION_STRUCTURE HMVS
+        ON HMVS.PROPERTY_ID=HCO.PROPERTY_ID
+        LEFT JOIN HPMS_MDM_PROPERTY HMP
+        ON HMP.PROPERTY_ID=HMVS.PROPERTY_ID
+
+            <where>
+                HCO.STATUS='IN'
+                <if test="structureId!=null">
+                    and HMVS.STRUCTURE_ID = #{structureId,jdbcType=DECIMAL}
+                </if>
+            </where>
+    </select>
+
+
+</mapper>

@@ -178,7 +178,7 @@
                                     read:function(options) {
                                         $.ajax({
                                             type   : "POST",
-                                            url: "/mdm/property/projectQuery",
+                                            url: "${base.contextPath}/mdm/property/projectQuery",
                                             data: {},
                                             success: function(json) {
                                                // console.log(json);
@@ -220,7 +220,7 @@
                                     read:function(options) {
                                         $.ajax({
                                             type   : "POST",
-                                            url: "/hpms/mdm/equipment/queryEquipmentType",
+                                            url: "${base.contextPath}/hpms/mdm/equipment/queryEquipmentType",
                                             data: {},
                                             success: function(json) {
                                                 options.success(json.rows);
@@ -412,7 +412,7 @@
                                         read:function(options) {
                                             $.ajax({
                                                 type   : "POST",
-                                                url: "/mdm/property/companyQuery",
+                                                url: "${base.contextPath}/mdm/property/companyQuery",
                                                 data: {},
                                                 success: function(json) {
                                                     options.success(json.rows);
@@ -771,36 +771,33 @@
                     <div class="col-xs-8">
 
 		            <span class="k-widget k-lov k-header" style="width: 92%";>
-					       <span tabindex="-1" unselectable="on" class="k-dropdown-wrap k-state-default">
-					          <input id="position" class="k-input" type="text" autocomplete="off" title="" role="lov" aria-expanded="false"  aria-disabled="false" readonly="readonly" style="width: 100%;">
+					      <span tabindex="-1" unselectable="on" class="k-dropdown-wrap k-state-default">
+					          <input id="structureName" data-bind="value:model.versionId" class="k-input" type="text" autocomplete="off" title="" role="lov" aria-expanded="false"  readonly="readonly" style="width: 100%;">
 					              <span unselectable="on" class="k-icon k-i-close" title="clear" role="button" tabindex="-1">
 					              </span>
-					          <span id="selectPosition" unselectable="on" class="k-select" aria-label="select" role="button" tabindex="-1" onclick="newData()">
+					          <span unselectable="on" class="k-select" aria-label="select" role="button" tabindex="-1" onclick="newTree()">
 						           <span class="k-icon k-i-search">
 						           </span>
 					          </span>
 					       </span>
 					</span>
 
-					<div id="newWin" style="display: none"></div>
+					<div id="property_tree" ></div>
 					<script>
-						function newData() {
-					        $("#newWin").kendoWindow({
-					            actions: ["Close"],
-					            title: $l('位置'),
-					            draggable: true,
-					            height: "350px",
-					            width: "450px",
-					            close: function(){
-					                $("#editWin").empty();
-					            },
-					            content: "${base.contextPath}/mdm/position.html",
-					            iframe: true,
-					            modal: true
-					        });
-					        var win = $("#newWin").data("kendoWindow");
-					        win.center().open();
-					    }
+                        function newTree(){
+                            $("#property_tree").kendoWindow({
+                                actions: ["Close"],
+                                title: $l('选择'),
+                                draggable: true,
+                                height: "510px",
+                                width: "350px",
+                                content: '${base.contextPath}/fin/property_tree.html?companyId='+newViewModel.model.companyId+'&projectId='+newViewModel.model.projectId,
+                                iframe: true,
+                                modal: true
+                            });
+                            var win = $("#property_tree").data("kendoWindow");
+                            win.center().open();
+                        }
 			        	kendo.bind($('#position'),newViewModel);
 			        </script>
                     </div>
