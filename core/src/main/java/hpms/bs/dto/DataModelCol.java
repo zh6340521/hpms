@@ -14,7 +14,7 @@ import javax.persistence.*;
  * @date 2017/2/28
  */
 @Table(name = "HPMS_DATA_MODEL_COL")
-public class DataModelCol extends BaseDTO {
+public class DataModelCol extends BaseDTO{
 
     /*model_col_id          NUMBER not null,
     model_id              NUMBER not null,

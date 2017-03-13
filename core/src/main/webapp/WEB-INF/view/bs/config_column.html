@@ -174,7 +174,14 @@
                                 //是否启用
                                  enableFlag:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'},
 
-                             }
+                             },
+                            /* editable: function(col) {
+                                 if(col=='columnId'||col=='columnType'){
+                                     return false;
+                                 }
+
+                                 return true;
+                             }*/
 
                          }
                      }
@@ -185,10 +192,8 @@
              navigatable: false,
              height: '100%',
              resizable: true,
-             scrollable: "multiple,rowbox",
-             reorderable: true,
-             sortable   : true,
-             selectable : "row",
+             scrollable: true,
+             navigatable: false,
              editable: "inline",
              columnMenu: true,
              pageable: {
@@ -211,7 +216,7 @@
                      attributes: {style: "text-align:center"},
                     // title		: "操作",
                      title:'<@spring.message "hap.action"/>',
-                     width		: "4%" ,
+                     width		: 60 ,
                      headerAttributes: {
                          style: "text-align: center"
                      },
@@ -222,7 +227,7 @@
                      //name:"meaning",
                      //title: '字段名',
                      title:'<@spring.message "hpms.bs.column_name"/>',
-                     width: '6%' ,
+                     width: 60 ,
                      attributes: {style: "text-align:center"},
                      editor: function(container, options) {
                          var editor=$('<input required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"/>')
@@ -245,12 +250,24 @@
                                          options.model.set("columnLength",e.item.columnLength);
                                          options.model.set("columnName",e.item.columnName);
                                          options.model.set("columnNameAlias",e.item.columnNameAlias);
+                                         options.model.set("columnId",tranform(e.item.columnName));
 
-                                         //将带出来的字段设置为不可编辑
-                                         $("#columnType").attr("disabled",true);
-                                         $("#columnLength").attr("disabled",true);
-                                         $("#columnNameAlias").attr("disabled",true);
+
+
                                      },
+                                     //清除时也删除
+                                     change : function(e){
+                                         if(this.value()==""||this.value()==null){
+                                             options.model.set('columnLength',null);
+                                             options.model.set('columnId',null);
+                                             options.model.set('columnType',null);
+                                             options.model.set('columnNameAlias',null);
+                                         }
+
+
+
+                                     },
+
 
 
                                      textField: 'columnName',
@@ -265,13 +282,26 @@
 
                  },
                  {
+                     field: "columnId",
+                     attributes: {style: "text-align:center"},
+                     title:'组件名',
+                     width: 60,
+                     editor: function(container, options){
+                             var editor = $('<input id="columnId" class="k-input k-textbox k-valid"  disabled="disabled"  type="text" name="columnId"/>');
+                             editor.css('width','100%');
+                             container.append(editor);
+
+
+                     }
+                 },
+                 {
                      field: "columnType",
                      attributes: {style: "text-align:center"},
                      //title: '字段类型',
                      title:'<@spring.message "lovitem.field_type"/>',
-                     width: '6%',
+                     width: 60,
                      editor: function(container, options){
-                         var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
+                         var editor = $('<input id="columnType" class="k-input k-textbox k-valid" disabled="disabled" type="text" name="columnType"/>');
                          editor.css('width','100%');
                          container.append(editor);
                      }
@@ -280,7 +310,7 @@
                      field: "columnLength",
                      //title: '长度',
                      title:'<@spring.message "hpms.bs.column_length"/>',
-                     width: '6%' ,
+                     width: 60 ,
                      attributes: {style: "text-align:center"},
                      editor: function(container, options){
                          var editor = $('<input id="columnLength" class="k-input k-textbox k-valid" type="text" name="columnLength"/>');
@@ -293,7 +323,7 @@
                      //name:"meaning",
                      //title: '别名',
                      title:'<@spring.message "hpms.bs.column_alias"/>',
-                     width: '6%' ,
+                     width: 60 ,
                      attributes: {style: "text-align:center"},
                      editor: function (container, options) {
                          var editor = $('<input id="columnNameAlias" class="k-input k-textbox k-valid" type="text" name="columnNameAlias"/>');
@@ -308,7 +338,7 @@
                      attributes: {style: "text-align:center"},
                    //  title: '字符样式',
                      title:'<@spring.message "hpms.bs.column_style"/>',
-                     width: 80,
+                     width: 60,
                      template: function(dataItem){//模板函数，相当于文本框渲染
                          //将field的数据和下拉框内的数据进行绑定
                          var v = dataItem.columnStyle;
@@ -334,34 +364,98 @@
                                      dataValueField: "value",
                                      dataSource: columnStyleData,
                                      valuePrimitive: true,//如果不是true的话，选中内容会是一个object 并不是一个简单的json字符串、
+                                     //拖一带三
+                                     select:function(e){
+                                         var columnstyle = e.sender.dataItem(e.item)[e.sender.options.dataValueField];
+
+                                         //当选择的字符类型不为LIST时，sqlId，code和级联都为不可编辑
+                                         if(columnstyle!="LIST"){
+                                             $("#sysCode").attr("disabled",true);
+                                             $("#sqlId").attr("disabled",true);
+                                             $("#cascadeFrom").attr("disabled",true);
+                                         }
+
+                                     },
                                  });
-                     }
+
+
+                     },
+
                  },
                  {
                      field: "sqlId",
-                     width: '8%',
+                     width: 60,
                      title: '<@spring.message "lov.sqlid"/>',
                      attributes: {style: "text-align:center"},
                      editor: function (container, options) {
-                         //根据是否存在主键id来判断是新增还是编辑
-                         if (options.model.columnStyle != "LIST") {
-                             container.removeClass('k-edit-cell');
-                         } else {
-                             var editor =  $('<input type="text"   name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+
+                         //如果字符类型为list并且快码code不为空，可编辑
+                             var editor =  $('<input type="text" id="sqlId" onblur="validatesqlId(this)"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
                              editor.css('width','100%');
                              container.append(editor);
-                         }
+                     }
+                 },
+                 {
+                     field: "dataTextField",
+                     width: 50,
+                     title: '显示字段',
+                     attributes: {style: "text-align:center"},
+                     editor: function (container, options) {
+
+                         //如果字符类型为list并且快码code不为空，可编辑
+                         var editor =  $('<input type="text" id="dataTextField"   name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                         editor.css('width','100%');
+                         container.append(editor);
+                     }
+                 },
+                 {
+                     field: "dataValueField",
+                     width: 50,
+                     title: '实际字段',
+                     attributes: {style: "text-align:center"},
+                     editor: function (container, options) {
+
+                         //如果字符类型为list并且快码code不为空，可编辑
+                         var editor =  $('<input type="text" id="dataValueField"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                         editor.css('width','100%');
+                         container.append(editor);
+                     }
+                 },
+                 {
+                     field: "sysCode",
+                     width: 60,
+                     title: '快码CODE',
+                     attributes: {style: "text-align:center"},
+                     editor: function (container, options) {
+                             var editor = $('<input id="sysCode" onblur="validateSysCode(this)" class="k-input k-textbox k-valid" type="text" name="' + options.field + '"/>');
+                             editor.css('width','100%');
+                             container.append(editor);
+
+                     }
+                 },
+                 {
+                     field: "cascadeFrom",
+                     width: 60,
+                     title: '级联组件名',
+                     attributes: {style: "text-align:center"},
+                     editor: function (container, options) {
+
+
+                             var editor = $('<input id="cascadeFrom" onblur="validateCascadeFrom(this)" id="cascadeFrom"  class="k-input k-textbox k-valid" type="text" name="' + options.field + '"/>');
+                             editor.css('width','100%');
+                             container.append(editor);
+
                      }
                  },
                  {
                      field: "requiredFlag",
-                     width: '5%',
+                     width: 60,
                      title: '<@spring.message "hpms.bs.column_requireflag"/>',
                      attributes: {style: "text-align:center"}
                  },
                  {
                      field: "enableFlag",
-                     width: '5%',
+                     width: 60,
                     // title: '是否启用',
                      title:'<@spring.message "hap.enableflag"/>',
                      attributes: {style: "text-align:center"}
@@ -377,6 +471,68 @@
          Hap.autoResizeGrid("#grid");
          //设置表格上的字居中
          $("#grid thead>tr th").css("text-align","center");
+
+
+         //将大写字符串转成驼峰命名法
+         function tranform(str){
+             var s = str;
+             s = s.toLowerCase();
+             var a = s.split("_");
+             var o = a[0];
+             for(var i=1;i<a.length;i++){
+                 o = o + a[i].slice(0,1).toUpperCase() + a[i].slice(1);
+             }
+             return o;
+         }
+
+         //校验sqlId  当sqlId不为空时，可以填code,反之 不可以
+         function validatesqlId(self){
+
+             if(self.value!=null&&self.value!=""){
+
+                 $("#sysCode").attr("disabled",true);
+             }else{
+
+                 $("#sysCode").attr("disabled",false);
+             }
+         }
+
+         //校验code 当code为空时，可以填sqlId,反之 不可以
+         function validateSysCode(self){
+            if(self.value!=null&&self.value!=""){
+                $("#sqlId").attr("disabled",true);
+                $("#cascadeFrom").attr("disabled",true);
+            }else{
+                $("#sqlId").attr("disabled",false);
+                $("#cascadeFrom").attr("disabled",false);
+            }
+         }
+
+         //校验级联 当输入了级联的组件后，如果sqlId为空，弹出提示sqlId为必输，反之 没提示
+         function validateCascadeFrom(self)
+         {
+
+             var sqlId = $("#sqlId").val()
+
+             if(sqlId==null||sqlId==""){
+                 if(self.value!=null&&self.value!=""){
+                     kendo.ui.showErrorDialog({
+                         message: "请输入对应的sqlId"
+                     })
+                 }
+             }
+
+             //如果级联不为空，code不可编辑
+             if(self.value!=null&&self.value!=""){
+                 $("#sysCode").attr("disabled",true);
+             }else{
+                 $("#sysCode").attr("disabled",false);
+             }
+
+         }
+
      </script>
+
+
 
      </body>
