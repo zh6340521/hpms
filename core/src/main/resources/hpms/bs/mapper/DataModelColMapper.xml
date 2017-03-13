@@ -16,28 +16,33 @@
         <result column="model_name" property="modelName" jdbcType="VARCHAR" />
     </resultMap>
 
+
     <!--查询字段名-->
     <select id="countColumnName" resultMap="BaseResultMap" parameterType="hpms.bs.dto.DataModelCol">
        SELECT dmc.model_col_id,
         dmc.column_name
-   FROM hpms_data_model_col dmc
+       FROM hpms_data_model_col dmc
 
-   <where>
-       1=1
-       <if test="modelColId!=null">
-           and dmc.model_col_id != #{modelColId,jdbcType=DECIMAL}
-       </if>
+       <where>
+           1=1
+           <if test="modelColId!=null">
+               and dmc.model_col_id != #{modelColId,jdbcType=DECIMAL}
+           </if>
 
-       <if test="columnName!=null">
-           and  dmc.column_name =#{columnName,jdbcType=VARCHAR}
-       </if>
+           <if test="columnName!=null">
+               and  dmc.column_name =#{columnName,jdbcType=VARCHAR}
+           </if>
 
-       <if test="modelId!=null">
-           and dmc.model_id=#{modelId,jdbcType=DECIMAL}
-       </if>
-   </where>
-
+           <if test="modelId!=null">
+               and dmc.model_id=#{modelId,jdbcType=DECIMAL}
+           </if>
+       </where>
     </select>
+
+
+
+
+
 
     <!--lov查询字段名-->
     <select id="findColumnNameForLov" resultMap="BaseResultMap" parameterType="hpms.bs.dto.DataModelCol">

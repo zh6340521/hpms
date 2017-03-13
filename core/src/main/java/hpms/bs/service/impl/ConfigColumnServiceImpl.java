@@ -13,6 +13,7 @@ import hpms.bs.mapper.ConfigMapper;
 import hpms.bs.mapper.ConfigValuesMapper;
 import hpms.bs.service.IConfigColumnService;
 import hpms.cache.ConfigCache;
+import hpms.utils.ValidationTableException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -63,18 +64,29 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
     private SqlSessionFactory sqlSessionFactory;
 
     //字段是必输时的显示字段
-    public final static String vaildate_message = "required";
+    public final static String vaildate_required_message = "1";
+    public final static String vaildate_unrequired_message = "2";
 
     private Logger logger = LoggerFactory.getLogger(ConfigColumnServiceImpl.class);
 
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void myBatchUpdate(IRequest requestCtx, List<ConfigColumn> cvs) {
+    public void myBatchUpdate(IRequest requestCtx, List<ConfigColumn> cvs) throws ValidationTableException {
         IBaseService self = (IBaseService) AopContext.currentProxy();
         for(ConfigColumn cc:cvs){
             cc.setLastUpdatedBy(requestCtx.getUserId());
             cc.setLastUpdateDate(new Date());
+
+            logger.info("当字符类型为list并且sqlid和快码code都不空时，抛出错误");
+            if(cc.getColumnStyle()=="LIST"||"LIST".equals(cc.getColumnStyle())){
+                if((cc.getSqlId()!=null&&!"".equals(cc.getSqlId()))&&(cc.getSysCode()!=null&&!"".equals(cc.getSysCode()))){
+                    logger.info("将这条记录删除，并抛出错误信息");
+                    cvs.remove(cc);
+                    throw new ValidationTableException("当字符样式为LIST时，Sql Id和快码CODE不能同时存在！", null);
+                }
+            }
+
 
             if(cc.getConfigColumnId()!=null){
                 self.updateByPrimaryKey(requestCtx,cc);
@@ -124,9 +136,9 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
                                 if(cc.getEnableFlag().equals("Y")||cc.getEnableFlag()=="Y"){
                                     logger.info("判断字符是否必输");
                                     if(cc.getRequiredFlag().equals("Y")||cc.getRequiredFlag()=="Y"){
-                                        cc.setVaildateMessage(vaildate_message);
+                                        cc.setVaildateMessage(vaildate_required_message);
                                     }else{
-                                        cc.setVaildateMessage("");
+                                        cc.setVaildateMessage(vaildate_unrequired_message);
                                     }
                                         ccList.add(cc);
 

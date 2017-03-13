@@ -7,6 +7,7 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.bs.dto.ConfigColumn;
 import hpms.bs.service.IConfigColumnService;
+import hpms.utils.ValidationTableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -70,7 +71,15 @@ public class ConfigColumnController extends BaseController {
             return rd;
         }
 
-        configColumnService.myBatchUpdate(requestCtx,cc);
+        try {
+            configColumnService.myBatchUpdate(requestCtx,cc);
+        } catch (ValidationTableException e) {
+            ResponseData rd = new ResponseData(false);
+            String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+                    RequestContextUtils.getLocale(request));
+            rd.setMessage(errorMessage);
+            return rd;
+        }
         return new ResponseData(cc);
     }
 
