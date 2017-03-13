@@ -42,6 +42,7 @@ public class InvoiceLineServiceImpl extends BaseServiceImpl<InvoiceLine> impleme
             invoiceLine.setInvoiceId(invoice.getInvoiceId());
             invoiceLineMapper.insertSelective(invoiceLine);
         }else{
+            invoice=invoiceLine.getInvoice();
             invoiceLineMapper.insertSelective(invoiceLine);
             invoice.setInvoiceId(invoiceLine.getInvoiceId());
             invoiceMapper.updateByPrimaryKeySelective(invoice);

@@ -27,11 +27,11 @@ public class InvoiceLine extends BaseDTO {
       @Column
       private String profitCenter;
       @Column
-      private Long lineAmount;
+      private Float lineAmount;
       @Column
       private String taxCode;
       @Column
-      private Long taxAmount;
+      private Float taxAmount;
       @Column
       private String description;
       @Column
@@ -116,11 +116,11 @@ public class InvoiceLine extends BaseDTO {
          return profitCenter;
      }
 
-     public void setLineAmount(Long lineAmount){
+     public void setLineAmount(Float lineAmount){
          this.lineAmount = lineAmount;
      }
 
-     public Long getLineAmount(){
+     public Float getLineAmount(){
          return lineAmount;
      }
 
@@ -132,11 +132,11 @@ public class InvoiceLine extends BaseDTO {
          return taxCode;
      }
 
-     public void setTaxAmount(Long taxAmount){
+     public void setTaxAmount(Float taxAmount){
          this.taxAmount = taxAmount;
      }
 
-     public Long getTaxAmount(){
+     public Float getTaxAmount(){
          return taxAmount;
      }
 

@@ -38,9 +38,9 @@ public class Invoice extends BaseDTO {
       @Column
       private String transType;
       @Column
-      private Long invoiceAmount;
+      private Float invoiceAmount;
       @Column
-      private Long taxAmount;
+      private Float taxAmount;
       @Column
       private String enableFlag;
       @Column
@@ -66,6 +66,26 @@ public class Invoice extends BaseDTO {
     private String paymentMethodName;
     @Transient
     private Long structureId;
+    @Transient
+    private String meaning1;
+    @Transient
+    private String meaning2;
+
+    public String getMeaning1() {
+        return meaning1;
+    }
+
+    public void setMeaning1(String meaning1) {
+        this.meaning1 = meaning1;
+    }
+
+    public String getMeaning2() {
+        return meaning2;
+    }
+
+    public void setMeaning2(String meaning2) {
+        this.meaning2 = meaning2;
+    }
 
     public Long getStructureId() {
         return structureId;
@@ -241,19 +261,19 @@ public class Invoice extends BaseDTO {
          return transType;
      }
 
-     public void setInvoiceAmount(Long invoiceAmount){
+     public void setInvoiceAmount(Float invoiceAmount){
          this.invoiceAmount = invoiceAmount;
      }
 
-     public Long getInvoiceAmount(){
+     public Float getInvoiceAmount(){
          return invoiceAmount;
      }
 
-     public void setTaxAmount(Long taxAmount){
+     public void setTaxAmount(Float taxAmount){
          this.taxAmount = taxAmount;
      }
 
-     public Long getTaxAmount(){
+     public Float getTaxAmount(){
          return taxAmount;
      }
 

@@ -1,6 +1,6 @@
 package hpms.fin.controllers;
 
-import hpms.fin.dto.InvoiceLine;
+
 import org.springframework.stereotype.Controller;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.core.IRequest;
@@ -28,7 +28,7 @@ import java.util.List;
     public ResponseData query(Invoice dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(service.select(requestContext,dto,page,pageSize));
+        return new ResponseData(service.queryInvoice(requestContext,dto,page,pageSize));
     }
 
     @RequestMapping(value = "/hpms/fin/invoice/submit")
@@ -53,8 +53,7 @@ import java.util.List;
         public ResponseData queryOccupation(HttpServletRequest request,@RequestBody Invoice dto){
 
             IRequest requestCtx = createRequestContext(request);
-            /*Invoice curinvoice=new Invoice();
-            curinvoice.setStructureId(dto);*/
+
             List<Invoice> invoices = new ArrayList<Invoice>();
             Invoice invoice = service.queryOccupation(requestCtx,dto);
             invoices.add(invoice);

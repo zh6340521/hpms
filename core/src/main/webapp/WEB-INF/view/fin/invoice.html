@@ -17,7 +17,7 @@
             }
         </style>
 
-        <script src="${base.contextPath}/common/code?invoiceClass=HPMS_INVOICE_CLASS" type="text/javascript"></script>
+        <script src="${base.contextPath}/common/code?invoiceClass=HPMS_AP_INVOICE_TYPE" type="text/javascript"></script>
         <script src="${base.contextPath}/common/code?transType=HPMS_TRANS_TYPE" type="text/javascript"></script>
         <script type="text/javascript">
 
@@ -828,9 +828,8 @@
                             var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
                             var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
                             var json = JSON.parse(invoiceLineMessage);
-
+                            jsonInvoiceHeader.invoiceAmount=-newViewModel.model.balance;
                             json.invoice=jsonInvoiceHeader;
-
                         }else{
                             var invoiceLineMessage = kendo.stringify(viewModel.model);
 
@@ -874,17 +873,19 @@
                             var invoiceLineMessage = kendo.stringify(viewModel.model);
                             var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
                             var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
+                            jsonInvoiceHeader.invoiceAmount=newViewModel.model.curbalance;
                             var json = JSON.parse(invoiceLineMessage);
-
                             json.invoice=jsonInvoiceHeader;
+
 
                         }else{
                             var invoiceLineMessage = kendo.stringify(viewModel.model);
                             var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
                             var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
                             var json = JSON.parse(invoiceLineMessage);
-
+                            jsonInvoiceHeader.invoiceAmount=newViewModel.model.curbalance;
                             json.invoice=jsonInvoiceHeader;
+
 
                         }
                     }

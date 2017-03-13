@@ -25,6 +25,10 @@
         <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
         <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR" />
         <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR" />
+        <result column="MEANING1" property="meaning1" jdbcType="VARCHAR" />
+        <result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
+        <result column="PAYMENT_TERM_NAME" property="paymentTermName" jdbcType="VARCHAR" />
+        <result column="PAYMENT_METHOD_NAME" property="paymentMethodName" jdbcType="VARCHAR" />
 
     </resultMap>
 
@@ -54,7 +58,9 @@
         HCO.PROPERTY_NAME,
         HCO.CUSTOMER_NAME,
         HMPT.PAYMENT_TERM_NAME,
-        HMPM.PAYMENT_METHOD_NAME
+        HMPM.PAYMENT_METHOD_NAME,
+        HCVV1.MEANING MEANING1,
+        HCVV2.MEANING MEANING2
 
         FROM HPMS_FIN_INVOICE HFI
         LEFT JOIN FND_COMPANY_B FCB
@@ -67,11 +73,31 @@
         ON HMPT.PAYMENT_TERM_ID = HFI.PAYMENT_TERM_ID
         LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
         ON HMPM.PAYMENT_METHOD_ID = HFI.PAYMENT_METHOD_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+        ON HCVV1.CODE = 'HPMS_AP_INVOICE_TYPE'
+        AND HCVV1.VALUE = HFI.INVOICE_TYPE
+        AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV2
+        ON HCVV2.CODE = 'HPMS_TRANS_TYPE'
+        AND HCVV2.VALUE = HFI.TRANS_TYPE
+        AND HCVV2.LANG = #{request.locale,jdbcType=VARCHAR}
 
         <where>
             1=1
             <if test="invoiceId!=null">
                 and HFI.INVOICE_ID = #{invoiceId,jdbcType=DECIMAL}
+            </if>
+            <if test="companyId!=null">
+                and HFI.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="projectId!=null">
+                and HFI.PROJECT_ID = #{projectId,jdbcType=DECIMAL}
+            </if>
+            <if test="customerName!=null">
+                and HCO.CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR}
+            </if>
+            <if test="propertyName!=null">
+                and HCO.PROPERTY_NAME = #{propertyName,jdbcType=VARCHAR}
             </if>
         </where>
 
