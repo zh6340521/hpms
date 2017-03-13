@@ -560,7 +560,7 @@
                                                 read:function(options) {
                                                     $.ajax({
                                                         type   : "POST",
-                                                        url: "/hpms/mdm/fee/query?enableFlag="+'Y',
+                                                        url: "${base.contextPath}/hpms/mdm/fee/query?enableFlag="+'Y',
                                                         data: {},
                                                         success: function(json) {
                                                             options.success(json.rows);
