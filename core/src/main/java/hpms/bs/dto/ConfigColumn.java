@@ -90,10 +90,24 @@ public class ConfigColumn extends BaseDTO {
     @Column
     private String columnStyle;
 
+    /**
+     * sqlId
+     */
+    @Column
+    private String sqlId;
+
     @Transient
     private String vaildateMessage;  //存放必输提示信息
     @Transient
     private int columnNumber;//字符编号
+
+    public String getSqlId() {
+        return sqlId;
+    }
+
+    public void setSqlId(String sqlId) {
+        this.sqlId = sqlId;
+    }
 
     public int getColumnNumber() {
         return columnNumber;

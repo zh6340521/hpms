@@ -9,6 +9,13 @@ import com.hand.hap.system.service.IBaseService;
 import hpms.mdm.dto.BpGeneral;
 import hpms.mdm.dto.Customer;
 
+/**
+ * @author huifang.zhou@hand-china.com
+ * @version 1.0
+ * @name IBpGeneralService
+ * @description：一般信息接口
+ * @date 2017/2/27
+ */
 public interface IBpGeneralService extends IBaseService<BpGeneral>,ProxySelf<IBpGeneralService>{
 	
 	public void submitBpGeneral(IRequest request,Customer customer);

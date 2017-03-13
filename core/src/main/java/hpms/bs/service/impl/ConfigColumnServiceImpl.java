@@ -13,17 +13,25 @@ import hpms.bs.mapper.ConfigMapper;
 import hpms.bs.mapper.ConfigValuesMapper;
 import hpms.bs.service.IConfigColumnService;
 import hpms.cache.ConfigCache;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.beans.PropertyDescriptor;
+import java.util.*;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -47,8 +55,15 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
     @Autowired
     private ConfigMapper configMapper;
 
+    @Autowired
+    private BeanFactory beanFactory;
+
+    @Autowired
+    @Qualifier("sqlSessionFactory")
+    private SqlSessionFactory sqlSessionFactory;
+
     //字段是必输时的显示字段
-    public final static String vaildate_message = "required validationMessage='必输'";
+    public final static String vaildate_message = "required";
 
     private Logger logger = LoggerFactory.getLogger(ConfigColumnServiceImpl.class);
 
@@ -127,6 +142,86 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
         }
 
         return ccList;
+    }
+
+    @Override
+    public List<?> selectDatas(IRequest request, String sqlId, Object obj) {
+
+        logger.info("调用spring的StringUtils工具类截取sqlId小数点前半部分并将首字母改成小写");
+        String beanName = StringUtils.uncapitalize(StringUtils.substringBefore(sqlId, "."));
+
+        logger.info("利用反射创建bean实例");
+        Object mapperObjectDelegate = beanFactory.getBean(beanName);
+        if (mapperObjectDelegate == null) {
+            return Collections.emptyList();
+        }
+
+        logger.info("获取该类的定义信息，然后使用反射去访问其全部信息(包括函数和字段)");
+        Class<?>[] interfaceClass = mapperObjectDelegate.getClass().getInterfaces();
+        for (Class c : interfaceClass) {
+            if (c.getSimpleName().equalsIgnoreCase(beanName)) {
+                sqlId = c.getPackage().getName() + "." + StringUtils.capitalize(sqlId);
+                break;
+            }
+        }
+        logger.info("打开sql会话");
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            obj = convertMapParamToDtoParam(sqlSession, sqlId, obj);
+
+            return sqlSession.selectList(sqlId, obj);
+        } catch (Throwable e) {
+            if (logger.isErrorEnabled()) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+
+    /**
+     * 将 map 类型的参数 转换为 dto 类型
+     *
+     * @param sqlSession
+     * @param sqlId
+     * @param map
+     * @return
+     */
+    private Object convertMapParamToDtoParam(SqlSession sqlSession, String sqlId, Object map) {
+        if (!(map instanceof Map)) {
+            logger.warn("lov query parameter is not a map:{}", map);
+            return map;
+        }
+        MappedStatement statement = sqlSession.getConfiguration().getMappedStatement(sqlId);
+        if (statement == null) {
+            logger.warn("no statement found for sqlId:{}", sqlId);
+            return map;
+        }
+        List<ResultMap> resultMaps = statement.getResultMaps();
+        if (resultMaps == null || resultMaps.isEmpty()) {
+            logger.warn("statement has no specified ResultMap, sqlId:{}", sqlId);
+            return map;
+        }
+        ResultMap resultMap = resultMaps.get(0);
+        try {
+            Class dtoClass = resultMap.getType();
+            Object dto = dtoClass.newInstance();
+            ((Map) map).forEach((k, v) -> {
+                try {
+                    PropertyDescriptor desc = PropertyUtils.getPropertyDescriptor(dto, (String) k);
+                    if (desc != null) {
+                        BeanUtils.setProperty(dto, (String) k, v);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            logger.debug("convert lov query parameter to {}", dto);
+            return dto;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     //将数据同步到redis

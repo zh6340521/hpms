@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -87,12 +88,43 @@ public class ConfigColumnController extends BaseController {
         return new ResponseData();
     }
 
+    /**
+     * 从缓存中查询数据
+     * @param configValueId
+     * @param configId
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/bs/configcolumn/queryByCache")
     @ResponseBody
     public ResponseData queryByCache(Long configValueId,Long configId,HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         List<ConfigColumn> ccList = configColumnService.findConfigColumnByCache(requestContext,configValueId,configId);
         return new ResponseData(ccList);
+    }
+
+    /**
+     *
+     * @param configColumnId
+     * @param params
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/configcolumn/code/queryBySqlId")
+    @ResponseBody
+    public ResponseData getDatas(Long configColumnId, @RequestParam Map<String, String> params,
+                                    HttpServletRequest request) {
+        String sqlId = "";
+        IRequest requestContext = createRequestContext(request);
+        ConfigColumn cc = new ConfigColumn();
+        cc.setConfigColumnId(configColumnId);
+
+        List<ConfigColumn> ccList = configColumnService.select(requestContext,cc,1,10);
+        if(!ccList.isEmpty()&&ccList.size()!=0){
+            ConfigColumn c1= ccList.get(0);
+            sqlId = c1.getSqlId();
+        }
+        return new ResponseData(configColumnService.selectDatas(requestContext, sqlId, params));
     }
 
 }

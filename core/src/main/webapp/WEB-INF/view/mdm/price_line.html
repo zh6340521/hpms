@@ -90,7 +90,6 @@
 		        viewModel.queryResource(e);
 		    }
 		});
-		
 		$("#feeTypeId").kendoComboBox({
 		  valuePrimitive: true,
 		  dataTextField: "feeTypeName",
@@ -151,8 +150,7 @@
 		var dataSource = new kendo.data.DataSource({
 	        transport   : {
 	            read        : {
-	                url     : _basePath+"/mdm/priceLine/priceLineQuery",
-	                data	: {priceHeaderId:priceHeaderId},
+	                url     : _basePath+"/mdm/priceLine/priceLineQuery?priceHeaderId="+priceHeaderId,
 	                type    : "POST",
 	                dataType: "json"
 	            },

@@ -1,5 +1,7 @@
 package hpms.fin.service.impl;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -139,7 +141,8 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 		PriceLine priceLine = new PriceLine();
 		priceLine.setFeeId(feeListNew.getFeeId());
 		priceLine = priceLineMapper.selectOne(priceLine);
-		if(priceLine.getUnitPrice()>0){
+		if(priceLine!=null&&priceLine.getUnitPrice()>0){
+			StringBuffer sb = new StringBuffer();
 			VersionStructure versionStructure1 = new VersionStructure();
 			versionStructure1.setVersionId(feeListNew.getVersionId());
 			List<VersionStructure> versionStructures = versionStructureMapper.queryVersionStructure(versionStructure1);
@@ -176,6 +179,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 				occupation.setPropertyId(versionStructure3.getPropertyId());
 				List<Occupation> occupations = occupationMapper.select(occupation);
 				if(occupations.size()<=0){
+					sb.append(versionStructure3.getStructureName()+",");
 					continue;
 				}else{
 					for (int i = 0; i < occupations.size(); i++) {
@@ -187,6 +191,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					if(occupation.getStatus().equals("IN")){
 						versionStructures4.add(versionStructure3);
 					}else{
+						sb.append(versionStructure3.getStructureName()+",");
 						continue;
 					}
 				}
@@ -211,8 +216,10 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					List<FeeList> feeLists2 = feeListMapper.select(feeList2);
 					if(feeLists2.size()>0){
 						for (int i = 0; i < feeLists2.size(); i++) {
-							feeList2 = feeLists2.get(0);
-							if(feeLists2.get(i).getCreationDate().after(feeList2.getCreationDate())){
+							if(i == 0){
+								feeList2 = feeLists2.get(0);
+							}
+							if(feeLists2.get(i).getDateTo().after(feeList2.getDateTo())){
 								feeList2 = feeLists2.get(i);
 							}
 						}
@@ -234,11 +241,13 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 							if(i==0){
 								feeList.setAccruedDate(cal.getTime());
 								feeList.setDateTo(getMaxMonthDate(cal.getTime()));
-								feeList.setFeePeriod(df.parse(cal.getTime().toString()).toString());
+								feeList.setFeePeriod(df.format(cal.getTime()));
 							}else{
-								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()));
-								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo())));
-								feeList.setFeePeriod(df.parse(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()).toString()).toString());
+								Calendar cal1 = Calendar.getInstance();
+								cal1.setTime(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo())));
+								feeList.setFeePeriod(df.format(cal1.getTime()));
 							}
 							feeList.setFeeTypeId(feeListNew.getFeeTypeId());//赋值项目类型和收费项目
 							FeeType feeType = new FeeType();
@@ -265,10 +274,20 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 							codeValue.setCodeId(code.getCodeId());
 							codeValue = codeValueMapper.selectOne(codeValue);
 							feeList.setTransTypeName(codeValue.getMeaning());
-							feeList.setAdjAmount(Float.parseFloat("0"));
-							feeList.setOverduePayment(Float.parseFloat("0"));
+							feeList.setAdjAmount(Float.parseFloat("0.00"));
+							feeList.setOverduePayment(Float.parseFloat("0.00"));
 							if(fee.getBillingMethod().equals("FIXED")){
-								feeList.setGrossAmount(feeList.getUnitPrice()*Long.parseLong("1"));
+								Calendar cal2 = Calendar.getInstance();
+								cal2.setTime(feeList.getAccruedDate());
+								Calendar cal3 = Calendar.getInstance();
+								cal3.setTime(feeList.getDateTo());
+								SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
+								if(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime())).equals(temp(df1.format(cal2.getTime()))-1)){
+									feeList.setGrossAmount(feeList.getUnitPrice()*Long.parseLong("1"));
+								}else{
+									BigDecimal b = new BigDecimal((feeList.getUnitPrice()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+									feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+								}
 							}else if(fee.getBillingMethod().equals("CALCULATED")){
 								if(fee.getFeeName().equals("物业费")){
 									CalculateRule calculateRule = new CalculateRule(); 
@@ -277,23 +296,44 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 									CalRuleLine calRuleLine = new CalRuleLine();
 									calRuleLine.setCalculateRuleId(calculateRule.getCalculateRuleId());
 									List<CalRuleLine> calRuleLines = calRuleLineMapper.select(calRuleLine);
+									Calendar cal2 = Calendar.getInstance();
+									cal2.setTime(feeList.getAccruedDate());
+									Calendar cal3 = Calendar.getInstance();
+									cal3.setTime(feeList.getDateTo());
+									SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
 									for (CalRuleLine calRuleLine2 : calRuleLines) {
 										CalculateElement calculateElement = new CalculateElement(); 
 										calculateElement.setCalculateElementId(calRuleLine2.getCalculateElementId());
 										calculateElement = calculateElementMapper.selectOne(calculateElement);
-										if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
-											feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1"));
-											break;
-										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
-											feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1"));
-											break;
-										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
-											feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1"));
-											break;
+										if(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime())).equals(temp(df1.format(cal2.getTime()))-1)){
+											if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+												feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1"));
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+												feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1"));
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+												feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1"));
+												break;
+											}
+										}else{
+											if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+												BigDecimal b = new BigDecimal((feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+												feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+												BigDecimal b = new BigDecimal((feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+												feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+												BigDecimal b = new BigDecimal((feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+												feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+												break;
+											}
 										}
 									}
 								}else{
-									throw new ValidationTableException("收费项目未定价", null);
+									throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 								}
 							}
 							feeList.setTotalAmount(feeList.getGrossAmount());
@@ -312,15 +352,19 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 							feeList.setFeeStatusName("新建");
 							feeList.setOccupationId(occupation.getOccupationId());//收费对象
 							feeList.setCustomerName(occupation.getCustomerName());//客户名称
+							Calendar cal = Calendar.getInstance();
 							SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
+							cal.setTime(occupation.getFeeDate());
 							if(i==0){
 								feeList.setAccruedDate(occupation.getFeeDate());
 								feeList.setDateTo(getMaxMonthDate(occupation.getFeeDate()));
-								feeList.setFeePeriod(df.parse(occupation.getFeeDate().toString()).toString());
+								feeList.setFeePeriod(df.format(cal.getTime()));
 							}else{
-								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()));
-								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo())));
-								feeList.setFeePeriod(df.parse(getPerFirstDayOfMonth(feeLists.get(i-1).getDateTo()).toString()).toString());
+								Calendar cal1 = Calendar.getInstance();
+								cal1.setTime(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setAccruedDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo()));
+								feeList.setDateTo(getMaxMonthDate(getPerFirstDayOfMonth(feeLists.get(feeLists.size()-1).getDateTo())));
+								feeList.setFeePeriod(df.format(cal1.getTime()));
 							}
 							feeList.setFeeTypeId(feeListNew.getFeeTypeId());//赋值项目类型和收费项目
 							FeeType feeType = new FeeType();
@@ -347,10 +391,20 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 							codeValue.setCodeId(code.getCodeId());
 							codeValue = codeValueMapper.selectOne(codeValue);
 							feeList.setTransTypeName(codeValue.getMeaning());
-							feeList.setAdjAmount(Float.parseFloat("0"));
-							feeList.setOverduePayment(Float.parseFloat("0"));
+							feeList.setAdjAmount(Float.parseFloat("0.00"));
+							feeList.setOverduePayment(Float.parseFloat("0.00"));
 							if(fee.getBillingMethod().equals("FIXED")){
-								feeList.setGrossAmount(feeList.getUnitPrice()*Long.parseLong("1"));
+								Calendar cal2 = Calendar.getInstance();
+								cal2.setTime(feeList.getAccruedDate());
+								Calendar cal3 = Calendar.getInstance();
+								cal3.setTime(feeList.getDateTo());
+								SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
+								if(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime())).equals(temp(df1.format(cal2.getTime()))-1)){
+									feeList.setGrossAmount(feeList.getUnitPrice()*Long.parseLong("1"));
+								}else{
+									BigDecimal b = new BigDecimal((feeList.getUnitPrice()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+									feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+								}
 							}else if(fee.getBillingMethod().equals("CALCULATED")){
 								if(fee.getFeeName().equals("物业费")){
 									CalculateRule calculateRule = new CalculateRule(); 
@@ -359,23 +413,45 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 									CalRuleLine calRuleLine = new CalRuleLine();
 									calRuleLine.setCalculateRuleId(calculateRule.getCalculateRuleId());
 									List<CalRuleLine> calRuleLines = calRuleLineMapper.select(calRuleLine);
+									Calendar cal2 = Calendar.getInstance();
+									cal2.setTime(feeList.getAccruedDate());
+									Calendar cal3 = Calendar.getInstance();
+									cal3.setTime(feeList.getDateTo());
+									SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
 									for (CalRuleLine calRuleLine2 : calRuleLines) {
 										CalculateElement calculateElement = new CalculateElement(); 
 										calculateElement.setCalculateElementId(calRuleLine2.getCalculateElementId());
 										calculateElement = calculateElementMapper.selectOne(calculateElement);
-										if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
-											feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1"));
-											break;
-										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
-											feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1"));
-											break;
-										}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
-											feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1"));
-											break;
+										if(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime())).equals(temp(df1.format(cal2.getTime()))-1)){
+											if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+												feeList.setGrossAmount(feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1"));
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+												feeList.setGrossAmount(feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1"));
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+												feeList.setGrossAmount(feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1"));
+												break;
+											}
+										}else{
+											if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("ROOM_AREA")){
+												BigDecimal b = new BigDecimal((feeList.getUnitPrice()*property.getRoomArea()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+												feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("USE_AREA")){
+												BigDecimal b = new BigDecimal((feeList.getUnitPrice()*property.getUseArea()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+												feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+												break;
+											}else if(calculateElement.getTableName().equals("HPMS_MDM_PROPERTY")&&calculateElement.getColumnName().equals("FEE_AREA")){
+												BigDecimal b = new BigDecimal((feeList.getUnitPrice()*property.getFeeArea()*Long.parseLong("1")*(daysBetween(df1.format(cal2.getTime()),df1.format(cal3.getTime()))/temp(df1.format(cal2.getTime())))));
+												feeList.setGrossAmount(b.setScale(2,BigDecimal.ROUND_HALF_UP).floatValue());
+												break;
+											}
 										}
+										
 									}
 								}else{
-									throw new ValidationTableException("收费项目未定价", null);
+									throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 								}
 							}
 							feeList.setTotalAmount(feeList.getGrossAmount());
@@ -405,29 +481,12 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					}
 					feeList.setOccupationId(occupation.getOccupationId());//收费对象
 					feeList.setCustomerName(occupation.getCustomerName());//客户名称
-					FeeList feeList2 = new FeeList();
-					feeList2.setOccupationId(occupation.getOccupationId());
-					List<FeeList> feeLists2 = feeListMapper.select(feeList2);
-					if(feeLists2.size()>0){
-						for (int i = 0; i < feeLists2.size(); i++) {
-							feeList2 = feeLists2.get(0);
-							if(feeLists2.get(i).getCreationDate().after(feeList2.getCreationDate())){
-								feeList2 = feeLists2.get(i);
-							}
-						}
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(feeList2.getDateTo());
-						cal.add(Calendar.DATE, 1);
-						feeList.setAccruedDate(cal.getTime());
-						feeList.setDateTo(cal.getTime());
-						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
-						feeList.setFeePeriod(df.parse(cal.getTime().toString()).toString());
-					}else{
-						feeList.setAccruedDate(occupation.getFeeDate());
-						feeList.setDateTo(occupation.getFeeDate());
-						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
-						feeList.setFeePeriod(df.parse(occupation.getFeeDate().toString()).toString());
-					}
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(feeListNew.getFeeListDate());
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
+					feeList.setAccruedDate(feeListNew.getFeeListDate());
+					feeList.setDateTo(feeListNew.getFeeListDate());
+					feeList.setFeePeriod(df.format(cal.getTime()));
 					feeList.setFeeTypeId(feeListNew.getFeeTypeId());//赋值项目类型和收费项目
 					FeeType feeType = new FeeType();
 					feeType.setFeeTypeId(feeListNew.getFeeTypeId());
@@ -458,8 +517,8 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 					}else{
 						feeList.setFeeQuantity(Long.parseLong("1"));
 					}
-					feeList.setAdjAmount(Float.parseFloat("0"));
-					feeList.setOverduePayment(Float.parseFloat("0"));
+					feeList.setAdjAmount(Float.parseFloat("0.00"));
+					feeList.setOverduePayment(Float.parseFloat("0.00"));
 					if(fee.getBillingMethod().equals("FIXED")){
 						feeList.setGrossAmount(feeList.getUnitPrice()*feeList.getFeeQuantity());
 					}else if(fee.getBillingMethod().equals("CALCULATED")){
@@ -486,7 +545,7 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 								}
 							}
 						}else{
-							throw new ValidationTableException("收费项目未定价", null);
+							throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 						}
 					}
 					feeList.setTotalAmount(feeList.getGrossAmount());
@@ -495,9 +554,16 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
 				}
 			}
 			returnList.clear();
+			if(feeLists.size()>0){
+				if(sb.length()>0){
+					feeLists.get(0).setBeff(sb.toString().substring(0, sb.toString().length()-1));
+				}
+			}else{
+				throw new ValidationTableException("hpms.fin.feelist.was_not_found_on_board_room", null);
+			}
 			return feeLists;
 		}else{
-			throw new ValidationTableException("收费项目未定价", null);
+			throw new ValidationTableException("hpms.fin.feelist.charging_projects_not_pricing", null);
 		}
 	}
 	
@@ -548,11 +614,49 @@ public class FeeListServiceImpl extends BaseServiceImpl<FeeList> implements IFee
        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
        return calendar.getTime();
    }
+   /**
+   *
+   * 描述:获取两个日期相差的天数
+   * @param smdate
+   * @param bdate
+   * @return
+   */
+   public static Float daysBetween(String smdate,String bdate) throws ParseException{  
+       SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");  
+       Calendar cal = Calendar.getInstance();    
+       cal.setTime(sdf.parse(smdate));    
+       long time1 = cal.getTimeInMillis();                 
+       cal.setTime(sdf.parse(bdate));    
+       long time2 = cal.getTimeInMillis();         
+       long between_days=(time2-time1)/(1000*3600*24);  
+           
+      return Float.parseFloat(String.valueOf(between_days));     
+   }
+   /**
+   *
+   * 描述:获取当前月的天数
+   * @param YYMMdd
+   * @return
+   */
+   public static Float temp(String YYMMdd) throws ParseException{   
+	   String strDate = YYMMdd;
+	   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+	   Calendar calendar = Calendar.getInstance();   
+	   Date date = sdf.parse(strDate); 
+	   calendar.setTime(date);   
+	   int day = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);   
+	   return Float.parseFloat(String.valueOf(day));
+
+	}
 
 	@Override
 	public void feeListSubmit(IRequest requestContext, List<FeeList> feeLists) {
 		for (FeeList feeList : feeLists) {
+			Date date = new Date();
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSS");
+	        String formDate =sdf.format(date);
 			feeList.setFeeStatus("CREATED");
+			feeList.setFeeListCode(formDate);
 			feeListMapper.insertSelective(feeList);
 		}
 	}

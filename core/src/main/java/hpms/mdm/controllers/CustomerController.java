@@ -62,8 +62,13 @@ public class CustomerController extends BaseController{
  @ResponseBody
  public ResponseData updateByEnableFlag(HttpServletRequest request,Customer customer) {
          IRequest requestContext = createRequestContext(request);
-         customer.setEnableFlag("N");
-         customerService.updateByEnableFlag(requestContext, customer);
+         String flag = customerService.queryByEnableFlag(customer.getCustomerId());
+         if ("Y".equals(flag)) {
+			customer.setEnableFlag("N");
+		} else {
+			customer.setEnableFlag("Y");
+		}
+         customerService.updateByPrimaryKeySelective(requestContext, customer);
          return new ResponseData();
 	
  }

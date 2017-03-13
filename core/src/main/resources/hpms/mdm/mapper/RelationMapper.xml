@@ -16,18 +16,16 @@
     </resultMap>
 
     <!-- 查询紧急联系人是否存在-->
-    <select id="selectByCountIcmFlag" resultType="int"
-		parameterType="hpms.mdm.dto.Relation">
+    <select id="selectByCountIcmFlag" resultType="int"  parameterType="java.lang.Integer">
         select count(0)
   from hpms_mdm_relation hmr
   left join hpms_mdm_bp_general hmbg
     on hmr.from_bp_id = hmbg.bp_id
  <where>
-   1=1
-    <if test="fromBpId != null">
-        and hmr.from_bp_id =  #{fromBpId,jdbcType=VARCHAR}
+   1=1  and hmr.icm_flag = 1
+    <if test="fromBpId!=null">
+        and hmr.from_bp_id =  #{fromBpId}
     </if>
-   and hmr.icm_flag = 1
  </where> 
     </select>
     <!-- 查询该联系人是否建立过关系 -->

@@ -36,7 +36,7 @@
     });
 
     function newData() {
-    	parent.openTab('fee_list','应收费用清单新建','fin/fee_list_create.html?isedit=0')
+    	parent.openTab('fee_list',"<@spring.message 'hpms.fin.feelist.fee_list_create'/>",'fin/fee_list_create.html?isedit=0')
     };
 	</script>
 <div id="page-content">
@@ -76,7 +76,7 @@
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">交易类型</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.invoice.transtype'/></label>
 				    <div class="col-md-7">
 				    	<input id="transType" name="transType" data-bind="value:model.transType" style="width: 90%;"/>
 				    </div>
@@ -84,7 +84,7 @@
 			</div>
 			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">计费明细编号</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.feelistcode'/></label>
 				    <div class="col-md-7">
 				        <input type="text" class="k-textbox" name="feeListCode"  data-bind="value:model.feeListCode" style="width: 90%;"/> 
 				    </div>
@@ -98,7 +98,7 @@
 			</div>
 			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">计费期间</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.feeperiod'/></label>
 				    <div class="col-md-3">
 				    	<input id="accruedDate" data-role="datepicker" data-bind="value:model.accruedDate" style="width: 140%;"/>
 				    </div>
@@ -115,8 +115,8 @@
 	<script>kendo.bind($('#fee_list_form'), viewModel);</script>
 	<div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
         <span  onclick="newData()" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.new"/></span>
-        <span  onclick="updateData('REVOCATION')" class="btn btn-primary" style="float:left;margin-right:5px;">撤销</span>
-        <span  onclick="updateData('WITHDRAWING')" class="btn btn-primary" style="float:left;margin-right:5px;">计提</span>
+        <span  onclick="updateData('REVOCATION')" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hpms.fin.feelist.undo"/></span>
+        <span  onclick="updateData('WITHDRAWING')" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hpms.fin.feelist.provision"/></span>
         <span  data-bind="click:queryResource" class="btn btn-primary" style="float:left;"><@spring.message "hap.query"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
@@ -124,19 +124,19 @@
 		<form class="form-horizontal" id="pool_form2" role="form" style="margin-top: 5px;">
 			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">计提总额</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.provision_amount'/></label>
 				    <div class="col-md-7">
 				    	<input id = "grossAmount" type="text" class="k-textbox" name="grossAmount" data-bind="value:model.grossAmount" style="width: 90%;"/>
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">折扣总额</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.adjtotal'/></label>
 					<div class="col-md-7">
 						<input id = "adjAmount" type="text" class="k-textbox" name="adjAmount" data-bind="value:model.adjAmount" style="width: 90%;"/>
 					</div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">应收总额</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.amount'/></label>
 				    <div class="col-md-7">
 				      <input id = "amount" type="text" class="k-textbox" name="amount"  data-bind="value:model.amount" style="width: 90%;">
 				    </div>
@@ -144,19 +144,20 @@
 			</div>
 			<div class="row">
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">计提日期</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.counteddate'/></label>
 				    <div class="col-md-7">
 				        <input data-role="datepicker" name="countedDate"  data-bind="value:model.countedDate" style="width: 90%;"/> 
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<label class="col-md-5 control-label">备注</label>
+					<label class="col-md-5 control-label"><@spring.message 'hpms.fin.feelist.remark'/></label>
 				    <div class="col-md-7">
 				    	<input type="text" class="k-textbox" name="remark" data-bind="value:model.remark" style="width: 90%;"/>
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
-					<span  onclick="updateData2('WITHDRAWING')" class="btn btn-primary" style="float:left;margin-right:5px;">确定</span>
+					<span  onclick="updateData2('WITHDRAWING')" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.ok"/></span>
+					<span  onclick="cancel()" class="btn btn-primary" style="float:left;margin-right:5px;"><@spring.message "hap.cancel"/></span>
 				</div>
 			</div>
 		</form>
@@ -172,6 +173,10 @@
 		$("#grossAmount").attr("readonly",true).css("background", "#DDDDDD");
 		$("#adjAmount").attr("readonly",true).css("background", "#DDDDDD");
 		$("#amount").attr("readonly",true).css("background", "#DDDDDD");
+		
+		function cancel(){
+			$("#fee_list_form2").hide();
+		}
 		
 		$('#fee_list_form input').keydown(function (e) {
 		    if (e.keyCode == 13) {
@@ -308,7 +313,42 @@
 	                    var datas = Hap.prepareSubmitParameter(options, type)
 	                    return kendo.stringify(datas);
 	                } else if (type === "read") {
-	                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+	                	var model = viewModel.model.toJSON();
+	                    var map = {};
+	                    if(model.companyId){
+	                        map.companyId = model.companyId;
+	                    }
+	                    if(model.projectId){
+	                        map.projectId = model.projectId
+	                    }
+	                    if(model.propertyName){
+	                        map.propertyName = model.propertyName
+	                    }
+	                    if(model.propertyNumber){
+	                        map.propertyNumber = model.propertyNumber
+	                    }
+	                    if(model.feeTypeId){
+	                        map.feeTypeId = model.feeTypeId
+	                    }
+	                    if(model.transType){
+	                        map.transType = model.transType
+	                    }
+	                    if(model.feeListCode){
+	                        map.feeListCode = model.feeListCode
+	                    }
+	                    if(model.feeStatus){
+	                        map.feeStatus = model.feeStatus
+	                    }
+	                    if(model.num){
+	                        map.num = model.num
+	                    }
+	                    if(model.accruedDate){
+	                        map.accruedDate = new Date(model.accruedDate);
+	                    }
+	                    if(model.accruedDate2){
+	                        map.accruedDate2 = new Date(model.accruedDate2);
+	                    }
+	                    return map;
 	                }
 	            }
 	        },
@@ -352,7 +392,7 @@
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "feeListCode",
-                title      : "计费明细编号", 
+                title      : "<@spring.message 'hpms.fin.feelist.feelistcode'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
@@ -368,12 +408,12 @@
               
 	        },{
 	        	field      : "customerName",
-                title      : "所属客户", 
+                title      : "<@spring.message 'hpms.fin.feelist.customer'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "feePeriod",
-                title      : "计费期间", 
+                title      : "<@spring.message 'hpms.fin.feelist.feeperiod'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
@@ -388,100 +428,100 @@
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "transTypeName",
-                title      : "交易类型", 
+                title      : "<@spring.message 'hpms.fin.invoice.transtype'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "unitPrice",
-                title      : "单价", 
+                title      : "<@spring.message 'hpms.mdm.priceline.unitprice'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "feeQuantity",
-                title      : "数量", 
+                title      : "<@spring.message 'hpms.fin.feelist.quantity'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "currencyType",
-                title      : "币种", 
+                title      : "<@spring.message 'hpms.mdm.priceline.currency'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "segmentFlag",
-                title      : "峰度", 
+                title      : "<@spring.message 'hpms.fin.feelist.segmentflag'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "presentRecord",
-                title      : "本次抄表数", 
+                title      : "<@spring.message 'hpms.fin.feelist.presentrecord'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "lastRecord",
-                title      : "上次抄表数", 
+                title      : "<@spring.message 'hpms.fin.feelist.lastrecord'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "grossAmount",
-                title      : "总价", 
+                title      : "<@spring.message 'hpms.fin.feelist.grossamount'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "adjAmount",
-                title      : "折扣", 
+                title      : "<@spring.message 'hpms.fin.feelist.adjamount'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "overduePayment",
-                title      : "违约金", 
+                title      : "<@spring.message 'hpms.fin.feelist.overduepayment'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "totalAmount",
-                title      : "应收合计", 
+                title      : "<@spring.message 'hpms.fin.feelist.totalamount'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "accruedDate",
-                title      : "计费日期起", 
+                title      : "<@spring.message 'hpms.fin.feelist.accrueddate'/>", 
                 width      : 120,
                 format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "dateTo",
-                title      : "计费日期止", 
+                title      : "<@spring.message 'hpms.fin.feelist.dateto'/>", 
                 width      : 120,
                 format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "remark",
-                title      : "备注", 
+                title      : "<@spring.message 'hpms.fin.feelist.remark'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "dataSource",
-                title      : "数据来源", 
+                title      : "<@spring.message 'hpms.fin.feelist.datasource'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "referenceNumber",
-                title      : "参考编号", 
+                title      : "<@spring.message 'hpms.fin.feelist.referencenumber'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "payPartRepair",
-                title      : "维修单结算方", 
+                title      : "<@spring.message 'hpms.fin.feelist.paypartrepair'/>", 
                 width      : 120,
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "generateDate",
-                title      : "生成日期", 
+                title      : "<@spring.message 'hpms.fin.feelist.generatedate'/>", 
                 width      : 120,
                 format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
 	        },{
 	        	field      : "countedDate",
-                title      : "计提日期", 
+                title      : "<@spring.message 'hpms.fin.feelist.counteddate'/>", 
                 width      : 120,
                 format: "{0:yyyy-MM-dd}",
                 attributes  : {style: "text-align:center"}
@@ -504,10 +544,10 @@
                  }
                  if(operation=="WITHDRAWING"){
 	    		 	$.each(checked,function(i,v){
-	    		 		if(v.feeStatus=="CANCELLED"){
+	    		 		if(v.feeStatus!="CREATED"){
 	    		 			kendo.ui.showInfoDialog({
                                 title:$l('hap.tip.info'),
-                                message:"已撤销的单子不能进行计提操作，请重新选择！"
+                                message:"<@spring.message 'hpms.fin.feelist.status_error'/>"
                             })
                             return;
 	    		 		}else{

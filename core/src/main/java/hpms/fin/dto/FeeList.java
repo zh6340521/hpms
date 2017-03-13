@@ -1,18 +1,12 @@
 package hpms.fin.dto;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.activiti.rest.common.util.DateToStringSerializer;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.hand.hap.system.dto.BaseDTO;
+import org.activiti.rest.common.util.DateToStringSerializer;
+
+import javax.persistence.*;
+import java.util.Date;
 /**
  * 
  * @name FeeList
@@ -21,7 +15,7 @@ import com.hand.hap.system.dto.BaseDTO;
  * @version 1.0
  */
 @Table(name = "hpms_fin_fee_list")
-public class FeeList extends BaseDTO{
+public class FeeList extends BaseDTO implements Comparable<FeeList>{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@Column
@@ -64,9 +58,9 @@ public class FeeList extends BaseDTO{
 	@Column
 	private String segmentFlag;//峰度
 	@Column
-	private Long lastRecord;//上次抄表数
+	private Float lastRecord;//上次抄表数
 	@Column
-	private Long presentRecord;//本次抄表数
+	private Float presentRecord;//本次抄表数
 	@Column
 	private Float grossAmount;//总额
 	@Column
@@ -111,6 +105,8 @@ public class FeeList extends BaseDTO{
 	@JsonFormat(pattern="yyyy-MM-dd")
 	@JsonSerialize(using = DateToStringSerializer.class, as = Date.class)
 	private Date countedDate;//计提日期
+	@Transient
+	private String beff;
 	public Long getFeeListId() {
 		return feeListId;
 	}
@@ -225,16 +221,16 @@ public class FeeList extends BaseDTO{
 	public void setSegmentFlag(String segmentFlag) {
 		this.segmentFlag = segmentFlag;
 	}
-	public Long getLastRecord() {
+	public Float getLastRecord() {
 		return lastRecord;
 	}
-	public void setLastRecord(Long lastRecord) {
+	public void setLastRecord(Float lastRecord) {
 		this.lastRecord = lastRecord;
 	}
-	public Long getPresentRecord() {
+	public Float getPresentRecord() {
 		return presentRecord;
 	}
-	public void setPresentRecord(Long presentRecord) {
+	public void setPresentRecord(Float presentRecord) {
 		this.presentRecord = presentRecord;
 	}
 	public Float getGrossAmount() {
@@ -339,5 +335,15 @@ public class FeeList extends BaseDTO{
 	public void setCountedDate(Date countedDate) {
 		this.countedDate = countedDate;
 	}
-	
+	public String getBeff() {
+		return beff;
+	}
+	public void setBeff(String beff) {
+		this.beff = beff;
+	}
+
+	@Override
+	public int compareTo(FeeList o) {
+		return this.totalAmount.compareTo(o.getTotalAmount());
+	}
 }
