@@ -39,6 +39,13 @@ public class MeterChargeController extends BaseController{
     @ResponseBody
     public ResponseData update(HttpServletRequest request, @RequestBody List<MeterCharge> dto, BindingResult result) {
         IRequest requestCtx = createRequestContext(request);
+
+        if(meterChargeService.isHaveEn(dto.get(0)) == false){
+            ResponseData responseData = new ResponseData();
+            responseData.setMessage("同一公司项目下某一种仪表类型的计费规则只允许一条为启用!");
+            responseData.setSuccess(false);
+            return responseData;
+        }
         if (result.hasErrors()) {
             ResponseData rd = new ResponseData(false);
             rd.setMessage(getErrorMessage(result, request));
