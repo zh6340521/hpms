@@ -46,6 +46,10 @@
                     equipmentTypeparent1.append('<span style="color: #ff0000">*</span>');
                     var equipmentNameparent = $("input[name='equipmentName']").parent();
                     equipmentNameparent.append('<span style="color: #ff0000">*</span>');
+                    newViewModel.model.set('equipmentUom','PINGMI');
+                    newViewModel.model.set('equipmentSignificance','A');
+                    newViewModel.model.set('equipmentStatus','A');
+                    newViewModel.model.set('maintenanceType','A');
                 });
             }
 
@@ -345,17 +349,18 @@
                         <script>
                             $("#metering").kendoDropDownList({
 
-                            optionLabel: "--请选择--",
-                            dataTextField: "meaning",
-                            template: function(dataItem){
-                                return dataItem['meaning'] || ''
-                            },
-                            dataValueField: "value",
-                            dataSource: uom,
-                            select : function(e){
-                                var dataItem = this.dataItem(e.item);
-                                newViewModel.model.set('equipmentUom',dataItem.value);
-                            }
+                                optionLabel: "--请选择--",
+                                dataTextField: "meaning",
+                                template: function(dataItem){
+                                    return dataItem['meaning'] || ''
+                                },
+                                dataValueField: "value",
+                                dataSource: uom,
+                                index:0,
+                                select : function(e){
+                                    var dataItem = this.dataItem(e.item);
+                                    newViewModel.model.set('equipmentUom',dataItem.value);
+                                }
                    	      	                      
                         }).data("kendoDropDownList"); 
                         kendo.bind($('#metering'), newViewModel);</script>
