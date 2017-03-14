@@ -130,6 +130,8 @@
                         //$("input[name='parentEquipment']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
                         $("#parentEquipment").data("kendoLov").enable(false);
                         $("#selectPosition").prop("onclick",null).off("click");
+                        //$("#clearPosition").prop("onclick",null).off("click");
+
                     });
 
 
@@ -775,9 +777,9 @@
 		            <span id="versionLov" class="k-widget k-lov k-header" style="width: 92%";>
 					      <span id="hoverLov" tabindex="-1" unselectable="on" class="k-dropdown-wrap k-state-default">
 					          <input id="structureName" data-bind="value:model.structureName" class="k-input" type="text" autocomplete="off" title="" role="lov" aria-expanded="false"  readonly="readonly" style="width: 100%;">
-					              <span unselectable="on" onclick="clearVersion()" class="k-icon k-i-close" title="clear" role="button" tabindex="-1">
+					              <span id="clearPosition" unselectable="on" onclick="clearVersion()" class="k-icon k-i-close" title="clear" role="button" tabindex="-1">
 					              </span>
-					          <span unselectable="on" class="k-select" aria-label="select" role="button" tabindex="-1" onclick="newTree()">
+					          <span id="selectPosition" unselectable="on" class="k-select" aria-label="select" role="button" tabindex="-1" onclick="newTree()">
 						           <span class="k-icon k-i-search">
 						           </span>
 					          </span>
@@ -852,13 +854,16 @@
    }  
 </style>
 <script>
-    $("#versionLov").mouseover(function(){
-        $("#hoverLov").addClass("k-state-hover");
-    });
+    if(!islook){
+        $("#versionLov").mouseover(function(){
+            $("#hoverLov").addClass("k-state-hover");
+        });
 
-    $("#versionLov").mouseleave(function(){
-        $("#hoverLov").removeClass("k-state-hover");
-    });
+        $("#versionLov").mouseleave(function(){
+            $("#hoverLov").removeClass("k-state-hover");
+        });
+    }
+
     
     function  clearVersion() {
         newViewModel.model.set("versionId",null);
