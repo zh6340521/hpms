@@ -398,7 +398,14 @@
 		                             dataTextField: "meaning",
 		                             dataValueField: "value",
 		                             valuePrimitive: true,
-		                             dataSource: billingMethodData
+		                             dataSource: billingMethodData,
+		                             select:function(e){
+		                             	if(e.dataItem.value=="FIXED"){
+		                             		$("#calculateRuleId").data("kendoDropDownList").enable(false);
+		                             	}else{
+		                             		$("#calculateRuleId").data("kendoDropDownList").enable(true);
+		                             	}
+		                             }
 		                    });
 				        	$('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 		            }
@@ -422,7 +429,7 @@
 			    	      			calculateRuleData = data.rows
 			    	      		}
 			    	      	 }); 
-				        	$('<input name="' + options.field + '"/>')
+				        	$('<input id="calculateRuleId" name="' + options.field + '"/>')
 		                         .appendTo(container)
 		                         .kendoDropDownList({
 		                             dataTextField: "ruleName",
