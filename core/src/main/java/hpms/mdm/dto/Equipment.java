@@ -108,6 +108,16 @@ public class Equipment extends BaseDTO {
     private String parentEquipmentName;
     @Transient
     private String name;
+    @Transient
+    private String structureName;
+
+    public String getStructureName() {
+        return structureName;
+    }
+
+    public void setStructureName(String structureName) {
+        this.structureName = structureName;
+    }
 
     public String getName() {
         return name;

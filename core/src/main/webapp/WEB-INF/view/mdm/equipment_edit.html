@@ -425,7 +425,7 @@
                                 },
                                 select:function (e) {
                                     newViewModel.model.set('companyId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
-                                    console.log(newViewModel.model.companyId);
+                                    //console.log(newViewModel.model.companyId);
                                     if(newViewModel.model.companyId==null||newViewModel.model.companyId==''){
                                         $("input[name='department']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
                                         newViewModel.model.set('orgId',null);
@@ -772,10 +772,10 @@
                            style="text-align: right"><@spring.message "hpms.mdm.equipment.version"/>:</label>
                     <div class="col-xs-8">
 
-		            <span class="k-widget k-lov k-header" style="width: 92%";>
-					      <span tabindex="-1" unselectable="on" class="k-dropdown-wrap k-state-default">
-					          <input id="structureName" data-bind="value:model.versionId" class="k-input" type="text" autocomplete="off" title="" role="lov" aria-expanded="false"  readonly="readonly" style="width: 100%;">
-					              <span unselectable="on" class="k-icon k-i-close" title="clear" role="button" tabindex="-1">
+		            <span id="versionLov" class="k-widget k-lov k-header" style="width: 92%";>
+					      <span id="hoverLov" tabindex="-1" unselectable="on" class="k-dropdown-wrap k-state-default">
+					          <input id="structureName" data-bind="value:model.structureName" class="k-input" type="text" autocomplete="off" title="" role="lov" aria-expanded="false"  readonly="readonly" style="width: 100%;">
+					              <span unselectable="on" onclick="clearVersion()" class="k-icon k-i-close" title="clear" role="button" tabindex="-1">
 					              </span>
 					          <span unselectable="on" class="k-select" aria-label="select" role="button" tabindex="-1" onclick="newTree()">
 						           <span class="k-icon k-i-search">
@@ -787,20 +787,30 @@
 					<div id="property_tree" ></div>
 					<script>
                         function newTree(){
-                            $("#property_tree").kendoWindow({
-                                actions: ["Close"],
-                                title: $l('选择'),
-                                draggable: true,
-                                height: "510px",
-                                width: "350px",
-                                content: '${base.contextPath}/fin/property_tree.html?companyId='+newViewModel.model.companyId+'&projectId='+newViewModel.model.projectId,
-                                iframe: true,
-                                modal: true
-                            });
-                            var win = $("#property_tree").data("kendoWindow");
-                            win.center().open();
+
+                            if(newViewModel.model.companyId==null||newViewModel.model.companyId==undefined||newViewModel.model.projectId==null||newViewModel.model.projectId==undefined){
+                                kendo.ui.showInfoDialog({
+                                    message:'<@spring.message "hpms.mdm.equipment.company"/><@spring.message "hpms.mdm.equipment.project"/>不能为空'
+                                });
+                            }else{
+
+                                $("#property_tree").kendoWindow({
+                                    actions: ["Close"],
+                                    title: $l('选择'),
+                                    draggable: true,
+                                    height: "350px",
+                                    width: "510px",
+                                    content: '${base.contextPath}/mdm/position.html?companyId='+newViewModel.model.companyId+'&projectId='+newViewModel.model.projectId,
+                                    iframe: true,
+                                    modal: true
+                                });
+                                var win = $("#property_tree").data("kendoWindow");
+                                win.center().open();
+                            }
+
+
                         }
-			        	kendo.bind($('#position'),newViewModel);
+			        	kendo.bind($('#structureName'),newViewModel);
 			        </script>
                     </div>
                 </div>
@@ -842,6 +852,18 @@
    }  
 </style>
 <script>
+    $("#versionLov").mouseover(function(){
+        $("#hoverLov").addClass("k-state-hover");
+    });
+
+    $("#versionLov").mouseleave(function(){
+        $("#hoverLov").removeClass("k-state-hover");
+    });
+    
+    function  clearVersion() {
+        newViewModel.model.set("versionId",null);
+        newViewModel.model.set("structureName",null);
+    }
 
     $("#page-content").kendoValidator();
     $("#closeWin").click(function(){

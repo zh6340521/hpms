@@ -1,0 +1,56 @@
+<#--
+        * description: 房间选择
+        * version: 1.0
+        * #copyright#
+        *author: jun.guo@hand-china.com 2017.03.10
+        -->
+    <#include "../include/header.html">
+        <body>
+        <div id="page-content">
+            <div id="treeview"></div>
+
+        </div>
+        <script type="text/javascript" >
+
+            var companyId = <#if RequestParameters.companyId?exists>
+            ${RequestParameters.companyId}
+            <#else>-1</#if>;
+            var projectId = <#if RequestParameters.projectId?exists>
+            ${RequestParameters.projectId}
+            <#else>-1</#if>;
+
+
+            homogeneous = new kendo.data.HierarchicalDataSource({
+                transport: {
+                    read: {
+                        url: "${base.contextPath}/fin/feeList/structureQuery",
+                        data: {companyId:companyId,projectId:projectId},
+                        type   : "POST",
+                        dataType: "json"
+                    }
+                },
+                schema: {
+                    data:"rows",
+                    model: {
+                        id: "structureId",
+                        hasChildren: "hasChildren",
+                        children:"items"
+                    }
+                }
+            });
+
+            var treeview = $("#treeview").kendoTreeView({
+                dataSource:homogeneous,
+                dataValueField: "id",
+                dataTextField: "structureName",
+                select: onSelect
+            });
+            function onSelect(e){
+                window.parent.newViewModel.model.set("structureName",this.dataItem(e.node).structureName);
+                window.parent.newViewModel.model.set("versionId",this.dataItem(e.node).structureId);
+                window.parent.$("#property_tree").data("kendoWindow").close();
+            }
+
+        </script>
+        </body>
+        </html>

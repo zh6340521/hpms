@@ -49,6 +49,7 @@
         <result column="MEANING2" property="meaning2" jdbcType="VARCHAR"/>
         <result column="PARENT_EQUIPMENT_NAME" property="parentEquipmentName" jdbcType="VARCHAR"/>
         <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="STRUCTURE_NAME" property="structureName" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="EquipmentTypeMap" type="hpms.mdm.dto.EquipmentType" extends="com.hand.hap.mapper.StdMapper.STD">
@@ -107,7 +108,8 @@
         HCVV.MEANING MEANING1,
         HCVV1.MEANING MEANING2,
         HME2.EQUIPMENT_NAME PARENT_EQUIPMENT_NAME,
-        HOU.NAME
+        HOU.NAME,
+        HMVS.STRUCTURE_NAME
         FROM HPMS_MDM_EQUIPMENT HME
         LEFT JOIN FND_COMPANY_B FCB
         ON HME.COMPANY_ID = FCB.COMPANY_ID
@@ -127,6 +129,8 @@
         ON HME2.EQUIPMENT_ID=HME.PARENT_EQUIPMENT_ID
         LEFT JOIN hr_org_unit_b HOU
         ON HOU.UNIT_ID=HME.ORG_ID
+        LEFT JOIN HPMS_MDM_VERSION_STRUCTURE HMVS
+        ON HMVS.STRUCTURE_ID=HME.VERSION_ID
 
 
         <where>
