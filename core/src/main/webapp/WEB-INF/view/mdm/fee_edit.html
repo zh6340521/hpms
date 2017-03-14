@@ -44,12 +44,13 @@
 	     	  // $("#itemFlag").data("kendoCheckbox").enable(false);
                 $("#itemFlag").attr("disabled",true);
 	        }
-            $("#feeCode").css("width", "92%");
-            $("#feeName").css("width", "92%");
+            //$("#feeCode").css("width", "92%");
+          // position:absolute;z-index:1;
+           // $("#feeName").css("width", "92%");
             var $feeCodeparent = $("input[name='feeCode']").parent();
-            $feeCodeparent.append('<span style="color: #ff0000">*</span>');
+            $feeCodeparent.append('<span style="right:0px;top:5px;float:right;color: #ff0000;position:absolute;z-index:1;">*</span>');
             var $feeNameparent = $("input[name='feeName']").parent();
-            $feeNameparent.append('<span style="color: #ff0000">*</span>');
+            $feeNameparent.append('<span style="right:0px;top:5px;float:right;color: #ff0000;position:absolute;z-index:1;">*</span>');
 	        newViewModel.model.set('equipmentFlag','N');
 	        newViewModel.model.set('overdueFalg','N');
 	        newViewModel.model.set('itemFlag','N');
@@ -162,7 +163,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='feeCode']").parent();
-                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="feeCode" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"大写字母下划线数字"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-62%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="feeCode" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"大写字母下划线数字"+'</span>');
                         	newViewModel.model.set('feeCode',null);
                             }
 
@@ -357,7 +358,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='precision']").parent();
-                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="precision" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-42%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="precision" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
                         	newViewModel.model.set('precision',null);
                             }
 
@@ -508,7 +509,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='overdueRate']").parent();
-                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="overdueRate" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的数"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-42%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="overdueRate" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
                         	newViewModel.model.set('overdueRate',null);
                             }
 
@@ -535,7 +536,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='chargeDays']").parent();
-                        	$parent.append('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="chargeDays" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-42%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="chargeDays" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
                         	kendo.bind($('#chargeDays'), newViewModel);
                             }
 

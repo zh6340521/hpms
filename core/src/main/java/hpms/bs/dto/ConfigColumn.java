@@ -96,10 +96,75 @@ public class ConfigColumn extends BaseDTO {
     @Column
     private String sqlId;
 
+    /**
+     * 下拉框绑定的快码
+     */
+    @Column
+    private String sysCode;
+
+    /**
+     * 级联
+     */
+    @Column
+    private String  cascadeFrom;
+
+    /**
+     * 属性ID
+     */
+    @Column
+    private String columnId;
+
+    @Column
+    private String dataTextField;//显示的字段
+
+    @Column
+    private String dataValueField; //实际存的字段
+
     @Transient
     private String vaildateMessage;  //存放必输提示信息
     @Transient
     private int columnNumber;//字符编号
+
+
+    public String getDataTextField() {
+        return dataTextField;
+    }
+
+    public void setDataTextField(String dataTextField) {
+        this.dataTextField = dataTextField;
+    }
+
+    public String getDataValueField() {
+        return dataValueField;
+    }
+
+    public void setDataValueField(String dataValueField) {
+        this.dataValueField = dataValueField;
+    }
+
+    public String getCascadeFrom() {
+        return cascadeFrom;
+    }
+
+    public void setCascadeFrom(String cascadeFrom) {
+        this.cascadeFrom = cascadeFrom;
+    }
+
+    public String getColumnId() {
+        return columnId;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    public String getSysCode() {
+        return sysCode;
+    }
+
+    public void setSysCode(String sysCode) {
+        this.sysCode = sysCode;
+    }
 
     public String getSqlId() {
         return sqlId;

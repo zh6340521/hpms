@@ -17,6 +17,11 @@
         <result column="column_length" property="columnLength" jdbcType="VARCHAR" />
         <result column="column_style" property="columnStyle" jdbcType="VARCHAR" />
         <result column="sql_id" property="sqlId" jdbcType="VARCHAR" />
+        <result column="sys_code" property="sysCode" jdbcType="VARCHAR" />
+        <result column="cascade_from" property="cascadeFrom" jdbcType="VARCHAR" />
+        <result column="column_id" property="columnId" jdbcType="VARCHAR" />
+        <result column="data_text_field" property="dataTextField" jdbcType="VARCHAR" />
+        <result column="data_value_field" property="dataValueField" jdbcType="VARCHAR" />
 
 
     </resultMap>

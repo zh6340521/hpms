@@ -6,6 +6,7 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
 import hpms.bs.dto.ConfigColumn;
+import hpms.utils.ValidationTableException;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface IConfigColumnService extends IBaseService<ConfigColumn>,ProxySe
      * @param requestCtx
      * @param cvs
      */
-    public void myBatchUpdate(IRequest requestCtx, List<ConfigColumn> cvs);
+    public void myBatchUpdate(IRequest requestCtx, List<ConfigColumn> cvs) throws ValidationTableException;
 
     /**
      * 删除数据同步redis

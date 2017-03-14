@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.fin.mapper.InvoiceLineMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.InvoiceLine">
+        <result column="INVOICE_LINE_ID" property="invoiceLineId" jdbcType="DECIMAL" />
+        <result column="INVOICE_ID" property="invoiceId" jdbcType="DECIMAL" />
+        <result column="LINE_NUMNER" property="lineNumner" jdbcType="DECIMAL" />
+        <result column="FEE_ID" property="feeId" jdbcType="DECIMAL" />
+        <result column="ACCOUNT_NUM" property="accountNum" jdbcType="VARCHAR" />
+        <result column="COST_CENTER" property="costCenter" jdbcType="VARCHAR" />
+        <result column="PROFIT_CENTER" property="profitCenter" jdbcType="VARCHAR" />
+        <result column="LINE_AMOUNT" property="lineAmount" jdbcType="DECIMAL" />
+        <result column="TAX_CODE" property="taxCode" jdbcType="VARCHAR" />
+        <result column="TAX_AMOUNT" property="taxAmount" jdbcType="DECIMAL" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="FEE_NAME" property="feeName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--查询应付行信息-->
+    <select id="queryInvoiceLine" parameterType="hpms.fin.dto.InvoiceLine" resultMap="BaseResultMap">
+        SELECT
+        HFIL.INVOICE_LINE_ID,
+        HFIL.INVOICE_ID,
+        HFIL.LINE_NUMNER,
+        HFIL.FEE_ID,
+        HFIL.ACCOUNT_NUM,
+        HFIL.COST_CENTER,
+        HFIL.PROFIT_CENTER,
+        HFIL.LINE_AMOUNT,
+        HFIL.TAX_CODE,
+        HFIL.TAX_AMOUNT,
+        HFIL.DESCRIPTION,
+        HFIL.PROGRAM_ID,
+        HFIL.REQUEST_ID,
+        HMF.FEE_NAME
+
+        FROM HPMS_FIN_INVOICE_LINE HFIL
+        LEFT JOIN HPMS_MDM_FEE HMF
+        ON HMF.FEE_ID = HFIL.FEE_ID
+        LEFT JOIN HPMS_FIN_INVOICE HFI
+        ON HFI.INVOICE_ID=HFIL.INVOICE_ID
+
+
+        <where>
+            1=1
+            <if test="invoiceId!=null">
+                and HFIL.INVOICE_ID = #{invoiceId,jdbcType=DECIMAL}
+            </if>
+        </where>
+
+    </select>
+
+
+
+</mapper>

@@ -113,6 +113,9 @@
             <if test="billingMethod!=null">
                 and HMF.BILLING_METHOD=#{billingMethod,jdbcType=VARCHAR}
             </if>
+            <if test="enableFlag!=null">
+                and HMF.ENABLE_FLAG=#{enableFlag,jdbcType=VARCHAR}
+            </if>
 
         </where>
 

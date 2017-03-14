@@ -81,7 +81,7 @@
                                                        read:function(options) {
                                                            $.ajax({
                                                                type   : "POST",
-                                                               url: "/fnd/company/query",
+                                                               url: "${base.contextPath}/fnd/company/query",
                                                                data: {},
                                                                success: function(json) {
                                                                    options.success(json.rows);
@@ -118,7 +118,7 @@
                                     read:function(options) {
                                     $.ajax({
                                     type   : "POST",
-                                    url: "/hpms/mdm/project/query",
+                                    url: "${base.contextPath}/hpms/mdm/project/query",
                                     data: {},
                                     success: function(json) {
                                     options.success(json.rows);
@@ -158,7 +158,7 @@
                                                     read:function(options) {
                                                         $.ajax({
                                                             type   : "POST",
-                                                            url: "/mdm/equipmentType/query",
+                                                            url: "${base.contextPath}/mdm/equipmentType/query",
                                                             data: {},
                                                             success: function(json) {
                                                                 options.success(json.rows);
