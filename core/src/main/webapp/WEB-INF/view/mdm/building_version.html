@@ -22,6 +22,11 @@
           display: inline-block;
       }
 
+      span.red {
+          color: red;
+          font-weight: bold;
+      }
+
 
 
   </style>
@@ -335,32 +340,32 @@
               },
               {
                   field: "versionNumber",
-                 // title: '编码',
+                  // title: '编码',
                   title:'<@spring.message "hpms.mdm.fee.feecode"/>',
                   width: '17%' ,
                   attributes: {style: "text-align:center"},
-                 /* template : function (rowdata) {
-                      if (!!rowdata.versionId) {
-                          return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="editBuildingVersion('+rowdata.versionId+',\''+rowdata.versionNumber+'\')"><font color="blue">'
-                                  + rowdata.versionNumber
-                                  + '</font></a>';
+                  /* template : function (rowdata) {
+                   if (!!rowdata.versionId) {
+                   return '<a style="text-decoration : underline;color : blue;cursor:pointer" onclick="editBuildingVersion('+rowdata.versionId+',\''+rowdata.versionNumber+'\')"><font color="blue">'
+                   + rowdata.versionNumber
+                   + '</font></a>';
 
-                      }else return rowdata.versionNumber
-                  },*/
+                   }else return rowdata.versionNumber
+                   },*/
                   editor: function (container, options) {
                       //根据是否存在主键id来判断是新增还是编辑
                       if (options.model.versionId != "") {
                           container.html(options.model.versionNumber);
                           container.removeClass('k-edit-cell');
                       } else {
-                          var editor =  $('<input type="text" required  validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                          var editor =  $('<input class="k-input k-textbox k-valid" type="text" required  validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />'+'<span class="red">&nbsp;&nbsp;*</span>');
                           editor.css('width','100%');
                           container.append(editor);
                       }
 
 
                       //alert(options.field);
-                     // $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                      // $('<input type="text" required  validationMessage="只允许输入大写字母、数字及下划线"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
 
                   },
 
@@ -448,7 +453,7 @@
                               }*/
                           }
                       });
-                      $('<input required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
+                      $('<input  required validationMessage="<@spring.message "hpms.notempty"/>" name="' + options.field + '"/>')
                               .appendTo(container)
                               .kendoDropDownList({
                                   dataTextField: "companyFullName",
@@ -476,6 +481,7 @@
                                       });
                                   }
                               });
+                      $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
 
                   }
               },
@@ -518,6 +524,7 @@
 
                                   }
                               });
+                      $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
                   }
 
               },
@@ -531,8 +538,11 @@
                   editor: function (container, options) {
 
                       //alert(options.field);
-                      $('<input type="text" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                     // $('<input class="k-input k-textbox k-valid" type="text" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '" />'+'<span class="red">&nbsp;&nbsp;*</span>');
 
+                      var editor =  $('<input class="k-input k-textbox k-valid" type="text" required  validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '" />'+'<span class="red">&nbsp;&nbsp;*</span>');
+                      editor.css('width','100%');
+                      container.append(editor);
                   },
               },
               {

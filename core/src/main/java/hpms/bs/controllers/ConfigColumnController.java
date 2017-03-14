@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -36,8 +34,7 @@ public class ConfigColumnController extends BaseController {
 
     /**
      *
-     * 查询
-     * @param cc
+     * @param configValueId
      * @param page
      * @param pageSize
      * @param request
@@ -45,9 +42,11 @@ public class ConfigColumnController extends BaseController {
      */
     @RequestMapping(value = "/bs/configcolumn/query")
     @ResponseBody
-    public ResponseData query(ConfigColumn cc, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+    public ResponseData query(Long configValueId, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
+        ConfigColumn cc = new ConfigColumn();
+        cc.setConfigValueId(configValueId);
         List<ConfigColumn> cList = configColumnService.select(requestContext,cc,page,pageSize);
         return new ResponseData(cList);
     }
@@ -111,6 +110,60 @@ public class ConfigColumnController extends BaseController {
         List<ConfigColumn> ccList = configColumnService.findConfigColumnByCache(requestContext,configValueId,configId);
         return new ResponseData(ccList);
     }
+
+    /**
+     * 根据行号从缓存中查询数据
+     * @param configValueId
+     * @param configId
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/bs/configcolumn/queryDataByCache")
+    @ResponseBody
+   /* public Map<Long,List<ConfigColumn>> queryDataByCache(@RequestParam Long configValueId,@RequestParam Long configId,@RequestParam Long displayLineNo[],HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        Map<Long,List<ConfigColumn>> ccMap = new HashMap<>();
+        Map<Long,List<ConfigColumn>> map = new HashMap<>();
+
+        for(int i = 0; i < displayLineNo.length; i++){
+            ccMap = configColumnService.findConfigColumnCacheBydisplayLineNo(requestContext,configValueId,configId,displayLineNo[i]);
+
+           *//* Iterator it = ccMap.keySet().iterator();
+            while(it.hasNext()){
+                Long key;
+                List<ConfigColumn> configColumnList;
+                key=(Long)it.next();
+                configColumnList=(List<ConfigColumn>) ccMap.get(key);
+                ccList.addAll(configColumnList);
+            }*//*
+            map.putAll(ccMap);
+        }
+
+        return map;
+    }*/
+
+    public ResponseData queryDataByCache(@RequestParam Long configValueId,@RequestParam Long configId,@RequestParam Long displayLineNo[],HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        Map<Long,List<ConfigColumn>> ccMap = new HashMap<>();
+        List<ConfigColumn> ccList = new ArrayList<>();
+
+        for(int i = 0; i < displayLineNo.length; i++){
+            ccMap = configColumnService.findConfigColumnCacheBydisplayLineNo(requestContext,configValueId,configId,displayLineNo[i]);
+
+             Iterator it = ccMap.keySet().iterator();
+             while(it.hasNext()){
+                Long key;
+                List<ConfigColumn> configColumnList;
+                key=(Long)it.next();
+                configColumnList=(List<ConfigColumn>) ccMap.get(key);
+                ccList.addAll(configColumnList);
+            }
+
+        }
+        return new ResponseData(ccList);
+    }
+
+
 
     /**
      *

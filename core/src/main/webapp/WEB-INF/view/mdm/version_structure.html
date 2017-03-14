@@ -9,6 +9,31 @@
         <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <body>
 
+    <style>
+        span[class='k-window-title'] {
+            user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        span[class^="l-icon-"] {
+            width: 20px;
+            height: 16px;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        span.red {
+            color: red;
+            font-weight: bold;
+        }
+
+
+
+    </style>
+
     <!--***********************form表单*****************-->
     <div>
         <script type="text/javascript">
@@ -319,7 +344,11 @@
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {
                             //alert(options.field);
-                            $('<input type="text" required validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '" pattern="^[0-9A-Z_]+$" />').appendTo(container).kendoMaskedTextBox({});
+                            var editor = $('<input class="k-input k-textbox k-valid" required validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '"  />'+'<span class="red">&nbsp;&nbsp;*</span>');
+                            editor.css('width','100%');
+                            container.append(editor);
+                           // var editor =  $('<input class="k-input k-textbox k-valid" type="text" required  validationMessage="<@spring.message "hpms.vaildate.message"/>"  name="' + options.field + '" />'+'<span class="red">&nbsp;&nbsp;*</span>');
+
                             /*//根据是否存在主键id来判断是新增还是编辑
                             if (options.model.structureId != "") {
                                 container.html(options.model.structureNumber);
@@ -340,8 +369,10 @@
                         width: '17%' ,
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {
-                            //alert(options.field);
-                            $('<input type="text"  required  validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
+                            var editor = $('<input class="k-input k-textbox k-valid" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"  />'+'<span class="red">&nbsp;&nbsp;*</span>');
+                            editor.css('width','100%');
+                            container.append(editor);
+                          //  $('<input type="text"  required  validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
 
                         },
 
@@ -411,8 +442,11 @@
                         width: '20%' ,
                         attributes: {style: "text-align:center"},
                         editor: function (container, options) {
+                            var editor = $('<input class="k-input k-textbox k-valid" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"  />'+'<span class="red">&nbsp;&nbsp;*</span>');
+                            editor.css('width','100%');
+                            container.append(editor);
                             //alert(options.field);
-                            $('<input type="text"  required  validationMessage="<@spring.message "hpms.notempty"/>"   name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
+                          //  $('<input type="text"  required  validationMessage="<@spring.message "hpms.notempty"/>"   name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
 
                         },
 
