@@ -120,11 +120,31 @@ public class ConfigColumn extends BaseDTO {
     @Column
     private String dataValueField; //实际存的字段
 
+    @Column
+    private Long displayLineNo;//行号
+
     @Transient
     private String vaildateMessage;  //存放必输提示信息
     @Transient
     private int columnNumber;//字符编号
+    @Transient
+    private Long dataLength;//字段长度
 
+    public Long getDataLength() {
+        return dataLength;
+    }
+
+    public void setDataLength(Long dataLength) {
+        this.dataLength = dataLength;
+    }
+
+    public Long getDisplayLineNo() {
+        return displayLineNo;
+    }
+
+    public void setDisplayLineNo(Long displayLineNo) {
+        this.displayLineNo = displayLineNo;
+    }
 
     public String getDataTextField() {
         return dataTextField;

@@ -1,0 +1,317 @@
+<#include "../include/header.html">
+    <body>
+    <script src="${base.contextPath}/common/code?resourceTypeData=HPMS_CR_OBJECT" type="text/javascript"></script>
+    <script src="${base.contextPath}/common/code?typeData=HPMS_UOM" type="text/javascript"></script>
+    <script type="text/javascript">
+        // 初始化viewModel
+        var viewModel = kendo.observable({
+            model: {},
+            // 将快码的值设为全局变量
+            typeResource: resourceTypeData,
+            // 新增函数
+            createFunction: function(){
+                $('#grid').data('kendoGrid').addRow();
+            },
+        });
+
+        // 获取chargeRuleId
+        var chargeRuleId = ${RequestParameters.chargeRuleId!0};
+
+        var companyArray = null;
+        var projectArray = null;
+        var equipmentArray = null;
+        $.ajax({
+            type   : "GET",
+            url: "/fnd/company/query",
+            data: '',
+            async: false,
+            success: function(args) {
+                companyArray = args.rows;
+            }
+        });
+        $.ajax({
+            type   : "GET",
+            url: "/hpms/mdm/project/query",
+            data: '',
+            async: false,
+            success: function(args) {
+                projectArray = args.rows;
+            }
+        });
+        $.ajax({
+            type   : "GET",
+            url: "/mdm/equipmentType/query",
+            data: '',
+            async: false,
+            success: function(args) {
+                equipmentArray = args.rows;
+            }
+        })
+        $.ajax({
+            type   : "GET",
+            url: '${base.contextPath}/bs/charge/query?chargeRuleId='+chargeRuleId,
+            data: '',
+            async: false,
+            success: function(args) {
+                viewModel.model.crName = args.rows[0].crName;
+                for(var k in resourceTypeData){
+                    if(resourceTypeData[k].value ==args.rows[0].crObject){
+                        viewModel.model.crObject = resourceTypeData[k].meaning;
+                    }
+                }
+                for(var k in companyArray){
+                    if(companyArray[k].companyId ==args.rows[0].companyId){
+                        viewModel.model.companyName = companyArray[k].companyFullName;
+                    }
+                }
+                for(var k in projectArray){
+                    if(projectArray[k].projectId ==args.rows[0].projectId){
+                        viewModel.model.projectName = projectArray[k].projectName;
+                    }
+                }
+                for(var k in equipmentArray){
+                    if(equipmentArray[k].equipmentTypeId ==args.rows[0].equipmentTypeId){
+                        viewModel.model.typeName = equipmentArray[k].typeName;
+                    }
+                }
+                if(args.rows[0].enableFlag =="Y"){
+                    viewModel.model.enableFlag = "启用";
+                }else if(args.rows[0].enableFlag == "N"){
+                    viewModel.model.enableFlag = "失效";
+                }
+            }
+        })
+
+    </script>
+    <div id="page-content">
+        <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+            <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+                <div id="form" class="panel-body">
+                    <div class="row" style="margin-bottom: 5px;">
+                        <!-- 公司 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">公司</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px"
+                                           data-bind="value:model.companyName"
+                                           class="k-textbox" value="123" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 项目 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">项目</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px"
+                                           data-bind="value:model.projectName"
+                                           class="k-textbox" value="123" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 仪表类型 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">仪表类型</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px"
+                                           data-bind="value:model.typeName"
+                                           class="k-textbox" value="123" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 计费维度 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">计费维度</label>
+                                <div class="col-sm-8">
+                                    <input id="ob" type="text" style="width: 160px"
+                                           data-bind="value:model.crObject"
+                                           class="k-textbox" value="123" disabled>
+                                </div>
+                            </div>
+                        </div><br/>
+                        <!-- 计费规则 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">计费规则</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px"
+                                           data-bind="value:model.crName"
+                                           class="k-textbox" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 启用状态 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">启用状态</label>
+                                <div class="col-sm-8">
+                                    <input id="enable" type="text" style="width: 160px"
+                                           data-bind="value:model.enableFlag"
+                                           class="k-textbox" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- gird组件 -->
+        <div style="clear: both;">
+            <div id="grid"></div>
+        </div>
+    </div>
+    <script>
+        // 绑定数据源
+        kendo.bind($('#query-form'), viewModel);
+        // 当前路径
+        var crudServiceBaseUrl = '${base.contextPath}/bs/meterprice';
+
+        // 定义数据源
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl + "/query?chargeRuleId="+chargeRuleId,
+                    type: "GET",
+                    dataType: "json"
+                },
+                create: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                update: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                destroy: {
+                    url: crudServiceBaseUrl + "/delete",
+                    contentType: "application/json",
+                    type: "DELETE"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type);
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                    }
+                },
+            },
+            requestEnd: function (e) {
+                if(e.type=='read'){
+                    crcode=e.response.rows;
+                }else if(e.type=='create'&&e.response.success==true){
+                    kendo.ui.showInfoDialog({
+                        message: '添加成功!'
+                    });
+                } else if(e.type=='update'&&e.response.success==true){
+                    kendo.ui.showInfoDialog({
+                        message: '更新成功!'
+                    });
+                }else{
+                    $('#grid').data('kendoGrid').dataSource.read();
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "gradePriceId",
+                    fields: {
+                        chargeRuleId:{
+                            defaultValue:chargeRuleId
+                        },
+                        price:{type:'Decimal'}
+                    },
+                }
+            }
+        });
+        //
+        var grid = $('#grid').kendoGrid({
+            dataSource: dataSource,
+            height: '100%',
+            resizable: false,
+            scrollable: true,
+            selectable: 'row',
+            editable: "inline",
+            sortable: true,
+            navigatable: false,
+            reorderable: true,
+            toolbar:[
+                {template:('<span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;">新增</span>')},
+            ],
+            pageable: {
+                // 分页类别
+                pageSizes: [5, 10, 20, 50],
+                // 刷新按钮
+                refresh: true,
+                // 最大显示页面数
+                buttonCount: 5
+            },
+            columns: [
+                {
+                    title:'操作',
+                    attributes: {style: "text-align:center"},
+                    command:[{name: "edit"},
+                    ],
+                    width:'6%'
+                },
+                {
+                    field: "grade",
+                    title: '计费段',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    editor: function (container, options) {
+                        $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负整数" pattern="^[0-9_]+$" name="' + options.field + '"/>').appendTo(container)
+                    },
+                },
+                {
+                    field: "price",
+                    title: '单价 ( ¥ ) ',
+                    width: '12%',
+                    type:"Decimal",format:"{0:N2}",
+                    attributes: {style: "text-align:center"},
+                    editor: function (container, options) {
+                        $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负数" pattern="^([0-9])+(\.[0-9]+)?$" name="' + options.field + '"/>').appendTo(container)
+                    },
+                },
+                {
+                    field: "uom",
+                    title: '计量单位',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    template:function (rowdata){
+                        for(var k in typeData){
+                            if(typeData[k].value == rowdata.uom){
+                                return typeData[k].meaning
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                            $('<input type="text" style="width: 120px"class="k-textbox" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField:"value",
+                                    valuePrimitive: true,
+                                    dataSource: typeData,
+                                    index:-1,
+                                });
+                    },
+                }
+            ],
+        }).data("kendoGrid");
+        // 自动填充界面
+        Hap.autoResizeGrid("#grid");
+        // 标题居中
+        $("#grid thead>tr th").css("text-align", "center");
+    </script>
+    </body>

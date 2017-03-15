@@ -1,84 +1,115 @@
-/*function formElements(data,formName){
-    for(var i = 0; i < data.rows.length; i++){
-        var columnNumber = data.rows[i].columnNumber;
-        if(columnNumber%2!=0)
-        continue;
-        if(columnNumber==data.rows.length){
-            showFormElements(formName,data.rows[columnNumber-1].configColumnId,data.rows[columnNumber-1].columnNameAlias,false);
-            //alert("最后一个："+data.rows[columnNumber-1].configColumnId+"\n"+data.rows[columnNumber-1].columnNameAlias);
-        }else{
-            showFormElements(formName,data.rows[columnNumber-1].configColumnId,data.rows[columnNumber-1].columnNameAlias,true,data.rows[columnNumber].columnNameAlias,data.rows[columnNumber].configColumnId);
-           // alert("其他的："+data.rows[columnNumber-1].configColumnId+"\n"+data.rows[columnNumber-1].columnNameAlias+"\n"+data.rows[columnNumber].columnNameAlias);
-            //showFormElements(data,formName);
+
+/**
+ * 查询建筑类型下对应的字段
+ * @param configValueId
+ * @param configId
+ * @author  fuchun.hu@hand-china.com 2017年3月7日 09:43:40
+ */
+function findConfigColumn(configValueId,configId,formName,viewModel){
+    $.ajax({
+        url: _basePath+"/bs/configcolumn/queryByCache?configValueId="+configValueId+'&configId='+configId,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (args) {
+
+            //判断是否渲染了后台div
+            /*var node = document.getElementById('div1');
+            if(node!=null){
+                //如果已存在渲染div,切换时将div清除
+                $("div#div1").remove();
+
+            }*/
+
+
+
+            //调用js 根据行号进行分组
+            //showFormElements(args,formName,viewModel);
+            findFormElementsBydisplayLineNo(args,formName,viewModel,configValueId,configId);
+
+        },
+
+    });
+}
+
+
+
+/**
+ * 根据前台输入的字段行号分组
+ * @author  fuchun.hu@hand-china.com  2017年3月14日 10:48:48
+ * @param data
+ * @param formName
+ * @param viewModel
+ */
+function findFormElementsBydisplayLineNo(data,formName,viewModel,configValueId,configId){
+ var displayLineNos =[];
+ for(var m=0;m<data.rows.length;m++){
+     displayLineNos.push(data.rows[m].displayLineNo);
+ }
+
+ var str1=[];
+        for(i=0;i<displayLineNos.length;i++){
+            if(str1.indexOf(displayLineNos[i])<0){
+                str1.push(displayLineNos[i])
+            }
         }
-        //showFormElements(data,formName);
+
+
+
+    //alert(displayLineNos);
+
+    for (var i = 0; i < data.rows.length; i++) {
+        //alert(data.rows[i].configValueId+"____________"+data.rows[i].configId+"______________"+data.rows[i].displayLineNo);
+//alert(data.rows[i].displayLineNo);
+
+        $.ajax({
+            url: _basePath+"/bs/configcolumn/queryDataByCache?configValueId="+configValueId+'&configId='+configId+'&displayLineNo='+str1,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (args) {
+
+                //判断是否渲染了后台div
+                var node = document.getElementById('div1');
+                if(node!=null){
+                    //如果已存在渲染div,切换时将div清除
+                    $("div#div1").remove();
+                    //node.parentNode.removeChild(node);
+                }
+                //     viewModel.get("buildType");
+
+                //调用js
+                showFormElements(args,formName,viewModel);
+
+
+            },
+
+        });
     }
 
 }
 
 
 
-
-function showFormElements(formName,value1,text1,flag,value2,text2,i){
-    alert(value1+'/n'+text1+'/n'+value2+'/n'+text2);
-    var s = '<div class="row" >'+
-        '<div id="div1"  class="col-md-6" style="margin-bottom:10px">' +
-        '<div class="col-md-4 tdAlign">' +
-        '<label >' + text1 + '</label>' +
-        '</div>' +
-        '<div class="col-md-8">' +
-        '<input type="text" class="k-textbox" id="' + value1 + '"  data-bind="value:model.' + value1 + '" style="width: 70%" >' +
-        '</div>' +
-        '</div>';
-    if (flag) {
-        s += '<div id="div1"  class="col-md-6" style="margin-bottom:10px">'+
-            '<div class="col-md-4 tdAlign">'+
-            '<label >' + value2 + '</label>'+
-            '</div>' +
-            '<div class="col-md-8">' +
-            '<input type="text" class="k-textbox" id="' + text2 + '"  data-bind="value:model.' + text2 + '" style="width: 70%" >' +
-            '</div>' +
-            '</div>'+
-            '</div>';
-    }else{
-        s += '</div>';
-    }
-    $("#" + formName).append(s);
-
-
-}*/
-
 /**
  * 根据后台json动态拼接
- * author  hufuchun 2017年3月7日 09:43:40
+ * @author fuchun.hu@hand-china.com 2017年3月7日 09:43:40
  * @param data
  * @param formName
  */
 function showFormElements(data,formName,viewModel) {
-    //alert(viewModel.model.get("company"));
-    var cascadeValue="";
+
+   // alert(12/datacount);
     //循环当前行div，加在当前行div中
     for (var i = 0; i < data.rows.length; i++) {
-
 
         if (data.rows[i].columnStyle == "TEXT")//text
         {
            // alert(data.rows[i].columnLength);
            // var vaildateMessage = data.rows[i].vaildateMessage;
             $("#" + formName).append(
-                /*'<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
-                '<div class="form-group">' +
-                '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
-                '<div class="col-sm-7">'+
-                '<input class="k-textbox" onblur="validateLength(data.rows[i].columnLength)" id="'+ data.rows[i].columnId+'"' +
-                'name="'+ data.rows[i].configColumnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;" />'+
-               '</div>'+
-                '<div  style="margin-left:52%">'+
-                '<span data-for="'+ data.rows[i].columnId+'" class=".k-invalid-msg"></span>'+
-                '</div>'+
-                '</div>'+
-                '</div>'*/
-                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+
+                '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                 '<div class="form-group">' +
                 '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                 '<div class="col-sm-7">'+
@@ -98,7 +129,7 @@ function showFormElements(data,formName,viewModel) {
         }else if(data.rows[i].columnStyle == "DECIMAL")//只能输入小数
         {
             $("#" + formName).append(
-                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                 '<div class="form-group">' +
                 '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                 '<div class="col-sm-7">'+
@@ -114,7 +145,7 @@ function showFormElements(data,formName,viewModel) {
         }else if(data.rows[i].columnStyle == "NUMBER") //只能输入整数
         {
             $("#" + formName).append(
-                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                 '<div class="form-group">' +
                 '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                 '<div class="col-sm-7">'+
@@ -132,11 +163,12 @@ function showFormElements(data,formName,viewModel) {
         {
 
             $("#" + formName).append(
-                '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                 '<div class="form-group">' +
                 '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                 '<div class="col-sm-7">'+
-                '<input onblur="vaildateRequired('+data.rows[i].vaildateMessage +',this)" type="date" style="width: 200px;" id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
+                '<input onblur="vaildateRequired('+data.rows[i].vaildateMessage +',this)"  id="'+ data.rows[i].columnId+'"' +
+                'name="'+ data.rows[i].configColumnId+'"  data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;" />'+
                 '<script type="text/javascript">'+
                 '$("#"+"'+ data.rows[i].columnId+'").kendoDatePicker({ format : "yyyy-MM-dd"});'+
                 '</script>'+
@@ -152,11 +184,12 @@ function showFormElements(data,formName,viewModel) {
 
               //  alert(data.rows[i].columnId);
                 $("#" + formName).append(
-                    '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                    '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                     '<div class="form-group">' +
                     '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                     '<div class="col-sm-7">'+
-                    '<input name="'+data.rows[i].columnId+'"  style="width: 200px;" id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;"/>'+
+                    '<input name="'+data.rows[i].columnId+'"   id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;"/>'+
+
 
                     '<script type="text/javascript">'+
                     '$("#"+"'+ data.rows[i].columnId+'").kendoComboBox({'+
@@ -191,11 +224,11 @@ function showFormElements(data,formName,viewModel) {
             if(data.rows[i].sysCode!=null){
                 $("#" + formName).append(
                     '<script src="'+_basePath+'/common/code?codeData='+data.rows[i].sysCode+'" type="text/javascript"></script>'+
-                    '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                    '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                     '<div class="form-group">' +
                     '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                     '<div class="col-sm-7">'+
-                    '<input onblur="vaildateRequired('+data.rows[i].vaildateMessage +',this)"  style="width: 200px;" id="'+ data.rows[i].columnId+'"  data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
+                    '<input onblur="vaildateRequired('+data.rows[i].vaildateMessage +',this)" id="'+ data.rows[i].columnId+'"  data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
 
                     '<script type="text/javascript">'+
                     '$("#"+"'+ data.rows[i].columnId+'").kendoComboBox({'+
@@ -221,11 +254,11 @@ function showFormElements(data,formName,viewModel) {
                 //alert(cascadeFrom);
 
                 $("#" + formName).append(
-                    '<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">'+
+                    '<div id="div1" class="col-sm-'+data.rows[i].dataLength+'" style="margin-bottom: 5px;">'+
                     '<div class="form-group">' +
                     '<label class="col-sm-3 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                     '<div class="col-sm-7">'+
-                    '<input style="width: 200px;" id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
+                    '<input id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].configColumnId+'" style="width: 70%;"/>'+
 
                     '<script type="text/javascript">'+
                     '$("#"+"'+ data.rows[i].columnId+'").kendoComboBox({'+
@@ -268,35 +301,6 @@ function showFormElements(data,formName,viewModel) {
                 );
             }
         }
-        /*else if(data.rows[i].columnStyle=="LIST")//combobox
-         {
-         $("#" + formName).append('<div class="col-md-6" style="margin-bottom:10px">' +
-         '<div class="col-md-4 tdAlign">' +
-         '<label >'+data.rows[i].columnNameAlias+'</label>' +
-         '</div>' +
-         '<div class="col-md-8">' +
-         '<input type="text" class="k-textbox" id="'+data.rows[i].columnNameAlias+'" name="'+data.rows[i].columnNameAlias+'" style="width: 70%;" data-bind="value:model.'+data.rows[i].columnNameAlias+'"/>' +
-         '</div>' +
-         '</div>');
-         // showComboboxs(data.rows[i],null);
-         }
-         else if(data.rows[i].columnStyle=="DATE")//Date
-         {
-         var $str=$beforeStr;
-         $str+="<input  id="+data.rows[i].columnNameAlias+" style='width:"+data.rows[i].columnNameAlias+"px;height:28px;vertical-align:middle;margin-left:8px'/>";
-         $str+=$afterStr;
-         $("#row"+rowNum).append($str);
-         showDate(data.rows[i],null);
-         }
-         else if(data.rows[i].formElement=="TIME")//Time
-         {
-         var $str=$beforeStr;
-         $str+="<input id="+data.rows[i].paramsName+" style='width:"+data.rows[i].showWidth+"px;vertical-align:middle;margin-left:8px'/>";
-         $str+=$afterStr;
-         $("#row"+rowNum).append($str);
-         showTime(data.rows[i],null);
-         }
-         }*/
 
     }
 }

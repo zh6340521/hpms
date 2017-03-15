@@ -7,7 +7,7 @@
 <mapper namespace="hpms.bs.mapper.ConfigColumMapper">
     <resultMap id="BaseResultMap" type="hpms.bs.dto.ConfigColumn" extends="com.hand.hap.mapper.StdMapper.STD">
         <id column="config_column_id" property="configColumnId" jdbcType="DECIMAL" />
-        <result column="config_vaule_id" property="configVauleId" jdbcType="DECIMAL" />
+        <result column="config_value_id" property="configValueId" jdbcType="DECIMAL" />
         <result column="company_id" property="companyId" jdbcType="DECIMAL" />
         <result column="column_name" property="columnName" jdbcType="VARCHAR" />
         <result column="column_name_alias" property="columnNameAlias" jdbcType="VARCHAR" />
@@ -22,7 +22,44 @@
         <result column="column_id" property="columnId" jdbcType="VARCHAR" />
         <result column="data_text_field" property="dataTextField" jdbcType="VARCHAR" />
         <result column="data_value_field" property="dataValueField" jdbcType="VARCHAR" />
-
+        <result column="display_line_no" property="displayLineNo" jdbcType="DECIMAL" />
 
     </resultMap>
+
+    <!--根据行号查询数据-->
+    <select id="findConfigColumnBydisplayLineNo" parameterType="hpms.bs.dto.ConfigColumn" resultMap="BaseResultMap">
+      SELECT   cc.config_column_id,
+               cc.config_value_id,
+               cc.company_id,
+               cc.column_name,
+               cc.column_name_alias,
+               cc.required_flag,
+               cc.enable_flag,
+               cc.column_type,
+               cc.column_length,
+               cc.column_style,
+               cc.sql_id,
+               cc.sys_code,
+               cc.cascade_from,
+               cc.column_id,
+               cc.data_text_field,
+               cc.data_value_field,
+               cc.display_line_no
+          FROM hpms_config_column cc
+
+        <where>
+            1=1
+            <if test="configColumnId!=null">
+                and cc.config_column_id !=#{configColumnId,jdbcType=DECIMAL}
+            </if>
+
+            and cc.display_line_no=#{displayLineNo,jdbcType=DECIMAL}
+            and cc.enable_flag='Y'
+            and cc.config_value_id=#{configValueId,jdbcType=DECIMAL}
+
+        </where>
+
+
+
+    </select>
     </mapper>

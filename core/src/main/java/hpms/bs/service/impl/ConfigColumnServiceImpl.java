@@ -74,6 +74,7 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
     @Transactional(propagation = Propagation.REQUIRED)
     public void myBatchUpdate(IRequest requestCtx, List<ConfigColumn> cvs) throws ValidationTableException {
         IBaseService self = (IBaseService) AopContext.currentProxy();
+        List<ConfigColumn> configColumnList = new ArrayList<>();
         for(ConfigColumn cc:cvs){
             cc.setLastUpdatedBy(requestCtx.getUserId());
             cc.setLastUpdateDate(new Date());
@@ -85,8 +86,15 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
                     cvs.remove(cc);
                     throw new ValidationTableException("当字符样式为LIST时，Sql Id和快码CODE不能同时存在！", null);
                 }
+                logger.info("当sqlid不为空，且显示字段和实际字段为空时，抛出错误I");
+                if(cc.getSqlId()!=null&&!"".equals(cc.getSqlId())){
+                    if(cc.getDataTextField()==null||cc.getDataTextField()==""||cc.getDataValueField()==null||cc.getDataValueField()==""){
+                        logger.info("将这条记录删除，并抛出错误信息");
+                        cvs.remove(cc);
+                        throw new ValidationTableException("请输入【显示字段】和【实际字段】", null);
+                    }
+                }
             }
-
 
             if(cc.getConfigColumnId()!=null){
                 self.updateByPrimaryKey(requestCtx,cc);
@@ -153,6 +161,86 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
             }
         }
 
+        return ccList;
+    }
+
+    @Override
+    public Map<Long,List<ConfigColumn>> findConfigColumnCacheBydisplayLineNo(IRequest iRequest, Long configValueId, Long configId, Long displayLineNo) {
+        String cid = Long.toString(configId);
+        logger.info("查询缓存中对应的头表对象");
+        Config config = configCache.getValue(cid);
+
+        List<ConfigValue> configValueList = new ArrayList<>();
+        List<ConfigColumn> ccList = new ArrayList<>();
+        Map<Long,List<ConfigColumn>> map = new HashMap<>();
+
+
+        logger.info("头表对象对应的行表");
+        List<ConfigValue> cvList = config.getConfigValueList();
+        if(!cvList.isEmpty()&&cvList.size()!=0){
+            for(ConfigValue cv:cvList){
+                if(cv.getConfigValueId().equals(configValueId)||cv.getConfigValueId()==configValueId){
+                    configValueList.add(cv);
+
+                    logger.info("查询该表对应的行表");
+                    for(ConfigValue cv1:configValueList){
+                        List<ConfigColumn> cc1List = cv1.getConfigColumnList();
+                        if(!cc1List.isEmpty()&&cc1List.size()!=0){
+                            for(ConfigColumn cc:cc1List){
+                                logger.info("查询所有启用的字段");
+                                if(cc.getEnableFlag().equals("Y")||cc.getEnableFlag()=="Y"){
+                                    logger.info("判断行号是否和传入的相等");
+                                    if(cc.getDisplayLineNo().equals(displayLineNo)||cc.getDisplayLineNo()==displayLineNo){
+                                        logger.info("判断字符是否必输");
+                                        if(cc.getRequiredFlag().equals("Y")||cc.getRequiredFlag()=="Y"){
+                                            cc.setVaildateMessage(vaildate_required_message);
+                                        }else{
+                                            cc.setVaildateMessage(vaildate_unrequired_message);
+                                        }
+
+                                        ccList.add(cc);
+                                    }
+
+
+
+                                }
+
+
+                            }
+                        }
+
+
+                    }
+                }
+            }
+            map.put(displayLineNo,ccList);
+            logger.info("遍历map");
+            for (Long key : map.keySet()) {
+                System.out.println("Key = " + key);
+                List<ConfigColumn> ConfigColumns =map.get(key);
+                if(!ConfigColumns.isEmpty()&&ConfigColumns.size()!=0){
+                    for(ConfigColumn cc:ConfigColumns){
+
+                        int dataLength = 12/ConfigColumns.size();
+                        cc.setDataLength(new Long(dataLength));
+                    }
+                }
+
+            }
+
+
+
+        }
+
+        return map;
+    }
+
+    //根据行号查询数据
+    public List<ConfigColumn> findDataByDisplayLineNo(IRequest iRequest,Long displayLineNo){
+        List<ConfigColumn> ccList = new ArrayList<>();
+        ConfigColumn cc = new ConfigColumn();
+        cc.setDisplayLineNo(displayLineNo);
+        ccList = configColumMapper.select(cc);
         return ccList;
     }
 

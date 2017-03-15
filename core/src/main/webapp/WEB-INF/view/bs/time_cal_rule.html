@@ -1,0 +1,524 @@
+<#include "../include/header.html">
+    <body>
+    <script src="${base.contextPath}/common/code?resourceTypeData=HPMS_CR_OBJECT" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        // 初始化viewModel
+        var viewModel = kendo.observable({
+            model: {},
+            // 将快码的值设为全局变量
+            typeResource: resourceTypeData,
+            // 条件查询
+            queryResource: function (e) {
+                $("#grid").data("kendoGrid").dataSource.page(1);
+            },
+            // 新增函数
+            createFunction: function(){
+                $('#grid').data('kendoGrid').addRow();
+            },
+            // 重置查询框
+            resetForm: function (e) {
+                var formDate = viewModel.model.toJSON();
+                for (var k in formDate) {
+                    viewModel.model.set(k, null);
+                }
+                $("#grid").data("kendoGrid").dataSource.page(1);
+            },
+        });
+            var companyArray = [];
+            var projectArray = null;
+            var equipmentArray = null;
+            $.ajax({
+                type   : "GET",
+                url: "/fnd/company/query",
+                data: '',
+                async: false,
+                success: function(args) {
+                     ca = args.rows;
+                     for(var key in args.rows){
+                         if(args.rows[key].parentCompanyId != null){
+                             companyArray.push(args.rows[key]);
+                         }
+                     }
+                }
+            });
+            $.ajax({
+                type   : "GET",
+                url: "/hpms/mdm/project/query",
+                data: '',
+                async: false,
+                success: function(args) {
+                     projectArray = args.rows;
+                }
+            });
+            $.ajax({
+                type   : "GET",
+                url: "/mdm/equipmentType/query",
+                data: '',
+                async: false,
+                success: function(args) {
+                     equipmentArray = args.rows;
+                }
+            })
+            var cp = [];
+            for(var com in companyArray){
+                var com_pro = new Object();
+                com_pro.companyId = companyArray[com].companyId;
+                com_pro.companyFullName = companyArray[com].companyFullName;
+                var proo = [];
+                for(var pro in projectArray){
+                    if(projectArray[pro].companyId == com_pro.companyId) {
+                        var proj = new Object();
+                        proj.projectId = projectArray[pro].projectId;
+                        proj.projectName = projectArray[pro].projectName;
+                        proo.push(proj);
+                        com_pro.proo = proo;
+                    }
+                }
+                cp.push(com_pro);
+            }
+            var crcode ={};
+            function isHave(_o){
+                for(var k in crcode){
+                    if(crcode[k].crCode == _o){
+                        kendo.ui.showWarningDialog({
+                            message: '该计费规则已存在!'
+                        });
+                        $("#editCode").val(null);
+                    }
+                }
+            }
+    </script>
+    <div id="page-content">
+        <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+            <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+                <div class="panel-body">
+                    <div class="row" style="margin-bottom: 5px;">
+                        <!-- 公司 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">公司</label>
+                                <div class="col-sm-8">
+                                    <input id="company" type="text" style="width: 160px"
+                                           data-bind="value:model.companyId"
+                                           class="k-textbox">
+                                </div>
+                                <script>
+                                    $("#company").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "companyFullName",
+                                        dataValueField: "companyId",
+                                        dataSource: companyArray,
+                                        change:function (e) {
+                                            viewModel.model.companyId=e.sender._old;
+                                            var cpd = {};
+                                            for(var key in cp){
+                                                if(cp[key].companyId == e.sender._old){
+                                                    cpd = cp[key].proo;
+                                                }
+                                            }
+                                            $("#project").kendoDropDownList({
+                                                optionLabel: "--请选择--",
+                                                dataTextField: "projectName",
+                                                dataValueField: "projectId",
+                                                dataSource: cpd,
+                                                change:function (e) {
+                                                    viewModel.model.projectId=e.sender._old;
+                                                }
+                                            }).data("kendoDropDownList");
+                                            kendo.bind($('#project'), viewModel);
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#company'), viewModel);
+                                </script>
+                            </div>
+                        </div>
+                        <!-- 项目 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">项目</label>
+                                <div class="col-sm-8">
+                                    <input id="project" type="text" style="width: 160px"
+                                           data-bind="value:model.projectId"
+                                           class="k-textbox">
+                                </div>
+                                <script>
+                                    $("#project").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "projectName",
+                                        dataValueField: "projectId",
+                                        dataSource: projectArray,
+                                        change:function (e) {
+                                            viewModel.model.projectId=e.sender._old;
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#project'), viewModel);
+                                </script>
+                            </div>
+                        </div>
+                        <!-- 仪表类型 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">仪表类型</label>
+                                <div class="col-sm-8">
+                                    <input id="equipmentType" type="text" style="width: 160px"
+                                           data-bind="value:model.equipmentTypeId"
+                                           class="k-textbox">
+                                </div>
+                                <script>
+                                    $("#equipmentType").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "typeName",
+                                        dataValueField: "equipmentTypeId",
+                                        dataSource: equipmentArray,
+                                        change:function (e) {
+                                            viewModel.model.equipmentTypeId=e.sender._old;
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#equipmentType'), viewModel);
+                                </script>
+                            </div>
+                        </div>
+                        <!-- 计费维度 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">计费维度</label>
+                                <div class="col-sm-8">
+                                    <input id="ob" type="text" style="width: 160px"
+                                           data-bind="value:model.crObject"
+                                           class="k-textbox">
+                                </div>
+                                <script>
+                                    // 计费维度下拉框
+                                    $("#ob").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "meaning",
+                                        dataValueField:"value",
+                                        valuePrimitive: true,
+                                        dataSource: resourceTypeData,
+                                        index:-1,
+                                    });
+                                </script>
+                            </div>
+                        </div><br/>
+                        <!-- 计费规则 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">计费规则</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px"
+                                           data-bind="value:model.crName"
+                                           class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 启用状态 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">启用状态</label>
+                                <div class="col-sm-8">
+                                    <input id="enable" type="text" style="width: 160px"
+                                           data-bind="value:model.enableFlag"
+                                           class="k-textbox">
+                                </div>
+                                <script>
+                                    // 启用状态下拉框
+                                    $("#enable").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataSource:["启用","失效"],
+                                        index:-1,
+                                        change:function () {
+                                            if(this.value()=="启用"){
+                                                viewModel.model.enableFlag = 'Y'
+                                            }else{
+                                                viewModel.model.enableFlag = 'N'
+                                            }
+                                        }
+                                    })
+                                </script>
+                            </div>
+                        </div>
+                        <!-- 查询框按钮 -->
+                        <div style="float:right;">
+                            <span class="btn btn-primary" style="width: 70px;float:left;margin-right:5px;" data-bind="click:queryResource"
+                                  type="submit"><@spring.message "hap.query"/></span>
+                            <span class="btn btn-default" style="float:left;width:70px" data-bind="click:resetForm"
+                                  type="button"><@spring.message "hap.reset"/></span>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- gird组件 -->
+        <div style="clear: both;">
+            <div id="grid"></div>
+        </div>
+    </div>
+    <script>
+        // 绑定查询框
+        kendo.bind($('#query-form'), viewModel);
+        // 当前路径
+        var crudServiceBaseUrl = '${base.contextPath}/bs/charge';
+        // 定义数据源
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl + "/query",
+                    type: "GET",
+                    dataType: "json"
+                },
+                create: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                update: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                destroy: {
+                    url: crudServiceBaseUrl + "/delete",
+                    contentType: "application/json",
+                    type: "DELETE"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type);
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                    }
+                },
+            },
+            requestEnd: function (e) {
+                if(e.type=='read'){
+                    crcode=e.response.rows;
+                }else if(e.type=='create'&&e.response.success==true){
+                    kendo.ui.showInfoDialog({
+                        message: '添加成功!'
+                    });
+                } else if(e.type=='update'&&e.response.success==true){
+                    kendo.ui.showInfoDialog({
+                        message: '更新成功!'
+                    });
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "chargeRuleId",
+                    fields: {
+                        enableFlag:{
+                            defaultValue: 'N',
+                            type: 'boolean',
+                            checkedValue: 'Y',
+                            uncheckedValue: 'N'
+                        },
+                    },
+                }
+            }
+        });
+        var grid = $('#grid').kendoGrid({
+            dataSource: dataSource,
+            height: '100%',
+            resizable: false,
+            scrollable: true,
+            selectable: 'row',
+            editable: "inline",
+            sortable: true,
+            navigatable: false,
+            reorderable: true,
+            toolbar:[
+                {template:('<span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;">新增</span>')},
+            ],
+            pageable: {
+                // 分页类别
+                pageSizes: [5, 10, 20, 50],
+                // 刷新按钮
+                refresh: true,
+                // 最大显示页面数
+                buttonCount: 5
+            },
+            columns: [
+                {
+                    title:'操作',
+                    attributes: {style: "text-align:center"},
+                    command:[ {
+                        name: "查",
+                        text:"<i class='fa fa-search'></i>",
+                        click:function (e) {
+                            var tr = $(e.target).closest("tr");
+                            var dataItem = this.dataItem(tr);
+                            parent.openTab("set_"+dataItem.chargeRuleId,dataItem.crName,"bs/time_cal.html/?chargeRuleId="+dataItem.chargeRuleId);
+                        }
+                    },
+                        {name: "edit"}
+                    ],
+                    width:'12%'
+                },
+                {
+                    field: "companyId",
+                    title: '公司',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    template:function (rowdata){
+                                    for(var k in companyArray){
+                                        if(companyArray[k].companyId == rowdata.companyId){
+                                            return companyArray[k].companyFullName
+                                        }
+                                    }
+                    },
+                    editor: function (container, options) {
+                        $('<input id="comp" required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                                $("#comp").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    dataTextField: "companyFullName",
+                                    dataValueField: "companyId",
+                                    dataSource: companyArray,
+                                    change:function (e) {
+                                        options.model.companyId=e.sender._old;
+                                        var cpd = {};
+                                        for(var key in cp){
+                                            if(cp[key].companyId == e.sender._old){
+                                                cpd = cp[key].proo;
+                                            }
+                                        }
+                                        $("#pro").kendoDropDownList({
+                                            optionLabel: "--请选择--",
+                                            dataTextField: "projectName",
+                                            dataValueField: "projectId",
+                                            dataSource: cpd,
+                                            change:function (e) {
+                                                options.model.projectId=e.sender._old;
+                                            }
+                                        }).data("kendoDropDownList");
+                                        kendo.bind($('#pro'), viewModel);
+                                    }
+                                }).data("kendoDropDownList");
+                                kendo.bind($('#comp'), viewModel);
+                    }
+                },
+                {
+                    field: "projectId",
+                    title: '项目',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    template:function (rowdata){
+                        for(var k in projectArray){
+                            if(projectArray[k].projectId == rowdata.projectId){
+                                return projectArray[k].projectName
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                           $('<input id="pro" required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                                $("#pro").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    dataTextField: "projectName",
+                                    dataValueField: "projectId",
+                                    dataSource: projectArray,
+                                    change:function (e) {
+                                        options.model.projectId=e.sender._old;
+                                    }
+                                }).data("kendoDropDownList");
+                                kendo.bind($('#pro'), viewModel);
+                    }
+                },
+                {
+                    field: "equipmentTypeId",
+                    title: '仪表类型',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    template:function (rowdata){
+                        for(var k in equipmentArray){
+                            if(equipmentArray[k].equipmentTypeId == rowdata.equipmentTypeId){
+                                return equipmentArray[k].typeName
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        $('<input id="equip" required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                                $("#equip").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    dataTextField: "typeName",
+                                    dataValueField: "equipmentTypeId",
+                                    dataSource: equipmentArray,
+                                    change:function (e) {
+                                        options.model.equipmentTypeId=e.sender._old;
+                                    }
+                                }).data("kendoDropDownList");
+                    },
+                },
+                {
+                    field: "crObject",
+                    title: '计费维度',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    template:function (rowdata){
+                        for(var k in resourceTypeData){
+                            if(resourceTypeData[k].value == rowdata.crObject){
+                                return resourceTypeData[k].meaning
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        if(options.model.chargeRuleId == "") {
+                            $('<input type="text" style="width: 120px"class="k-textbox" name="' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField: "meaning",
+                                    dataValueField:"value",
+                                    valuePrimitive: true,
+                                    dataSource: resourceTypeData,
+                                    index:-1,
+                                });
+                        }else{
+                            for(var k in resourceTypeData){
+                                if(resourceTypeData[k].value == options.model.crObject){
+                                    $('<span>'+resourceTypeData[k].meaning+'</span>')
+                                        .appendTo(container)
+                                }
+                            }
+                        }
+                    },
+                },
+                {
+                    field: "crCode",
+                    title: '计费规则编码',
+                    width: '10%',
+                    attributes: {style: "text-align:center"},
+                    editor: function (container, options) {
+                        if(options.model.chargeRuleId == "") {
+                            $('<input id="editCode" onchange="isHave(this.value)" required type="text" class="k-textbox" validationMessage="大写,数字和_" pattern="^[A-Z0-9_]+$" name="' + options.field + '"/>').appendTo(container)
+                        }else{
+                            $('<span>'+options.model.crCode+'</span>')
+                                .appendTo(container)
+                        }
+                    },
+                },
+                {
+                    field: "crName",
+                    title: '计费规则',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                },
+                {
+                    field: "enableFlag",
+                    title: '启用状态',
+                    width: '10%',
+                    attributes: {style: "text-align:center"},
+                },
+            ],
+        }).data("kendoGrid");
+        // 自动填充界面
+        Hap.autoResizeGrid("#grid");
+        // 标题居中
+        $("#grid thead>tr th").css("text-align", "center");
+    </script>
+    </body>

@@ -9,6 +9,7 @@ import hpms.bs.dto.ConfigColumn;
 import hpms.utils.ValidationTableException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -41,6 +42,15 @@ public interface IConfigColumnService extends IBaseService<ConfigColumn>,ProxySe
      */
     public List<ConfigColumn> findConfigColumnByCache(IRequest iRequest,Long configValueId,Long configId);
 
+    /**
+     * 根据主键和行号查询缓存中的数据
+     * @param iRequest
+     * @param configValueId
+     * @param configId
+     * @param displayLineNo
+     * @return
+     */
+    public Map<Long,List<ConfigColumn>> findConfigColumnCacheBydisplayLineNo(IRequest iRequest, Long configValueId, Long configId, Long displayLineNo);
     /**
      * 利用反射查询sqlId对应的数据
      * @param request
