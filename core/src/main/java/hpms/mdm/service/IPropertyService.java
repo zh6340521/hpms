@@ -1,15 +1,15 @@
 package hpms.mdm.service;
 
-import java.util.List;
-
 import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.system.service.IBaseService;
-
+import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
+
+import java.util.List;
 
 /**
  * @name IPropertyService
@@ -58,5 +58,13 @@ public interface IPropertyService extends IBaseService<Property>,ProxySelf<Prope
      * @return List<ConfigValue> 所有符合的结果集
      */
 	List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue);
+
+	/**
+	 * 查询建筑档案动态的字段
+	 * @param requestContext
+	 * @param project
+     * @return
+     */
+	List<ConfigColumn> propertyShow(IRequest requestContext, Property property);
 
 }

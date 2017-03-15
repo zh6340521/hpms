@@ -1,30 +1,23 @@
 package hpms.mdm.controllers;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.support.RequestContextUtils;
-
 import com.hand.hap.core.IRequest;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-
+import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
 import hpms.mdm.service.IPropertyService;
 import hpms.utils.ValidationTableException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.RequestContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @name PropertyController
@@ -144,4 +137,22 @@ public class PropertyController extends BaseController{
 		List<ConfigValue> configValues = propertyService.propertyTypeQuery(requestContext,configValue);
 		return new ResponseData(configValues);
 	}
+
+	/**
+	 * 查询建筑档案动态的字段
+	 * @param propertyId
+	 * @param request
+     * @return
+     */
+	@RequestMapping(value = "/mdm/property/showproperty" , method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData propertyShow(Long propertyId, HttpServletRequest request){
+		IRequest requestContext = createRequestContext(request);
+		Property pj = new Property();
+		pj.setPropertyId(propertyId);
+		List<ConfigColumn> configValues = propertyService.propertyShow(requestContext,pj);
+		return new ResponseData(configValues);
+	}
+
+
 }

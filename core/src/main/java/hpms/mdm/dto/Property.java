@@ -1,13 +1,11 @@
 package hpms.mdm.dto;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hand.hap.system.dto.BaseDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @name Property
@@ -124,6 +122,72 @@ public class Property extends BaseDTO{
 	private String publicSpaceStatus;//公共区域状态
 	@Column
 	private String enableFlag;//记录状态
+
+
+	/**
+	 * fuchun.hu@hand-china.com  2017年3月15日 20:08:24
+	 * 加了暂存字段
+	 */
+	@Transient
+	private String columnNameAlias;
+
+	@Transient
+	private String columnId;
+
+	@Transient
+	private Long configValueId;
+
+	@Transient
+	private Long configId;
+
+	@Transient
+	private Long configColumnId;
+
+
+	public void setCompleteTime(Date completeTime) {
+		this.completeTime = completeTime;
+	}
+
+	public String getColumnNameAlias() {
+		return columnNameAlias;
+	}
+
+	public void setColumnNameAlias(String columnNameAlias) {
+		this.columnNameAlias = columnNameAlias;
+	}
+
+	public String getColumnId() {
+		return columnId;
+	}
+
+	public void setColumnId(String columnId) {
+		this.columnId = columnId;
+	}
+
+	public Long getConfigValueId() {
+		return configValueId;
+	}
+
+	public void setConfigValueId(Long configValueId) {
+		this.configValueId = configValueId;
+	}
+
+	public Long getConfigId() {
+		return configId;
+	}
+
+	public void setConfigId(Long configId) {
+		this.configId = configId;
+	}
+
+	public Long getConfigColumnId() {
+		return configColumnId;
+	}
+
+	public void setConfigColumnId(Long configColumnId) {
+		this.configColumnId = configColumnId;
+	}
+
 	public Long getPropertyId() {
 		return propertyId;
 	}

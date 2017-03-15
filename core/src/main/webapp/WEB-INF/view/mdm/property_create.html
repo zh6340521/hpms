@@ -5,6 +5,7 @@
  *author: chengye.hu@hand-china.com 2017.02.13
 -->
 <#include "../include/header.html">
+	<script src="${base.contextPath}/resources/js/hpms.js"></script>
 <body>
 	<style type="text/css">
             label {
@@ -38,8 +39,8 @@
 <div id="page-content">
 	<div id="dialogNewData"></div>
 	<div id="property_form">
-		<form class="form-horizontal" id="pool_form" role="form" style="margin-top: 5px;">
-			<div class="row">
+		<form id="form" class="form-horizontal"  role="form" style="margin-top: 5px;">
+						<div class="row">
 				<div class="col-md-6" style="margin-bottom:10px">
 					<div class="col-md-4 tdAlign">
 	                       <label ><@spring.message 'hpms.mdm.property.group'/></label>
@@ -131,13 +132,28 @@
 		</form>
 	</div>
 	<script>kendo.bind($('#property_form'), viewModel);</script>
-	<br>
+
+	<script>
+
+		//form表单校验
+		$("#form").kendoValidator({
+			messages: {
+				required: '必输'
+			}
+		});
+
+
+	</script>
+
+
 	<div id="toolbar-btn" style="clear:both;" align="center">
         <span id="submit" onclick="submitData()" class="btn btn-primary" style="width:80px;margin-right:5px;"><@spring.message "hap.save"/></span>
         <span id="cancel" onclick="cancel()" class="btn btn-primary" style="width:80px;"><@spring.message "hap.cancel"/></span>
 	</div>
 	<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 </div>
+
+
 	<script type="text/javascript" >
 		var isedit = <#if RequestParameters.isedit?exists>
                                 ${RequestParameters.isedit}
@@ -145,6 +161,8 @@
     	var propertyId = <#if RequestParameters.propertyId?exists>
                                 ${RequestParameters.propertyId}
                              <#else>-1</#if>;
+
+
 	    $('#property_form').kendoValidator();
 	    $("#groupId").kendoComboBox({
 		  valuePrimitive: true,
@@ -270,6 +288,26 @@
                   data: 'rows'
               }
           },
+		  select:function(e){
+			  //查询子表数据
+			  findConfigColumn(e.dataItem.configValueId,e.dataItem.configId,"property_form",viewModel);
+
+
+		  },
+
+		  change:function(e){
+			  //改变值时刷新页面
+			  if(this.value()==null||this.value()==""){
+				  // location.reload();
+				  var node = document.getElementById('div1');
+				  if(node!=null){
+					  //如果已存在渲染div,切换时将div清除
+					  $("div#div1").remove();
+					  //node.parentNode.removeChild(node);
+				  }
+			  }
+
+		  },
           dataBound:function(){
           		if(propertyId !=-1 && isedit == 1){
           			this.readonly(true);
@@ -300,6 +338,9 @@
       	}
       	
 		function submitData() {
+			/*alert("js is "+viewModel.model.roomArea);
+			alert("groupId is "+viewModel.model.groupId);*/
+
 	        if(viewModel.model.groupId==''||viewModel.model.groupId==null){
 	            kendo.ui.showInfoDialog({
 	                message:'groupId不能为空'
@@ -391,6 +432,10 @@
                     for (var k in row) {
                    		viewModel.model.set(k, row[k]);
                		}
+
+					var isview = 2;
+					//调用js动态出现渲染的字段
+					showProperty("property_form",viewModel,propertyId,isview);
 		        }
 		    });
     	}

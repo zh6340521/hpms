@@ -1,20 +1,19 @@
 package hpms.mdm.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
-
+import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
 import hpms.mdm.mapper.PropertyMapper;
 import hpms.mdm.service.IPropertyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @name PropertyServiceImpl
@@ -46,6 +45,11 @@ public class PropertyServiceImpl extends BaseServiceImpl<Property> implements IP
 	@Override
 	public List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue) {
 		return propertyMapper.propertyTypeQuery(configValue);
+	}
+
+	@Override
+		public List<ConfigColumn> propertyShow(IRequest requestContext, Property property){
+		return propertyMapper.propertyShow(property);
 	}
 
 }

@@ -64,8 +64,8 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
     private SqlSessionFactory sqlSessionFactory;
 
     //字段是必输时的显示字段
-    public final static String vaildate_required_message = "1";
-    public final static String vaildate_unrequired_message = "2";
+    public final static String vaildate_required_message = "required";
+
 
     private Logger logger = LoggerFactory.getLogger(ConfigColumnServiceImpl.class);
 
@@ -146,7 +146,7 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
                                     if(cc.getRequiredFlag().equals("Y")||cc.getRequiredFlag()=="Y"){
                                         cc.setVaildateMessage(vaildate_required_message);
                                     }else{
-                                        cc.setVaildateMessage(vaildate_unrequired_message);
+                                        cc.setVaildateMessage("");
                                     }
                                         ccList.add(cc);
 
@@ -195,7 +195,7 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
                                         if(cc.getRequiredFlag().equals("Y")||cc.getRequiredFlag()=="Y"){
                                             cc.setVaildateMessage(vaildate_required_message);
                                         }else{
-                                            cc.setVaildateMessage(vaildate_unrequired_message);
+                                            cc.setVaildateMessage("");
                                         }
 
                                         ccList.add(cc);

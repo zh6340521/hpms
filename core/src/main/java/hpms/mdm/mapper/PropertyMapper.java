@@ -1,13 +1,13 @@
 package hpms.mdm.mapper;
 
-import java.util.List;
-
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.mybatis.common.Mapper;
-
+import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
+
+import java.util.List;
 
 /**
  * @name PropertyMapper
@@ -50,5 +50,12 @@ public interface PropertyMapper extends Mapper<Property>{
      * @return List<ConfigValue> 符合的对象集合
      */
 	List<ConfigValue> propertyTypeQuery(ConfigValue configValue);
+
+	/**
+	 * 查询建筑档案动态的字段
+	 * @param property
+	 * @return
+	 */
+	List<ConfigColumn> propertyShow(Property property);
 
 }
