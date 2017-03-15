@@ -1,7 +1,7 @@
-package hpms.bs.mapper;
+package hpms.fin.mapper;
 
 import com.hand.hap.mybatis.common.Mapper;
-import hpms.bs.dto.MeterGradePrice;
+import hpms.fin.dto.MeterGradePrice;
 
 /**
  * Created by LoseMyself

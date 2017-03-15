@@ -1,4 +1,4 @@
-package hpms.bs.dto;
+package hpms.fin.dto;
 
 import com.hand.hap.system.dto.BaseDTO;
 

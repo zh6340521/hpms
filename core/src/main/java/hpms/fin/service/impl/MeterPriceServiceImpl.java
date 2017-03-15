@@ -1,9 +1,8 @@
-package hpms.bs.service.impl;
+package hpms.fin.service.impl;
 
 import com.hand.hap.system.service.impl.BaseServiceImpl;
-import hpms.bs.dto.MeterGradePrice;
-import hpms.bs.service.IMeterChargeService;
-import hpms.bs.service.IMeterPriceService;
+import hpms.fin.dto.MeterGradePrice;
+import hpms.fin.service.IMeterPriceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

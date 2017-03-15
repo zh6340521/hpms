@@ -1,8 +1,8 @@
-package hpms.bs.service;
+package hpms.fin.service;
 
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
-import hpms.bs.dto.MeterCharge;
+import hpms.fin.dto.MeterCharge;
 
 /**
  * Created by LoseMyself

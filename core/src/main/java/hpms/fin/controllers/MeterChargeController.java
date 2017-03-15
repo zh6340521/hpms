@@ -1,10 +1,10 @@
-package hpms.bs.controllers;
+package hpms.fin.controllers;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-import hpms.bs.dto.MeterCharge;
-import hpms.bs.service.IMeterChargeService;
+import hpms.fin.dto.MeterCharge;
+import hpms.fin.service.IMeterChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -23,7 +23,7 @@ public class MeterChargeController extends BaseController{
     @Autowired
     private IMeterChargeService meterChargeService;
 
-    @RequestMapping(value = "bs/charge/query",method = RequestMethod.GET)
+    @RequestMapping(value = "fin/charge/query",method = RequestMethod.GET)
     @ResponseBody
     public ResponseData select(HttpServletRequest request, MeterCharge meterCharge,
                                @RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -35,12 +35,13 @@ public class MeterChargeController extends BaseController{
 
 
 
-    @RequestMapping(value = "bs/charge/submit",method = RequestMethod.POST)
+    @RequestMapping(value = "fin/charge/add",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData update(HttpServletRequest request, @RequestBody List<MeterCharge> dto, BindingResult result) {
+    public ResponseData add(HttpServletRequest request, @RequestBody List<MeterCharge> dto, BindingResult result) {
         IRequest requestCtx = createRequestContext(request);
-
-        if(meterChargeService.isHaveEn(dto.get(0)) == false){
+        boolean a = meterChargeService.isHaveEn(dto.get(0));
+        System.out.println(a);
+        if( a == false){
             ResponseData responseData = new ResponseData();
             responseData.setMessage("同一公司项目下某一种仪表类型的计费规则只允许一条为启用!");
             responseData.setSuccess(false);
@@ -54,7 +55,20 @@ public class MeterChargeController extends BaseController{
         return new ResponseData(meterChargeService.batchUpdate(requestCtx, dto));
     }
 
-    @RequestMapping(value = "bs/charge/delete",method = RequestMethod.DELETE)
+    @RequestMapping(value = "fin/charge/update",method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData update(HttpServletRequest request, @RequestBody List<MeterCharge> dto, BindingResult result) {
+        IRequest requestCtx = createRequestContext(request);
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }
+        return new ResponseData(meterChargeService.batchUpdate(requestCtx, dto));
+    }
+
+
+    @RequestMapping(value = "fin/charge/delete",method = RequestMethod.DELETE)
     public ResponseData delete(@RequestBody List<MeterCharge> sequences){
         ResponseData responseData = new ResponseData();
         meterChargeService.batchDelete(sequences);

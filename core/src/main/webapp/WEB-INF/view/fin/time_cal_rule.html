@@ -259,7 +259,7 @@
         // 绑定查询框
         kendo.bind($('#query-form'), viewModel);
         // 当前路径
-        var crudServiceBaseUrl = '${base.contextPath}/bs/charge';
+        var crudServiceBaseUrl = '${base.contextPath}/fin/charge';
         // 定义数据源
         var dataSource = new kendo.data.DataSource({
             transport: {
@@ -269,12 +269,12 @@
                     dataType: "json"
                 },
                 create: {
-                    url: crudServiceBaseUrl + "/submit",
+                    url: crudServiceBaseUrl + "/add",
                     contentType: "application/json",
                     type: "POST"
                 },
                 update: {
-                    url: crudServiceBaseUrl + "/submit",
+                    url: crudServiceBaseUrl + "/update",
                     contentType: "application/json",
                     type: "POST"
                 },
@@ -299,10 +299,16 @@
                     kendo.ui.showInfoDialog({
                         message: '添加成功!'
                     });
-                } else if(e.type=='update'&&e.response.success==true){
+                }else if(e.type=='update'&&e.response.success==true){
                     kendo.ui.showInfoDialog({
                         message: '更新成功!'
                     });
+                }else if(e.type="delete"&&e.response.success==true){
+                    kendo.ui.showInfoDialog({
+                        message: e.response.message
+                    });
+                }else{
+                    $('#grid').data('kendoGrid').dataSource.read();
                 }
             },
             batch: true,
@@ -355,10 +361,10 @@
                         click:function (e) {
                             var tr = $(e.target).closest("tr");
                             var dataItem = this.dataItem(tr);
-                            parent.openTab("set_"+dataItem.chargeRuleId,dataItem.crName,"bs/time_cal.html/?chargeRuleId="+dataItem.chargeRuleId);
+                            parent.openTab("set_"+dataItem.chargeRuleId,dataItem.crName,"fin/time_cal.html/?chargeRuleId="+dataItem.chargeRuleId);
                         }
                     },
-                        {name: "edit"}
+                        {name: "edit"},
                     ],
                     width:'12%'
                 },
@@ -394,6 +400,7 @@
                                             dataTextField: "projectName",
                                             dataValueField: "projectId",
                                             dataSource: cpd,
+                                            index: -1,
                                             change:function (e) {
                                                 options.model.projectId=e.sender._old;
                                             }
@@ -422,6 +429,7 @@
                                     optionLabel: "--请选择--",
                                     dataTextField: "projectName",
                                     dataValueField: "projectId",
+                                    index: -1,
                                     dataSource: projectArray,
                                     change:function (e) {
                                         options.model.projectId=e.sender._old;

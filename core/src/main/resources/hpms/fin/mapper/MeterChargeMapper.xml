@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="hpms.bs.mapper.MeterChargeMapper">
-    <select id="isHaveEnable" parameterType="hpms.bs.dto.MeterCharge" resultType="hpms.bs.dto.MeterCharge">
+<mapper namespace="hpms.fin.mapper.MeterChargeMapper">
+    <select id="isHaveEnable" parameterType="hpms.fin.dto.MeterCharge" resultType="hpms.fin.dto.MeterCharge">
         SELECT enable_flag enableFlag FROM HPMS_FIN_METER_CHARGE_RULE
          WHERE company_id = #{companyId} AND project_id = #{projectId} AND equipment_type_id = #{equipmentTypeId}
     </select>

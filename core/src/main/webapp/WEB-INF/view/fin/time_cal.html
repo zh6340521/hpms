@@ -49,7 +49,7 @@
         })
         $.ajax({
             type   : "GET",
-            url: '${base.contextPath}/bs/charge/query?chargeRuleId='+chargeRuleId,
+            url: '${base.contextPath}/fin/charge/query?chargeRuleId='+chargeRuleId,
             data: '',
             async: false,
             success: function(args) {
@@ -168,7 +168,7 @@
         // 绑定数据源
         kendo.bind($('#query-form'), viewModel);
         // 当前路径
-        var crudServiceBaseUrl = '${base.contextPath}/bs/meterprice';
+        var crudServiceBaseUrl = '${base.contextPath}/fin/meterprice';
 
         // 定义数据源
         var dataSource = new kendo.data.DataSource({

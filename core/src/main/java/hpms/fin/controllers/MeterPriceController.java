@@ -1,10 +1,10 @@
-package hpms.bs.controllers;
+package hpms.fin.controllers;
 
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-import hpms.bs.dto.MeterGradePrice;
-import hpms.bs.service.IMeterPriceService;
+import hpms.fin.dto.MeterGradePrice;
+import hpms.fin.service.IMeterPriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -23,7 +23,7 @@ public class MeterPriceController extends BaseController{
     @Autowired
     private IMeterPriceService meterPriceService;
 
-    @RequestMapping(value = "bs/meterprice/query",method = RequestMethod.GET)
+    @RequestMapping(value = "fin/meterprice/query",method = RequestMethod.GET)
     @ResponseBody
     public ResponseData select(HttpServletRequest request, MeterGradePrice meterCharge,
                                @RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -35,7 +35,7 @@ public class MeterPriceController extends BaseController{
 
 
 
-    @RequestMapping(value = "bs/meterprice/submit",method = RequestMethod.POST)
+    @RequestMapping(value = "fin/meterprice/submit",method = RequestMethod.POST)
     @ResponseBody
     public ResponseData update(HttpServletRequest request, @RequestBody List<MeterGradePrice> dto, BindingResult result) {
         IRequest requestCtx = createRequestContext(request);
@@ -47,7 +47,7 @@ public class MeterPriceController extends BaseController{
         return new ResponseData(meterPriceService.batchUpdate(requestCtx, dto));
     }
 
-    @RequestMapping(value = "bs/meterprice/delete",method = RequestMethod.DELETE)
+    @RequestMapping(value = "fin/meterprice/delete",method = RequestMethod.DELETE)
     public ResponseData delete(@RequestBody List<MeterGradePrice> sequences){
         ResponseData responseData = new ResponseData();
         meterPriceService.batchDelete(sequences);
