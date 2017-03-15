@@ -12,4 +12,6 @@ import java.util.List;
 public interface MeterChargeMapper extends Mapper<MeterCharge>{
 
     List<MeterCharge> isHaveEnable(MeterCharge meterCharge);
+
+    Integer isChange(MeterCharge meterCharge);
 }

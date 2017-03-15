@@ -5,6 +5,7 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.fin.dto.MeterCharge;
 import hpms.fin.service.IMeterChargeService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,23 @@ public class MeterChargeController extends BaseController{
 
     @Autowired
     private IMeterChargeService meterChargeService;
+
+    @RequestMapping(value = "fin/charge/find",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseData find(HttpServletRequest request, MeterCharge meterCharge){
+        IRequest requestContext = this.createRequestContext(request);
+        boolean a = meterChargeService.isChange(meterChargeService.selectByPrimaryKey(requestContext,meterCharge));
+        ResponseData responseData = new ResponseData();
+        if(a){
+            responseData.setMessage("true");
+            responseData.setSuccess(true);
+        }else{
+            responseData.setMessage("false");
+            responseData.setSuccess(false);
+        }
+        return responseData;
+    }
+
 
     @RequestMapping(value = "fin/charge/query",method = RequestMethod.GET)
     @ResponseBody

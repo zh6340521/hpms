@@ -5,4 +5,13 @@
         SELECT enable_flag enableFlag FROM HPMS_FIN_METER_CHARGE_RULE
          WHERE company_id = #{companyId} AND project_id = #{projectId} AND equipment_type_id = #{equipmentTypeId}
     </select>
+    <select id="isChange" parameterType="hpms.fin.dto.MeterCharge" resultType="java.lang.Integer">
+      SELECT count(*)
+      FROM HPMS_FIN_METER_READ_HIS HFMRH, HPMS_MDM_EQUIPMENT HME
+      WHERE HFMRH.COMPANY_ID = #{companyId}
+      AND HFMRH.PROJECT_ID = #{projectId}
+      AND HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
+      AND HME.EQUIPMENT_TYPE_ID = #{equipmentTypeId}
+      AND HFMRH.STATUS = 'ACTIVE'
+    </select>
 </mapper>

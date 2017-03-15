@@ -36,4 +36,13 @@ public class MeterChargeService extends BaseServiceImpl<MeterCharge> implements 
         }
         return a;
     }
+
+    @Override
+    public boolean isChange(MeterCharge meterCharge) {
+        Integer i = mapper.isChange(meterCharge);
+        if(i != 0){
+            return false;
+        }
+        return true;
+    }
 }

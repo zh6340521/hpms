@@ -88,6 +88,11 @@
                     }
                 }
             }
+            function isActive(_o){
+                kendo.ui.showWarningDialog({
+                    message: "该计费规则下有未冻结的抄表记录,不允许失效操作!"
+                });
+            }
     </script>
     <div id="page-content">
         <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
@@ -521,6 +526,27 @@
                     title: '启用状态',
                     width: '10%',
                     attributes: {style: "text-align:center"},
+                    editor: function (container, options) {
+                        if(options.model.chargeRuleId == "") {
+                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
+                        }else if(options.model.enableFlag == "Y"){
+                            $.ajax({
+                                type   : "GET",
+                                url: crudServiceBaseUrl+"/find?chargeRuleId="+options.model.chargeRuleId,
+                                data: '',
+                                async: false,
+                                success: function(args) {
+                                    if(args.success == false){
+                                        $('<span onmouseover="isActive()" tabindex="0" class="k-checkbox k-state-default fa fa-check"><input disabled type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
+                                    }else{
+                                        $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
+                                    }
+                                }
+                            });
+                        }else{
+                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
+                        }
+                    },
                 },
             ],
         }).data("kendoGrid");

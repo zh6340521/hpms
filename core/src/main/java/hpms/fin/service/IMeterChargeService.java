@@ -11,4 +11,5 @@ import hpms.fin.dto.MeterCharge;
 public interface IMeterChargeService extends IBaseService<MeterCharge>, ProxySelf<IMeterChargeService> {
 
     boolean isHaveEn(MeterCharge meterCharge);
+    boolean isChange(MeterCharge meterCharge);
 }
