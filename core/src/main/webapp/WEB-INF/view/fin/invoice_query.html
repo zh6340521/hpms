@@ -222,7 +222,11 @@
                 {
                     field: "invoiceDate",
                     title: '<@spring.message "hpms.fin.invoice.invoiceDate"/>',
-                    width: 100
+                    width: 100,
+                    template:function(rowdata){
+                        var invoiceDate=rowdata.invoiceDate.toString();
+                        return invoiceDate.substring(0,10);
+                    }
                 },
 
                 {

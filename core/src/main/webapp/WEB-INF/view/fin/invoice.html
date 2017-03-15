@@ -194,6 +194,7 @@
             <div style="clear:both">
                 <div id="invoice_grid" ></div>
             </div>
+
             <!--<script>kendo.bind($('#invoice_grid'), viewModel);</script>-->
         </div>
         <script type="text/javascript" >
@@ -528,11 +529,25 @@
                     attributes  : {style: "text-align:center"},
                     template: function(dataItem) {
                         //console.log(dataItem['lineNumner']);
-                        return dataItem['lineNumner']||'';
+                        if(dataItem['lineNumner']==null||dataItem['lineNumner']==''){
+                            //var editor = $('<span id="lineNumber"></span>');
+                           // console.log(newViewModel.model.showlineNumber);
+                            return newViewModel.model.showlineNumber;
+                        }else{
+                            return dataItem['lineNumner'];
+                        }
+                        //return dataItem['lineNumner']||'';
                     },
                     editor: function(container, options){
-                            container.html(options.model.lineNumner);
-                            container.removeClass('k-edit-cell');
+                            //container.html(options.model.lineNumner);
+                        /*var editor = $('<span id="lineNumber" name="lineNumber"></span>');
+                        editor.css('width','100%');
+                        container.append(editor);*/
+                        container.removeClass('k-edit-cell');
+                        container.html(options.model.lineNumner);
+
+                        $('<span id="lineNumber" name="lineNumber"></span>')
+                                .appendTo(container);
                     }
 
                },{
@@ -757,14 +772,6 @@
                 win.center().open();
             }
 
-
-            function createFunction(){
-                $('#invoice_grid').data('kendoGrid').addRow();
-                //document.getElementById("addrow").disabled=true;
-                $('#addrow').removeAttr("onclick");
-            }
-
-
             var dataSource1;
             function submitInvoiceLine() {
                 if(newViewModel.model.paymentTermId==null||newViewModel.model.paymentTermId==''){
@@ -873,7 +880,7 @@
                             var invoiceLineMessage = kendo.stringify(viewModel.model);
                             var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
                             var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
-                            jsonInvoiceHeader.invoiceAmount=newViewModel.model.curbalance;
+                            jsonInvoiceHeader.invoiceAmount=-newViewModel.model.curbalance;
                             var json = JSON.parse(invoiceLineMessage);
                             json.invoice=jsonInvoiceHeader;
 
@@ -883,7 +890,7 @@
                             var invoiceHeaderMessage=kendo.stringify(newViewModel.model);
                             var jsonInvoiceHeader=JSON.parse(invoiceHeaderMessage);
                             var json = JSON.parse(invoiceLineMessage);
-                            jsonInvoiceHeader.invoiceAmount=newViewModel.model.curbalance;
+                            jsonInvoiceHeader.invoiceAmount=-newViewModel.model.balance;
                             json.invoice=jsonInvoiceHeader;
 
 
@@ -972,6 +979,7 @@
                                 $('#invoice_grid').data('kendoGrid').dataSource.page(1);
                                 $('#saveForm').show();
                                 $('#addrow').attr("onclick","createFunction();");
+                                newViewModel.model.set("showlineNumber",null);
                                 //document.getElementById("addrow").disabled=false;
                                 kendo.ui.showInfoDialog({
                                     message : '<@spring.message "hap.tip.success"/>'
@@ -984,6 +992,28 @@
                             }
                         }});
 
+                }
+
+            }
+
+            function createFunction(){
+
+                //document.getElementById("addrow").disabled=true;
+                $('#addrow').removeAttr("onclick");
+                if(dataSource1==null){
+                    $('#invoice_grid').data('kendoGrid').addRow();
+                    var items=dataSource.data();
+                    newViewModel.model.set("showlineNumber",1);
+                    document.getElementById("lineNumber").innerHTML = 1;
+                    $('#addrow').removeAttr("onclick");
+
+                }else{
+                    $('#invoice_grid').data('kendoGrid').addRow();
+                    var items=dataSource1.data();
+                    console.log(items[items.length-2].lineNumner+1);
+                    newViewModel.model.set("showlineNumber",items[items.length-2].lineNumner+1);
+                    document.getElementById("lineNumber").innerHTML = items[items.length-2].lineNumner+1;
+                    $('#addrow').removeAttr("onclick");
                 }
 
             }

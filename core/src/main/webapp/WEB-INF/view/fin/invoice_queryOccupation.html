@@ -57,12 +57,18 @@
 			data:  kendo.stringify(json),
 			success: function(data){
 				if (data.success) {
-					window.parent.newViewModel.model.set("customerName",data.rows[0].customerName);
-					window.parent.newViewModel.model.set("propertyNumber",data.rows[0].propertyNumber);
-					window.parent.newViewModel.model.set("propertyName",data.rows[0].propertyName);
-					window.parent.newViewModel.model.set("occupationId",data.rows[0].occupationId);
-					console.log(data.rows[0].occupationId);
-					window.parent.$("#property_tree").data("kendoWindow").close();
+                    //console.log(data.rows[0]);
+                    if(data.rows[0]!=null){
+                    window.parent.newViewModel.model.set("customerName",data.rows[0].customerName);
+                    window.parent.newViewModel.model.set("propertyNumber",data.rows[0].propertyNumber);
+                    window.parent.newViewModel.model.set("propertyName",data.rows[0].propertyName);
+                    window.parent.newViewModel.model.set("occupationId",data.rows[0].occupationId);
+                    //console.log(data.rows[0].occupationId);
+                    window.parent.$("#property_tree").data("kendoWindow").close();
+                }else{
+
+                    }
+
 				}else{
 					window.parent.$("#property_tree").data("kendoWindow").close();
 				}
