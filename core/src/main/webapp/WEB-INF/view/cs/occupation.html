@@ -256,7 +256,6 @@
         select: function (e) {
             if (e.dataItem.projectId){
                 var projectId = e.dataItem.projectId;
-                console.log(e.dataItem.projectId)
                 $.ajax({
                     url: "${base.contextPath}/cs/projectProcedure/query",
                     type: "POST",

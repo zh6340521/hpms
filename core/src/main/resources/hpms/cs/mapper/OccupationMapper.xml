@@ -83,6 +83,9 @@
             <if test="propertyId != null">
                 AND hmp.PROPERTY_ID = #{propertyId , jdbcType=DECIMAL}
             </if>
+            <if test="occupationId != null">
+                AND occ.OCCUPATION_ID = #{occupationId , jdbcType=VARCHAR}
+            </if>
             <if test="status != null">
                 AND occ.STATUS = #{status , jdbcType=DECIMAL}
             </if>
@@ -168,6 +171,56 @@
         <if test="sortname ==null">
             order by OCCUPATION_ID  desc
         </if>
+    </select>
+
+    <select id="selectCustomer" parameterType="hpms.cs.dto.Occupation" resultMap="BaseResultMap">
+        SELECT
+            "c".CUSTOMER_ID,
+            "c".CUSTOMER_NUMBER customerCode,
+            NVL ("bp".FULL_NAME,"bp".COMPANY_NAME) CUSTOMER_NAME,
+            "bp".FULL_NAME,
+            "bp".COMPANY_NAME,
+            occ.PROPERTY_ID,
+            occ.PROPERTY_NAME,
+            occ.PROPERTY_NUMBER
+        FROM HPMS.HPMS_MDM_CUSTOMER "c"
+        LEFT JOIN HPMS.HPMS_MDM_BP_GENERAL "bp" ON "c".BP_ID = "bp".BP_ID
+        LEFT JOIN (
+          SELECT
+              *
+          FROM
+              HPMS_CS_OCCUPATION
+          WHERE
+              OCCUPATION_ID IN (
+                  SELECT
+                      MAX (
+                              HPMS_CS_OCCUPATION.OCCUPATION_ID
+                      )
+                  FROM
+                      HPMS_CS_OCCUPATION
+                  GROUP BY
+                      HPMS_CS_OCCUPATION.PROPERTY_ID
+              )
+          ) occ ON "c".CUSTOMER_ID = occ.CUSTOMER_ID
+        <where>
+            <if test="customerCode != null">
+                AND "c".CUSTOMER_NUMBER like concat('%',concat(#{customerCode,jdbcType=VARCHAR}, '%'))
+            </if>
+
+            <if test="customerName != null">
+                AND (
+                "bp".FULL_NAME like concat('%',concat(#{customerName,jdbcType=VARCHAR}, '%'))
+                OR "bp".COMPANY_NAME like concat('%',concat(#{customerName,jdbcType=VARCHAR}, '%'))
+                )
+            </if>
+
+            <if test="propertyNumber != null">
+                AND occ.PROPERTY_NUMBER like concat('%',concat(#{propertyNumber,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="propertyName != null">
+                AND occ.PROPERTY_NAME like concat('%',concat(#{propertyName,jdbcType=VARCHAR}, '%'))
+            </if>
+        </where>
     </select>
 
 

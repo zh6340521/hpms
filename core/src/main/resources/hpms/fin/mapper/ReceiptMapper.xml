@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.fin.mapper.ReceiptMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.Receipt" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="RECEIPT_ID" property="receiptId" jdbcType="DECIMAL" />
+        <result column="FEE_LIST_ID" property="feeListId" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_NUM" property="receiptNum" jdbcType="VARCHAR" />
+        <result column="LINE_NUMBER" property="lineNumber" jdbcType="DECIMAL" />
+        <result column="REFERENCE_NUMBER" property="referenceNumber" jdbcType="VARCHAR" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
+        <result column="FEE_TYPE_ID" property="feeTypeId" jdbcType="DECIMAL" />
+        <result column="FEE_ID" property="feeId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_DATE" property="receiptDate" jdbcType="DATE" />
+        <result column="RECEIPT_METHOD" property="receiptMethod" jdbcType="VARCHAR" />
+        <result column="RECEIPT_TERM" property="receiptTerm" jdbcType="VARCHAR" />
+        <result column="RECEIPT_AMOUNT" property="receiptAmount" jdbcType="DECIMAL" />
+        <result column="REFUND_AMOUNT" property="refundAmount" jdbcType="DECIMAL" />
+        <result column="DEDUCT_AMOUNT" property="deductAmount" jdbcType="DECIMAL" />
+        <result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+        <result column="RECEIPT_PERIOD" property="receiptPeriod" jdbcType="VARCHAR" />
+        <result column="TRANS_TYPE" property="transType" jdbcType="VARCHAR" />
+        <result column="ADJ_AMOUNT" property="adjAmount" jdbcType="DECIMAL" />
+        <result column="DEDUCT_REASON" property="deductReason" jdbcType="VARCHAR" />
+        <result column="PAYER" property="payer" jdbcType="VARCHAR" />
+        <result column="TRANSACTOR" property="transactor" jdbcType="VARCHAR" />
+        <result column="CLEAR_TRANSACTOR" property="clearTransactor" jdbcType="VARCHAR" />
+        <result column="CLEAR_CODE" property="clearCode" jdbcType="VARCHAR" />
+        <result column="CLEARED_DATE" property="clearedDate" jdbcType="DATE" />
+        <result column="RECEIPT_STATUS" property="receiptStatus" jdbcType="VARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <resultMap id="ReceiptFeeListResultMap" type="hpms.fin.dto.ReceiptFeeList"
+               extends="hpms.fin.mapper.FeeListMapper.BaseResultMap">
+        <result column="RECEIPT_METHOD" property="receiptMethod" jdbcType="VARCHAR" />
+        <result column="RECEIPT_METHOD_NAME" property="receiptMethodName" jdbcType="VARCHAR" />
+        <result column="SETTLEMENT_AMOUNT" property="settlementAmount" jdbcType="VARCHAR" />
+        <result column="RECEIPT_ID" property="receiptId" jdbcType="DECIMAL" />
+        <result column="RECEIPT_NUM" property="receiptNum" jdbcType="VARCHAR" />
+        <result column="LINE_NUMBER" property="lineNumber" jdbcType="DECIMAL" />
+        <result column="RECEIPT_DATE" property="receiptDate" jdbcType="DATE" />
+        <result column="RECEIPT_STATUS" property="receiptStatus" jdbcType="VARCHAR" />
+        <result column="RECEIPT_STATUS_NAME" property="receiptStatusName" jdbcType="VARCHAR" />
+        <result column="DOC_TYPE" property="docType" jdbcType="VARCHAR" />
+        <result column="RECEIPT_AMOUNT" property="receiptAmount" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+
+    </resultMap>
+
+    <select id="selectFeeList" parameterType="hpms.fin.dto.ReceiptFeeList" resultMap="ReceiptFeeListResultMap">
+        SELECT
+            "hffl".FEE_LIST_ID,
+            "hffl".FEE_LIST_CODE,
+            "hffl".FEE_STATUS,
+            "hffl".OCCUPATION_ID,
+            "hffl".FEE_PERIOD,
+            "hffl".FEE_TYPE_ID,
+            "hffl".FEE_ID,
+            "hffl".UNIT_PRICE,
+            "hffl".FEE_UOM,
+            "hffl".FEE_QUANTITY,
+            "hffl".CURRENCY_TYPE,
+            "hffl".SEGMENT_FLAG,
+            "hffl".LAST_RECORD,
+            "hffl".PRESENT_RECORD,
+            "hffl".GROSS_AMOUNT,
+            "hffl".ADJ_AMOUNT,
+            "hffl".OVERDUE_PAYMENT,
+            "hffl".TOTAL_AMOUNT,
+            "hffl".ACCRUED_DATE,
+            "hffl".DATE_TO,
+            "hffl".REMARK,
+            "hffl".REFERENCE_NUMBER,
+            "hffl".DATA_SOURCE,
+            "hffl".COMPANY_ID,
+            "hffl".TRANS_TYPE,
+            "hffl".PAY_PART_REPAIR,
+            "hffl".GENERATE_DATE,
+            "hffl".COUNTED_DATE,
+            "hcvv1".MEANING TRANS_TYPE_NAME,
+            "hcvv2".MEANING FEE_STATUS_NAME,
+            ("hffl".TOTAL_AMOUNT-NVL(rec.RECEIPT_AMOUNT,0)) SETTLEMENT_AMOUNT
+        FROM HPMS_FIN_FEE_LIST "hffl"
+        LEFT JOIN HPMS_CODE_VALUE_V "hcvv1"
+        ON "hffl".TRANS_TYPE = "hcvv1".VALUE AND "hcvv1".CODE = 'HPMS_TRANS_TYPE' AND "hcvv1".LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V "hcvv2"
+        ON "hffl".FEE_STATUS = "hcvv2".VALUE AND "hcvv2".CODE = 'HPMS_FEE_LIST_TPYE' AND "hcvv2".LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN (
+            SELECT FEE_LIST_ID,SUM(RECEIPT_AMOUNT) RECEIPT_AMOUNT
+            FROM HPMS_FIN_RECEIPT
+            GROUP BY FEE_LIST_ID
+        ) rec
+        ON rec.FEE_LIST_ID = "hffl".FEE_LIST_ID
+        <where>
+            <if test="feeStatus != null">
+                AND FEE_STATUS = #{feeStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectReceipt" parameterType="hpms.fin.dto.ReceiptFeeList" resultMap="ReceiptFeeListResultMap">
+        SELECT
+        "hfr".OCCUPATION_ID,
+        "hfr".FEE_LIST_ID,
+        "hfr".FEE_TYPE_ID,
+        "hfr".FEE_ID,
+        "hfr".REFERENCE_NUMBER,
+        "hfr".COMPANY_ID,
+        "hfr".TRANS_TYPE,
+        "hfr".ADJ_AMOUNT,
+        "hfr".OBJECT_VERSION_NUMBER,
+        "hfr".LAST_UPDATE_DATE,
+        "hfr".RECEIPT_ID,
+--         "hfr".FEE_LIST_ID,
+--         "hfr".COMPANY_ID,
+        "hfr".PROJECT_ID,
+        "hfr".RECEIPT_NUM,
+        "hfr".LINE_NUMBER,
+--         "hfr".REFERENCE_NUMBER,
+--         "hfr".OCCUPATION_ID,
+--         "hfr".FEE_TYPE_ID,
+--         "hfr".FEE_ID,
+        "hfr".RECEIPT_DATE,
+        "hfr".RECEIPT_METHOD,
+        "hfr".RECEIPT_TERM,
+        "hfr".RECEIPT_AMOUNT,
+        "hfr".REFUND_AMOUNT,
+        "hfr".DEDUCT_AMOUNT,
+        "hfr".CURRENCY,
+        "hfr".RECEIPT_PERIOD,
+--         "hfr".TRANS_TYPE,
+--         "hfr".ADJ_AMOUNT,
+        "hfr".DEDUCT_REASON,
+        "hfr".PAYER,
+        "hfr".TRANSACTOR,
+        "hfr".CLEAR_TRANSACTOR,
+        "hfr".CLEAR_CODE,
+        "hfr".CLEARED_DATE,
+        "hfr".RECEIPT_STATUS,
+        "hfr".DESCRIPTION,
+--         "hfr".OBJECT_VERSION_NUMBER,
+--         "hfr".LAST_UPDATE_DATE,
+--         "hffl".FEE_LIST_ID,
+        "hffl".FEE_LIST_CODE,
+        "hffl".FEE_STATUS,
+--         "hffl".OCCUPATION_ID,
+        "hffl".FEE_PERIOD,
+--         "hffl".FEE_TYPE_ID,
+--         "hffl".FEE_ID,
+        "hffl".UNIT_PRICE,
+        "hffl".FEE_UOM,
+        "hffl".FEE_QUANTITY,
+        "hffl".CURRENCY_TYPE,
+        "hffl".SEGMENT_FLAG,
+        "hffl".LAST_RECORD,
+        "hffl".PRESENT_RECORD,
+        "hffl".GROSS_AMOUNT,
+--         "hffl".ADJ_AMOUNT,
+        "hffl".OVERDUE_PAYMENT,
+        "hffl".TOTAL_AMOUNT,
+        "hffl".ACCRUED_DATE,
+        "hffl".DATE_TO,
+        "hffl".REMARK,
+--         "hffl".REFERENCE_NUMBER,
+        "hffl".DATA_SOURCE,
+--         "hffl".COMPANY_ID,
+--         "hffl".TRANS_TYPE,
+        "hffl".PAY_PART_REPAIR,
+        "hffl".GENERATE_DATE,
+        "hffl".COUNTED_DATE,
+        "hcvv1".MEANING TRANS_TYPE_NAME,
+        NULL FEE_STATUS_NAME,
+        "hcvv3".MEANING RECEIPT_STATUS_NAME,
+--         (
+--         "hffl".TOTAL_AMOUNT - NVL (rec.RECEIPT_AMOUNT, 0)
+--         ) SETTLEMENT_AMOUNT,
+        "hfr".RECEIPT_AMOUNT SETTLEMENT_AMOUNT,
+        "hmft".FEE_TYPE_NAME,
+        "hmf".FEE_NAME,
+        "hmpm".PAYMENT_METHOD_NAME RECEIPT_METHOD_NAME,
+        'RE' DOC_TYPE
+        FROM
+        HPMS_FIN_RECEIPT "hfr"
+        LEFT JOIN HPMS_FIN_FEE_LIST "hffl" ON "hfr".FEE_LIST_ID = "hffl".FEE_LIST_ID
+        LEFT JOIN HPMS_MDM_FEE_TYPE "hmft" ON "hffl".FEE_TYPE_ID = "hmft".FEE_TYPE_ID
+        LEFT JOIN HPMS_MDM_FEE "hmf" ON "hfr".FEE_ID = "hmf".FEE_ID
+        LEFT JOIN HPMS_MDM_PAYMENT_METHOD "hmpm" ON "hfr".RECEIPT_METHOD = "hmpm".PAYMENT_METHOD_CODE
+        LEFT JOIN HPMS_CODE_VALUE_V "hcvv1" ON "hfr".TRANS_TYPE = "hcvv1".VALUE
+        AND "hcvv1".CODE = 'HPMS_TRANS_TYPE'
+        AND "hcvv1".LANG = #{request.locale, jdbcType = VARCHAR}
+--         LEFT JOIN HPMS_CODE_VALUE_V "hcvv2" ON "hffl".FEE_STATUS = "hcvv2".VALUE
+--         AND "hcvv2".CODE = 'HPMS_FEE_LIST_TPYE'
+--         AND "hcvv2".LANG = 'zh_CN'
+        LEFT JOIN HPMS_CODE_VALUE_V "hcvv3" ON "hfr".RECEIPT_STATUS = "hcvv3".VALUE
+        AND "hcvv3".CODE = 'HPMS_RECEIPT_TYPE'
+        AND "hcvv3".LANG = #{request.locale, jdbcType = VARCHAR}
+--         LEFT JOIN (
+--         SELECT
+--         FEE_LIST_ID,
+--         SUM (RECEIPT_AMOUNT) RECEIPT_AMOUNT
+--         FROM
+--         HPMS_FIN_RECEIPT
+--         GROUP BY
+--         FEE_LIST_ID
+--         ) rec ON rec.FEE_LIST_ID = "hffl".FEE_LIST_ID
+        <where>
+            <if test='type=="receivable"'>
+                1=2
+            </if>
+            <if test='type=="adjustment"'>
+                1=2
+            </if>
+            <if test='type=="advance"'>
+                AND RECEIPT_STATUS IN ('D','B')
+            </if>
+            <if test='type=="deposit"'>
+                AND "hfr".TRANS_TYPE = 'DEPOSIT'
+            </if>
+            <if test='type=="collection"'>
+                1=2
+            </if>
+            <if test="receiptId!=null">
+                AND "hfr".RECEIPT_ID = #{receiptId,jdbcType=DECIMAL}
+            </if>
+            <if test="occupationId != null">
+                AND "hfr".OCCUPATION_ID = #{occupationId , jdbcType=VARCHAR}
+            </if>
+        </where>
+        UNION
+        SELECT
+        "hffl".OCCUPATION_ID,
+        "hffl".FEE_LIST_ID,
+        "hffl".FEE_TYPE_ID,
+        "hffl".FEE_ID,
+        "hffl".REFERENCE_NUMBER,
+        "hffl".COMPANY_ID,
+        "hffl".TRANS_TYPE,
+        "hffl".ADJ_AMOUNT,
+        "hffl".OBJECT_VERSION_NUMBER,
+        "hffl".LAST_UPDATE_DATE,
+        "hfr".RECEIPT_ID,
+--         "hfr".FEE_LIST_ID,
+--         "hfr".COMPANY_ID,
+        "hfr".PROJECT_ID,
+        "hfr".RECEIPT_NUM,
+        "hfr".LINE_NUMBER,
+--         "hfr".REFERENCE_NUMBER,
+--         "hfr".OCCUPATION_ID,
+--         "hfr".FEE_TYPE_ID,
+--         "hfr".FEE_ID,
+        "hfr".RECEIPT_DATE,
+        "hfr".RECEIPT_METHOD,
+        "hfr".RECEIPT_TERM,
+        "hfr".RECEIPT_AMOUNT,
+        "hfr".REFUND_AMOUNT,
+        "hfr".DEDUCT_AMOUNT,
+        "hfr".CURRENCY,
+        "hfr".RECEIPT_PERIOD,
+--         "hfr".TRANS_TYPE,
+--         "hfr".ADJ_AMOUNT,
+        "hfr".DEDUCT_REASON,
+        "hfr".PAYER,
+        "hfr".TRANSACTOR,
+        "hfr".CLEAR_TRANSACTOR,
+        "hfr".CLEAR_CODE,
+        "hfr".CLEARED_DATE,
+        "hfr".RECEIPT_STATUS,
+        "hfr".DESCRIPTION,
+--         "hffl".OBJECT_VERSION_NUMBER,
+--         "hffl".LAST_UPDATE_DATE,
+--         "hffl".FEE_LIST_ID,
+        "hffl".FEE_LIST_CODE,
+        "hffl".FEE_STATUS,
+--         "hffl".OCCUPATION_ID,
+        "hffl".FEE_PERIOD,
+--         "hffl".FEE_TYPE_ID,
+--         "hffl".FEE_ID,
+        "hffl".UNIT_PRICE,
+        "hffl".FEE_UOM,
+        "hffl".FEE_QUANTITY,
+        "hffl".CURRENCY_TYPE,
+        "hffl".SEGMENT_FLAG,
+        "hffl".LAST_RECORD,
+        "hffl".PRESENT_RECORD,
+        "hffl".GROSS_AMOUNT,
+--         "hffl".ADJ_AMOUNT,
+        "hffl".OVERDUE_PAYMENT,
+        "hffl".TOTAL_AMOUNT,
+        "hffl".ACCRUED_DATE,
+        "hffl".DATE_TO,
+        "hffl".REMARK,
+--         "hffl".REFERENCE_NUMBER,
+        "hffl".DATA_SOURCE,
+--         "hffl".COMPANY_ID,
+--         "hffl".TRANS_TYPE,
+        "hffl".PAY_PART_REPAIR,
+        "hffl".GENERATE_DATE,
+        "hffl".COUNTED_DATE,
+        "hcvv1".MEANING TRANS_TYPE_NAME,
+        "hcvv2".MEANING FEE_STATUS_NAME,
+        NULL RECEIPT_STATUS_NAME,
+        (
+        "hffl".TOTAL_AMOUNT - NVL (rec.RECEIPT_AMOUNT, 0)
+        ) SETTLEMENT_AMOUNT,
+        "hmft".FEE_TYPE_NAME,
+        "hmf".FEE_NAME,
+        NULL RECEIPT_METHOD_NAME,
+        'AR' DOC_TYPE
+        FROM
+        HPMS_FIN_FEE_LIST "hffl"
+        LEFT JOIN HPMS_CODE_VALUE_V "hcvv1" ON "hffl".TRANS_TYPE = "hcvv1".
+        VALUE
+
+        AND "hcvv1".CODE = 'HPMS_TRANS_TYPE'
+        AND "hcvv1".LANG = 'zh_CN'
+        LEFT JOIN HPMS_CODE_VALUE_V "hcvv2" ON "hffl".FEE_STATUS = "hcvv2".
+        VALUE
+
+        AND "hcvv2".CODE = 'HPMS_FEE_LIST_TPYE'
+        AND "hcvv2".LANG = 'zh_CN'
+        LEFT JOIN HPMS_FIN_RECEIPT "hfr" ON 1 = 2
+        LEFT JOIN HPMS_MDM_FEE_TYPE "hmft" ON "hffl".FEE_TYPE_ID = "hmft".FEE_TYPE_ID
+        LEFT JOIN HPMS_MDM_FEE "hmf" ON "hffl".FEE_ID = "hmf".FEE_ID
+        LEFT JOIN (
+        SELECT
+        FEE_LIST_ID,
+        SUM (RECEIPT_AMOUNT) RECEIPT_AMOUNT
+        FROM
+        HPMS_FIN_RECEIPT
+        GROUP BY
+        FEE_LIST_ID
+        ) rec ON rec.FEE_LIST_ID = "hffl".FEE_LIST_ID
+        <where>
+            <if test='type=="receivable"'>
+                AND (
+                FEE_STATUS IN ('COUNTED','PART_SETTLEMENT')
+                and "hffl".TRANS_TYPE = 'RECEIVABLE'
+                and "hffl".ADJ_AMOUNT = 0
+                )
+            </if>
+            <if test='type=="adjustment"'>
+                AND (
+                FEE_STATUS IN ('COUNTED','PART_SETTLEMENT')
+--                 and "hffl".TRANS_TYPE = 'PAYABLE'
+                and "hffl".ADJ_AMOUNT > 0
+                )
+            </if>
+            <if test='type=="advance"'>
+                AND 1=2
+            </if>
+            <if test='type=="deposit"'>
+                AND (
+                   FEE_STATUS IN ('COUNTED','PART_SETTLEMENT')
+                  and "hffl".TRANS_TYPE = 'DEPOSIT'
+                )
+            </if>
+            <if test='type=="collection"'>
+                AND (
+                FEE_STATUS IN ('COUNTED','PART_SETTLEMENT')
+                and "hffl".TRANS_TYPE = 'AGENT'
+                )
+            </if>
+            <if test='type=="all"'>
+                AND FEE_STATUS IN ('COUNTED','PART_SETTLEMENT')
+            </if>
+            <if test="receiptId!=null">
+                AND "hfr".RECEIPT_ID = #{receiptId,jdbcType=DECIMAL}
+            </if>
+            <if test="occupationId != null">
+                AND "hffl".OCCUPATION_ID = #{occupationId , jdbcType=VARCHAR}
+            </if>
+        </where>
+        <if test="sortname !=null">
+            <bind name="_colName" value="@com.hand.hap.mybatis.util.OGNL@unCamel(sortname)"/>
+            order by ${_colName} ${sortorder}
+        </if>
+        <if test="sortname ==null">
+            order by LAST_UPDATE_DATE  desc
+        </if>
+    </select>
+
+</mapper>

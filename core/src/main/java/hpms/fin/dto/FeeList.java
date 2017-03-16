@@ -15,7 +15,7 @@ import java.util.Date;
  * @version 1.0
  */
 @Table(name = "hpms_fin_fee_list")
-public class FeeList extends BaseDTO implements Comparable<FeeList>{
+public class FeeList extends BaseDTO{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@Column
@@ -342,8 +342,4 @@ public class FeeList extends BaseDTO implements Comparable<FeeList>{
 		this.beff = beff;
 	}
 
-	@Override
-	public int compareTo(FeeList o) {
-		return this.totalAmount.compareTo(o.getTotalAmount());
-	}
 }

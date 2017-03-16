@@ -289,7 +289,6 @@
 
         },
         change:function (e) {
-            console.log(e.sender._dataItem)
             viewModel.model.set("customerCode",e.sender._dataItem.customerNumber);
             viewModel.model.set("customerId", e.sender._dataItem.customerId);
 
