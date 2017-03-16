@@ -1,0 +1,237 @@
+<#--
+ * description: 换表
+ * version: 1.0
+ * #copyright#
+ * author jun.zhao02@hand-china.com    2017/3/14 10:20:00
+-->
+<#include "../include/header.html">
+<body>
+<style type="text/css">
+    span.red_text { color: red; font-weight: bold; }
+</style>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script>
+    var equipmentId = <#if RequestParameters.equipmentId?exists> ${RequestParameters.equipmentId} <#else>-1</#if>;
+
+    viewModel = kendo.observable({
+        model: {
+            newRecordFlag : "Y",
+            status : "ACTIVE"
+        }
+    });
+    if(equipmentId !=-1){
+        $.ajax({
+            type   : "POST",
+            url: "${base.contextPath}/hpms/fin/pubmeter/query",
+            data: { equipmentId : equipmentId },
+            success: function(json) {
+                var row = json.rows[0] || {};
+                for (var k in row) {
+                    viewModel.model.set(k, row[k]);
+                }
+
+                $("#changeEquipmentId").kendoComboBox({
+                    valuePrimitive: true,
+                    dataTextField: "equipmentName",
+                    dataValueField: "equipmentId",
+                    dataSource: {
+                        transport: {
+                            read:function(options) {
+                                $.ajax({
+                                    type   : "POST",
+                                    url: "${base.contextPath}/hpms/fin/pubmeter/query?companyId=" + viewModel.model.companyId + "&projectId=" + viewModel.model.projectId + "&equipmentTypeId=" + viewModel.model.equipmentTypeId + "&initFlag=N",
+                                    data: {},
+                                    success: function(json) {
+                                        options.success(json.rows);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+
+                $("#companyFullName").attr("readonly",true).css("background", "#DDDDDD");
+                $("#projectName").attr("readonly",true).css("background", "#DDDDDD");
+                $("#typeName").attr("readonly",true).css("background", "#DDDDDD");
+                $("#equipmentName").attr("readonly",true).css("background", "#DDDDDD");
+                $("#crName").attr("readonly",true).css("background", "#DDDDDD");
+                $("#meterTotalAmount").attr("readonly",true).css("background", "#DDDDDD");
+
+            }
+        });
+    }
+
+    function readChange() {
+        if (viewModel.model.currentRead=='' || viewModel.model.currentRead==null || viewModel.model.meterTotalUse=='' || viewModel.model.meterTotalUse==null) {
+            null;
+        }else {
+            viewModel.model.set("lastRead", Math.round((viewModel.model.currentRead  - viewModel.model.meterTotalUse)*10,2)/10 );
+            viewModel.model.set("meterTotalAmount", Math.round((viewModel.model.currentRead  - viewModel.model.meterTotalUse)*10,2)/10 );
+        }
+
+
+    }
+
+</script>
+
+
+    <div id="page-content">
+            <form class="form-horizontal">
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.companyName"/></label>
+                        <div class="col-xs-7">
+                            <input id="companyFullName" name="companyFullName" type="text" data-bind="value:model.companyFullName" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#companyFullName'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.project.projectName"/></label>
+                        <div class="col-xs-7">
+                            <input id="projectName" name="projectName" type="text" data-bind="value:model.projectName" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#projectName'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.fee.equipmenttype"/></label>
+                        <div class="col-xs-7">
+                            <input id="typeName" name="typeName" type="text" data-bind="value:model.typeName" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#typeName'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.metername"/></label>
+                        <div class="col-xs-7">
+                            <input id="equipmentName" name="equipmentName" type="text" data-bind="value:model.equipmentName" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#equipmentName'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-6" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.priceline.calculaterule"/></label>
+                        <div class="col-xs-7">
+                            <input id="crName" name="crName" type="text" data-bind="value:model.crName" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#crName'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.changeEquipmentId"/></label>
+                        <div class="col-xs-6">
+                            <input id="changeEquipmentId" name="changeEquipmentId" type="text" required validationMessage="<@spring.message "hpms.fin.pubmeter.changeEquipmentId"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.changeEquipmentId"
+                                   style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#changeEquipmentId'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="changeEquipmentId"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.changeDate"/></label>
+                        <div class="col-xs-6">
+                            <input id="changeDate" name="changeDate" type="text" required validationMessage="<@spring.message "hpms.fin.pubmeter.changeDate"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.changeDate"
+                            style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#changeDate'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="changeDate"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12" >
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.changereason"/></label>
+                        <div class="col-xs-6">
+                            <input id="changeReason" name="changeReason" required validationMessage="<@spring.message "hpms.fin.pubmeter.changeReason"/><@spring.message "hap.error.nullexception"/>" data-bind="value:model.changeReason" class="k-textbox"
+                                   style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#changeReason'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-4" >
+                            <span class="k-invalid-msg" data-for="changeReason"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-right" style="bottom: 20px;position: fixed; right: 85px; float: left; background: #fff;">
+                    <span class="btn btn-success" id="saveGrid" type="submit"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-success" id="closeWin" type="button"><i class="fa fa-times-circle-o" style="margin-right:3px;"></i><@spring.message "hap.cancel"/></span>
+                </div>
+
+            </form>
+    </div>
+
+    <script type="text/javascript" >
+
+        $('#page-content').kendoValidator();
+
+        $("#closeWin").click(function(){
+            window.parent.$("#chgWin").data("kendoWindow").close();
+        });
+        $("#saveGrid").click(function () {
+            if(viewModel.model.changeEquipmentId==''||viewModel.model.changeEquipmentId==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.fin.pubmeter.changeEquipmentId"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.changeDate==''||viewModel.model.changeDate==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.fin.pubmeter.changeDate"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.changeReason==''||viewModel.model.changeReason==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.fin.pubmeter.changeReason"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else {
+                viewModel.model.__status = 'update';
+                Hap.submitForm({
+                    url: '${base.contextPath}/hpms/fin/pubmeter/submit',
+                    formModel: viewModel.model,
+                    success: function (data) {
+                        window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
+                        window.parent.$("#chgWin").data("kendoWindow").close();
+                    }
+                });
+
+            }
+        });
+        $("#changeDate").kendoDatePicker({
+            format : "yyyy-MM-dd"
+        });
+
+    </script>
+
+</body>
+</html>
