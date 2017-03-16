@@ -105,8 +105,7 @@
                                 <label class="col-sm-4 control-label">公司</label>
                                 <div class="col-sm-8">
                                     <input id="company" type="text" style="width: 160px"
-                                           data-bind="value:model.companyId"
-                                           class="k-textbox">
+                                           data-bind="value:model.companyId">
                                 </div>
                                 <script>
                                     $("#company").kendoDropDownList({
@@ -144,8 +143,7 @@
                                 <label class="col-sm-4 control-label">项目</label>
                                 <div class="col-sm-8">
                                     <input id="project" type="text" style="width: 160px"
-                                           data-bind="value:model.projectId"
-                                           class="k-textbox">
+                                           data-bind="value:model.projectId">
                                 </div>
                                 <script>
                                     $("#project").kendoDropDownList({
@@ -167,8 +165,7 @@
                                 <label class="col-sm-4 control-label">仪表类型</label>
                                 <div class="col-sm-8">
                                     <input id="equipmentType" type="text" style="width: 160px"
-                                           data-bind="value:model.equipmentTypeId"
-                                           class="k-textbox">
+                                           data-bind="value:model.equipmentTypeId">
                                 </div>
                                 <script>
                                     $("#equipmentType").kendoDropDownList({
@@ -190,8 +187,7 @@
                                 <label class="col-sm-4 control-label">计费维度</label>
                                 <div class="col-sm-8">
                                     <input id="ob" type="text" style="width: 160px"
-                                           data-bind="value:model.crObject"
-                                           class="k-textbox">
+                                           data-bind="value:model.crObject">
                                 </div>
                                 <script>
                                     // 计费维度下拉框
@@ -212,8 +208,7 @@
                                 <label class="col-sm-4 control-label">计费规则</label>
                                 <div class="col-sm-8">
                                     <input type="text" style="width: 160px"
-                                           data-bind="value:model.crName"
-                                           class="k-textbox">
+                                           data-bind="value:model.crName" class="k-textbox">
                                 </div>
                             </div>
                         </div>
@@ -223,8 +218,7 @@
                                 <label class="col-sm-4 control-label">启用状态</label>
                                 <div class="col-sm-8">
                                     <input id="enable" type="text" style="width: 160px"
-                                           data-bind="value:model.enableFlag"
-                                           class="k-textbox">
+                                           data-bind="value:model.enableFlag">
                                 </div>
                                 <script>
                                     // 启用状态下拉框
@@ -243,21 +237,23 @@
                                 </script>
                             </div>
                         </div>
-                        <!-- 查询框按钮 -->
-                        <div style="float:right;">
-                            <span class="btn btn-primary" style="width: 70px;float:left;margin-right:5px;" data-bind="click:queryResource"
-                                  type="submit"><@spring.message "hap.query"/></span>
-                            <span class="btn btn-default" style="float:left;width:70px" data-bind="click:resetForm"
-                                  type="button"><@spring.message "hap.reset"/></span>
-                        </div>
                         <div style="clear:both"></div>
+                        <!-- 查询框按钮 -->
+                        <div style="float:left;margin-top: 20px">
+                            <span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;margin-left:-15px;width: 70px"><i class="fa fa-plus-square" style="margin-right:3px;"></i>
+	<@spring.message "hap.new"/></span>
+                            <span class="btn btn-primary" style="width: 70px;float:left;margin-right:5px;" data-bind="click:queryResource"
+                                  type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                            <span class="btn btn-default" style="float:left;width:70px" data-bind="click:resetForm"
+                                  type="button"><i class="glyphicon glyphicon-erase" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
         <!-- gird组件 -->
-        <div style="clear: both;">
-            <div id="grid"></div>
+        <div>
+            <div id="grid" style="margin-top: -20px;"></div>
         </div>
     </div>
     <script>
@@ -345,9 +341,6 @@
             sortable: true,
             navigatable: false,
             reorderable: true,
-            toolbar:[
-                {template:('<span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;">新增</span>')},
-            ],
             pageable: {
                 // 分页类别
                 pageSizes: [5, 10, 20, 50],
@@ -386,7 +379,7 @@
                                     }
                     },
                     editor: function (container, options) {
-                        $('<input id="comp" required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                        $('<input id="comp" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
                                 $("#comp").kendoDropDownList({
                                     optionLabel: "--请选择--",
                                     dataTextField: "companyFullName",
@@ -429,7 +422,7 @@
                         }
                     },
                     editor: function (container, options) {
-                           $('<input id="pro" required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                           $('<input id="pro" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
                                 $("#pro").kendoDropDownList({
                                     optionLabel: "--请选择--",
                                     dataTextField: "projectName",
@@ -456,7 +449,7 @@
                         }
                     },
                     editor: function (container, options) {
-                        $('<input id="equip" required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                        $('<input id="equip" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
                                 $("#equip").kendoDropDownList({
                                     optionLabel: "--请选择--",
                                     dataTextField: "typeName",
@@ -482,7 +475,7 @@
                     },
                     editor: function (container, options) {
                         if(options.model.chargeRuleId == "") {
-                            $('<input type="text" style="width: 120px"class="k-textbox" name="' + options.field + '"/>')
+                            $('<input type="text" style="width: 120px" name="' + options.field + '"/>')
                                 .appendTo(container)
                                 .kendoDropDownList({
                                     dataTextField: "meaning",
