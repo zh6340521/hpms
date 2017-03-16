@@ -155,13 +155,15 @@
                             </div>
                         </div>
                         <div style="clear:both"></div>
+                        <span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;margin-top: 20px;margin-left: -15px"><i class="fa fa-plus-square" style="margin-right:3px;"></i>
+	<@spring.message "hap.new"/></span>
                     </div>
                 </div>
             </form>
         </div>
         <!-- gird组件 -->
         <div style="clear: both;">
-            <div id="grid"></div>
+            <div id="grid" style="margin-top: -20px"></div>
         </div>
     </div>
     <script>
@@ -245,9 +247,6 @@
             sortable: true,
             navigatable: false,
             reorderable: true,
-            toolbar:[
-                {template:('<span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;">新增</span>')},
-            ],
             pageable: {
                 // 分页类别
                 pageSizes: [5, 10, 20, 50],
@@ -280,7 +279,13 @@
                     type:"Decimal",format:"{0:N2}",
                     attributes: {style: "text-align:center"},
                     editor: function (container, options) {
-                        $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负数" pattern="^([0-9])+(\.[0-9]+)?$" name="' + options.field + '"/>').appendTo(container)
+                        if(options.model.gradePriceId !=""){
+                            var c = options.model.price;
+                            options.model.price = c.toFixed(2);
+                            $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负数" pattern="^([0-9])+(\.[0-9]+)?$" name="' + options.field + '"/>').appendTo(container)
+                        }else{
+                            $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负数" pattern="^([0-9])+(\.[0-9]+)?$" name="' + options.field + '"/>').appendTo(container)
+                        }
                     },
                 },
                 {
