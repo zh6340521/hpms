@@ -16,8 +16,13 @@
         <result column="PARENT_STRUCTURE_ID" property="parentStructureId" jdbcType="DECIMAL" />
 
         <result column="parent_structure_name" property="parentStructureName" jdbcType="VARCHAR" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="VARCHAR" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="VARCHAR" />
         <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+         <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
         <result column="config_value_name" property="configValueName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
     </resultMap>
 
     <resultMap type="hpms.bs.dto.ConfigValue" id="configValueResultMap">
