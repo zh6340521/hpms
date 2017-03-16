@@ -16,7 +16,13 @@
         <result column="PARENT_STRUCTURE_ID" property="parentStructureId" jdbcType="DECIMAL" />
 
         <result column="parent_structure_name" property="parentStructureName" jdbcType="VARCHAR" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="VARCHAR" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="VARCHAR" />
         <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+         <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
+        <result column="config_value_name" property="configValueName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
     </resultMap>
 
 
@@ -86,5 +92,41 @@ FROM
 
         </where>
 
+    </select>
+    <!--根据建筑类型为房间带出客户 -->
+    <select id="queryByStructureName" parameterType="hpms.mdm.dto.VersionStructure" resultMap="BaseResultMap">
+    SELECT hmp.property_id,
+       hmp.property_name,
+       hmp.project_id,
+       hmp.company_id,
+       HCO.CUSTOMER_NAME,
+       HCO.STATUS,
+       hcv.config_value_name,
+       hmvs.business_format,
+       hmvs.structure_id,
+       hmvs.version_id,
+       HCO.OCCUPATION_ID,
+       hmvs.structure_name
+  from (SELECT *
+          FROM HPMS_CS_OCCUPATION
+         WHERE OCCUPATION_ID IN
+               (SELECT MAX(HPMS_CS_OCCUPATION.OCCUPATION_ID)
+                  FROM HPMS_CS_OCCUPATION
+                 GROUP BY HPMS_CS_OCCUPATION.PROPERTY_ID)) HCO
+  LEFT JOIN HPMS_MDM_VERSION_STRUCTURE HMVS
+    ON HMVS.PROPERTY_ID = HCO.PROPERTY_ID
+  LEFT JOIN HPMS_MDM_PROPERTY HMP
+    on hmp.property_id = hmvs.property_id
+  left join HPMS_CONFIG_VALUE hcv
+    on hcv.config_value_id = hmp.property_type
+ where 1 = 1 and HCO.STATUS='IN'
+   and hcv.config_value_name = '房间'
+
+    <if test="companyId!=null">
+    	and hmp.company_id = #{companyId,jdbcType=VARCHAR}
+    </if>
+    <if test="projectId!=null">
+    	and hmp.project_id = #{projectId,jdbcType=VARCHAR}
+    </if>
     </select>
 </mapper>
