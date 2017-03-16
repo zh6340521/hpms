@@ -31,15 +31,19 @@ public class EquipmentTypeServiceImpl extends BaseServiceImpl<EquipmentType> imp
             for (EquipmentType type :
                     list) {
 
-                if (Integer.parseInt(type.getEndNum())<Integer.parseInt(type.getStartNum())){
 
-                    throw new EquipmentTypeException(
-                            EquipmentTypeException.ENDNUM_GREATER_THAN_CURNUM,
-                            EquipmentTypeException.ENDNUM_GREATER_THAN_CURNUM,null);
 
-                }
+
 
                 if ("add".equals(type.get__status())) {
+
+                    if (Integer.parseInt(type.getEndNum())<Integer.parseInt(type.getStartNum())){
+
+                        throw new EquipmentTypeException(
+                                EquipmentTypeException.ENDNUM_GREATER_THAN_CURNUM,
+                                EquipmentTypeException.ENDNUM_GREATER_THAN_CURNUM,null);
+
+                    }
 
                     if ("CUSTOMER METER".equals(type.getTypeAttribute()) ||
                             "PUBLIC METER".equals(type.getTypeAttribute())){

@@ -177,7 +177,7 @@
                     },
                     elementName:{type: "string"},
                     description:{type: "string"},
-                    enableFlag:{type: "string"}
+                    enableFlag:{defaultValue: 'Y',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'}
                 }
             }
         }
@@ -281,31 +281,7 @@
                 field: "enableFlag",
                 title: '<@spring.message "hpms.mdm.feetype.enableflag"/>',
                 attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-
-                    var v = dataItem.enableFlag;
-                    $.each(enableFlagData,function(i,n){
-                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
-                            v = n.meaning;
-                            return v;
-                        }
-                    });
-                    return v || "";
-                },
-                editor:function (container, options) {
-                    $('<input required style="width: 90%;" ' +
-                        ' validationMessage="<@spring.message "hap.error.nullexception"/>" ' +
-                        'name="' + options.field + '"/>')
-                        .appendTo(container)
-                        .kendoDropDownList({
-                            dataTextField:"meaning",
-                            dataValueField:"value",
-                            valuePrimitive:true,
-                            dataSource: enableFlagData
-                        });
-                    $('<span class="red">&nbsp;&nbsp;*</span>').appendTo(container);
-                }
+                width: 120
             }
         ],
         edit: function (e) {
