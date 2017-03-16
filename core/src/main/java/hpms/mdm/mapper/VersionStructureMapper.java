@@ -3,6 +3,7 @@ package hpms.mdm.mapper;/**
  */
 
 import com.hand.hap.mybatis.common.Mapper;
+import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.VersionStructure;
 
 import java.util.List;
@@ -29,4 +30,11 @@ public interface VersionStructureMapper extends Mapper<VersionStructure> {
      * @return
      */
     public List<VersionStructure> queryVersionStructure(VersionStructure vs);
+
+    /**
+     * 查询建筑类型
+     * @param configValue
+     * @return
+     */
+    List<ConfigValue> propertyTypeQuery(ConfigValue configValue);
 }

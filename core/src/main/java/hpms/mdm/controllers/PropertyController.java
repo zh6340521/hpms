@@ -67,11 +67,18 @@ public class PropertyController extends BaseController{
         	try{
         	Property property = new Property();
         	property.setPropertyNumber(propertys.get(0).getPropertyNumber());
-	        	if(propertyService.propertyQuery(requestContext,property,1,100).size()>0){
-	        		throw new ValidationTableException("hpms.mdm.property.property_code_not_uniqueness", null);
-	        	}else{
+
+				//只有新增状态下才判断建筑代码是否唯一
+				for(Property p:propertys){
+					if(p.getPropertyId()==null){
+						if(propertyService.propertyQuery(requestContext,property,1,100).size()>0){
+							throw new ValidationTableException("hpms.mdm.property.property_code_not_uniqueness", null);
+						}
+					}
+				}
+
 	        		return new ResponseData(propertyService.batchUpdate(requestContext, propertys));
-	        	}
+
         	}catch (ValidationTableException e){
     	        ResponseData responseData = new ResponseData(false);
     	        String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,

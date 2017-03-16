@@ -5,6 +5,7 @@ package hpms.mdm.service.impl;/**
 import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
+import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.VersionStructure;
 import hpms.mdm.mapper.VersionStructureMapper;
 import hpms.mdm.service.IVersionStructureService;
@@ -32,5 +33,10 @@ public class VersionStructureServiceImpl extends BaseServiceImpl<VersionStructur
     public List<VersionStructure> findAllVersionStructure(VersionStructure vs, IRequest requestContext,int page,int pagesize) {
         PageHelper.startPage(page, pagesize);
         return versionStructureMapper.queryVersionStructure(vs);
+    }
+
+    @Override
+    public List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue) {
+        return versionStructureMapper.propertyTypeQuery(configValue);
     }
 }

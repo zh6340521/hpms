@@ -5,6 +5,7 @@ package hpms.mdm.service;/**
 import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
+import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.VersionStructure;
 
 import java.util.List;
@@ -23,5 +24,13 @@ public interface IVersionStructureService extends IBaseService<VersionStructure>
      * @return
      */
     public List<VersionStructure> findAllVersionStructure(VersionStructure vs,IRequest requestContext,int page,int pagesize);
+
+    /**
+     * 查询建筑类型
+     * @param requestContext
+     * @param configValue
+     * @return
+     */
+    List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue);
 }
 

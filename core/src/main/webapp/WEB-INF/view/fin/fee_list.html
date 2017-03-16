@@ -348,6 +348,13 @@
 	                    if(model.accruedDate2){
 	                        map.accruedDate2 = new Date(model.accruedDate2);
 	                    }
+
+						if (options.page) {
+							map.page = options.page;
+						}
+						if (options.pageSize) {
+							map.pagesize = options.pageSize;
+						}
 	                    return map;
 	                }
 	            }

@@ -94,6 +94,13 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
                         throw new ValidationTableException("请输入【显示字段】和【实际字段】", null);
                     }
                 }
+
+                if((cc.getSqlId()==null||cc.getSqlId()=="")&&(cc.getSysCode()==null||cc.getSysCode()=="")){
+                    logger.info("将这条记录删除，并抛出错误信息");
+                    cvs.remove(cc);
+                    throw new ValidationTableException("当字符样式为LIST时，请输入Sql Id或者快码CODE", null);
+
+                }
             }
 
             if(cc.getConfigColumnId()!=null){

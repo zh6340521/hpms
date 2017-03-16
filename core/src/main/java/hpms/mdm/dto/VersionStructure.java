@@ -2,12 +2,10 @@ package hpms.mdm.dto;/**
  * Created by user1 on 2017/2/15.
  */
 
-import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
 
-import java.util.List;
-
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author fuchun.hu@hand-china.com
@@ -82,7 +80,18 @@ public class VersionStructure extends BaseDTO {
     
     @Transient
     private boolean hasChildren;//huchengye
-    
+
+    @Transient
+    private String  configValueName;//建筑类型名称
+
+    public String getConfigValueName() {
+        return configValueName;
+    }
+
+    public void setConfigValueName(String configValueName) {
+        this.configValueName = configValueName;
+    }
+
     public String getPropertyName() {
         return propertyName;
     }

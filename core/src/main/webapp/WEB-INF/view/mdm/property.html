@@ -229,17 +229,42 @@
 	            buttonCount: 5
 	        },
 	        columns    : [{
-	        	field      : "",
-                title      : '<@spring.message "hap.action"/>', 
-                width      : 70 ,
-                template : function(rowdata) {
-                    var uid = rowdata.uid.toString();
-                    var singleDispatch = '<button type="button" id="dispatch" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.view"/>'+' onclick="lookProperty('+rowdata.propertyId+')"><span class="glyphicon glyphicon-eye-open"></span></button>&nbsp;';
-                    var singleRecycle = '<button type="button" id="recycle" class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" title='+'<@spring.message "hap.edit"/>'+' onclick="updateProperty('+rowdata.propertyId+')"><span class="glyphicon glyphicon-edit"></span></button>';
-                    return singleDispatch + singleRecycle;
-                },
-                attributes  : {style: "text-align:center"}
-	        },{
+
+				command	: [{
+					//查看
+					name:"detail",
+					text:"<i class='fa fa-search'></i>",
+					click:function (e) {
+						e.preventDefault();
+						var tr = $(e.target).closest("tr");
+						var data = this.dataItem(tr);
+
+						lookProperty(data.propertyId);
+
+
+					}
+				},{
+					//编辑
+					name : "edit",
+					text :'<@spring.message "hap.edit"/>',
+					click:function(e){
+						e.preventDefault();
+						var tr = $(e.target).closest("tr");
+						var data = this.dataItem(tr);
+
+						updateProperty(data.propertyId);
+					}
+
+
+				}],
+				attributes: {style: "text-align:center"},
+				title		: '<@spring.message "hap.action"/>',
+				width		: "10%" ,
+				headerAttributes: {
+					style: "text-align: center"
+				},
+
+			},{
 	        	field      : "companyName",
                 title      : "<@spring.message 'hpms.mdm.property.company'/>", 
                 width      : 120,

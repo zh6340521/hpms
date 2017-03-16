@@ -7,7 +7,9 @@
     <#include "../include/header.html">
         <!--tab页-->
         <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-    <body>
+        <script src="${base.contextPath}/common/code?resourceTypeData=HPMS_BUSINESS_FORMAT" type="text/javascript"></script>
+
+        <body>
 
     <style>
         span[class='k-window-title'] {
@@ -40,6 +42,7 @@
 
             //获取特定字段来判断是新增还是编辑界面
             var versionId = '${RequestParameters.versionId!0}';
+            var companyId = '${RequestParameters.companyId!0}'
 
             var viewModel = kendo.observable({
                 model: {},
@@ -304,6 +307,7 @@
                         }
                     });
 
+            var propertyData = [];
             var grid = $("#grid").kendoGrid({
                 dataSource : dataSource,
                 navigatable: false,
@@ -441,12 +445,24 @@
                         title:'<@spring.message "hpms.mdm.build.type"/>',
                         width: '20%' ,
                         attributes: {style: "text-align:center"},
+                        template:function (rowdata){
+                            for(var k in resourceTypeData){
+                                if(resourceTypeData[k].value == rowdata.businessFormat){
+                                    return resourceTypeData[k].meaning
+                                }
+                            }
+                        },
                         editor: function (container, options) {
-                            var editor = $('<input class="k-input k-textbox k-valid" required validationMessage="<@spring.message "hpms.notempty"/>"  name="' + options.field + '"  />'+'<span class="red">&nbsp;&nbsp;*</span>');
-                            editor.css('width','100%');
-                            container.append(editor);
-                            //alert(options.field);
-                          //  $('<input type="text"  required  validationMessage="<@spring.message "hpms.notempty"/>"   name="' + options.field + '"  />').appendTo(container).kendoMaskedTextBox({});
+                            $('<input type="text" style="width: 120px" name="' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoDropDownList({
+                                        dataTextField: "meaning",
+                                        dataValueField:"value",
+                                        valuePrimitive: true,
+                                        dataSource: resourceTypeData,
+
+                                    });
+
 
                         },
 
