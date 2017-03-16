@@ -131,10 +131,10 @@
         AND HFMCR.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
         AND HFMCR.ENABLE_FLAG = 'Y'
 
-
         <where>
             1=1
             AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+            AND HME.CHANGE_EQUIPMENT_ID IS NULL
             <if test="equipmentCode!=null">
                 and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
             </if>
@@ -362,7 +362,9 @@
                 AND (('N' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID not in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS))
                 OR ('Y' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS)))
             </if>
-
+            <if test="changeEquipmentId!=null">
+                and HME.CHANGE_EQUIPMENT_ID=#{changeEquipmentId,jdbcType=VARCHAR}
+            </if>
         </where>
 
     </select>
