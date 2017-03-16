@@ -90,7 +90,6 @@ var isedit = '${RequestParameters.isedit!0}' == '1';
     							contentType:"application/json",
     							data:  kendo.stringify(json),
     				 			success: function(data){
-        							window.parent.$('#bpRetaionGrid').dataSource.page(dataSource._page);
 											if (data.success) {
 												kendo.ui.showInfoDialog({
 													message : '<@spring.message "hap.tip.success"/>'

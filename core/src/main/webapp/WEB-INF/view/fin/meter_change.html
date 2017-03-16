@@ -215,20 +215,40 @@
                     message:'<@spring.message "hpms.fin.pubmeter.changeReason"/><@spring.message "hap.error.nullexception"/>'
                 })
             }else {
-                viewModel.model.__status = 'update';
-                Hap.submitForm({
-                    url: '${base.contextPath}/hpms/fin/pubmeter/submit',
-                    formModel: viewModel.model,
-                    success: function (data) {
-                        $.ajax({
-                            type   : "POST",
-                            url: '${base.contextPath}/hpms/fin/meter/read/his/changeMeter?equipmentId=' + equipmentId + "&changeEquipmentId=" + viewModel.model.changeEquipmentId,
-                            success: function(json) {
-                                window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
-                                window.parent.$("#chgWin").data("kendoWindow").close();
+                $.ajax({
+                    type   : "POST",
+                    url: "${base.contextPath}/hpms/fin/pubmeter/change/query",
+                    data: { equipmentId : equipmentId },
+                    success: function(json) {
+                        var row = json.rows[0] || {};
+                        for (var k in row) {
+                            if (k=="changeEquipmentId" && row[k] == null) {
+                                viewModel.model.__status = 'update';
+                                Hap.submitForm({
+                                    url: '${base.contextPath}/hpms/fin/pubmeter/submit',
+                                    formModel: viewModel.model,
+                                    success: function (data) {
+                                        $.ajax({
+                                            type   : "POST",
+                                            url: '${base.contextPath}/hpms/fin/meter/read/his/changeMeter?equipmentId=' + equipmentId + "&changeEquipmentId=" + viewModel.model.changeEquipmentId,
+                                            success: function(json) {
+                                                window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
+                                                window.parent.$("#chgWin").data("kendoWindow").close();
+                                            }
+                                        });
+                                    }
+                                });
+
                             }
-                        });
+                            else if (k=="changeEquipmentId" && row[k] != null)
+                            {
+                                kendo.ui.showInfoDialog({
+                                    message:'<@spring.message "hap.error.nullexception"/>'
+                                })
+                            }
+                        }
                     }
+
                 });
 
             }
