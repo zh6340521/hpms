@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hpms.fin.mapper.DiscountDateMapper">
+	<resultMap type="hpms.fin.dto.DiscountDate" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+		<id column="DISCOUNT_ID" property="discountId" jdbcType="DECIMAL" />
+        <result column="COMPLANY_ID" property="complanyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="DISCOUNT_DATE_FROM" property="discountDateFrom" jdbcType="VARCHAR" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
+        <result column="DISCOUNT_DATE_TO" property="discountDateTo" jdbcType="VARCHAR" />
+        <result column="DISCOUNT_PRO_ID" property="discountProId" jdbcType="DECIMAL" />
+        <result column="DISCOUNT_DATE" property="discountDate" jdbcType="DATE" />
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="VARCHAR" />
+        <result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
+        <result column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="FEE_PERIOD" property="feePeriod" jdbcType="VARCHAR" />
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR" />
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR" />
+        <result column="FEE_STATUS" property="feeStatus" jdbcType="VARCHAR" />
+        <result column="fee_name" property="feeName" jdbcType="VARCHAR" />
+        <result column="discount_pro_name" property="discountProName" jdbcType="VARCHAR" />
+        <result column="fee_id" property="feeId" jdbcType="DECIMAL" />
+        <result column="GROSS_AMOUNT" property="grossAmount" jdbcType="DECIMAL"/>
+        <result column="TOTAL_AMOUNT" property="totalAmount" jdbcType="DECIMAL"/>
+        <result column="ADJ_AMOUNT" property="adjAmount" jdbcType="DECIMAL"/>
+	</resultMap>
+	
+	
+	<!-- 根据条件查询是否存在应收优惠清单 -->
+	<select id="queryCount" resultType="int"  parameterType="hpms.fin.dto.DiscountDate">
+		SELECT COUNT(0)
+			  FROM HPMS_FIN_FEE_LIST hffl
+			  LEFT JOIN HPMS_CS_OCCUPATION hco
+			    ON hffl.OCCUPATION_ID = hco.OCCUPATION_ID
+			  LEFT JOIN HPMS_MDM_FEE_TYPE hmft
+			    ON hffl.FEE_TYPE_ID = hmft.FEE_TYPE_ID
+			  LEFT JOIN HPMS_MDM_FEE hmf
+			    ON hffl.FEE_ID = hmf.FEE_ID
+			 WHERE 1 = 1  AND hffl.fee_status = 'CREATED'
+			 <if test="propertyName!=null">
+			 	AND HCO.PROPERTY_NAME = #{propertyName,jdbcType=VARCHAR}
+			 </if>
+	           <if test="fromDate!=null">
+	           		AND hffl.FEE_PERIOD &gt;= #{fromDate}
+	           </if>
+	           <if test="todate!=null">
+	           		AND hffl.FEE_PERIOD &lt;= #{todate}
+	           </if>
+	</select>
+	<!-- 根据选择的优惠方案名称带出费项类型 -->
+	<select id="queryName" resultMap="BaseResultMap" parameterType="hpms.fin.dto.DiscountDate">
+		select hmf.fee_name
+		  from HPMS_MDM_DISCOUNT_PRO hmdp
+		 inner join HPMS_MDM_FEE hmf
+		    on hmdp.fee_id = hmf.fee_id
+    where 1=1
+    <if test="discountProName!=null"></if>
+    AND hmdp.discount_pro_name = #{discountProName,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 根据条件查询总金额 -->
+	<select id="querySum" resultMap="BaseResultMap" parameterType="hpms.fin.dto.DiscountDate">
+		SELECT sum(hffl.gross_amount) gross,count(0) item
+        FROM HPMS_FIN_FEE_LIST hffl
+        LEFT JOIN HPMS_CS_OCCUPATION hco
+          ON hffl.OCCUPATION_ID = hco.OCCUPATION_ID
+        LEFT JOIN HPMS_MDM_FEE_TYPE hmft
+          ON hffl.FEE_TYPE_ID = hmft.FEE_TYPE_ID
+        LEFT JOIN HPMS_MDM_FEE hmf
+          ON hffl.FEE_ID = hmf.FEE_ID
+       		WHERE 1 = 1  AND hffl.fee_status = 'CREATED'
+       		 <if test="propertyName!=null">
+			 	AND HCO.PROPERTY_NAME = #{propertyName,jdbcType=VARCHAR}
+			 </if>
+ 			<if test="fromDate!=null">
+	           		AND hffl.FEE_PERIOD &gt;= #{fromDate}
+	           </if>
+	           <if test="todate!=null">
+	           		AND hffl.FEE_PERIOD &lt;= #{todate}
+	           </if>
+	</select>
+	
+	
+	<!-- 根据条件查询总金额 -->
+	<select id="queryDiscount" resultMap="BaseResultMap" parameterType="hpms.fin.dto.DiscountDate">
+		SELECT HFD.COMPLANY_ID,
+			       FCB.COMPANY_FULL_NAME,
+			       HFD.PROJECT_ID,
+			       HMP.PROJECT_NAME,
+			       HCO.PROPERTY_NAME,
+			       HCO.CUSTOMER_NAME,
+			       HFD.DISCOUNT_DATE_FROM,
+			       HFD.DISCOUNT_DATE_TO,
+			       HMDP.DISCOUNT_PRO_NAME,
+			       HMF.FEE_NAME,
+			       HFD.GROSS_AMOUNT,
+			       HFD.ADJ_AMOUNT,
+			       HFD.TOTAL_AMOUNT,
+			       HFD.Discount_Date
+			  FROM HPMS_FIN_DISCOUNT HFD
+			  LEFT JOIN FND_COMPANY_B FCB
+			    ON HFD.COMPLANY_ID = FCB.COMPANY_ID
+			  LEFT JOIN HPMS_MDM_PROJECT HMP
+			    ON HFD.PROJECT_ID = HMP.PROJECT_ID
+			  LEFT JOIN HPMS_CS_OCCUPATION HCO
+			    ON HFD.OCCUPATION_ID = HCO.OCCUPATION_ID
+			  LEFT JOIN HPMS_MDM_DISCOUNT_PRO HMDP
+			    ON HFD.DISCOUNT_PRO_ID = HMDP.DISCOUNT_PRO_ID
+			  LEFT JOIN HPMS_MDM_FEE HMF
+			    ON HMDP.FEE_ID = HMF.FEE_ID
+       			WHERE 1 = 1
+       		 <if test="complanyId!=null">
+			 	AND HFD.COMPLANY_ID = #{complanyId,jdbcType=DECIMAL}
+			 </if>
+ 			<if test="projectId!=null">
+	           		AND HFD.PROJECT_ID = #{projectId,jdbcType=DECIMAL}
+	           </if>
+	           <if test="customerName!=null">
+	           		AND HCO.CUSTOMER_NAME LIKE concat('%', concat(#{customerName,jdbcType=VARCHAR}, '%'))
+	           </if>
+	           <if test="discountDate!=null">
+	           		AND HFD.Discount_Date = #{discountDate,jdbcType=DATE}
+	           </if>
+	</select>
+</mapper>

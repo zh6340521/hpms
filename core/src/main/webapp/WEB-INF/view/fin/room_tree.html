@@ -1,0 +1,101 @@
+<#--
+ * description: 应收费用清单
+ * version: 1.0
+ * #copyright#
+ *author: chengye.hu@hand-china.com 2017.02.15
+-->
+<#include "../include/header.html">
+<body>
+<div id="page-content">
+	<div id="treeview"></div> 
+		
+</div>
+	<script type="text/javascript" >
+	
+	var companyId = <#if RequestParameters.companyId?exists>
+                                ${RequestParameters.companyId}
+                             <#else>-1</#if>;
+    var projectId = <#if RequestParameters.projectId?exists>
+                                ${RequestParameters.projectId}
+                             <#else>-1</#if>;
+	
+			
+	homogeneous = new kendo.data.HierarchicalDataSource({
+                      transport: {
+                          read: {
+                              url: "${base.contextPath}/fin/feeList/structureQuery",
+                              data: {companyId:companyId,projectId:projectId},
+                              type   : "POST",
+                              dataType: "json"
+                          }
+                      },
+                      schema: {
+                      	  data:"rows",
+                          model: {
+                              id: "structureId",
+                              hasChildren: "hasChildren",
+                              children:"items"
+                          }
+                      }
+                  });
+	
+	var treeview = $("#treeview").kendoTreeView({
+              dataSource:homogeneous,
+              dataValueField: "id",
+              dataTextField: "structureName",
+              select: onSelect
+          });
+    
+	function onSelect(e){
+		var structureName = this.dataItem(e.node).structureName;
+		var structureId = this.dataItem(e.node).structureId;
+		var versionId = this.dataItem(e.node).versionId;
+		var propertyName = this.dataItem(e.node).propertyName;
+		$.ajax({
+					type   : "POST",
+					url: "${base.contextPath}/mdm/structure/queryByName?companyId="+companyId+"&projectId="+projectId,
+					data: {}, 
+					success: function(datas) {
+						if (datas.total > 0) {
+							for (var i = 0; i < datas.rows.length; i++) {
+							if (datas.rows[i].structureName == structureName) {
+							    var status = datas.rows[i].status;
+								var name = datas.rows[i].structureName;
+								var customerName = datas.rows[i].customerName;
+								var occupationId = datas.rows[i].occupationId;
+								console.log(occupationId)
+								window.parent.document.getElementById("struName").value=propertyName;
+								window.parent.document.getElementById("custName").value=customerName;
+								window.parent.document.getElementById("occupationId").value=occupationId;
+								//window.parent.$("#struName").val(structureName);
+								window.parent.$("#room_tree").data("kendoWindow").close();
+							}else{
+								kendo.ui.showInfoDialog({
+									message : '请选择正确的节点!'
+								});
+							}
+						}
+						}else{
+							kendo.ui.showInfoDialog({
+									message : '该节点未入伙,请重新选择!'
+								});	
+						}
+					}
+				 });
+		/* console.log("111111111"+name)		 
+		if (name == structureName) {  
+					console.log("22222"+name)
+					console.log("3333333"+structureName)
+		      		/* window.parent.viewModel.model.set("structureName",this.dataItem(e.node).structureName);
+					window.parent.viewModel.model.set("structureId",this.dataItem(e.node).structureId);
+					window.parent.viewModel.model.set("versionId",this.dataItem(e.node).versionId);
+		 }else{
+				 	
+  						 } 
+		 */
+		
+	}
+		
+	</script>
+</body>
+</html>
