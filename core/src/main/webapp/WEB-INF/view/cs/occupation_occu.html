@@ -77,10 +77,15 @@
                     data       : kendo.stringify(viewModel.model),
                     success: function (args) {
                         if(args.occupationId){
+                            var occuWindow = window.parent.$('#CS_OCCUPATION');
+                            setTimeout(function() {
+                                occuWindow.attr("src",occuWindow.attr("src"));
+                            },100);
                             kendo.ui.showInfoDialog({
                                 title:$l('hap.prompt'),
                                 message:$l('hap.tip.success')
                             }).done(function (event) {
+
                                 window.top.closeTab("occupation_occu");
 
                             });
