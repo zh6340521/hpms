@@ -1,0 +1,297 @@
+<#--
+        * description: 添加收费项目界面-代收代付
+        * version: 1.0
+        * author: feng.liu01@hand-china.com
+        * #{copyright}#
+        *
+        -->
+
+<#include "../include/header.html">
+
+<script
+        src="${base.contextPath}/common/code?transTypeData=HPMS_TRANS_TYPE">
+</script>
+
+
+<script type="text/javascript">
+
+
+
+
+    function receipt() {
+        var model = window.parent.viewModel.model;
+
+        var feeList = [];
+        for (let data of dataSource.data()){
+            if (data.settlementAmount>0){
+                feeList.push(data);
+            }
+        }
+        model.set("feeLists",feeList);
+        model.set("transactor","${Session.userName}");
+        model.set("receiptAmount",$("#totalAmountId").text());
+        $.ajax({
+            url: '${base.contextPath}/fin/receipt/submit',
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data       : JSON.stringify(model),
+            success: function (args) {
+                if (args.success) {
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.prompt'),
+                        message: $l('hap.tip.success')
+                    }).done(function () {
+                        window.parent.$("#addFeeId").data("kendoWindow").close();
+                    });
+                } else {
+                    kendo.ui.showInfoDialog({
+                        title: $l('hap.prompt'),
+                        message: '<@spring.message "失败"/>'
+                    });
+                }
+            }
+        });
+
+    }
+
+    function closeWindow() {
+        window.parent.$("#addFeeId").data("kendoWindow").close();
+    }
+
+    $(document).ready(function () {
+        $('#Grid').data('kendoGrid').addRow();
+    })
+
+</script>
+<body>
+<div id="page-content">
+
+
+    <div style="clear:both">
+        <div id="Grid"></div>
+    </div>
+
+    <div style="clear:both">
+        <h4>应收总额：<span id="totalAmountId">0</span></h4>
+    </div>
+
+    <div style="float: right;margin-top: 10px">
+        <span class="btn btn-primary"
+              style="margin-right: 5px;" onclick="receipt()">
+            <i class="fa fa-pencil-square-o" style="margin-right:3px;"></i>
+            <@spring.message "收款"/>
+        </span>
+
+        <span class="btn btn-primary"
+              style="margin-right: 5px;" onclick="closeWindow()">
+            <i class="fa fa-trash-o" style="margin-right:3px;"></i>
+            <@spring.message "取消"/>
+        </span>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    var BaseUrl = "${base.contextPath}/fin/receipt",
+    dataSource = new kendo.data.DataSource({
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "receiptId",
+                fields: {
+                    transType: {type: "string"},
+                    unitPrice:{type: "number",defaultValue:0},
+                    feeQuantity:{type: "number",defaultValue:1},
+                    settlementAmount:{type: "number",defaultValue:0}
+                }
+            }
+        }
+    });
+
+    $("#Grid").kendoGrid({
+        dataSource: dataSource,
+        height: '200px',
+        resizable: true,
+        scrollable: true,
+        navigatable: false,
+        autoBind: false,
+//        editable:true,
+        editable:"inline",
+        columns: [
+
+            {
+                field: "feeId",
+                title: '<@spring.message "收费项目"/>',
+                attributes: {style: "text-align:center"},
+                width: 120,
+                editor:function (container, options) {
+                    $('<input style="width: 90%;" ' +
+                        'name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+                            dataTextField: "feeName",
+                            dataValueField: "feeId",
+                            valuePrimitive:true,
+                            dataSource: {
+                                transport: {
+                                    read: {
+                                        url:"${base.contextPath}/mdm/priceLine/feeQuery",
+                                        type : "POST"
+                                    },
+                                    contentType : "application/json"
+                                },
+                                schema: {
+                                    data: 'rows'
+                                }
+                            },
+                            select:function (e) {
+                                options.model.set("feeName",e.dataItem.feeName);
+                                let transType = e.dataItem.transType;
+
+                                options.model.set("transType", transType);
+
+                                $.each(transTypeData,function(i,n){
+                                    if((n.value||'').toLowerCase() == (transType||'').toLowerCase()){
+                                        transType = n.meaning;
+                                    }
+                                });
+
+                                $("[data-container-for='transType']").text(transType);
+                            }
+                        });
+                },
+                template:function (dataItem) {
+                    return dataItem.feeName || '';
+                }
+            },
+            {
+                field: "transType",
+                title: '<@spring.message "交易类型"/>',
+                attributes: {style: "text-align:center"},
+                width: 80,
+                editor:function (container, options) {
+
+                },
+                template:function (dataItem) {
+                    var v = dataItem.transType;
+                    $.each(transTypeData,function(i,n){
+                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
+                            v = n.meaning;
+                            return v;
+                        }
+                    });
+                    return v || "";
+                }
+            },
+
+            {
+                field: "receiptMethod",
+                title: '<@spring.message "收款方式"/>',
+                attributes: {style: "text-align:center"},
+                width: 120,
+                editor:function (container, options) {
+                    $('<input id="feeTypeId" style="width: 90%;" ' +
+                        'name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDropDownList({
+                            dataTextField:"paymentMethodName",
+                            dataValueField:"paymentMethodCode",
+                            valuePrimitive:true,
+                            dataSource: {
+                                transport: {
+                                    read: {
+                                        url:"${base.contextPath}/mdm/paymentMethod/paymentMethodQuery",
+                                        type : "POST"
+                                    },
+                                    contentType : "application/json"
+                                },
+                                schema: {
+                                    data: 'rows'
+                                }
+                            },
+                            select:function (e) {
+                                options.model.set("paymentMethodName",e.dataItem.paymentMethodName);
+                            }
+                        });
+                },
+                template:function (dataItem) {
+                    return dataItem.paymentMethodName || '';
+                }
+            },
+            {
+                field: "settlementAmount",
+                title: '<@spring.message "金额"/>',
+                attributes: {style: "text-align:center"},
+                width: 100,
+                editor:function (container, options) {
+                    $('<input  style="width: 90%;" ' +
+                        'name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+
+                        })
+                }
+            },
+            {
+                field: "receiptPeriod",
+                title: '<@spring.message "计费期间"/>',
+                attributes: {style: "text-align:center"},
+                width: 100,
+                format: "{0:yyyy-MM}",
+                editor:function (container, options) {
+                    $('<input  style="width: 90%;" ' +
+                        'name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoDatePicker({
+                            format: "yyyy-MM"
+                        });
+                }
+            },
+            {
+                field: "description",
+                title: '<@spring.message "备注"/>',
+                attributes: {style: "text-align:center"},
+                width: 80
+            },
+            {
+                field: "insert",
+                title: '<@spring.message "插入"/>',
+                attributes: {style: "text-align:center"},
+                width: 80,
+                editor:function (container, options) {
+                    $('<span class="btn btn-primary" onclick="insertData()"><@spring.message "插入"/></span>')
+                        .appendTo(container)
+                },
+                template:function (dataItem) {
+                    return "已插入";
+                }
+//                command: [
+//                    {
+//                        name:"insert",
+//                        text:"插入"
+//                    }
+//                ]
+            }
+        ]
+    });
+
+    function insertData() {
+        var grid = $('#Grid').data('kendoGrid');
+        grid.saveChanges();
+        grid.addRow();
+        let sum = 0;
+        for (let data of dataSource.data()){
+            sum += data.settlementAmount;
+        }
+        $("#totalAmountId").text(sum.toFixed(2));
+    }
+
+    $("#Grid thead>tr th").css("text-align","center");
+
+</script>
+</body>
+</html>

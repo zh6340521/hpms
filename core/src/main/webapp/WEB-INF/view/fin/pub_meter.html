@@ -71,22 +71,9 @@
                 }
 
             })
-        }else if (operation=="HIS"){
+        }else if (operation=="VIEW"){
             $.each(checked,function(i,v) {
-                $("#hisWin").kendoWindow({
-                    actions: ["Close"],
-                    draggable: true,
-                    height: "450px",
-                    width: "800px",
-                    close: function () {
-                    },
-                    content: "meter_his.html?&equipmentId=" + v.equipmentId,
-                    iframe: true,
-                    modal: true
-                });
-                var win = $("#hisWin").data("kendoWindow");
-                win.setOptions({"title": v.equipmentName + '<@spring.message "hpms.fin.pubmeter.meterreadhis"/>'});
-                win.center().open();
+                parent.openTab("meterView" + v.equipmentId,v.equipmentName + '<@spring.message "hpms.fin.pubmeter.readrecord"/>',"fin/meter_view.html?&equipmentId=" + v.equipmentId)
             })
 
         }else if (operation=="CHANGE") {
@@ -184,8 +171,8 @@
     <script>kendo.bind($('#query_form'), viewModel);</script>
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
         <span type="button" onclick="oprMeter('INIT')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hpms.initialization"/></span>
+        <span type="button" onclick="oprMeter('VIEW')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.view"/></span>
         <span type="button" onclick="oprMeter('CHANGE')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterchange"/></span>
-        <span type="button" onclick="oprMeter('HIS')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.view"/></span>
         <span type="submit" class="btn btn-primary" style="float:left;width:70px;margin-right:5px;" data-bind="click:queryResource" ><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>

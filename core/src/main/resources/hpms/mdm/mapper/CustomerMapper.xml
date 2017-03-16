@@ -83,6 +83,9 @@
 		   <if test="credentialNumber != null">
 		      AND BP.CREDENTIAL_NUMBER LIKE concat('%', concat(#{credentialNumber,jdbcType=VARCHAR}, '%'))
 		   </if>
+			<if test="enableFlag!=null">
+				AND CUST.ENABLE_FLAG = #{enableFlag,jdbcType=VARCHAR}
+			</if>
 		</where>
 	</select>
 	
