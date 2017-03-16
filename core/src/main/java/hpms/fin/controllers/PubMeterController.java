@@ -27,6 +27,22 @@ public class PubMeterController extends BaseController {
         return new ResponseData(service.queryPubMeter(requestContext, dto, page, pageSize));
     }
 
+    @RequestMapping(value = "/hpms/fin/pubmeter/init/query")
+    @ResponseBody
+    public ResponseData queryInit(PubMeter dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.queryPubMeterInit(requestContext, dto, page, pageSize));
+    }
+
+    @RequestMapping(value = "/hpms/fin/pubmeter/change/query")
+    @ResponseBody
+    public ResponseData queryChange(PubMeter dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.queryPubMeterChange(requestContext, dto, page, pageSize));
+    }
+
     @RequestMapping(value = "/hpms/fin/pubmeter/submit")
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<PubMeter> dto){

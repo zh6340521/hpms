@@ -23,4 +23,16 @@ public class PubMeterServiceImpl extends BaseServiceImpl<PubMeter> implements IP
         PageHelper.startPage(page, pagesize);
         return pubMeterMapper.queryPubMeter(pubMeter);
     }
+
+    @Override
+    public List<PubMeter> queryPubMeterInit(IRequest requestContext, PubMeter pubMeter, int page, int pagesize) {
+        PageHelper.startPage(page, pagesize);
+        return pubMeterMapper.queryPubMeterInit(pubMeter);
+    }
+
+    @Override
+    public List<PubMeter> queryPubMeterChange(IRequest requestContext, PubMeter pubMeter, int page, int pagesize) {
+        PageHelper.startPage(page, pagesize);
+        return pubMeterMapper.queryPubMeterChange(pubMeter);
+    }
 }

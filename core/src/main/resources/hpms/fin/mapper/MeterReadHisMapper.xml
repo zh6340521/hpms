@@ -44,6 +44,9 @@
        <if test="equipmentId!=null">
           AND HFMRH.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
        </if>
+       <if test="newRecordFlag!=null">
+          AND HFMRH.NEW_RECORD_FLAG=#{newRecordFlag,jdbcType=DECIMAL}
+       </if>
     </select>
 
 </mapper>

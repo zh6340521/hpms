@@ -1,3 +1,4 @@
+
 package hpms.mdm.mapper;/**
  * Created by user1 on 2017/2/15.
  */
@@ -37,4 +38,13 @@ public interface VersionStructureMapper extends Mapper<VersionStructure> {
      * @return
      */
     List<ConfigValue> propertyTypeQuery(ConfigValue configValue);
+
+    /*
+     * 查询建筑类型为房间的相关信息
+     */
+    public List<VersionStructure> queryByStructureName(VersionStructure vs);
+
+    
+
+
 }

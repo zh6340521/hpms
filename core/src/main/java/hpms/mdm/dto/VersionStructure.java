@@ -26,7 +26,39 @@ public class VersionStructure extends BaseDTO {
     @GeneratedValue(generator = GENERATOR_TYPE)
     private Long structureId;
 
-    /**
+    public Long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getConfigValueName() {
+		return configValueName;
+	}
+
+	public void setConfigValueName(String configValueName) {
+		this.configValueName = configValueName;
+	}
+
+	/**
      * 版本id
      */
     @Column
@@ -81,19 +113,41 @@ public class VersionStructure extends BaseDTO {
     @Transient
     private boolean hasChildren;//huchengye
 
+
+
+
     @Transient
-    private String  configValueName;//建筑类型名称
+    private Long companyId;//公司id
+    @Transient
+    private Long projectId;//项目id
+    @Transient
+    private String customerName;//客户名称
+    @Transient
+    private String configValueName;//建筑类型
+    @Transient
+    private String status;//入伙状态
+    @Transient
+    private Long occupationId;//入伙表id
 
-    public String getConfigValueName() {
-        return configValueName;
-    }
-
-    public void setConfigValueName(String configValueName) {
-        this.configValueName = configValueName;
-    }
 
     public String getPropertyName() {
         return propertyName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Long getOccupationId() {
+        return occupationId;
+    }
+
+    public void setOccupationId(Long occupationId) {
+        this.occupationId = occupationId;
     }
 
     public void setPropertyName(String propertyName) {

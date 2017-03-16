@@ -31,9 +31,16 @@ import java.util.List;
 
     @RequestMapping(value = "/hpms/fin/meter/read/his/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<MeterReadHis> dto){
+    public ResponseData update(HttpServletRequest request,@RequestBody List<MeterReadHis> dto) {
         IRequest requestCtx = createRequestContext(request);
         return new ResponseData(service.batchUpdate(requestCtx, dto));
+    }
+
+    @RequestMapping(value = "/hpms/fin/meter/read/his/changeMeter")
+    @ResponseBody
+    public ResponseData changeMeter(HttpServletRequest request, @RequestParam Long equipmentId, @RequestParam Long changeEquipmentId) {
+        IRequest requestCtx = createRequestContext(request);
+        return new ResponseData(service.changeMeterReadHis(requestCtx, equipmentId, changeEquipmentId));
     }
 
     @RequestMapping(value = "/hpms/fin/meter/read/his/remove")

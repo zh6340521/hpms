@@ -1,3 +1,4 @@
+
 package hpms.mdm.service.impl;/**
  * Created by user1 on 2017/2/15.
  */
@@ -38,5 +39,10 @@ public class VersionStructureServiceImpl extends BaseServiceImpl<VersionStructur
     @Override
     public List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue) {
         return versionStructureMapper.propertyTypeQuery(configValue);
+    }
+
+    @Override
+    public List<VersionStructure> queryByStructureName(VersionStructure vs,IRequest requestContext) {
+        return versionStructureMapper.queryByStructureName(vs);
     }
 }

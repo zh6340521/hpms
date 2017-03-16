@@ -1,3 +1,4 @@
+
 package hpms.mdm.service;/**
  * Created by user1 on 2017/2/15.
  */
@@ -32,5 +33,12 @@ public interface IVersionStructureService extends IBaseService<VersionStructure>
      * @return
      */
     List<ConfigValue> propertyTypeQuery(IRequest requestContext, ConfigValue configValue);
+
+    /**
+     * 查询建筑类型为房间的相关信息
+     * @param vs
+     * @return
+     */
+    public List<VersionStructure> queryByStructureName(VersionStructure vs,IRequest requestContext);
 }
 

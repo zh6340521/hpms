@@ -1,3 +1,4 @@
+
 package hpms.mdm.controllers;/**
  * Created by user1 on 2017/2/15.
  */
@@ -70,6 +71,22 @@ public class VersionStructureController extends BaseController {
     public ResponseData delete(HttpServletRequest request,@RequestBody List<VersionStructure> vs){
         versionStructureService.batchDelete(vs);
         return new ResponseData();
+    }
+
+    /**
+     *
+     * 查询
+     * @param vs
+     * @param page
+     * @param pageSize
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/mdm/structure/queryByName")
+    @ResponseBody
+    public ResponseData queryByName(VersionStructure vs, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(versionStructureService.queryByStructureName(vs, requestContext));
     }
 
 

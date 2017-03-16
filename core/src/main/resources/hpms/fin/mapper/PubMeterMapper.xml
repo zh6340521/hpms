@@ -153,6 +153,211 @@
             <if test="equipmentTypeId!=null">
                 and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=VARCHAR}
             </if>
+        </where>
+
+    </select>
+
+    <!--查询公共仪表-->
+    <select id="queryPubMeterInit" parameterType="hpms.fin.dto.PubMeter" resultMap="BaseResultMap">
+        SELECT HME.EQUIPMENT_ID,
+        HME.EQUIPMENT_TYPE_ID,
+        HME.EQUIPMENT_CODE,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_BARCODE,
+        HME.EQUIPMENT_SERIAL,
+        HME.ASSETS_NUMBER,
+        HME.EQUIPMENT_UOM,
+        HME.DOOR_NO,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.ORG_ID,
+        HME.EQUIPMENT_SIGNIFICANCE,
+        HME.EQUIPMENT_STATUS,
+        HME.PURCHASING_DATE,
+        HME.EQUIPMENT_SUPPLIER,
+        HME.EQUIPMENT_MANUFACTURE,
+        HME.EQUIPMENT_MODEL,
+        HME.PRODUCTION_DATE,
+        HME.FACTORY_NUMBER,
+        HME.INSTALL_DATE,
+        HME.USE_DATE,
+        HME.MAINTENANCE_TYPE,
+        HME.DURABLE_YEAR,
+        HME.GUARANTEE_DATE,
+        HME.INDICATIVE_PRICE,
+        HME.EQUIPMENT_ATTACHMENT,
+        HME.EQUIPMENT_PICTURE,
+        HME.TECHNICAL_PARAMETER,
+        HME.PARENT_EQUIPMENT_ID,
+        HME.VERSION_ID,
+        HME.EQUIPMENT_PICTURE_FILE_NAME,
+        HME.EQUIPMENT_PICTURE_CONTENT_TYPE,
+        HME.EQUIPMENT_PICTURE_FILE_SIZE,
+        HME.EQUIPMENT_PICTURE_UPDATED_AT,
+        HME.CHANGE_EQUIPMENT_ID,
+        HME.CHANGE_REASON,
+        HME.PROGRAM_ID,
+        HME.REQUEST_ID,
+        FCB.company_full_name,
+        HMP.PROJECT_NAME,
+        HMET.TYPE_NAME,
+        HCVV.MEANING MEANING1,
+        HCVV1.MEANING MEANING2,
+        HME2.EQUIPMENT_NAME PARENT_EQUIPMENT_NAME,
+        HOU.NAME,
+        HFMCR.CR_NAME,
+        '' INIT_FLAG,
+        HME.CHANGE_DATE
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HME.EQUIPMENT_TYPE_ID = HMET.EQUIPMENT_TYPE_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HMPS_METER_ATTRIBUTE'
+        AND HCVV.VALUE = HMET.TYPE_ATTRIBUTE
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+        ON HCVV1.CODE = 'HPMS_EQUIPMENT_STATUS'
+        AND HCVV1.VALUE = HME.EQUIPMENT_STATUS
+        AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME2
+        ON HME2.EQUIPMENT_ID=HME.PARENT_EQUIPMENT_ID
+        LEFT JOIN hr_org_unit_b HOU
+        ON HOU.UNIT_ID=HME.ORG_ID
+        LEFT JOIN HPMS_FIN_METER_CHARGE_RULE HFMCR
+        ON HFMCR.COMPANY_ID = HME.COMPANY_ID
+        AND HFMCR.PROJECT_ID = HME.PROJECT_ID
+        AND HFMCR.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HFMCR.ENABLE_FLAG = 'Y'
+
+
+        <where>
+            1=1
+            AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+            <if test="equipmentCode!=null">
+                and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="equipmentId!=null">
+                and HME.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="companyId!=null">
+                and FCB.COMPANY_ID=#{companyId,jdbcType=VARCHAR}
+            </if>
+
+            <if test="projectId!=null">
+                and HMP.PROJECT_ID=#{projectId,jdbcType=VARCHAR}
+            </if>
+
+            <if test="equipmentTypeId!=null">
+                and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+
+    </select>
+
+    <!--查询公共仪表-->
+    <select id="queryPubMeterChange" parameterType="hpms.fin.dto.PubMeter" resultMap="BaseResultMap">
+        SELECT HME.EQUIPMENT_ID,
+        HME.EQUIPMENT_TYPE_ID,
+        HME.EQUIPMENT_CODE,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_BARCODE,
+        HME.EQUIPMENT_SERIAL,
+        HME.ASSETS_NUMBER,
+        HME.EQUIPMENT_UOM,
+        HME.DOOR_NO,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.ORG_ID,
+        HME.EQUIPMENT_SIGNIFICANCE,
+        HME.EQUIPMENT_STATUS,
+        HME.PURCHASING_DATE,
+        HME.EQUIPMENT_SUPPLIER,
+        HME.EQUIPMENT_MANUFACTURE,
+        HME.EQUIPMENT_MODEL,
+        HME.PRODUCTION_DATE,
+        HME.FACTORY_NUMBER,
+        HME.INSTALL_DATE,
+        HME.USE_DATE,
+        HME.MAINTENANCE_TYPE,
+        HME.DURABLE_YEAR,
+        HME.GUARANTEE_DATE,
+        HME.INDICATIVE_PRICE,
+        HME.EQUIPMENT_ATTACHMENT,
+        HME.EQUIPMENT_PICTURE,
+        HME.TECHNICAL_PARAMETER,
+        HME.PARENT_EQUIPMENT_ID,
+        HME.VERSION_ID,
+        HME.EQUIPMENT_PICTURE_FILE_NAME,
+        HME.EQUIPMENT_PICTURE_CONTENT_TYPE,
+        HME.EQUIPMENT_PICTURE_FILE_SIZE,
+        HME.EQUIPMENT_PICTURE_UPDATED_AT,
+        HME.CHANGE_EQUIPMENT_ID,
+        HME.CHANGE_REASON,
+        HME.PROGRAM_ID,
+        HME.REQUEST_ID,
+        FCB.company_full_name,
+        HMP.PROJECT_NAME,
+        HMET.TYPE_NAME,
+        HCVV.MEANING MEANING1,
+        HCVV1.MEANING MEANING2,
+        HME2.EQUIPMENT_NAME PARENT_EQUIPMENT_NAME,
+        HOU.NAME,
+        HFMCR.CR_NAME,
+        '' INIT_FLAG,
+        HME.CHANGE_DATE
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HME.EQUIPMENT_TYPE_ID = HMET.EQUIPMENT_TYPE_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HMPS_METER_ATTRIBUTE'
+        AND HCVV.VALUE = HMET.TYPE_ATTRIBUTE
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+        ON HCVV1.CODE = 'HPMS_EQUIPMENT_STATUS'
+        AND HCVV1.VALUE = HME.EQUIPMENT_STATUS
+        AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME2
+        ON HME2.EQUIPMENT_ID=HME.PARENT_EQUIPMENT_ID
+        LEFT JOIN hr_org_unit_b HOU
+        ON HOU.UNIT_ID=HME.ORG_ID
+        LEFT JOIN HPMS_FIN_METER_CHARGE_RULE HFMCR
+        ON HFMCR.COMPANY_ID = HME.COMPANY_ID
+        AND HFMCR.PROJECT_ID = HME.PROJECT_ID
+        AND HFMCR.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HFMCR.ENABLE_FLAG = 'Y'
+
+
+        <where>
+            1=1
+            AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+            <if test="equipmentCode!=null">
+                and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="equipmentId!=null">
+                and HME.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="companyId!=null">
+                and FCB.COMPANY_ID=#{companyId,jdbcType=VARCHAR}
+            </if>
+
+            <if test="projectId!=null">
+                and HMP.PROJECT_ID=#{projectId,jdbcType=VARCHAR}
+            </if>
+
+            <if test="equipmentTypeId!=null">
+                and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=VARCHAR}
+            </if>
             <if test="initFlag!=null">
                 AND (('N' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID not in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS))
                 OR ('Y' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS)))

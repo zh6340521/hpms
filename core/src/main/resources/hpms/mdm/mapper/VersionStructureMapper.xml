@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
   ~ #{copyright}#
@@ -111,4 +112,44 @@ FROM
             AND HC.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
         </if>
     </select>
+
+    <!--根据建筑类型为房间带出客户 -->
+    <select id="queryByStructureName" parameterType="hpms.mdm.dto.VersionStructure" resultMap="BaseResultMap">
+        SELECT hmp.property_id,
+        hmp.property_name,
+        hmp.project_id,
+        hmp.company_id,
+        HCO.CUSTOMER_NAME,
+        HCO.STATUS,
+        hcv.config_value_name,
+        hmvs.business_format,
+        hmvs.structure_id,
+        hmvs.version_id,
+        HCO.OCCUPATION_ID,
+        hmvs.structure_name
+        from (SELECT *
+        FROM HPMS_CS_OCCUPATION
+        WHERE OCCUPATION_ID IN
+        (SELECT MAX(HPMS_CS_OCCUPATION.OCCUPATION_ID)
+        FROM HPMS_CS_OCCUPATION
+        GROUP BY HPMS_CS_OCCUPATION.PROPERTY_ID)) HCO
+        LEFT JOIN HPMS_MDM_VERSION_STRUCTURE HMVS
+        ON HMVS.PROPERTY_ID = HCO.PROPERTY_ID
+        LEFT JOIN HPMS_MDM_PROPERTY HMP
+        on hmp.property_id = hmvs.property_id
+        left join HPMS_CONFIG_VALUE hcv
+        on hcv.config_value_id = hmp.property_type
+        where 1 = 1 and HCO.STATUS='IN'
+        and hcv.config_value_name = '房间'
+
+        <if test="companyId!=null">
+            and hmp.company_id = #{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="projectId!=null">
+            and hmp.project_id = #{projectId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+
 </mapper>

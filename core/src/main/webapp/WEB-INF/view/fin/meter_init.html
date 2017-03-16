@@ -22,7 +22,7 @@
     if(equipmentId !=-1){
         $.ajax({
             type   : "POST",
-            url: "${base.contextPath}/hpms/fin/pubmeter/query",
+            url: "${base.contextPath}/hpms/fin/pubmeter/init/query",
             data: { equipmentId : equipmentId },
             success: function(json) {
                 var row = json.rows[0] || {};
