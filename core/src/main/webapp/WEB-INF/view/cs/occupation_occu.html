@@ -291,7 +291,7 @@
         contextPath:'${base.contextPath}',
         locale:'${base.locale}',
         query:function (e) {
-
+            e.param.enableFlag = 'Y';
         },
         change:function (e) {
             viewModel.model.set("customerCode",e.sender._dataItem.customerNumber);
