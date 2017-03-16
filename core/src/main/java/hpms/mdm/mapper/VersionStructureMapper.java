@@ -29,4 +29,9 @@ public interface VersionStructureMapper extends Mapper<VersionStructure> {
      * @return
      */
     public List<VersionStructure> queryVersionStructure(VersionStructure vs);
+    
+    /*
+     * 查询建筑类型为房间的相关信息
+     */
+    public List<VersionStructure> queryByStructureName(VersionStructure vs);
 }

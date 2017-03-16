@@ -33,4 +33,10 @@ public class VersionStructureServiceImpl extends BaseServiceImpl<VersionStructur
         PageHelper.startPage(page, pagesize);
         return versionStructureMapper.queryVersionStructure(vs);
     }
+
+
+	@Override
+	public List<VersionStructure> queryByStructureName(VersionStructure vs,IRequest requestContext) {
+		return versionStructureMapper.queryByStructureName(vs);
+	}
 }

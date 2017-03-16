@@ -1,0 +1,478 @@
+<#include "../include/header.html">
+    <script src="${base.contextPath}/resources/js/hpms.js"></script>
+
+    <style type="text/css">
+        label {
+            font-size: 12px;
+        }
+        .tdAlign {
+            text-align:right;
+        }
+        .col-sm-8,.col-sm-4{
+            margin-top: 5px;
+        }
+        span.red {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+
+    <body>
+
+    <script type="text/javascript">
+        //定义viewmodel
+        var viewModel = kendo.observable({
+            model: {},
+        });
+
+    </script>
+
+    <div id="page-content">
+        <div id="task_summary_form">
+            <form id="form" class="form-horizontal"  role="form" style="margin-top: 5px;">
+
+                <div class="col-md-6" style="margin-bottom:10px">
+                    <div class="col-md-3 tdAlign">
+                        <label >公司</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input id="companyId" name="companyId" data-bind="value:model.companyId" style="width: 70%;"/>
+                        <script>
+                            $("#companyId").kendoComboBox({
+                                valuePrimitive: true,  //原始值
+                                dataTextField: "companyFullName",
+                                dataValueField: "companyId",
+                                dataSource: {
+                                    transport: {
+                                        read:function(options) {
+                                            $.ajax({
+                                                type   : "POST",
+                                                url: "${base.contextPath}/mdm/property/companyQuery",
+                                                data: {},
+                                                success: function(json) {
+                                                    options.success(json.rows);
+                                                }
+                                            });
+                                        },
+
+                                    },
+
+
+                                },
+                                //获取下拉框选中的值
+                                select:function(e){
+                                    viewModel.model.set("cId", e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                  //  alert(viewModel.model.get("cId"));
+
+                                }
+
+
+                            });
+                        </script>
+
+                    </div>
+                </div>
+
+                <div class="col-md-6" style="margin-bottom:10px">
+                    <div class="col-md-3 tdAlign">
+                        <label >建筑类型</label>
+                    </div>
+                    <div class="col-md-7">
+                        <input  id="buildType" name="buildType"  data-bind="value:model.buildType" style="width: 70%;"
+                               required>
+
+                        <script>
+
+                            $("#buildType").kendoComboBox({
+                                autoBind: false,
+                                valuePrimitive: true,
+                                cascadeFrom: "companyId",  //关联的父级input的id
+                                //cascadeFromField: "companyFullName",
+                                filter: "contains",
+                                dataTextField: "configValueName",
+                                dataValueField: "configValueId",
+                                dataSource: {
+                                    serverFiltering:true,
+                                    transport: {
+                                        read: {
+                                            url:"${base.contextPath}/bs/configvalue/queryConValueByCache?modelId="+10014+'&columnName='+'COLUMN_NAME',
+                                            type : "POST"
+                                        },
+                                        contentType : "application/json",
+                                        parameterMap: function(options, type) {
+                                            if (type === "read") {
+                                                var filter = options.filter.filters[0]
+                                                var map = {};
+                                                map[filter.field] = filter.value;
+                                                return map;
+                                            }
+                                        }
+                                    },
+                                    schema: {
+                                        data: 'rows'
+                                    }
+                                },
+                                select:function(e){
+                                    //查询子表数据
+                                    findConfigColumn(e.dataItem.configValueId,e.dataItem.configId,"form",viewModel);
+
+
+                                },
+                                change:function(e){
+                                    //改变值时刷新页面
+                                    if(this.value()==null||this.value()==""){
+                                       // location.reload();
+                                        var node = document.getElementById('div1');
+                                        if(node!=null){
+                                            //如果已存在渲染div,切换时将div清除
+                                            $("div#div1").remove();
+                                            //node.parentNode.removeChild(node);
+                                        }
+                                    }
+
+                                }
+                            }) ;
+                        </script>
+                    </div>
+                    <div>
+                        <span data-for="buildType" class=".k-invalid-msg"></span>
+                    </div>
+               </div>
+
+
+                <!--<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">项目</label>
+                    <div class="col-sm-7">
+                        <input  style="width: 200px;" id="projectId" data-bind="value:model.projectId" style="width: 70%;"/>
+
+                        <script type="text/javascript">
+                        $("#projectId").kendoComboBox({
+                        autoBind: false,
+                        filter: "contains",
+                        cascadeFrom: "companyId",
+                        valuePrimitive: true,
+                        dataTextField: "projectName",
+                        dataValueField: "projectId",
+
+                        dataSource: {
+                        /*transport: {
+                        read:function(options) {
+                            $.ajax({
+                            type   : "POST",
+                                //' url: "'+_basePath+'/configcolumn/code/queryBySqlId?configColumnId='+data.rows[i].configColumnId+'&'+cascadeFrom+'='+viewModel.model.get(cascadeFrom)+'",'+
+                            url: "${base.contextPath}/mdm/property/projectQuery",
+
+                            success: function(json) { options.success(json.rows);}
+                            });
+                            }
+                            }*/
+                            serverFiltering:true,
+                            transport: {
+                                read: {
+                                    url:"${base.contextPath}/mdm/property/projectQuery",
+                                    type : "POST"
+                                },
+                                contentType : "application/json",
+                                parameterMap: function(options, type) {
+                                    if (type === "read") {
+                                        var filter = options.filter.filters[0]
+                                        var map = {};
+                                        map[filter.field] = filter.value;
+                                        return map;
+                                    }
+                                }
+                            },
+                            schema: {
+                                data: 'rows'
+                            }
+                            },
+                             });
+
+
+                            </script>
+                        </div>
+                    </div>
+                </div>-->
+
+
+
+
+
+
+
+
+                <!--<div id="div1" class="col-sm-6" style="margin-bottom: 5px;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">333</label>
+                        <div class="col-sm-7">
+                            <input   id="a"
+                                     name="a" required  data-bind="value:model.a" style="width: 70%;" />
+
+                            <span data-for="a" class=".k-invalid-msg"></span>
+                            <script type="text/javascript">
+
+                                $("#a").kendoDatePicker({ format : "yyyy-MM-dd"});
+                            </script>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6" style="margin-bottom:5px">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">222</label>
+
+                    <div class="col-md-7">
+                        <input class="k-textbox" id="groupId" name="groupId" data-bind="value:model.groupId" style="width: 70%;"
+                               required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+                        <span class="red">&nbsp;&nbsp;*</span>
+                        <span data-for="groupId" class="k-invalid-msg" ></span>
+                    </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-sm-6" style="margin-bottom:5px">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">222</label>
+
+                        <div class="col-md-7">
+                            <input class="k-textbox" id="groupId1" name="groupId1" data-bind="value:model.groupId" style="width: 70%;"
+                                   required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+                            <span class="red">&nbsp;&nbsp;*</span>
+                            <span data-for="groupId1" class="k-invalid-msg" ></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6" style="margin-bottom:5px">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">222</label>
+
+                        <div class="col-md-7">
+                            <input class="k-textbox" id="groupId2" name="groupId2" data-bind="value:model.groupId" style="width: 70%;"
+                                   required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+                            <span class="red">&nbsp;&nbsp;*</span>
+                            <span data-for="groupId2" class="k-invalid-msg" ></span>
+                        </div>
+                    </div>
+                </div>-->
+
+
+
+                <!--<div class="col-sm-4" style="margin-bottom: 5px;">
+                    <div class="form-group">
+
+
+                        <label class="col-sm-3 control-label">222</label>
+                        <div class="col-sm-7">
+                            <input class="k-textbox" id="partyNumber2" placeholder="<@spring.message 'wg.md.trade_party.party_number'/>" name="partyNumber2"
+                                   data-bind="value:model.partyNumber2" style="width: 100%;" />
+                        </div>
+                        <div>
+                            <span data-for="partyNumber2" class=".k-invalid-msg"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4" style="margin-bottom: 5px;">
+                    <div class="form-group">
+                        <input type="hidden" id="tradePartyId1" name="tradePartyId"/>
+
+                        <label class="col-sm-3 control-label">333</label>
+                        <div class="col-sm-7">
+                            <input class="k-textbox" id="partyNumber1" placeholder="<@spring.message 'wg.md.trade_party.party_number'/>" name="partyNumber1" required
+                                   data-bind="value:model.partyNumber1" style="width: 100%;" />
+                        </div>
+                        <div  style="width:52%;position: absolute;margin-left:92%; z-index:99">
+                            <span data-for="partyNumber1" class=".k-invalid-msg"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" style="margin-bottom:10px">
+                    <div class="col-md-4 tdAlign">
+                        <label ><@spring.message 'hpms.mdm.property.group'/></label>
+                    </div>
+                    <div class="col-md-8">
+                        <input id="groupId" name="groupId" data-bind="value:model.groupId" style="width: 70%;"
+                               required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+                        <span class="red">&nbsp;&nbsp;*</span>
+                        <span data-for="groupId" class="k-invalid-msg" ></span>
+                    </div>
+                </div>-->
+
+
+
+            </form>
+        </div>
+
+        <!--将viewmodel绑定-->
+        <script>kendo.bind($('#task_summary_form'), viewModel);</script>
+
+        <script>
+
+            //form表单校验
+          $("#form").kendoValidator({
+                messages: {
+                    required: '必输'
+                }
+            });
+
+
+            /*//查询该类型下对应的字段
+            function findConfigColumn(configValueId,configId){
+                $.ajax({
+                    url: "${base.contextPath}/bs/configcolumn/queryByCache?configValueId="+configValueId+'&configId='+configId,
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (args) {
+
+                        //判断是否渲染了后台div
+                        var node = document.getElementById('div1');
+                        if(node!=null){
+                            //如果已存在渲染div,切换时将div清除
+                            $("div#div1").remove();
+                            //node.parentNode.removeChild(node);
+                        }
+                   //     viewModel.get("buildType");
+
+                        //调用js
+                        showFormElements(args,"form",viewModel);
+
+                    },
+
+                });
+
+            }*/
+        </script>
+
+
+
+    </div>
+
+    <!--<div id="page-content">
+        <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+            <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+                <div class="panel-body">
+
+                        &lt;!&ndash; 公司 &ndash;&gt;
+                        <div class="col-md-6" style="margin-bottom:10px">
+
+                            <div class="col-md-4 tdAlign">
+                                <label ><@spring.message 'hpms.mdm.property.project'/></label>
+                            </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="companyId" style="width: 70%"
+                                           >
+                                    <script>
+                                        $("#companyId").kendoComboBox({
+                                            valuePrimitive: true,  //原始值
+                                            dataTextField: "companyFullName",
+                                            dataValueField: "companyId",
+                                            dataSource: {
+                                                transport: {
+                                                    read:function(options) {
+                                                        $.ajax({
+                                                            type   : "POST",
+                                                            url: "${base.contextPath}/mdm/property/companyQuery",
+                                                            data: {},
+                                                            success: function(json) {
+                                                                options.success(json.rows);
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            },
+                                           /* select:function(){
+                                                alert("111111");
+                                            }*/
+
+                                        });
+                                    </script>
+                                </div>
+
+                        </div>
+
+
+                        &lt;!&ndash; 建筑类型 &ndash;&gt;
+                        <div class="col-sm-6" style="margin-bottom:10px">
+
+                            <div class="col-sm-4 tdAlign">
+                                <label ><@spring.message 'hpms.mdm.property.project'/></label>
+                            </div>
+                                <div class="col-sm-8">
+                                    <input type="text" id="typeId" style="width: 70%">
+                                </div>
+                                <script>
+                                    $("#typeId").kendoComboBox({
+                                        autoBind: false,
+                                        valuePrimitive: true,
+                                        cascadeFrom: "companyId",  //联动绑定的参数
+                                        cascadeFromField: "companyId",
+                                        filter: "contains",
+                                        dataTextField: "configValueName",
+                                        dataValueField: "configValueId",
+                                        dataSource: {
+                                            serverFiltering:true,
+                                            transport: {
+                                                read: {
+                                                    url:"${base.contextPath}/bs/configvalue/queryConValueByCache?modelId="+10008+'&columnName='+'CONFIG_ID',
+                                                    type : "POST"
+                                                },
+                                                contentType : "application/json",
+                                                parameterMap: function(options, type) {
+                                                    if (type === "read") {
+                                                        var filter = options.filter.filters[0]
+                                                        var map = {};
+                                                        map[filter.field] = filter.value;
+                                                        return map;
+                                                    }
+                                                }
+                                            },
+                                            schema: {
+                                                data: 'rows'
+                                            }
+                                        },
+                                        select:function(e){
+                                            //查询子表数据
+                                            findConfigColumn(e.dataItem.configValueId,e.dataItem.configId);
+                                        }
+                                    }) ;
+                                </script>
+
+
+                        </div>
+
+
+
+            </form>
+        </div>
+
+
+        <script>
+            function findConfigColumn(configValueId,configId){
+              //  alert(configValueId);
+                $.ajax({
+                    url: "${base.contextPath}/bs/configcolumn/queryByCache?configValueId="+configValueId+'&configId='+configId,
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (args) {
+
+                        showFormElements(args,"query-form");
+
+                    },
+
+                });
+
+            }
+        </script>
+
+    </div>-->
+
+    </body>

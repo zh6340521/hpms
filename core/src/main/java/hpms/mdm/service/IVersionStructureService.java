@@ -23,5 +23,11 @@ public interface IVersionStructureService extends IBaseService<VersionStructure>
      * @return
      */
     public List<VersionStructure> findAllVersionStructure(VersionStructure vs,IRequest requestContext,int page,int pagesize);
+    /**
+     * 查询建筑类型为房间的相关信息
+     * @param vs
+     * @return
+     */
+    public List<VersionStructure> queryByStructureName(VersionStructure vs,IRequest requestContext);
 }
 

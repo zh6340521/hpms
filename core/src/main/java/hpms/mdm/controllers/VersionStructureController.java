@@ -46,6 +46,24 @@ public class VersionStructureController extends BaseController {
         return new ResponseData(versionStructureService.findAllVersionStructure(vs,requestContext,page,pageSize));
     }
 
+    
+    
+    /**
+    *
+    * 查询
+    * @param vs
+    * @param page
+    * @param pageSize
+    * @param request
+    * @return
+    */
+   @RequestMapping(value = "/mdm/structure/queryByName")
+   @ResponseBody
+   public ResponseData queryByName(VersionStructure vs, HttpServletRequest request) {
+       IRequest requestContext = createRequestContext(request);
+       return new ResponseData(versionStructureService.queryByStructureName(vs, requestContext));
+   }
+
     /**
      * 批量更新
      * @param request
@@ -58,6 +76,7 @@ public class VersionStructureController extends BaseController {
         IRequest requestCtx = createRequestContext(request);
         return new ResponseData(versionStructureService.batchUpdate(requestCtx, vs));
     }
+    
 
     /**
      * 删除
