@@ -30,7 +30,7 @@
             var equipmentArray = null;
             $.ajax({
                 type   : "GET",
-                url: "/fnd/company/query",
+                url: "${base.contextPath}/fnd/company/query",
                 data: '',
                 async: false,
                 success: function(args) {
@@ -44,7 +44,7 @@
             });
             $.ajax({
                 type   : "GET",
-                url: "/hpms/mdm/project/query",
+                url: "${base.contextPath}/hpms/mdm/project/query",
                 data: '',
                 async: false,
                 success: function(args) {
@@ -53,7 +53,7 @@
             });
             $.ajax({
                 type   : "GET",
-                url: "/mdm/equipmentType/query",
+                url: "${base.contextPath}/mdm/equipmentType/query",
                 data: '',
                 async: false,
                 success: function(args) {
