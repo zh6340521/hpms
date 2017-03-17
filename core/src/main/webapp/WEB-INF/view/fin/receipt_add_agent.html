@@ -47,7 +47,7 @@
                 } else {
                     kendo.ui.showInfoDialog({
                         title: $l('hap.prompt'),
-                        message: '<@spring.message "失败"/>'
+                        message: '<@spring.message "hpms.mdm.receipt.error"/>'
                     });
                 }
             }
@@ -73,20 +73,20 @@
     </div>
 
     <div style="clear:both">
-        <h4>应收总额：<span id="totalAmountId">0</span></h4>
+        <h4><@spring.message "hpms.mdm.receipt.sumprice"/>：<span id="totalAmountId">0</span></h4>
     </div>
 
     <div style="float: right;margin-top: 10px">
         <span class="btn btn-primary"
               style="margin-right: 5px;" onclick="receipt()">
             <i class="fa fa-pencil-square-o" style="margin-right:3px;"></i>
-            <@spring.message "收款"/>
+            <@spring.message "hpms.mdm.receipt.receipt"/>
         </span>
 
         <span class="btn btn-primary"
               style="margin-right: 5px;" onclick="closeWindow()">
             <i class="fa fa-trash-o" style="margin-right:3px;"></i>
-            <@spring.message "取消"/>
+            <@spring.message "hap.cancel"/>
         </span>
     </div>
 
@@ -124,7 +124,7 @@
 
             {
                 field: "feeId",
-                title: '<@spring.message "收费项目"/>',
+                title: '<@spring.message "hpms.mdm.priceline.fee"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 editor:function (container, options) {
@@ -170,7 +170,7 @@
             },
             {
                 field: "transType",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 80,
                 editor:function (container, options) {
@@ -190,7 +190,7 @@
 
             {
                 field: "receiptMethod",
-                title: '<@spring.message "收款方式"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptmethod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 editor:function (container, options) {
@@ -224,7 +224,7 @@
             },
             {
                 field: "settlementAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 100,
                 editor:function (container, options) {
@@ -238,7 +238,7 @@
             },
             {
                 field: "receiptPeriod",
-                title: '<@spring.message "计费期间"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 100,
                 format: "{0:yyyy-MM}",
@@ -253,34 +253,65 @@
             },
             {
                 field: "description",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.fin.feelist.remark"/>',
                 attributes: {style: "text-align:center"},
                 width: 80
             },
             {
                 field: "insert",
-                title: '<@spring.message "插入"/>',
+                title: '<@spring.message "hpms.mdm.receipt.insert"/>',
                 attributes: {style: "text-align:center"},
                 width: 80,
                 editor:function (container, options) {
-                    $('<span class="btn btn-primary" onclick="insertData()"><@spring.message "插入"/></span>')
+                    $('<span class="btn btn-primary" onclick="insertData()"><@spring.message "hpms.mdm.receipt.insert"/></span>')
                         .appendTo(container)
                 },
                 template:function (dataItem) {
-                    return "已插入";
+                    return '<@spring.message "hpms.mdm.receipt.inserted"/>';
                 }
-//                command: [
-//                    {
-//                        name:"insert",
-//                        text:"插入"
-//                    }
-//                ]
             }
         ]
     });
 
     function insertData() {
         var grid = $('#Grid').data('kendoGrid');
+
+        // 校验数据
+        var newData = dataSource.data()[0];
+
+        if (newData.settlementAmount<=0){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.unitpricebig"/>'
+            });
+            return;
+        }
+
+        if (!newData.receiptMethod){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.selectreceiptmethod"/>'
+            });
+            return;
+        }
+
+        if (!newData.receiptPeriod){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.receiptperiod"/>'
+            });
+            return;
+        }
+
+        if (!newData.feeId && !newData.description){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.inputtype"/>'
+            });
+            return;
+        }
+
+
         grid.saveChanges();
         grid.addRow();
         let sum = 0;
