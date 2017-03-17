@@ -15,7 +15,7 @@
 
 <script type="text/javascript">
 
-
+    var transType = '${RequestParameters.transType}';
 
 
     function receipt() {
@@ -102,8 +102,8 @@
             model: {
                 id: "receiptId",
                 fields: {
-                    transType: {type: "string"},
-                    unitPrice:{type: "number",defaultValue:0},
+                    transType: {type: "string",validation: {required: true}},
+                    unitPrice:{type: "number",defaultValue:0,validation: {required: true}},
                     feeQuantity:{type: "number",defaultValue:1},
                     settlementAmount:{type: "number",defaultValue:0}
                 }
@@ -121,41 +121,41 @@
 //        editable:true,
         editable:"inline",
         columns: [
-            {
-                field: "feeTypeId",
-                title: '<@spring.message "费项类型"/>',
-                attributes: {style: "text-align:center"},
-                width: 120,
-                editor:function (container, options) {
-                    $('<input id="feeTypeId" style="width: 90%;" ' +
-                        'name="' + options.field + '"/>')
-                        .appendTo(container)
-                        .kendoDropDownList({
-                            optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
-                            dataTextField: "feeTypeName",
-                            dataValueField: "feeTypeId",
-                            valuePrimitive:true,
-                            dataSource: {
-                                transport: {
-                                    read: {
-                                        url:"${base.contextPath}/mdm/priceLine/feeTypeQuery",
-                                        type : "POST"
-                                    },
-                                    contentType : "application/json"
-                                },
-                                schema: {
-                                    data: 'rows'
-                                }
-                            },
-                            select: function (e) {
-                                options.model.set("feeTypeName",e.dataItem.feeTypeName);
-                            }
-                        });
-                },
-                template:function (dataItem) {
-                    return dataItem.feeTypeName || '';
-                }
-            },
+//            {
+//                field: "feeTypeId",
+//                title: '<@spring.message "费项类型"/>',
+//                attributes: {style: "text-align:center"},
+//                width: 120,
+//                editor:function (container, options) {
+//                    $('<input id="feeTypeId" style="width: 90%;" ' +
+//                        'name="' + options.field + '"/>')
+//                        .appendTo(container)
+//                        .kendoDropDownList({
+//                            optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+//                            dataTextField: "feeTypeName",
+//                            dataValueField: "feeTypeId",
+//                            valuePrimitive:true,
+//                            dataSource: {
+//                                transport: {
+//                                    read: {
+//                                        url:"${base.contextPath}/mdm/priceLine/feeTypeQuery",
+//                                        type : "POST"
+//                                    },
+//                                    contentType : "application/json"
+//                                },
+//                                schema: {
+//                                    data: 'rows'
+//                                }
+//                            },
+//                            select: function (e) {
+//                                options.model.set("feeTypeName",e.dataItem.feeTypeName);
+//                            }
+//                        });
+//                },
+//                template:function (dataItem) {
+//                    return dataItem.feeTypeName || '';
+//                }
+//            },
             {
                 field: "feeId",
                 title: '<@spring.message "收费项目"/>',
@@ -167,15 +167,15 @@
                         .appendTo(container)
                         .kendoDropDownList({
                             optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
-                            cascadeFromField: "feeTypeId",
-                            cascadeFrom:"feeTypeId",
+//                            cascadeFromField: "feeTypeId",
+//                            cascadeFrom:"feeTypeId",
                             dataTextField: "feeName",
                             dataValueField: "feeId",
                             valuePrimitive:true,
                             dataSource: {
                                 transport: {
                                     read: {
-                                        url:"${base.contextPath}/mdm/priceLine/feeQuery",
+                                        url:"${base.contextPath}/mdm/priceLine/feeQuery?transType="+transType,
                                         type : "POST"
                                     },
                                     contentType : "application/json"

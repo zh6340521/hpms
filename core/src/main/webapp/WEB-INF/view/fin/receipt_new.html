@@ -79,6 +79,12 @@
                 modal: true
             });
         }else {
+            var transType = '';
+            if (type==='receivable') {
+                transType = 'RECEIVABLE';
+            }else if (type==='deposit'){
+                transType = 'DEPOSIT';
+            }
             $("#addFeeId").kendoWindow({
                 actions: ["Close"],
                 title: '添加收费项目',
@@ -88,7 +94,7 @@
                 close: function(){
                     $("#addFeeId").empty();
                 },
-                content: "${base.contextPath}/fin/receipt_add_fee.html",
+                content: "${base.contextPath}/fin/receipt_add_fee.html?transType="+transType,
                 iframe: true,
                 modal: true
             });
@@ -374,6 +380,21 @@
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.balance" class="k-textbox" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-4" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "折扣"/>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
+                                       data-bind="value:model.adjAmount" class="k-textbox" disabled>
 
                             </div>
                         </div>
