@@ -110,7 +110,7 @@
                     {
                 field: "lastRead",
                 title: '<@spring.message "hpms.fin.pubmeter.lastRead"/>',
-                width: 150
+                width: 100
             },
                     {
                 field: "currentRead",
@@ -130,9 +130,6 @@
         ],
         editable: false
     }).data("kendoGrid");
-
-//    Hap.autoResizeGrid("#readGrid");
-
 
     dataSource2 = new kendo.data.DataSource({
         transport: {
@@ -196,12 +193,12 @@
             {
                 field: "projectName",
                 title: '<@spring.message "hpms.mdm.project.projectName"/>',
-                width: 150
+                width: 120
             },
             {
                 field: "typeName",
                 title: '<@spring.message "hpms.mdm.equipment.equipmenttype"/>',
-                width: 100
+                width: 80
             },
             {
                 field: "equipmentCode",
@@ -216,12 +213,12 @@
             {
                 field: "equipmentSignificance",
                 title: '<@spring.message "hpms.mdm.equipment.significant"/>',
-                width: 100
+                width: 80
             },
             {
                 field: "changeReason",
                 title: '<@spring.message "hpms.fin.pubmeter.changereason"/>',
-                width: 100
+                width: 150
             },
         ],
         editable: false
@@ -230,8 +227,6 @@
     function meterView(equipmentId,equipmentName) {
         parent.openTab("meterView" + equipmentId,equipmentName + '<@spring.message "hpms.fin.pubmeter.readrecord"/>',"fin/meter_view.html?&equipmentId=" + equipmentId)
     }
-
-//    Hap.autoResizeGrid("#changeGrid");
 
 
 </script>

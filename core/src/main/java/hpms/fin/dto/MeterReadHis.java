@@ -1,10 +1,8 @@
 package hpms.fin.dto;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
-import javax.persistence.Table;
 import com.hand.hap.system.dto.BaseDTO;
 import java.util.Date;
 
@@ -45,6 +43,20 @@ public class MeterReadHis extends BaseDTO {
       private Long programId;
      @Column
       private Long requestId;
+     @Transient
+      private String companyFullName;
+     @Transient
+      private String projectName;
+     @Transient
+      private String equipmentName;
+     @Transient
+      private String statusDesc;
+     @Transient
+      private Long equipmentTypeId;
+     @Transient
+      private String year;
+     @Transient
+      private String month;
 
 
      public void setReadHisId(Long readHisId){
@@ -174,5 +186,61 @@ public class MeterReadHis extends BaseDTO {
      public Long getRequestId(){
          return requestId;
      }
+
+     public void setCompanyFullName(String companyFullName){
+        this.companyFullName = companyFullName;
+    }
+
+     public String getCompanyFullName(){
+        return companyFullName;
+    }
+
+     public void setProjectName(String projectName){
+        this.projectName = projectName;
+    }
+
+     public String getProjectName(){
+        return projectName;
+    }
+
+     public void setEquipmentName(String equipmentName){
+        this.equipmentName = equipmentName;
+    }
+
+     public String getEquipmentName(){
+        return equipmentName;
+    }
+
+     public void setStatusDesc(String statusDesc){
+        this.statusDesc = statusDesc;
+    }
+
+     public String getStatusDesc(){
+        return statusDesc;
+    }
+
+     public void setEquipmentTypeId(Long equipmentTypeId){
+        this.equipmentTypeId = equipmentTypeId;
+    }
+
+     public Long getEquipmentTypeId(){
+        return equipmentTypeId;
+    }
+
+    public void setYear(String year){
+        this.year = year;
+    }
+
+    public String getYear(){
+        return year;
+    }
+
+    public void setMonth(String month){
+        this.month = month;
+    }
+
+    public String getMonth(){
+        return month;
+    }
 
      }
