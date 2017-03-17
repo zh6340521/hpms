@@ -51,57 +51,6 @@
 
     </resultMap>
 
-    <select id="selectFeeList" parameterType="hpms.fin.dto.ReceiptFeeList" resultMap="ReceiptFeeListResultMap">
-        SELECT
-            "hffl".FEE_LIST_ID,
-            "hffl".FEE_LIST_CODE,
-            "hffl".FEE_STATUS,
-            "hffl".OCCUPATION_ID,
-            "hffl".FEE_PERIOD,
-            "hffl".FEE_TYPE_ID,
-            "hffl".FEE_ID,
-            "hffl".UNIT_PRICE,
-            "hffl".FEE_UOM,
-            "hffl".FEE_QUANTITY,
-            "hffl".CURRENCY_TYPE,
-            "hffl".SEGMENT_FLAG,
-            "hffl".LAST_RECORD,
-            "hffl".PRESENT_RECORD,
-            "hffl".GROSS_AMOUNT,
-            "hffl".ADJ_AMOUNT,
-            "hffl".OVERDUE_PAYMENT,
-            "hffl".TOTAL_AMOUNT,
-            "hffl".ACCRUED_DATE,
-            "hffl".DATE_TO,
-            "hffl".REMARK,
-            "hffl".REFERENCE_NUMBER,
-            "hffl".DATA_SOURCE,
-            "hffl".COMPANY_ID,
-            "hffl".TRANS_TYPE,
-            "hffl".PAY_PART_REPAIR,
-            "hffl".GENERATE_DATE,
-            "hffl".COUNTED_DATE,
-            "hcvv1".MEANING TRANS_TYPE_NAME,
-            "hcvv2".MEANING FEE_STATUS_NAME,
-            ("hffl".TOTAL_AMOUNT-NVL(rec.RECEIPT_AMOUNT,0)) SETTLEMENT_AMOUNT
-        FROM HPMS_FIN_FEE_LIST "hffl"
-        LEFT JOIN HPMS_CODE_VALUE_V "hcvv1"
-        ON "hffl".TRANS_TYPE = "hcvv1".VALUE AND "hcvv1".CODE = 'HPMS_TRANS_TYPE' AND "hcvv1".LANG = #{request.locale, jdbcType = VARCHAR}
-        LEFT JOIN HPMS_CODE_VALUE_V "hcvv2"
-        ON "hffl".FEE_STATUS = "hcvv2".VALUE AND "hcvv2".CODE = 'HPMS_FEE_LIST_TPYE' AND "hcvv2".LANG = #{request.locale, jdbcType = VARCHAR}
-        LEFT JOIN (
-            SELECT FEE_LIST_ID,SUM(RECEIPT_AMOUNT) RECEIPT_AMOUNT
-            FROM HPMS_FIN_RECEIPT
-            GROUP BY FEE_LIST_ID
-        ) rec
-        ON rec.FEE_LIST_ID = "hffl".FEE_LIST_ID
-        <where>
-            <if test="feeStatus != null">
-                AND FEE_STATUS = #{feeStatus}
-            </if>
-        </where>
-    </select>
-
     <select id="selectReceipt" parameterType="hpms.fin.dto.ReceiptFeeList" resultMap="ReceiptFeeListResultMap">
         SELECT
         "hfr".OCCUPATION_ID,

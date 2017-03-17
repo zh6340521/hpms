@@ -40,14 +40,6 @@ public class ReceiptController extends BaseController {
         return new ResponseData(service.selectReceipt(requestContext, dto, page, pageSize));
     }
 
-    @RequestMapping(value = "/fin/receipt/queryFeeList")
-    @ResponseBody
-    public ResponseData queryFeeList(ReceiptFeeList dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
-                                     @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
-        IRequest requestContext = createRequestContext(request);
-        return new ResponseData(service.selectFeeList(requestContext, dto, page, pageSize));
-    }
-
     @RequestMapping(value = "/fin/receipt/submit")
     @ResponseBody
     public ResponseData update(HttpServletRequest request,

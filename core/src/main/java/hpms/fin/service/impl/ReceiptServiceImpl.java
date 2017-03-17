@@ -35,12 +35,6 @@ public class ReceiptServiceImpl extends BaseServiceImpl<Receipt> implements IRec
     private FeeListMapper feeListMapper;
 
     @Override
-    public List<ReceiptFeeList> selectFeeList(IRequest requestContext, ReceiptFeeList dto, int page, int pageSize) {
-        PageHelper.startPage(page, pageSize);
-        return mapper.selectFeeList(dto);
-    }
-
-    @Override
     public List<Receipt> updateReceipt(IRequest requestCtx, Receipt receipt) {
         List<Receipt> receipts = new ArrayList<Receipt>();
 
@@ -111,12 +105,6 @@ public class ReceiptServiceImpl extends BaseServiceImpl<Receipt> implements IRec
                 List<ReceiptFeeList> feeLists = receipt.getFeeLists();
 
                 // 按照可结算金额排序
-//            Collections.sort(feeLists, new Comparator<ReceiptFeeList>() {
-//                @Override
-//                public int compare(ReceiptFeeList r1, ReceiptFeeList r2) {
-//                    return r1.getSettlementAmount().compareTo(r2.getSettlementAmount());
-//                }
-//            });
 
                 feeLists.sort(new Comparator<ReceiptFeeList>() {
                     @Override
