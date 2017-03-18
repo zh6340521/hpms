@@ -310,42 +310,26 @@ function showFormElements(data,formName,viewModel) {
             //当文本框为必输时
             if (data.rows[i].requiredFlag == "Y") {
                 $("#" + formName).append(
-                    /*'<div id="div1" class="col-sm-' + data.rows[i].dataLength + '" style="margin-bottom: 5px;">' +
-                    '<div class="form-group">' +
-                    '<label class="col-sm-3 control-label">' + data.rows[i].columnNameAlias + '</label>' +
-                    '<div class="col-sm-7">' +
-                    ' <input class="k-textbox" onblur="validateLength(' + data.rows[i].columnLength + ',this)" id="' + data.rows[i].columnId + '"' +
-                    'name="' + data.rows[i].columnId + '"  '+ data.rows[i].vaildateMessage+'  data-bind="value:model.' + data.rows[i].configColumnId + '" style="width: 100%;" />' +
-                    '<span class="red">&nbsp;&nbsp;*</span>'+
-                    '<span data-for="' + data.rows[i].columnId + '" class="k-invalid-msg" ></span>'+
-                    '</div>' +
-                    '</div>' +
-                    '</div>'*/
 
-                    /*'<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top:5px">'+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
                     '<div class="col-md-4 tdAlign">'+
+
                     '<label >' + data.rows[i].columnNameAlias + '</label>'+
                     '</div>'+
                     '<div class="col-md-8">'+
-                    '<input  class="k-textbox" onblur="validateLength(' + data.rows[i].columnLength + ',this)" id="' + data.rows[i].columnId + '"  value="'+viewModel.model.get(data.rows[i].columnId)+'"   data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;"'+ data.rows[i].vaildateMessage+' validationMessage="必输" />'+
-
+                    '<input class="k-textbox" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;" />'+
+                    '</div>'+
+                    '<div style="width:65%;position: absolute;margin-left:75%; margin-top:1%;z-index:99">'+
                     '<span class="red">&nbsp;&nbsp;*</span>'+
+                    '<span data-for="' + data.rows[i].columnId + '" class=".k-invalid-msg"></span>'+
                     '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
-                    '<span data-for="' + data.rows[i].columnId + '" class="k-invalid-msg" ></span>'+
-                    '</div>'+
-                    '</div>'*/
-
-                '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top:5px">'+
-                 '<div class="col-md-4 tdAlign">'+
-                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
-                    '</div>'+
-                    '<div class="col-md-8">'+
-                    '<input class="k-textbox" onblur="validateLength(' + data.rows[i].columnLength + ',this)"  id="' + data.rows[i].columnId + '" name="' + data.rows[i].columnId + '"   data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;" '+ data.rows[i].vaildateMessage+' validationMessage="必输"/>'+
-                    '<span class="red">&nbsp;&nbsp;*</span>'+
-                    '<span data-for="' + data.rows[i].columnId + '" class="k-invalid-msg" ></span>'+
-                     '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
                     '</div>'+
                     '</div>'
+
+
+
+
 
                          );
             } else {
@@ -370,30 +354,38 @@ function showFormElements(data,formName,viewModel) {
             //当为必输时
             if (data.rows[i].requiredFlag == "Y"){
                 $("#" + formName).append(
-                '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top:5px">'+
-                '<div class="form-group">'+
-                '<label class="col-md-4 control-label">' + data.rows[i].columnNameAlias + '</label>'+
 
-                '<div class="col-md-8">'+
-                '<input class="k-textbox" value="'+viewModel.model.get(data.rows[i].columnId)+'" onblur="validateDecimal('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '" name="' + data.rows[i].columnId + '" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;"'+ data.rows[i].vaildateMessage+' validationMessage="必输"/>'+
-                '<span class="red">&nbsp;&nbsp;*</span>'+
-                '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
-                '<span data-for="' + data.rows[i].columnId + '" class="k-invalid-msg" ></span>'+
-                '</div>'+
-                '</div>'+
-                '</div>'
+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
+                    '<div class="col-md-4 tdAlign">'+
+
+                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
+                    '</div>'+
+                    '<div class="col-md-8">'+
+                    '<input class="k-textbox" onblur="validateDecimal('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;" />'+
+                    '</div>'+
+                    '<div style="width:65%;position: absolute;margin-left:75%; margin-top:1%;z-index:99">'+
+                    '<span class="red">&nbsp;&nbsp;*</span>'+
+                    '<span data-for="' + data.rows[i].columnId + '" class=".k-invalid-msg"></span>'+
+                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
+                    '</div>'+
+                    '</div>'
                 );
             }else{
                 $("#" + formName).append(
-                    '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                    '<div class="form-group">' +
-                    '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+
+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
+                    '<div class="col-md-4 tdAlign">'+
+
+                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
+                    '</div>'+
                     '<div class="col-md-8">'+
-                    '<input onblur="validateDecimal('+data.rows[i].columnLength+',this)" value="'+viewModel.model.get(data.rows[i].columnId)+'" class="k-textbox" id="'+ data.rows[i].columnId+'"' +
-                    'name="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" />'+
+                    '<input class="k-textbox" onblur="validateDecimal('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;" />'+
+                    '</div>'+
                     '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
-                    '</div>'+
-                    '</div>'+
                     '</div>'
                 );
             }
@@ -404,30 +396,40 @@ function showFormElements(data,formName,viewModel) {
             //当为必输时
             if(data.rows[i].requiredFlag == "Y"){
                 $("#" + formName).append(
-                    '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                    '<div class="form-group">' +
-                    '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
-                    '<div class="col-md-8">'+
-                    '<input onblur="validateNumber('+data.rows[i].columnLength+',this)" value="'+viewModel.model.get(data.rows[i].columnId)+'" class="k-textbox" id="'+ data.rows[i].columnId+'"' +
-                    'name="'+ data.rows[i].columnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" validationMessage="必输" />'+
-                    '<span class="red">&nbsp;&nbsp;*</span>'+
-                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
-                    '<span data-for="' + data.rows[i].columnId + '" class="k-invalid-msg" ></span>'+
+
+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
+                    '<div class="col-md-4 tdAlign">'+
+
+                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
                     '</div>'+
+                    '<div class="col-md-8">'+
+                    '<input class="k-textbox" onblur="validateNumber('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;" />'+
+                    '</div>'+
+                    '<div style="width:65%;position: absolute;margin-left:75%; margin-top:1%;z-index:99">'+
+                    '<span class="red">&nbsp;&nbsp;*</span>'+
+                    '<span data-for="' + data.rows[i].columnId + '" class=".k-invalid-msg"></span>'+
+                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
                     '</div>'+
                     '</div>'
                 );
             }else{
                 $("#" + formName).append(
-                    '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                    '<div class="form-group">' +
-                    '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+
+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
+                    '<div class="col-md-4 tdAlign">'+
+
+                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
+                    '</div>'+
                     '<div class="col-md-8">'+
-                    '<input onblur="validateNumber('+data.rows[i].columnLength+',this)" value="'+viewModel.model.get(data.rows[i].columnId)+'" class="k-textbox" id="'+ data.rows[i].columnId+'"' +
-                    'name="'+ data.rows[i].columnId+'"  data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" />'+
+                    '<input class="k-textbox" onblur="validateNumber('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%;" />'+
+                    '</div>'+
+
                     '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
-                    '</div>'+
-                    '</div>'+
+
                     '</div>'
                 );
             }
@@ -439,26 +441,31 @@ function showFormElements(data,formName,viewModel) {
 
             if(data.rows[i].requiredFlag == "Y"){
                 $("#" + formName).append(
+
+
                     '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                    '<div class="form-group">' +
-                    '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                    '<div class="col-md-4 tdAlign">'+
+                    '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                    '</div>'+
                     '<div class="col-md-8">'+
-                    '<input   id="'+ data.rows[i].columnId+'"' +
-                    'name="'+ data.rows[i].columnId+'" '+ data.rows[i].vaildateMessage+' value="'+viewModel.model.get(data.rows[i].columnId)+'"  data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" validationMessage="必输" />'+
+                    '<input   id="'+ data.rows[i].columnId+'" name="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'"   style="width: 70%;" '+ data.rows[i].vaildateMessage+' validationMessage="必输" />'+
                     '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
                     '<script type="text/javascript">'+
                     '$("#"+"'+ data.rows[i].columnId+'").kendoDatePicker({ format : "yyyy-MM-dd"});'+
                     '</script>'+
                     '</div>'+
                     '<div>'+
+                    '<div style="width:65%;position: absolute;margin-left:75%; margin-top:2%;z-index:99">'+
+                    '<span class="red">&nbsp;&nbsp;*</span>'+
                     '<span data-for="'+ data.rows[i].columnId+'" class=".k-invalid-msg"></span>'+
                     '</div>'+
                     '</div>'+
+
                     '</div>'
                 );
             }else{
                 $("#" + formName).append(
-                    '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
+                    /*'<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
                     '<div class="form-group">' +
                     '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
                     '<div class="col-md-8">'+
@@ -470,6 +477,23 @@ function showFormElements(data,formName,viewModel) {
                     '</script>'+
                     '</div>'+
                     '</div>'+
+                    '</div>'*/
+
+                    '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
+                    '<div class="col-md-4 tdAlign">'+
+                    '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                    '</div>'+
+                    '<div class="col-md-8">'+
+                    '<input   id="'+ data.rows[i].columnId+'" name="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'"   style="width: 70%;" />'+
+                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
+                    '<script type="text/javascript">'+
+                    '$("#"+"'+ data.rows[i].columnId+'").kendoDatePicker({ format : "yyyy-MM-dd"});'+
+                    '</script>'+
+                    '</div>'+
+                    '<div>'+
+
+                    '</div>'+
+
                     '</div>'
                 );
             }
@@ -483,8 +507,9 @@ function showFormElements(data,formName,viewModel) {
                 if(data.rows[i].requiredFlag == "Y"){
                     $("#" + formName).append(
                         '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                        '<div class="form-group">' +
-                        '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                        '<div class="col-md-4 tdAlign">'+
+                        '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                        '</div>'+
                         '<div class="col-md-8">'+
                         '<input name="'+data.rows[i].columnId+'" '+ data.rows[i].vaildateMessage+' value="'+viewModel.model.get(data.rows[i].columnId)+'"  id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" validationMessage="必输"/>'+
                         '<span class="red">&nbsp;&nbsp;*</span>'+
@@ -518,15 +543,16 @@ function showFormElements(data,formName,viewModel) {
 
 
 
-                        '</div>'+
+
                         '</div>'
 
                     );
                 }else{
                     $("#" + formName).append(
                         '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                        '<div class="form-group">' +
-                        '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                        '<div class="col-md-4 tdAlign">'+
+                        '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                        '</div>'+
                         '<div class="col-md-8">'+
                         '<input name="'+data.rows[i].columnId+'"  value="'+viewModel.model.get(data.rows[i].columnId)+'"  id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" validationMessage="必输"/>'+
                         '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
@@ -555,7 +581,7 @@ function showFormElements(data,formName,viewModel) {
 
                         '</script>'+
                         '</div>'+
-                        '</div>'+
+
                         '</div>'
 
                     );
@@ -571,8 +597,9 @@ function showFormElements(data,formName,viewModel) {
                     $("#" + formName).append(
                         '<script src="'+_basePath+'/common/code?codeData='+data.rows[i].sysCode+'" type="text/javascript"></script>'+
                         '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                        '<div class="form-group">' +
-                        '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                        '<div class="col-md-4 tdAlign">'+
+                        '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                        '</div>'+
                         '<div class="col-md-8">'+
                         '<input name="'+data.rows[i].columnId+'" '+ data.rows[i].vaildateMessage+' value="'+viewModel.model.get(data.rows[i].columnId)+'"  id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" validationMessage="必输"/>'+
                         '<span class="red">&nbsp;&nbsp;*</span>'+
@@ -590,15 +617,16 @@ function showFormElements(data,formName,viewModel) {
                         '</script>'+
                         '</div>'+
 
-                        '</div>'+
+
                         '</div>'
                     );
                 }else{
                     $("#" + formName).append(
                         '<script src="'+_basePath+'/common/code?codeData='+data.rows[i].sysCode+'" type="text/javascript"></script>'+
                         '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                        '<div class="form-group">' +
-                        '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                        '<div class="col-md-4 tdAlign">'+
+                        '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                        '</div>'+
                         '<div class="col-md-8">'+
                         '<input name="'+data.rows[i].columnId+'"  value="'+viewModel.model.get(data.rows[i].columnId)+'"  id="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;"/>'+
                         '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
@@ -614,7 +642,7 @@ function showFormElements(data,formName,viewModel) {
                         '</script>'+
                         '</div>'+
 
-                        '</div>'+
+
                         '</div>'
                     );
                 }
@@ -631,11 +659,13 @@ function showFormElements(data,formName,viewModel) {
                 if(data.rows[i].requiredFlag == "Y"){
                     $("#" + formName).append(
                         '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                        '<div class="form-group">' +
-                        '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                        '<div class="col-md-4 tdAlign">'+
+                        '<label >'+ data.rows[i].columnNameAlias+'</label>'+
+                        '</div>'+
                         '<div class="col-md-8">'+
                         '<input name="'+data.rows[i].columnId+'" value="'+viewModel.model.get(data.rows[i].columnId)+'" id="'+ data.rows[i].columnId+'" '+ data.rows[i].vaildateMessage+' data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;" validationMessage="必输"/>'+
                         '<span class="red">&nbsp;&nbsp;*</span>'+
+                        '<span data-for="'+ data.rows[i].columnId+'" class=".k-invalid-msg"></span>'+
                         '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
 
                         '<script type="text/javascript">'+
@@ -674,17 +704,18 @@ function showFormElements(data,formName,viewModel) {
                         '</script>'+
                         '</div>'+
 
-                        '<span data-for="'+ data.rows[i].columnId+'" class=".k-invalid-msg"></span>'+
 
-                        '</div>'+
+
+
                         '</div>'
 
                     );
                 }else{
                     $("#" + formName).append(
                         '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
-                        '<div class="form-group">' +
-                        '<label class="col-md-4 control-label">'+ data.rows[i].columnNameAlias+'</label>'+
+                        '<div class="col-md-4 tdAlign">'+
+                        '<label >'+ data.rows[i].columnNameAlias+'</label>'+
+                        '</div>'+
                         '<div class="col-md-8">'+
                         '<input name="'+data.rows[i].columnId+'" value="'+viewModel.model.get(data.rows[i].columnId)+'" id="'+ data.rows[i].columnId+'"  data-bind="value:model.'+ data.rows[i].columnId+'" style="width: 70%;"/>'+
                         '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
@@ -726,7 +757,7 @@ function showFormElements(data,formName,viewModel) {
                         '</div>'+
 
 
-                        '</div>'+
+
                         '</div>'
 
                     );
