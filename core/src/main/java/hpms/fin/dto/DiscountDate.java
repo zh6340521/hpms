@@ -8,6 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.activiti.rest.common.util.DateToStringSerializer;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.hand.hap.system.dto.BaseDTO;
 
 import hpms.mdm.dto.DiscountPro;
@@ -77,6 +82,9 @@ public class DiscountDate extends BaseDTO{
 	 * 调整时间
 	 */
 	@Column
+	@JsonFormat(pattern="yyyy-MM-dd")
+	@JsonSerialize(using = DateToStringSerializer.class, as = Date.class)
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Date discountDate;
 	
 	/**
@@ -127,6 +135,8 @@ public class DiscountDate extends BaseDTO{
 	@Transient
 	private Long feeId;//费项类型id
 	@Transient
+	private Long feeListId;//id
+	@Transient
 	private String discountProName;//优惠方案名称
 	@Transient
 	private String feeName;//费项类型名称
@@ -171,6 +181,18 @@ public class DiscountDate extends BaseDTO{
 
 	public float getGrossAmount() {
 		return grossAmount;
+	}
+	
+	
+
+	
+
+	public Long getFeeListId() {
+		return feeListId;
+	}
+
+	public void setFeeListId(Long feeListId) {
+		this.feeListId = feeListId;
 	}
 
 	public void setGrossAmount(float grossAmount) {
@@ -353,6 +375,7 @@ public class DiscountDate extends BaseDTO{
 		this.discountProId = discountProId;
 	}
 
+	
 	public Date getDiscountDate() {
 		return discountDate;
 	}

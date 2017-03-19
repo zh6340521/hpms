@@ -5,6 +5,7 @@ import java.util.List;
 import com.hand.hap.mybatis.common.Mapper;
 
 import hpms.fin.dto.DiscountDate;
+import hpms.fin.dto.FeeList;
 
 /**
  * 
@@ -18,13 +19,6 @@ import hpms.fin.dto.DiscountDate;
 public interface DiscountDateMapper extends Mapper<DiscountDate>{
 	
 	/**
-	 * 根据条件查询是否是否存在应收优惠清单
-	 * @param discountDate
-	 * @return
-	 */
-	public int queryCount(DiscountDate discountDate);
-	
-	/**
 	 * 根据优惠方案查到费项类型
 	 * @param discountDate
 	 * @return
@@ -32,7 +26,7 @@ public interface DiscountDateMapper extends Mapper<DiscountDate>{
 	public DiscountDate queryName(DiscountDate discountDate);
 	
 	/**
-	 * 根据条件查询所有金额
+	 * 根据条件查询总金额
 	 * @param discountDate
 	 * @return
 	 */
@@ -45,5 +39,19 @@ public interface DiscountDateMapper extends Mapper<DiscountDate>{
 	 */
 	public List<DiscountDate> queryDiscount(DiscountDate discountDate);
 	
+	
+	/*
+	 * 根据条件查询所有id
+	 */
+	public List<FeeList> queryFeeListId(DiscountDate discountDate);
+	
+	
+	/**
+	 * 修改应收费用清单
+	 * @param discountDate
+	 * @return
+	 */
+	public List<DiscountDate> updateFeeList(List<DiscountDate> discountDate);
+
 	
 }

@@ -1,6 +1,7 @@
 package hpms.fin.controllers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,20 +25,6 @@ import hpms.fin.service.IDiscountDateService;
 public class DiscountDateController extends BaseController{
 	@Autowired
 	private IDiscountDateService discountDateService;
-	
-	
-	/**
-     * 是否存在数据
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/hpms/fin/discountDate/queryCount")
-    @ResponseBody
-    public int queryCount(HttpServletRequest request,DiscountDate discountDate) {
-    	IRequest requestCtx = createRequestContext(request);
-        int itemNum = discountDateService.queryCount(discountDate, requestCtx);
-        return itemNum;
-    }
     
     @RequestMapping(value = "/hpms/fin/discountDate/query")
     @ResponseBody
@@ -72,10 +59,10 @@ public class DiscountDateController extends BaseController{
     @ResponseBody
     public ResponseData querySum(HttpServletRequest request,DiscountDate discountDate) {
     	IRequest requestCtx = createRequestContext(request);
+    	List<DiscountDate> DiscountDates = new ArrayList<DiscountDate>();
     	discountDate = discountDateService.querySum(discountDate, requestCtx);
-    	List<DiscountDate> dates = new ArrayList<DiscountDate>();
-    	dates.add(discountDate);
-        return new ResponseData(dates);
+    	DiscountDates.add(discountDate);
+        return new ResponseData(DiscountDates);
     }
     
     
@@ -89,15 +76,7 @@ public class DiscountDateController extends BaseController{
     @ResponseBody
     public ResponseData save(HttpServletRequest request,@RequestBody List<DiscountDate> discountDates) {
     	IRequest requestCtx = createRequestContext(request);
-    	/*discountDate = discountDateService.insert(requestCtx, discountDate);
-    	List<DiscountDate> dates = new ArrayList<DiscountDate>();
-    	dates.add(discountDate);*/
-    	for(DiscountDate discountDate:discountDates ){
-    		String todate=discountDate.getDiscountDateTo().substring(0, 7);
-    		discountDate.setDiscountDateTo(todate);
-    		
-    	}
-        return new ResponseData(discountDateService.batchUpdate(requestCtx, discountDates));
+        return new ResponseData(discountDateService.updateFeeList(discountDates, requestCtx));
     }
 
 }

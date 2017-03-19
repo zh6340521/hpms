@@ -16,13 +16,6 @@ import hpms.fin.dto.DiscountDate;
  */
 public interface IDiscountDateService extends IBaseService<DiscountDate>,ProxySelf<IDiscountDateService>{
 	
-	/**
-	 * 根据条件查询是否是否存在应收优惠清单
-	 * @param discountDate
-	 * @return
-	 */
-	public int queryCount(DiscountDate discountDate,IRequest requestContext);
-	
 	
 	/**
 	 * 根据优惠方案查到费项类型
@@ -45,5 +38,13 @@ public interface IDiscountDateService extends IBaseService<DiscountDate>,ProxySe
 	 * @return
 	 */
 	public List<DiscountDate> queryDiscount(DiscountDate discountDate,IRequest requestContext,int page,int pagesize);
+	
+	/**
+	 * 修改费用清单
+	 * @param discountDate
+	 * @param requestContext
+	 * @return
+	 */
+	public List<DiscountDate> updateFeeList(List<DiscountDate> discountDate,IRequest requestContext);
 
 }

@@ -51,24 +51,19 @@
 				<div class="from-group col-md-4" style="margin-bottom:10px">
 					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.fin.feecode'/></label>
 				    <div class="col-md-7">
-				        <input type="text" class="k-textbox" name="propertyNumber"  data-bind="value:model.propertyNumber" style="width: 90%;"/> 
+				        <input id="propertyNumber" type="text" class="k-textb ox" name="propertyNumber"  data-bind="value:model.propertyNumber" style="width: 90%;"/> 
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
 					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.fin.adjust_date'/></label>
 				    <div class="col-md-7">
-				    	<input id="discountDate" name="discountDate" data-bind="value:model.discountDate" style="width: 90%;" type="date" k-format="'yyyy-MM-dd'"/>
-				    	<script type="text/javascript">
-										$("#discountDate").kendoDatePicker({
-											format : "yyyy-MM-dd"
-										});
-						</script>
+				    	<input id="discountDate" data-role="datepicker" data-bind="value:model.discountDate" style="width: 90%;" />
 				    </div>
 				</div>
 				<div class="from-group col-md-4" style="margin-bottom:10px">
 					<label class="col-md-5 control-label"><@spring.message 'hpms.mdm.discountpro.discountpro'/></label>
 				    <div class="col-md-7">
-				    	<input id="transType" type="text" class="k-textbox" name="transType" data-bind="value:model.transType" style="width: 90%;"/>
+				    	<input id="discountProName" type="text" class="k-textbox" name="discountProName" data-bind="value:model.discountProName" style="width: 90%;"/>
 				    </div>
 				</div>
 			</div>
@@ -179,7 +174,30 @@
 	        serverPaging: true,
 	        pageSize    : 10,
 	        schema      : {
-	            data  : 'rows',
+	            data : function(response) {
+							if (response.success) {
+								if (response.rows.length > 0
+										&& response.rows[0].__status != null) {
+									var rows = response.rows;
+									for (var i = 0; i < rows.length; i++) {
+										if (rows[i].__status == "add") {
+											kendo.ui.showInfoDialog({
+														message : '<@spring.message "hap.tip.success"/>'
+													});	
+													
+											break;
+										}
+									}
+
+								}
+							} else {
+								kendo.ui.showInfoDialog({
+											message : '<@spring.message "hpms.mdm.receipt.error"/>'
+										})
+							}
+							return response.rows;
+
+						},
 	            total : 'total',
 	            model : {
 	                id    : "discountProId",
@@ -355,12 +373,11 @@
                   }
                    	$('#DateTo').data('kendoDatePicker').min(fromDate);
                    	fromDate = kendo.toString(fromDate,'yyyy-MM');
-                   	//console.log(fromDate);
                    	options.model.set('discountDateFrom',fromDate);
                    	var Id = document.getElementById("occupationId").value;
                    	options.model.set("occupationId",Id);
-                   	console.log(options.model.occupationId)
-                   	//console.log(options.model.discountDateFrom);
+                   	var propertyName = document.getElementById("struName").value;
+                   	options.model.set("propertyName",propertyName);
                   }
                  });
                 }
@@ -402,11 +419,10 @@
 									data: {}, 
 									success: function(datas) {
 									Amunts = datas.rows[0].gross;
-									console.log(Amunts)
 									var item = datas.rows[0].item;
 										if (item != Dates) {
 											kendo.ui.showInfoDialog({
-													message : "该房间在该优惠期间并未生成应收优惠清单!"
+													message : '<@spring.message "hpms.fin.discountdate.room_not_feelist"/>'
 											});
 											$('#DateTo').data('kendoDatePicker').value("");
 										}else if(item == Dates){
@@ -415,8 +431,6 @@
 									}
 									})
 				                }
-				               //options.model.set('discountDateTo',toDate);
-				              // console.log(options.model.discountDateTo)
 				              }
               });
           }
@@ -455,9 +469,6 @@
 								adjAmount = amount;
 								sumAmunt = Amunts-adjAmount;
 							}
-								console.log(adjAmount)
-								console.log(sumAmunt)
-			                console.log(discountProName)
 			                $.ajax({
 									type   : "POST",
 									url: "${base.contextPath}/hpms/fin/discountDate/queryName?discountProName="+discountProName,

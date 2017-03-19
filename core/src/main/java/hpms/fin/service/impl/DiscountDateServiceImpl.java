@@ -1,16 +1,18 @@
 package hpms.fin.service.impl;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 
 import hpms.fin.dto.DiscountDate;
+import hpms.fin.dto.FeeList;
 import hpms.fin.mapper.DiscountDateMapper;
+import hpms.fin.mapper.FeeListMapper;
 import hpms.fin.service.IDiscountDateService;
 
 
@@ -22,14 +24,13 @@ import hpms.fin.service.IDiscountDateService;
  * @date 2017/3/9
  */
 @Service
+@Transactional
 public class DiscountDateServiceImpl extends BaseServiceImpl<DiscountDate> implements IDiscountDateService{
 	@Autowired
 	private DiscountDateMapper discountDateMapper;
-
-	@Override
-	public int queryCount(DiscountDate discountDate, IRequest requestContext) {
-		return discountDateMapper.queryCount(discountDate);
-	}
+	
+	@Autowired
+	private FeeListMapper feeListMapper;
 
 	@Override
 	public DiscountDate queryName(DiscountDate discountDate, IRequest requestContext) {
@@ -46,6 +47,25 @@ public class DiscountDateServiceImpl extends BaseServiceImpl<DiscountDate> imple
 			int pagesize) {
 		PageHelper.startPage(page, pagesize);
 		return discountDateMapper.queryDiscount(discountDate);
+	}
+
+	@Override
+	public List<DiscountDate> updateFeeList(List<DiscountDate> discountDates, IRequest requestContext) {
+		for(DiscountDate discountDate:discountDates ){
+    		String todate=discountDate.getDiscountDateTo().substring(0, 7);
+    		discountDate.setDiscountDateTo(todate);
+    	}
+		discountDates = self().batchUpdate(requestContext, discountDates);
+		DiscountDate discountDate = discountDates.get(0);
+		List<FeeList> queryDate = discountDateMapper.queryFeeListId(discountDate);
+		for (FeeList fee : queryDate) {
+			//优惠金额,当前优惠除以条数-均分优惠
+			Float amount =discountDate.getAdjAmount() / queryDate.size();
+			fee.setAdjAmount(amount);
+			fee.setTotalAmount(fee.getGrossAmount()-amount);
+			feeListMapper.updateByPrimaryKeySelective(fee);
+		}
+		return discountDates;
 	}
 
 }

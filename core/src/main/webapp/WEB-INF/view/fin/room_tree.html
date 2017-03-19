@@ -58,42 +58,29 @@
 					success: function(datas) {
 						if (datas.total > 0) {
 							for (var i = 0; i < datas.rows.length; i++) {
-							if (datas.rows[i].structureName == structureName) {
-							    var status = datas.rows[i].status;
-								var name = datas.rows[i].structureName;
-								var customerName = datas.rows[i].customerName;
-								var occupationId = datas.rows[i].occupationId;
-								console.log(occupationId)
-								window.parent.document.getElementById("struName").value=propertyName;
-								window.parent.document.getElementById("custName").value=customerName;
-								window.parent.document.getElementById("occupationId").value=occupationId;
-								//window.parent.$("#struName").val(structureName);
-								window.parent.$("#room_tree").data("kendoWindow").close();
-							}else{
-								kendo.ui.showInfoDialog({
-									message : '请选择正确的节点!'
-								});
+								if (datas.rows[i].structureName == structureName) {
+								    var status = datas.rows[i].status;
+									var name = datas.rows[i].structureName;
+									var customerName = datas.rows[i].customerName;
+									var occupationId = datas.rows[i].occupationId;
+									window.parent.document.getElementById("struName").value=propertyName;
+									window.parent.document.getElementById("custName").value=customerName;
+									window.parent.document.getElementById("occupationId").value=occupationId;
+									//window.parent.$("#struName").val(structureName);
+									window.parent.$("#room_tree").data("kendoWindow").close();
+									return;
+								}
 							}
-						}
+							kendo.ui.showInfoDialog({
+										message : '<@spring.message "hpms.fin.discountdate.structurename"/>'
+									});
 						}else{
 							kendo.ui.showInfoDialog({
-									message : '该节点未入伙,请重新选择!'
+									message : '<@spring.message "hpms.fin.discountdate.structurename"/>'
 								});	
 						}
 					}
 				 });
-		/* console.log("111111111"+name)		 
-		if (name == structureName) {  
-					console.log("22222"+name)
-					console.log("3333333"+structureName)
-		      		/* window.parent.viewModel.model.set("structureName",this.dataItem(e.node).structureName);
-					window.parent.viewModel.model.set("structureId",this.dataItem(e.node).structureId);
-					window.parent.viewModel.model.set("versionId",this.dataItem(e.node).versionId);
-		 }else{
-				 	
-  						 } 
-		 */
-		
 	}
 		
 	</script>
