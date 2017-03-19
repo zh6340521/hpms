@@ -233,7 +233,7 @@
                                 .kendoLov({
                                     //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
                                     code:"MDM_SELECT_COLUMNS",
-                                    contextPath:'',
+                                    contextPath: '${base.contextPath}',
                                     locale:'${base.locale}',
                                     query:function (e) {
                                         //将头表带过来的表名作为查询条件

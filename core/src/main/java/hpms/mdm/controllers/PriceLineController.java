@@ -131,11 +131,12 @@ public class PriceLineController extends BaseController{
      */
 	@RequestMapping(value = "/mdm/priceLine/feeQuery" , method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData feeQuery(Long feeTypeId, HttpServletRequest request){
+	public ResponseData feeQuery(Long feeTypeId,String transType, HttpServletRequest request){
 		IRequest requestContext = createRequestContext(request);
 		Fee fee = new Fee();
 		fee.setFeeTypeId(feeTypeId);
 		fee.setEnableFlag("Y");
+		fee.setTransType(transType);
 		List<Fee> fees = feeService.select(requestContext, fee, 1, 100);
 		return new ResponseData(fees);
 	}

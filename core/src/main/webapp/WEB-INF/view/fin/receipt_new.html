@@ -43,7 +43,7 @@
         if (viewModel.model.get("companyId")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "请选择公司"/>'
+                message: '<@spring.message "hpms.fin.receipt.selectcompany"/>'
             });
             return;
         }
@@ -51,7 +51,7 @@
         if (viewModel.model.get("projectId")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "请选择项目"/>'
+                message: '<@spring.message "hpms.mdm.projectprocedure.error"/>'
             });
             return;
         }
@@ -59,7 +59,7 @@
         if (viewModel.model.get("customerCode")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "请选择客户"/>'
+                message: '<@spring.message "hpms.fin.receipt.selectcustomer"/>'
             });
             return;
         }
@@ -67,7 +67,7 @@
         if (type==='collection'){
             $("#addFeeId").kendoWindow({
                 actions: ["Close"],
-                title: '添加收费项目',
+                title: '<@spring.message "hpms.fin.receipt.addfee"/>',
                 draggable: true,
                 height: "300px",
                 width: "1000px",
@@ -79,16 +79,22 @@
                 modal: true
             });
         }else {
+            var transType = '';
+            if (type==='receivable') {
+                transType = 'RECEIVABLE';
+            }else if (type==='deposit'){
+                transType = 'DEPOSIT';
+            }
             $("#addFeeId").kendoWindow({
                 actions: ["Close"],
-                title: '添加收费项目',
+                title: '<@spring.message "hpms.fin.receipt.addfee"/>',
                 draggable: true,
                 height: "300px",
                 width: "1000px",
                 close: function(){
                     $("#addFeeId").empty();
                 },
-                content: "${base.contextPath}/fin/receipt_add_fee.html",
+                content: "${base.contextPath}/fin/receipt_add_fee.html?transType="+transType,
                 iframe: true,
                 modal: true
             });
@@ -100,12 +106,11 @@
     }
 
     function receipt() {
-//        var data = [];
 
         if (viewModel.model.get("companyId")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "请选择公司"/>'
+                message: '<@spring.message "hpms.fin.receipt.selectcompany"/>'
             });
             return;
         }
@@ -113,7 +118,7 @@
         if (viewModel.model.get("projectId")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "请选择项目"/>'
+                message: '<@spring.message "hpms.mdm.projectprocedure.error"/>'
             });
             return;
         }
@@ -121,7 +126,7 @@
         if (viewModel.model.get("customerCode")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "请选择客户"/>'
+                message: '<@spring.message "hpms.fin.receipt.selectcustomer"/>'
             });
             return;
         }
@@ -142,12 +147,52 @@
             let gridData = $("#collectionGrid").data("kendoGrid").selectedDataItems();
             viewModel.model.set("feeLists",gridData);
             viewModel.model.set("receiptStatus", "A");
+        } else if (type==='adjustment') {
+            let gridData = $("#adjustmentGrid").data("kendoGrid").selectedDataItems();
+            viewModel.model.set("feeLists",gridData);
+            viewModel.model.set("receiptStatus", "A");
         }
 
-        if (viewModel.model.get("sumPrice")<viewModel.model.get("receiptAmount")){
+        if (type!=='advance'){
+
+            if (viewModel.model.feeLists.length==0){
+                kendo.ui.showInfoDialog({
+                    title: $l('hap.prompt'),
+                    message: '<@spring.message "hpms.mdm.receipt.selectfeelist"/>'
+                });
+                return;
+            }
+
+        }
+
+
+
+        if (viewModel.model.get("sumPrice") < viewModel.model.get("receiptAmount")){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
-                message: '<@spring.message "收款金额大于应收金额！"/>'
+                message: '<@spring.message "hpms.mdm.receipt.sumPricemin"/>'
+            });
+            return;
+        }
+
+        if (!viewModel.model.get("receiptAmount") || viewModel.model.get("receiptAmount")<=0){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.receiptAmountbig"/>'
+            });
+            return;
+        }
+        if (!viewModel.model.get("receiptMethod")){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.selectreceiptmethod"/>'
+            });
+            return;
+        }
+        if (!viewModel.model.get("receiptTerm")){
+            kendo.ui.showInfoDialog({
+                title: $l('hap.prompt'),
+                message: '<@spring.message "hpms.mdm.receipt.selectreceiptterm"/>'
             });
             return;
         }
@@ -202,7 +247,7 @@
     function refund(receiptId) {
         $("#refundId").kendoWindow({
             actions: ["Close"],
-            title: '退款',
+            title: '<@spring.message "hpms.mdm.receipt.refund"/>',
             draggable: true,
             height: "450px",
             width: "800px",
@@ -228,9 +273,9 @@
         <div class="panel-body">
             <table class="pull-right">
                 <tr>
-                    <td>交款人</td>
-                    <td>收款人</td>
-                    <td>制单日期</td>
+                    <td><@spring.message "hpms.mdm.receipt.payer"/></td>
+                    <td><@spring.message "hpms.mdm.receipt.payee"/></td>
+                    <td><@spring.message "hpms.mdm.receipt.copydate"/></td>
                 </tr>
                 <tr>
                     <td>
@@ -271,7 +316,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "建筑编码"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.fin.feecode"/>：</label>
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.propertyNumber" class="k-textbox" disabled>
@@ -284,7 +329,7 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "建筑名称"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.property.propertyname"/>：</label>
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.propertyName" class="k-textbox" disabled>
@@ -294,7 +339,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "客户编码"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.receipt.customercode"/>：</label>
                             <div class="col-sm-8">
                                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.customerCode" class="k-textbox" disabled>
@@ -303,7 +348,7 @@
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "客户"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.customer.customername"/>：</label>
                             <div class="col-sm-8">
                                 <input id="customerNameId" type="text" style="width:150px;margin-right:5px;"
                                        data-bind="value:model.customerName">
@@ -318,7 +363,7 @@
 
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "收款日期"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.receipt.receiptDate"/>：</label>
                             <div class="col-sm-8">
                                 <input id="receiptDateId" type="text" style="width:150px;margin-right:5px;"
                                        data-bind="value:model.receiptDate">
@@ -328,7 +373,7 @@
 
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "收款方式"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.receipt.receiptmethod"/>：</label>
                             <div class="col-sm-8">
                                 <input id="receiptMethodId" type="text" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.receiptMethod">
@@ -338,7 +383,7 @@
 
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "收款条件"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.receipt.receiptterm"/>：</label>
                             <div class="col-sm-8">
                                 <input id="receiptTermId" type="text" style="float:left;width:150px;margin-right:5px;"
                                        data-bind="value:model.receiptTerm">
@@ -351,30 +396,58 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "应收总额"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.receipt.sumprice"/>：</label>
                             <div class="col-sm-8">
-                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
-                                       data-bind="value:model.sumPrice" class="k-textbox" disabled>
-
+                                <input id="sumPriceInp" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.sumPrice" disabled>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "本次实收"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.receipt.receiptamount"/>：</label>
                             <div class="col-sm-8">
-                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
-                                       data-bind="value:model.receiptAmount" class="k-textbox">
+                                <input id="receiptAmountInp" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.receiptAmount">
+                                <script>
+                                    $("#sumPriceInp").kendoNumericTextBox({});
+                                    $("#receiptAmountInp").kendoNumericTextBox({
+                                        min: 0,
+                                        change: function () {
+                                            var value = this.value();
+                                            viewModel.model.set("balance", viewModel.model.sumPrice - value);
+                                        }
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-4" style="padding: 0">
                         <div class="form-group" style="margin: 0">
-                            <label class="col-sm-4 control-label"><@spring.message "余额"/>：</label>
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.fin.invoice.balance"/>：</label>
                             <div class="col-sm-8">
-                                <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;"
-                                       data-bind="value:model.balance" class="k-textbox" disabled>
+                                <input id="balanceInp" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.balance" disabled>
 
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-sm-4" style="padding: 0">
+                        <div class="form-group" style="margin: 0">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.fin.feelist.adjamount"/>：</label>
+                            <div class="col-sm-8">
+                                <input id="adjAmountInp" type="text" style="width:150px;margin-right:5px;"
+                                       data-bind="value:model.adjAmount" disabled>
+
+                                <script>
+                                    $("#balanceInp").kendoNumericTextBox({});
+                                    $("#adjAmountInp").kendoNumericTextBox({});
+                                </script>
                             </div>
                         </div>
                     </div>
@@ -413,23 +486,23 @@
 
     <div id="tabstrip" style="clear:both;">
         <ul class="nav nav-tabs">
-            <li id="receivable">应收</li>
-            <li id="adjustment">应收调整</li>
-            <li id="advance">预收</li>
-            <li id="deposit">押金</li>
-            <li id="collection">代收代付</li>
-            <li id="all">所有</li>
+            <li id="receivable"><@spring.message "hpms.mdm.paymentmethod.arflag"/></li>
+            <li id="adjustment"><@spring.message "hpms.mdm.receipt.adjustment"/></li>
+            <li id="advance"><@spring.message "hpms.mdm.receipt.advance"/></li>
+            <li id="deposit"><@spring.message "hpms.mdm.receipt.deposit"/></li>
+            <li id="collection"><@spring.message "hpms.mdm.receipt.collection"/></li>
+            <li id="all"><@spring.message "hpms.mdm.receipt.all"/></li>
         </ul>
         <!--应收-->
         <div>
             <div id="advanceDiv" style="margin-top: 5px;">
                 <input id="advanceId" type="text" style="margin-right:5px;"
                        data-bind="value:model.advanceFlag">
-                客户：
+                <@spring.message "hpms.mdm.receipt.advancediv1"/>
                 <span style="color: red" id="customerNameSpan"></span>
-                有可用预收款 ¥
+                <@spring.message "hpms.mdm.receipt.advancediv2"/>
                 <span style="color: red" id="advanceSpan"></span>
-                ，是否使用？
+                <@spring.message "hpms.mdm.receipt.advancediv3"/>
                 <script>
                     $("#advanceId").kendoCheckbox({
                         change:function(e){
@@ -610,6 +683,7 @@
             viewModel.model.set("propertyNumber", e.sender._dataItem.propertyNumber);
             viewModel.model.set("propertyName", e.sender._dataItem.propertyName);
             viewModel.model.set("occupationId", e.sender._dataItem.occupationId);
+            $("#receivable").removeClass("k-state-active");
             $("#tabstrip").data("kendoTabStrip").select(0);
 
             $("#customerNameSpan").text(e.sender._dataItem.customerName);
@@ -716,36 +790,6 @@
     });
 
     var BaseUrl = "${base.contextPath}/fin/receipt";
-    dataSource = new kendo.data.DataSource({
-        transport: {
-            read: {
-                url: BaseUrl + "/queryFeeList",
-                type: "POST",
-                dataType: "json"
-            },
-            parameterMap: function (options, type) {
-                if (type !== "read" && options.models) {
-                    var datas = Hap.prepareSubmitParameter(options, type)
-                    return kendo.stringify(datas);
-                } else if (type === "read") {
-                    viewModel.model.set("feeStatus","COUNTED");
-
-                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
-                }
-            }
-        },
-        batch: true,
-        serverPaging: true,
-        pageSize: 10,
-        schema: {
-            data: 'rows',
-            total: 'total',
-            model: {
-
-            }
-        }
-    });
-
 
     var receiptDataSource = new kendo.data.DataSource({
         transport: {
@@ -796,61 +840,60 @@
             buttonCount: 5
         },
         editable: false,
-        toolbar:"可用预收款",
         columns: [
             {
                 field: "feeListCode",
-                title: '<@spring.message "计费明细编号"/>',
+                title: '<@spring.message "hpms.fin.feelist.feelistcode"/>',
                 attributes: {style: "text-align:center"},
                 width: 200
             },
             {
                 field: "feeStatusName",
-                title: '<@spring.message "计费状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.feestatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "feePeriod",
-                title: '<@spring.message "计费期间"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "totalAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "settlementAmount",
-                title: '<@spring.message "可结算金额"/>',
+                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "transTypeName",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "overduePayment",
-                title: '<@spring.message "违约金"/>',
+                title: '<@spring.message "hpms.fin.feelist.overduepayment"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "remark",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.mdm.occupation.remarks"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "docType",
-                title: '<@spring.message "单据类型"/>',
+                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -909,63 +952,63 @@
         columns: [
             {
                 field: "feeListCode",
-                title: '<@spring.message "计费明细编号"/>',
+                title: '<@spring.message "hpms.fin.feelist.feelistcode"/>',
                 attributes: {style: "text-align:center"},
                 width: 200
             },
             {
                 field: "feeStatusName",
-                title: '<@spring.message "计费状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.feestatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "feePeriod",
-                title: '<@spring.message "计费期间"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "totalAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "settlementAmount",
-                title: '<@spring.message "可结算金额"/>',
+                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "transTypeName",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "adjAmount",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.fin.feelist.adjamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "overduePayment",
-                title: '<@spring.message "违约金"/>',
+                title: '<@spring.message "hpms.fin.feelist.overduepayment"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "remark",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.mdm.occupation.remarks"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "docType",
-                title: '<@spring.message "单据类型"/>',
+                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -981,31 +1024,6 @@
             }
         ],
         dataBound:function (e) {
-            $("#adjustmentGrid .k-headbox").on("click", function (e) {
-                // 阻止事件冒泡
-                e.stopPropagation();
-
-                // 打钩
-                $(e.target).toggleClass("fa fa-check");
-
-                var grid = $("#adjustmentGrid").data("kendoGrid");
-
-                //  处理每一行的checkbox
-                var arr = grid.items();
-                for(var node of arr){
-                    if ($(e.target).hasClass("fa fa-check")){
-                        if (!$(node).hasClass("k-state-selected")){
-                            $(node).addClass("k-state-selected")
-                        }
-                    }else {
-                        if ($(node).hasClass("k-state-selected")){
-                            $(node).removeClass("k-state-selected")
-                        }
-                    }
-                }
-
-                sumPrice(grid);
-            });
 
             $("#adjustmentGrid .k-rowbox").bind("click", function (e) {
                 e.stopPropagation();
@@ -1050,58 +1068,58 @@
         columns: [
             {
                 field: "receiptNum",
-                title: '<@spring.message "收款单编号"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptnum"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "lineNumber",
-                title: '<@spring.message "行项目"/>',
+                title: '<@spring.message "hpms.mdm.receipt.linenumber"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "receiptStatusName",
-                title: '<@spring.message "收款单状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptstatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "receiptDate",
-                title: '<@spring.message "收款日期"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptdate"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 format: "{0:yyyy-MM-dd}"
             },
             {
                 field: "feeName",
-                title: '<@spring.message "收费项目"/>',
+                title: '<@spring.message "hpms.mdm.priceline.fee"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "receiptAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "transTypeName",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "remark",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.mdm.occupation.remarks"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "docType",
-                title: '<@spring.message "单据类型"/>',
+                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1135,20 +1153,20 @@
         columns: [
             {
                 field: "feeListCode",
-                title: '<@spring.message "计费明细编号"/>',
+                title: '<@spring.message "hpms.fin.feelist.feelistcode"/>',
                 attributes: {style: "text-align:center"},
                 width: 150
             },
             {
                 field: "feeStatusName",
-                title: '<@spring.message "计费状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.feestatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "receiptNum",
-                title: '<@spring.message "收款单编号"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptnum"/>',
                 attributes: {style: "text-align:center"},
                 width: 150,
                 template:function (dataItem) {
@@ -1165,41 +1183,41 @@
             },
             {
                 field: "lineNumber",
-                title: '<@spring.message "行项目"/>',
+                title: '<@spring.message "hpms.mdm.receipt.linenumber"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "receiptStatusName",
-                title: '<@spring.message "收款单状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptstatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "feePeriod",
-                title: '<@spring.message "计费期间"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "receiptDate",
-                title: '<@spring.message "收款日期"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptdate"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 format: "{0:yyyy-MM-dd}"
             },
             {
                 field: "feeName",
-                title: '<@spring.message "收费项目"/>',
+                title: '<@spring.message "hpms.mdm.priceline.fee"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "totalAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1213,7 +1231,7 @@
             },
             {
                 field: "settlementAmount",
-                title: '<@spring.message "可结算金额"/>',
+                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1226,25 +1244,25 @@
             },
             {
                 field: "transTypeName",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "overduePayment",
-                title: '<@spring.message "违约金"/>',
+                title: '<@spring.message "hpms.fin.feelist.overduepayment"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "remark",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.mdm.occupation.remarks"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "docType",
-                title: '<@spring.message "单据类型"/>',
+                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1278,57 +1296,57 @@
         columns: [
             {
                 field: "feeListCode",
-                title: '<@spring.message "计费明细编号"/>',
+                title: '<@spring.message "hpms.fin.feelist.feelistcode"/>',
                 attributes: {style: "text-align:center"},
                 width: 200
             },
             {
                 field: "feeStatusName",
-                title: '<@spring.message "计费状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.feestatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "feePeriod",
-                title: '<@spring.message "计费期间"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "totalAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "settlementAmount",
-                title: '<@spring.message "可结算金额"/>',
+                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "transTypeName",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "overduePayment",
-                title: '<@spring.message "违约金"/>',
+                title: '<@spring.message "hpms.fin.feelist.overduepayment"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "remark",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.mdm.occupation.remarks"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "docType",
-                title: '<@spring.message "单据类型"/>',
+                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1344,32 +1362,6 @@
             }
         ],
         dataBound:function (e) {
-
-            $("#collectionGrid .k-headbox").on("click", function (e) {
-                // 阻止事件冒泡
-                e.stopPropagation();
-
-                // 打钩
-                $(e.target).toggleClass("fa fa-check");
-
-                var grid = $("#collectionGrid").data("kendoGrid");
-
-                //  处理每一行的checkbox
-                var arr = grid.items();
-                for(var node of arr){
-                    if ($(e.target).hasClass("fa fa-check")){
-                        if (!$(node).hasClass("k-state-selected")){
-                            $(node).addClass("k-state-selected")
-                        }
-                    }else {
-                        if ($(node).hasClass("k-state-selected")){
-                            $(node).removeClass("k-state-selected")
-                        }
-                    }
-                }
-
-                sumPrice(grid);
-            });
 
             $("#collectionGrid .k-rowbox").bind("click", function (e) {
                 e.stopPropagation();
@@ -1414,66 +1406,66 @@
         columns: [
             {
                 field: "feeListCode",
-                title: '<@spring.message "计费明细编号"/>',
+                title: '<@spring.message "hpms.fin.feelist.feelistcode"/>',
                 attributes: {style: "text-align:center"},
                 width: 150
             },
             {
                 field: "referenceNumber",
-                title: '<@spring.message "参考编号"/>',
+                title: '<@spring.message "hpms.fin.feelist.referencenumber"/>',
                 attributes: {style: "text-align:center"},
                 width: 150
             },
             {
                 field: "feeStatusName",
-                title: '<@spring.message "计费状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.feestatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "receiptNum",
-                title: '<@spring.message "收款单编号"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptnum"/>',
                 attributes: {style: "text-align:center"},
                 width: 150
             },
             {
                 field: "lineNumber",
-                title: '<@spring.message "行项目"/>',
+                title: '<@spring.message "hpms.mdm.receipt.linenumber"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "receiptStatusName",
-                title: '<@spring.message "收款单状态"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptstatusname"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "feePeriod",
-                title: '<@spring.message "计费期间"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "receiptDate",
-                title: '<@spring.message "收款日期"/>',
+                title: '<@spring.message "hpms.mdm.receipt.receiptdate"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 format: "{0:yyyy-MM-dd}"
             },
             {
                 field: "feeName",
-                title: '<@spring.message "收费项目"/>',
+                title: '<@spring.message "hpms.mdm.priceline.fee"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "totalAmount",
-                title: '<@spring.message "金额"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1487,38 +1479,38 @@
             },
             {
                 field: "settlementAmount",
-                title: '<@spring.message "可结算金额"/>',
+                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "transTypeName",
-                title: '<@spring.message "交易类型"/>',
+                title: '<@spring.message "hpms.mdm.fee.transtype"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "adjAmount",
-                title: '<@spring.message "折扣"/>',
+                title: '<@spring.message "hpms.fin.feelist.adjamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
 
             {
                 field: "overduePayment",
-                title: '<@spring.message "违约金"/>',
+                title: '<@spring.message "hpms.fin.feelist.overduepayment"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "remark",
-                title: '<@spring.message "备注"/>',
+                title: '<@spring.message "hpms.mdm.occupation.remarks"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
                 field: "docType",
-                title: '<@spring.message "单据类型"/>',
+                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
                 attributes: {style: "text-align:center"},
                 width: 120,
                 template:function (dataItem) {
@@ -1538,10 +1530,13 @@
 
     function sumPrice(grid) {
         var sum = 0;
+        var adjAmountSum = 0;
         for (var dataItem of grid.selectedDataItems()){
+            adjAmountSum += dataItem.adjAmount;
             sum += dataItem.settlementAmount;
         }
         viewModel.model.set("sumPrice",sum.toFixed(2));
+        viewModel.model.set("adjAmount",adjAmountSum.toFixed(2));
     }
 
     $("thead>tr th").css("text-align","center");
@@ -1571,6 +1566,58 @@
 
         sumPrice(grid);
     });
+    $("#collectionGrid .k-headbox").on("click", function (e) {
+        // 阻止事件冒泡
+        e.stopPropagation();
+
+        // 打钩
+        $(e.target).toggleClass("fa fa-check");
+
+        var grid = $("#collectionGrid").data("kendoGrid");
+
+        //  处理每一行的checkbox
+        var arr = grid.items();
+        for(var node of arr){
+            if ($(e.target).hasClass("fa fa-check")){
+                if (!$(node).hasClass("k-state-selected")){
+                    $(node).addClass("k-state-selected")
+                }
+            }else {
+                if ($(node).hasClass("k-state-selected")){
+                    $(node).removeClass("k-state-selected")
+                }
+            }
+        }
+
+        sumPrice(grid);
+    });
+    $("#adjustmentGrid .k-headbox").on("click", function (e) {
+        // 阻止事件冒泡
+        e.stopPropagation();
+
+        // 打钩
+        $(e.target).toggleClass("fa fa-check");
+
+        var grid = $("#adjustmentGrid").data("kendoGrid");
+
+        //  处理每一行的checkbox
+        var arr = grid.items();
+        for(var node of arr){
+            if ($(e.target).hasClass("fa fa-check")){
+                if (!$(node).hasClass("k-state-selected")){
+                    $(node).addClass("k-state-selected")
+                }
+            }else {
+                if ($(node).hasClass("k-state-selected")){
+                    $(node).removeClass("k-state-selected")
+                }
+            }
+        }
+
+        sumPrice(grid);
+    });
+
+
 
 </script>
 </body>

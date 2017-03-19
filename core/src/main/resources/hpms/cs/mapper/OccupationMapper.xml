@@ -55,6 +55,8 @@
         ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
         LEFT JOIN HPMS_MDM_PROJECT hmp2
         ON hmp.PROJECT_ID = hmp2.PROJECT_ID
+        LEFT JOIN HPMS_CONFIG_VALUE hcv
+        ON hmp.PROPERTY_TYPE = hcv.CONFIG_VALUE_ID
         LEFT JOIN (
             SELECT *
             FROM HPMS_CS_OCCUPATION
@@ -67,6 +69,7 @@
         ) occ
         ON hmp.PROPERTY_ID = occ.PROPERTY_ID
         <where>
+            hcv.CONFIG_VALUE_NUMBER='CN03'
             <if test="companyId != null">
                 AND hmp.COMPANY_ID = #{companyId , jdbcType=DECIMAL}
             </if>

@@ -282,7 +282,7 @@
                                         .kendoLov({
                                             //三个必须参数：code、contextPath、locale，其他参数    根据实际情况自行设置
                                             code:"MDM_SELECT_ALL_TABLES",
-                                            contextPath:'',
+                                            contextPath: '${base.contextPath}',
                                             locale:'${base.locale}',
                                             query:function (e) {
                                                 if (!e.param.tableName) {

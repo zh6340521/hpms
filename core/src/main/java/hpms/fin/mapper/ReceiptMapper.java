@@ -14,7 +14,5 @@ import java.util.List;
  */
 
 public interface ReceiptMapper extends Mapper<Receipt> {
-    List<ReceiptFeeList> selectFeeList(ReceiptFeeList receiptFeeList);
-
     List<Receipt> selectReceipt(ReceiptFeeList receiptFeeList);
 }

@@ -4,7 +4,6 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.system.service.IBaseService;
-import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
@@ -65,6 +64,6 @@ public interface IPropertyService extends IBaseService<Property>,ProxySelf<Prope
 	 * @param project
      * @return
      */
-	List<ConfigColumn> propertyShow(IRequest requestContext, Property property);
+	List<Property> propertyShow(IRequest requestContext, Property property);
 
 }

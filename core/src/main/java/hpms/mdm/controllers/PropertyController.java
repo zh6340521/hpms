@@ -4,7 +4,6 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
@@ -114,12 +113,12 @@ public class PropertyController extends BaseController{
 		List<Company> companys = propertyService.groupQuery();
 		return new ResponseData(companys);
 	}
+
 	/**
-     * 项目查询URL 
-     *
-     * @param project 封装参数对象
-     * @param request   请求
-     * @return ResponseData 符合的对象集合以及其它信息所封装的对象
+	 * 项目查询URL
+	 * @param companyId
+	 * @param request
+     * @return
      */
 	@RequestMapping(value = "/mdm/property/projectQuery" , method = RequestMethod.POST)
 	@ResponseBody
@@ -157,7 +156,7 @@ public class PropertyController extends BaseController{
 		IRequest requestContext = createRequestContext(request);
 		Property pj = new Property();
 		pj.setPropertyId(propertyId);
-		List<ConfigColumn> configValues = propertyService.propertyShow(requestContext,pj);
+		List<Property> configValues = propertyService.propertyShow(requestContext,pj);
 		return new ResponseData(configValues);
 	}
 

@@ -17,17 +17,16 @@ import java.util.List;
 
 public interface IReceiptService extends IBaseService<Receipt>, ProxySelf<IReceiptService> {
 
+    List<Receipt> updateReceipt(IRequest requestCtx, Receipt receipt);
+
+
     /**
      * 关联查询
-     * @param requestContext
-     * @param dto
+     * @param requestCtx
+     * @param receiptFeeList
      * @param page
      * @param pageSize
      * @return
      */
-    List<ReceiptFeeList> selectFeeList(IRequest requestContext, ReceiptFeeList dto, int page, int pageSize);
-
-    List<Receipt> updateReceipt(IRequest requestCtx, Receipt receipt);
-
     List<Receipt> selectReceipt(IRequest requestCtx,ReceiptFeeList receiptFeeList, int page, int pageSize);
 }
