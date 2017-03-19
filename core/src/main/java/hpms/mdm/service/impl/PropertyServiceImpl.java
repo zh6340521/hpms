@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
-import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
@@ -48,7 +47,7 @@ public class PropertyServiceImpl extends BaseServiceImpl<Property> implements IP
 	}
 
 	@Override
-		public List<ConfigColumn> propertyShow(IRequest requestContext, Property property){
+		public List<Property> propertyShow(IRequest requestContext, Property property){
 		return propertyMapper.propertyShow(property);
 	}
 

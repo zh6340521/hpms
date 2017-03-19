@@ -52,6 +52,12 @@
         <result column="PARKING_STATUS" property="parkingStatus" jdbcType="VARCHAR"/>
         <result column="PUBLIC_SPACE_STATUS" property="publicSpaceStatus" jdbcType="VARCHAR"/>
         <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+
+        <result column="column_name_alias" property="columnNameAlias" jdbcType="VARCHAR"/>
+        <result column="column_id" property="columnId" jdbcType="VARCHAR"/>
+        <result column="config_value_id" property="configValueId" jdbcType="DECIMAL"/>
+        <result column="config_id" property="configId" jdbcType="DECIMAL"/>
+        <result column="config_column_id" property="configColumnId" jdbcType="DECIMAL"/>
     </resultMap>
     
     <resultMap type="com.hand.hap.fnd.dto.Company" id="companyResultMap">
@@ -66,10 +72,11 @@
         <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR"/>
         <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR"/>
     </resultMap>
-    
+
     <resultMap type="hpms.bs.dto.ConfigValue" id="configValueResultMap">
         <id column="CONFIG_VALUE_ID" property="configValueId" jdbcType="DECIMAL"/>
         <result column="CONFIG_VALUE_NAME" property="configValueName" jdbcType="VARCHAR"/>
+        <result column="CONFIG_ID" property="configId" jdbcType="DECIMAL"/>
     </resultMap>
     <!-- 条件查询建筑档案 -->
     <select id="propertyQuery" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.Property">
@@ -137,10 +144,11 @@
         <if test = "companyId != null"> AND hmp.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
         <if test = "projectId != null"> AND hmp.PROJECT_ID = #{projectId , jdbcType=DECIMAL} </if>
         <if test = "propertyType != null"> AND hmp.PROPERTY_TYPE = #{propertyType , jdbcType=DECIMAL} </if>
-        <if test = "configValueName != null"> AND hcv.CONFIG_VALUE_NAME = #{configValueName , jdbcType=VARCHAR} </if>
         <if test = "propertyName != null"> AND hmp.PROPERTY_NAME like concat('%', concat(#{propertyName,jdbcType=VARCHAR}, '%')) </if>
         <if test = "propertyNumber != null"> AND hmp.PROPERTY_NUMBER like concat('%', concat(#{propertyNumber,jdbcType=VARCHAR}, '%')) </if>
         <if test = "oldNumber != null"> AND hmp.OLD_NUMBER like concat('%', concat(#{oldNumber,jdbcType=VARCHAR}, '%')) </if>
+
+        ORDER BY hmp.CREATION_DATE DESC
     </select>
     
     <!-- 查询有效的公司名称 -->
@@ -199,16 +207,36 @@
     </select>
     <!-- 查询有效的建筑类型 -->
     <select id="propertyTypeQuery" resultMap="configValueResultMap" parameterType="hpms.bs.dto.ConfigValue">
-    	SELECT HCV.CONFIG_VALUE_ID,
-       		   HCV.CONFIG_VALUE_NAME
-          FROM HPMS_DATA_MODEL HDM
-          LEFT JOIN HPMS_CONFIG HC
-          ON HDM.MODEL_ID = HC.MODEL_ID AND HDM.TABLE_NAME = 'HPMS_MDM_PROPERTY' AND HC.ENABLE_FLAG = 'Y'
-          LEFT JOIN HPMS_CONFIG_VALUE HCV
-          ON HC.CONFIG_ID = HCV.CONFIG_ID AND HCV.ENABLE_FLAG = 'Y'
-          WHERE 1=1
-          <if test="companyId != null">
-         		AND HC.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
-          </if>
+        SELECT HCV.CONFIG_VALUE_ID,
+        HCV.CONFIG_VALUE_NAME,
+        HC.CONFIG_ID
+        FROM HPMS_DATA_MODEL HDM
+        LEFT JOIN HPMS_CONFIG HC
+        ON HDM.MODEL_ID = HC.MODEL_ID AND HDM.TABLE_NAME = 'HPMS_MDM_PROPERTY' AND HC.ENABLE_FLAG = 'Y'
+        LEFT JOIN HPMS_CONFIG_VALUE HCV
+        ON HC.CONFIG_ID = HCV.CONFIG_ID AND HCV.ENABLE_FLAG = 'Y'
+        WHERE 1=1
+        <if test="companyId != null">
+            AND HC.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+        </if>
+    </select>
+
+    <!--查询建筑档案动态的字段-->
+    <select id="propertyShow" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.Property">
+    SELECT cc.column_name_alias,
+            cc.column_id,
+            cc.config_value_id,
+            hc.config_id,
+            cc.config_column_id
+            FROM hpms_mdm_property mp
+            LEFT JOIN hpms_config_column cc
+            ON mp.property_type = cc.config_value_id
+            LEFT JOIN hpms_config_value hcv
+            ON hcv.config_value_id = cc.config_value_id
+            LEFT JOIN hpms_config hc
+            ON hc.config_id = hcv.config_id
+
+            WHERE mp.property_id = #{propertyId ,jdbcType=DECIMAL}
+            AND cc.enable_flag = 'Y'
     </select>
 </mapper>

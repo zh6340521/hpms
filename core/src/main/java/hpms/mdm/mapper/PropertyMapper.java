@@ -2,7 +2,6 @@ package hpms.mdm.mapper;
 
 import com.hand.hap.fnd.dto.Company;
 import com.hand.hap.mybatis.common.Mapper;
-import hpms.bs.dto.ConfigColumn;
 import hpms.bs.dto.ConfigValue;
 import hpms.mdm.dto.Project;
 import hpms.mdm.dto.Property;
@@ -56,6 +55,6 @@ public interface PropertyMapper extends Mapper<Property>{
 	 * @param property
 	 * @return
 	 */
-	List<ConfigColumn> propertyShow(Property property);
+	List<Property> propertyShow(Property property);
 
 }
