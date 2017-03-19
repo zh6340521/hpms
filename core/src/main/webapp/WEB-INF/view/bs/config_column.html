@@ -397,7 +397,14 @@
                                              document.getElementById("dataTextField").value = "";
                                              document.getElementById("dataValueField").value = "";
 
+                                             options.model.set('sysCode',null);
+                                             options.model.set('sqlId',null);
+                                             options.model.set('cascadeFrom',null);
+                                             options.model.set('dataTextField',null);
+                                             options.model.set('dataValueField',null);
+
                                          }else{
+
                                              $("#sysCode").attr("disabled",false);
                                              $("#sqlId").attr("disabled",false);
                                              $("#cascadeFrom").attr("disabled",false);
@@ -409,6 +416,13 @@
                                              document.getElementById("cascadeFrom").value = "";
                                              document.getElementById("dataTextField").value = "";
                                              document.getElementById("dataValueField").value = "";
+
+                                             options.model.set('sysCode',null);
+                                             options.model.set('sqlId',null);
+                                             options.model.set('cascadeFrom',null);
+                                             options.model.set('dataTextField',null);
+                                             options.model.set('dataValueField',null);
+
                                          }
 
                                      },
@@ -426,7 +440,7 @@
                      editor: function (container, options) {
 
                          //如果字符类型为list并且快码code不为空，可编辑
-                             var editor =  $('<input type="text" onclick="validatesqlid()" id="sqlId" onblur="validatesqlId(this)"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                             var editor =  $('<input type="text" onclick="validatesqlid()" id="sqlId" onblur="validatesqlId(this)"  />').appendTo(container).kendoMaskedTextBox({});
                              editor.css('width','100%');
                              container.append(editor);
                      }
@@ -439,7 +453,7 @@
                      editor: function (container, options) {
 
                          //如果字符类型为list并且快码code不为空，可编辑
-                         var editor =  $('<input type="text" id="dataTextField"   name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                         var editor =  $('<input type="text" id="dataTextField"    />').appendTo(container).kendoMaskedTextBox({});
                          editor.css('width','100%');
                          container.append(editor);
                      }
@@ -452,7 +466,7 @@
                      editor: function (container, options) {
 
                          //如果字符类型为list并且快码code不为空，可编辑
-                         var editor =  $('<input type="text" id="dataValueField"  name="' + options.field + '" />').appendTo(container).kendoMaskedTextBox({});
+                         var editor =  $('<input type="text" id="dataValueField"  />').appendTo(container).kendoMaskedTextBox({});
                          editor.css('width','100%');
                          container.append(editor);
                      }
@@ -477,7 +491,7 @@
                      editor: function (container, options) {
 
 
-                             var editor = $('<input id="cascadeFrom" onblur="validateCascadeFrom(this)" id="cascadeFrom"  class="k-input k-textbox k-valid" type="text" name="' + options.field + '"/>');
+                             var editor = $('<input id="cascadeFrom" onblur="validateCascadeFrom(this)"   class="k-input k-textbox k-valid" type="text" name="' + options.field + '"/>');
                              editor.css('width','100%');
                              container.append(editor);
 
