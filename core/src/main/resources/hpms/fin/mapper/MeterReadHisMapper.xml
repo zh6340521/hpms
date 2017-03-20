@@ -28,6 +28,14 @@
         <result column="MONTH" property="month" jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap id="YearResultMap" type="com.hand.hap.system.dto.Code">
+        <result column="CODE" property="code" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="MonthResultMap" type="com.hand.hap.system.dto.Code">
+        <result column="CODE" property="code" jdbcType="VARCHAR" />
+    </resultMap>
+
     <!--查询应付信息-->
     <select id="queryMeterReadHis" parameterType="hpms.fin.dto.MeterReadHis" resultMap="BaseResultMap">
         SELECT HFMRH.READ_HIS_ID,
@@ -86,6 +94,19 @@
         <if test="month!=null">
             and TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM')))=#{month,jdbcType=VARCHAR}
         </if>
+    </select>
+
+    <select id="queryYear" parameterType="com.hand.hap.system.dto.Code" resultMap="YearResultMap">
+        SELECT to_char(SYSDATE,'YYYY') - LEVEL + 1 code
+        FROM dual
+        connect by LEVEL &lt;= 5
+        ORDER BY 1
+    </select>
+
+    <select id="queryMonth" parameterType="com.hand.hap.system.dto.Code" resultMap="MonthResultMap">
+        SELECT LEVEL code
+        FROM dual
+        connect by LEVEL &lt;= 12
     </select>
 
 </mapper>

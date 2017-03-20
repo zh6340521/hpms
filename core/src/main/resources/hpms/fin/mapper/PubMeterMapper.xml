@@ -236,7 +236,6 @@
 
         <where>
             1=1
-            AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
             <if test="equipmentCode!=null">
                 and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
             </if>

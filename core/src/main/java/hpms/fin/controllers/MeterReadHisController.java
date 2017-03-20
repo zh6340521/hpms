@@ -1,5 +1,6 @@
 package hpms.fin.controllers;
 
+import com.hand.hap.system.dto.Code;
 import org.springframework.stereotype.Controller;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.core.IRequest;
@@ -49,4 +50,22 @@ import java.util.List;
         service.batchDelete(dto);
         return new ResponseData();
     }
+
+
+    @RequestMapping(value = "/hpms/fin/meter/read/his/queryYear")
+    @ResponseBody
+    public ResponseData queryYear(Code dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                                  @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.queryYear(requestContext,dto,page,pageSize));
+    }
+
+    @RequestMapping(value = "/hpms/fin/meter/read/his/queryMonth")
+    @ResponseBody
+    public ResponseData queryMonth(Code dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                                   @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.queryMonth(requestContext,dto,page,pageSize));
+    }
+
     }

@@ -2,6 +2,7 @@ package hpms.fin.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
+import com.hand.hap.system.dto.Code;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.fin.mapper.MeterReadHisMapper;
 import org.slf4j.Logger;
@@ -37,6 +38,16 @@ public class MeterReadHisServiceImpl extends BaseServiceImpl<MeterReadHis> imple
             k.set__status("add");
         }
         return batchUpdate(requestContext, mList);
+    }
+
+    @Override
+    public List<Code> queryYear(IRequest requestContext, Code code, int page, int pagesize) {
+        return meterReadHisMapper.queryYear(code);
+    }
+
+    @Override
+    public List<Code> queryMonth(IRequest requestContext, Code code, int page, int pagesize) {
+        return meterReadHisMapper.queryMonth(code);
     }
 
 }

@@ -63,7 +63,7 @@
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.fin.pubmeter.year"/></label>
                         <div class="col-xs-7">
-                            <input id="year" name="year" type="text" data-bind="value:model.year" class="k-textbox" style="width: 100%;">
+                            <input id="year" name="year" type="text" data-bind="value:model.year"  style="width: 100%;">
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.fin.pubmeter.month"/></label>
                         <div class="col-xs-7">
-                            <input id="month" name="month" type="text" data-bind="value:model.month" class="k-textbox" style="width: 100%;">
+                            <input id="month" name="month" type="text" data-bind="value:model.month" style="width: 100%;">
                         </div>
                     </div>
                 </div>
@@ -171,6 +171,47 @@
         }
     });
 
+    $("#year").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "code",
+        dataValueField: "code",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/hpms/fin/meter/read/his/queryYear",
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $("#month").kendoComboBox({
+        valuePrimitive: true,
+        dataTextField: "code",
+        dataValueField: "code",
+        dataSource: {
+            transport: {
+                read:function(options) {
+                    $.ajax({
+                        type   : "POST",
+                        url: "${base.contextPath}/hpms/fin/meter/read/his/queryMonth",
+                        data: {},
+                        success: function(json) {
+                            options.success(json.rows);
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+
     var BaseUrl = _basePath;
     dataSource = new kendo.data.DataSource({
         transport: {
@@ -249,7 +290,7 @@
             },
                     {
                 field: "currentRead",
-                title: '<@spring.message "hpms.fin.pubmeter.lastRead"/>',
+                title: '<@spring.message "hpms.fin.pubmeter.currentRead"/>',
                 width: 100
             },
                     {
