@@ -221,7 +221,7 @@
         </if>
     </select>
 
-    <!--查询建筑档案动态的字段-->
+    <!--查询建筑档案动态的字段 author by hufuchun 2017年3月20日 09:25:33-->
     <select id="propertyShow" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.Property">
     SELECT cc.column_name_alias,
             cc.column_id,

@@ -384,6 +384,7 @@
                                          //当选择的字符类型不为LIST时，sqlId，code和级联都为不可编辑
                                          if(columnstyle!="LIST"){
 
+
                                              $("#sysCode").attr("disabled",true);
                                              $("#sqlId").attr("disabled",true);
                                              $("#cascadeFrom").attr("disabled",true);
@@ -404,6 +405,8 @@
                                              options.model.set('dataValueField',null);
 
                                          }else{
+
+
 
                                              $("#sysCode").attr("disabled",false);
                                              $("#sqlId").attr("disabled",false);
@@ -439,10 +442,17 @@
                      attributes: {style: "text-align:center"},
                      editor: function (container, options) {
 
-                         //如果字符类型为list并且快码code不为空，可编辑
+                         /*//如果字符类型为list并且快码code不为空，可编辑
                              var editor =  $('<input type="text" onclick="validatesqlid()" id="sqlId" onblur="validatesqlId(this)"  />').appendTo(container).kendoMaskedTextBox({});
                              editor.css('width','100%');
-                             container.append(editor);
+                             container.append(editor);*/
+                         /*if (options.model.configColumnId != "") {
+                             container.html(options.model.sqlId);
+                         } else {*/
+                         var editor = $('<input id="sqlId"  class="k-input k-textbox k-valid" type="text" name="sqlId"/>');
+                         editor.css('width','100%');
+                         container.append(editor);
+                        /* }*/
                      }
                  },
                  {
@@ -453,7 +463,7 @@
                      editor: function (container, options) {
 
                          //如果字符类型为list并且快码code不为空，可编辑
-                         var editor =  $('<input type="text" id="dataTextField"    />').appendTo(container).kendoMaskedTextBox({});
+                         var editor =  $('<input type="text" id="dataTextField" class="k-input k-textbox k-valid" name="dataTextField"/>').appendTo(container).kendoMaskedTextBox({});
                          editor.css('width','100%');
                          container.append(editor);
                      }
@@ -466,7 +476,7 @@
                      editor: function (container, options) {
 
                          //如果字符类型为list并且快码code不为空，可编辑
-                         var editor =  $('<input type="text" id="dataValueField"  />').appendTo(container).kendoMaskedTextBox({});
+                         var editor =  $('<input type="text" id="dataValueField" class="k-input k-textbox k-valid" name="dataValueField"  />').appendTo(container).kendoMaskedTextBox({});
                          editor.css('width','100%');
                          container.append(editor);
                      }
@@ -477,7 +487,7 @@
                      title: '快码CODE',
                      attributes: {style: "text-align:center"},
                      editor: function (container, options) {
-                             var editor = $('<input id="sysCode" onclick="validateself()" onblur="validateSysCode(this)" class="k-input k-textbox k-valid" type="text" name="' + options.field + '"/>');
+                             var editor = $('<input id="sysCode" onclick="validateself()" onblur="validateSysCode(this)" class="k-input k-textbox k-valid" type="text" name="sysCode"/>');
                              editor.css('width','100%');
                              container.append(editor);
 
@@ -491,7 +501,7 @@
                      editor: function (container, options) {
 
 
-                             var editor = $('<input id="cascadeFrom" onblur="validateCascadeFrom(this)"   class="k-input k-textbox k-valid" type="text" name="' + options.field + '"/>');
+                             var editor = $('<input id="cascadeFrom" onblur="validateCascadeFrom(this)"   class="k-input k-textbox k-valid" type="text" name="cascadeFrom"/>');
                              editor.css('width','100%');
                              container.append(editor);
 
