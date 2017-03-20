@@ -94,8 +94,10 @@
 	                       <label ><@spring.message 'hpms.mdm.property.propertyname'/></label>
 	                   </div>
 				    <div class="col-md-8">
-				    	<input type="text" class="k-textbox" id="propertyName"  data-bind="value:model.propertyName" style="width: 70%;" required validationMessage="<@spring.message 'hpms.notempty'/>">
-				    	<span class="red">&nbsp;&nbsp;*</span>
+						<input id="propertyName" class="k-textbox"  name="propertyName" data-bind="value:model.propertyName" style="width: 70%;"
+							   required validationMessage="<@spring.message 'hpms.notempty'/>"/>
+						<span class="red">&nbsp;&nbsp;*</span>
+						<span data-for="propertyName" class="k-invalid-msg" ></span>
 				    </div>
 				</div>
 				<div class="col-md-6" style="margin-bottom:10px">
