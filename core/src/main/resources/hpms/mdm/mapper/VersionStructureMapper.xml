@@ -23,6 +23,8 @@
         <result column="config_value_name" property="configValueName" jdbcType="VARCHAR" />
         <result column="STATUS" property="status" jdbcType="VARCHAR" />
         <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
+
+        <result column="business_format_meaning" property="businessFormatMeaning" jdbcType="VARCHAR" />
     </resultMap>
 
     <resultMap type="hpms.bs.dto.ConfigValue" id="configValueResultMap">
@@ -70,6 +72,7 @@
        vs.parent_structure_id,
        hmp.property_name,
        vs.object_version_number,
+      hcv.meaning as business_format_meaning,
   (
     SELECT
        vs1.structure_name
@@ -82,6 +85,10 @@ FROM
   hpms_mdm_version_structure vs
   left join hpms_mdm_property hmp
   on vs.property_id = hmp.property_id
+  left join   hpms_code_value_v hcv
+  on hcv.code = 'HPMS_BUSINESS_FORMAT'
+  and hcv.value = vs.business_format
+  and hcv.lang=#{request.locale,jdbcType=VARCHAR}
 
         <where>
             1=1
