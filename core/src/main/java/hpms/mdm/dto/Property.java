@@ -142,7 +142,16 @@ public class Property extends BaseDTO{
 
 	@Transient
 	private Long configColumnId;
+	@Transient
+	private Long equipmentTypeId;
 
+	public Long getEquipmentTypeId() {
+		return equipmentTypeId;
+	}
+
+	public void setEquipmentTypeId(Long equipmentTypeId) {
+		this.equipmentTypeId = equipmentTypeId;
+	}
 
 	public void setCompleteTime(Date completeTime) {
 		this.completeTime = completeTime;
