@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.fin.mapper.MeterShareResultMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.MeterShareResult" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="share_result_id" property="shareResultId" jdbcType="DECIMAL" />
+        <result column="company_id" property="companyId" jdbcType="DECIMAL" />
+        <result column="project_id" property="projectId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="equipment_id" property="equipmentId" jdbcType="DECIMAL"/>
+        <result column="property_id" property="propertyId" jdbcType="DECIMAL" />
+        <result column="ms_date" property="msDate" jdbcType="TIMESTAMP" />
+        <result column="ms_person" property="msPerson" jdbcType="VARCHAR" />
+        <result column="invoice_code" property="invoiceCode" jdbcType="VARCHAR" />
+        <result column="ms_mount" property="msMount" jdbcType="DECIMAL" />
+        <result column="callable_date" property="callableDate" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+    </resultMap>
+
+ </mapper>

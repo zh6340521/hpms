@@ -237,7 +237,7 @@
                         attributes: {style: "text-align:center"},
 
                         editor: function (container, options) {
-                            //根据是否存在主键id来判断是新增还是编辑
+                            //根据是否存在主键id来判断是新增还是编辑,编辑状态时该字段不可编辑
                            if (options.model.modelId != "") {
                                 container.html(options.model.modelCode);
                                 container.removeClass('k-edit-cell');
