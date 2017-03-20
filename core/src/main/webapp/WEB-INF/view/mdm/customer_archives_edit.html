@@ -58,6 +58,9 @@ author:huifang.zhou@hand-china.com * -->
 			})
 			var viewModelSales = kendo.observable({
 				model : {},
+				creatFunction: function(){
+            		$('#saleGrid').data('kendoGrid').addRow();
+        			},
 				resetForm : function(e) {
 					var formData = viewModelSales.model.toJSON();
 					for ( var k in formData) {
@@ -711,6 +714,10 @@ author:huifang.zhou@hand-china.com * -->
 					</div>
 					<div id="salesFical" style="clear: both; display: none;">
 						<div id="saleGrid"></div>
+						<div class="pull-left" id="toolbar-btn" style="padding-bottom: 10px;padding-top: 10px;">
+							<span class="btn btn-primary k-grid-add" style="float: left; margin-right: 5px;" data-bind="click:creatFunction">
+            				<i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -888,6 +895,7 @@ author:huifang.zhou@hand-china.com * -->
 		    <div style="clear: both">
 		        <div id="bpRetaionGrid"></div>
 		    </div>
+		    
 		    <script>kendo.bind($('#bpRetaionGrid'), viewModelRelationship);</script>
 			</div>
 			</div>
@@ -904,29 +912,66 @@ author:huifang.zhou@hand-china.com * -->
 	    }
 	});
 	 var crudServiceBaseUrl = '${base.contextPath}',
-     dataSource = new kendo.data.DataSource({
+     salesdataSource = new kendo.data.DataSource({
                 transport: {
                     read: {
                         url: crudServiceBaseUrl + "/hpms/mdm/SalesFinacial/queryByCustId?custId="+${RequestParameters.customerId!0},
                         type    : "POST",
-                        dataType: "json"
+                        dataType: "json",
+                    },
+                    create: {
+                    	url: crudServiceBaseUrl + "/hpms/mdm/BpGeneral/submitSales",
+	                    contentType: "application/json",
+	                    type: "POST",
                     },
                     update: {
-                    url: crudServiceBaseUrl + "/hpms/mdm/SalesFinacial/salesFinacialSubmit",
-                    contentType: "application/json",
-                    type: "POST",
+	                    url: crudServiceBaseUrl + "/hpms/mdm/SalesFinacial/salesFinacialSubmit",
+	                    contentType: "application/json",
+	                    type: "POST",
                 },
                     parameterMap: function (options, type) {
                         if (type !== "read" && options.models) {
+                        	var custId = '${RequestParameters.customerId!0}';
+                        	options.models[0].custId = custId;
+                        	console.log(options.models[0].companyId)
                             var datas = Hap.prepareSubmitParameter(options, type);
+                        	console.log(datas)
                             return kendo.stringify(datas);
                         } else if (type === "read") {
                             return Hap.prepareQueryParameter(viewModelSales.model.toJSON(), options);
                         }
                     }
-                },batch: true,
+                },
+                requestEnd : function(e) {
+						if (e.type != "read") {
+							dataSource.page(salesdataSource._page);
+						}
+					},
+                batch: true,
                 schema: {
-                    data: 'rows',
+                    data : function(response) {
+							if (response.success) {
+								if (response.rows.length > 0
+										&& response.rows[0].__status != null) {
+									var rows = response.rows;
+									for (var i = 0; i < rows.length; i++) {
+										if (rows[i].__status != "read") {
+											kendo.ui.showInfoDialog({
+														message : '<@spring.message "hap.tip.success"/>'
+													});	
+													
+											break;
+										}
+									}
+
+								}
+							} else {
+								kendo.ui.showInfoDialog({
+											message : '<@spring.message "hpms.mdm.receipt.error"/>'
+										})
+							}
+							return response.rows;
+							},
                     total: 'total',
                     model: {
                         id: "salesFinacialId",
@@ -936,13 +981,13 @@ author:huifang.zhou@hand-china.com * -->
                     }
                 }
             });
-            
+    
     var companyData = [];
 	var paymentTermIdData = [];
 	var paymentMethodData = [];
 	//销售信息grid
 	var saleGrid = $("#saleGrid").kendoGrid({
-        dataSource: dataSource,
+        dataSource: salesdataSource,
         navigatable: false,
 		height: '100%',
 		resizable: true,
@@ -952,10 +997,10 @@ author:huifang.zhou@hand-china.com * -->
 	    editable: "inline",
 		columnMenu: true,
         columns : [ 
-        {command : [{name:"edit"}], 
-	     title: '<@spring.message "hap.action"/>', 
-		 attributes: {style: "text-align:center"},
-		  width: 100
+        {command : [{name:"edit"}],
+        	title: '<@spring.message "hap.action"/>', 
+		    attributes: {style: "text-align:center"},
+		    width: 100
 		},{
             field : "companyId",
 	                title      : "<@spring.message 'hpms.mdm.property.company'/>", 
@@ -1165,6 +1210,8 @@ author:huifang.zhou@hand-china.com * -->
             }
         ]
     }).data("kendoGrid");
+    
+    //Hap.autoResizeGrid("#saleGrid");
     
     var crudServiceBaseUrl = '${base.contextPath}',
      FicalsdataSource = new kendo.data.DataSource({
@@ -1383,7 +1430,7 @@ author:huifang.zhou@hand-china.com * -->
 												enableTabTrue();
 												enablePlanTrip();
 												lookPersonage();
-												viewModel.set("customerNumber",data.rows[0].customerNumber);
+												viewModel.model.set("customerNumber",data.rows[0].customerNumber);
 												customerId = data.rows[0].customerId;
 												bpId = data.rows[0].bpId;
 											} else {
@@ -1448,12 +1495,11 @@ author:huifang.zhou@hand-china.com * -->
 												kendo.ui.showInfoDialog({
 													message : '<@spring.message "hap.tip.success"/>'
 												}); 
-												window.parent.$('#grid').data('kendoGrid').dataSource.page(1);
-												customerId = comData.rows[0].customerId;
-												viewModel.set("customerNumber",data.rows[0].customerNumber);
 												enableTabTrue();
 												enablePlanTrip();
 												lookCompany();
+												viewModel.model.set("customerNumber",data.rows[0].customerNumber);
+												customerId = comData.rows[0].customerId;
 											} else {
 												kendo.ui.showInfoDialog({
 													message : '失败!'

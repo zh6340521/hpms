@@ -42,13 +42,10 @@ author:huifang.zhou@hand-china.com * --> <#include
 		</div>
 		<script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 		<div class="pull-right" id="query-form" style="padding-bottom: 10px;">
-			<input id="dropDownList"
-				style="width: 150px; float: left; margin-right: 5px;" data-bind="value:model.selectCombox"/> <input
-				data-role="maskedtextbox" type="text"
-				style="width: 150px; float: left; margin-right: 5px;"
-				data-bind="value:model.value" class="k-textbox"> <span
-				class="btn btn-primary" data-bind="click:queryResource"
-				style="width: 80px; float: left; margin-right: 5px;" type="submit">查询</span>
+			<input id="dropDownList" style="width: 150px; float: left; margin-right: 5px;" data-bind="value:model.selectCombox"/> 
+			<input data-role="maskedtextbox" type="text" style="width: 150px; float: left; margin-right: 5px;" data-bind="value:model.value" class="k-textbox"/>
+				<span class="btn btn-primary k-grid-save-changes" style="float: left; margin-right: 5px;" data-bind="click:queryResource">
+             <i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
 			<div style="clear: both"></div>
 		</div>
 		<script>kendo.bind($('#query-form'), viewModel);</script>
