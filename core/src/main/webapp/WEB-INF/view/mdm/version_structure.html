@@ -196,7 +196,8 @@
                                     structureName: response.rows[i].structureName,
                                     propertyId: response.rows[i].propertyId,
                                     businessFormat: response.rows[i].businessFormat,
-                                    propertyName  :response.rows[i].propertyName
+                                    propertyName  :response.rows[i].propertyName,
+                                    businessFormatMeaning:response.rows[i].businessFormatMeaning
                                 };
                                 products.push(product);
                             }
@@ -218,7 +219,7 @@
                         {field: "structureNumber", title: '<@spring.message "hpms.mdm.build.structure_number"/>'},
                         {field: "structureName", title: '<@spring.message "hpms.mdm.build.structure_name"/>'},
                         {field: "propertyName", title: '<@spring.message "hpms.mdm.build.entity"/>'},
-                        {field: "businessFormat", title: '<@spring.message "hpms.mdm.build.type"/>'}
+                        {field: "businessFormatMeaning", title: '<@spring.message "hpms.mdm.build.type"/>'}
                     ]
 
                 }).data("kendoTreeList");

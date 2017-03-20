@@ -113,6 +113,9 @@ public class VersionStructure extends BaseDTO {
     @Transient
     private boolean hasChildren;//huchengye
 
+    @Transient
+    private String businessFormatMeaning;//建筑实体名称
+
 
 
 
@@ -129,6 +132,14 @@ public class VersionStructure extends BaseDTO {
     @Transient
     private Long occupationId;//入伙表id
 
+
+    public String getBusinessFormatMeaning() {
+        return businessFormatMeaning;
+    }
+
+    public void setBusinessFormatMeaning(String businessFormatMeaning) {
+        this.businessFormatMeaning = businessFormatMeaning;
+    }
 
     public String getPropertyName() {
         return propertyName;
