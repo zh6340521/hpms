@@ -3,9 +3,7 @@ package hpms.fin.dto;
 import com.hand.hap.mybatis.annotation.Condition;
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by LoseMyself
@@ -21,27 +19,52 @@ public class MeterCharge extends BaseDTO{
     @GeneratedValue(generator = GENERATOR_TYPE)
     private Long chargeRuleId;
 
+
     /*公司ID*/
+    @Column
     private Long companyId;
 
     /*项目ID*/
+    @Column
     private Long projectId;
 
     /*设备类型ID*/
+    @Column
     private Long equipmentTypeId;
 
     /*计费维度*/
+    @Column
     private String crObject;
 
     /*计费规则编码*/
+    @Column
     private String crCode;
 
     /*计费规则*/
+    @Column
     @Condition(operator = LIKE)
     private String crName;
 
     /*记录状态*/
+    @Column
     private String enableFlag;
+
+    /**
+     * fuchun.hu@hand-china.com
+     * 加了暂存字段--设备名称
+     * 2017年3月20日 14:34:58
+     */
+    @Transient
+    private String typeName;
+
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
 
     public Long getChargeRuleId() {
         return chargeRuleId;

@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="hpms.fin.mapper.MeterChargeMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.MeterCharge">
+        <result column="charge_rule_id" property="chargeRuleId" jdbcType="DECIMAL" />
+        <result column="company_id" property="companyId" jdbcType="DECIMAL" />
+        <result column="project_id" property="projectId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL"/>
+        <result column="cr_object" property="crObject" jdbcType="VARCHAR" />
+        <result column="cr_code" property="crCode" jdbcType="VARCHAR" />
+        <result column="cr_name" property="crName" jdbcType="VARCHAR" />
+        <result column="enable_flag" property="enableFlag" jdbcType="VARCHAR" />
+
+        <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+
     <select id="isHaveEnable" parameterType="hpms.fin.dto.MeterCharge" resultType="hpms.fin.dto.MeterCharge">
         SELECT enable_flag enableFlag FROM HPMS_FIN_METER_CHARGE_RULE
          WHERE company_id = #{companyId} AND project_id = #{projectId} AND equipment_type_id = #{equipmentTypeId}
@@ -13,5 +28,17 @@
       AND HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
       AND HME.EQUIPMENT_TYPE_ID = #{equipmentTypeId}
       AND HFMRH.STATUS = 'ACTIVE'
+    </select>
+
+    <!--根据项目选择有效的仪表类型  fuchun.hu@hand-china.com   2017年3月20日 14:22:44-->
+    <select id="findEquipmentTypeByMeterCharge" parameterType="hpms.fin.dto.MeterCharge" resultMap="BaseResultMap">
+      SELECT cr.equipment_type_id,
+       et.type_name,
+       cr.project_id
+  FROM hpms_fin_meter_charge_rule cr,
+       hpms_mdm_equipment_type    et
+     WHERE cr.equipment_type_id = et.equipment_type_id
+     and cr.project_id=#{projectId,jdbcType=DECIMAL}
+    and cr.enable_flag='Y'
     </select>
 </mapper>
