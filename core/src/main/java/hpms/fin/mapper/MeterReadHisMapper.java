@@ -10,4 +10,5 @@ public interface MeterReadHisMapper extends Mapper<MeterReadHis>{
     List<MeterReadHis> queryMeterReadHis(MeterReadHis meterReadHis);
     List<Code> queryYear(Code code);
     List<Code> queryMonth(Code code);
+    List<MeterReadHis> batchMeterReadHis(MeterReadHis meterReadHis);
 }

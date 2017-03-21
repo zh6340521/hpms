@@ -68,6 +68,9 @@
         ON HFMRH.PROJECT_ID = HMP.PROJECT_ID
         LEFT JOIN HPMS_MDM_EQUIPMENT HME
         ON HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
         LEFT JOIN HPMS_CODE_VALUE_V HCVV
         ON HCVV.CODE = 'HPMS_METER_ENTER_STATUS'
         AND HCVV.VALUE = HFMRH.STATUS
@@ -107,6 +110,101 @@
         SELECT LEVEL code
         FROM dual
         connect by LEVEL &lt;= 12
+    </select>
+
+    <select id="batchMeterReadHis" parameterType="hpms.fin.dto.MeterReadHis" resultMap="BaseResultMap">
+        select * from (SELECT HFMRH.READ_HIS_ID,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.EQUIPMENT_ID,
+        HFMRH.INVOICE_CODE,
+        HFMRH2.CURRENT_READ LAST_READ,
+        HFMRH.CURRENT_READ,
+        HFMRH.METER_TOTAL_USE,
+        HFMRH.METER_TOTAL_AMOUNT,
+        TRUNC(SYSDATE) READ_DATE,
+        HFMRH.FLAG,
+        'Y' NEW_RECORD_FLAG,
+        HFMRH.IS_POSTED_FLAG,
+        'ACTIVE' STATUS,
+        HFMRH.PROGRAM_ID,
+        HFMRH.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_TYPE_ID,
+        TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYY') YEAR,
+        TO_CHAR(TO_NUMBER(TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'MM'))) MONTH
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+        LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH2
+        ON HFMRH2.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH
+        ON HFMRH.EQUIPMENT_ID = HFMRH2.EQUIPMENT_ID
+        AND TO_CHAR(HFMRH.READ_DATE,'YYYYMM') = TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYYMM')
+        WHERE 1=1
+        AND HFMRH.READ_HIS_ID IS NULL AND HFMRH2.READ_HIS_ID IS NOT NULL AND HFMRH2.STATUS = 'FREEZED'
+
+        UNION ALL
+        SELECT HFMRH.READ_HIS_ID,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.EQUIPMENT_ID,
+        HFMRH.INVOICE_CODE,
+        HFMRH.LAST_READ,
+        HFMRH.CURRENT_READ,
+        HFMRH.METER_TOTAL_USE,
+        HFMRH.METER_TOTAL_AMOUNT,
+        HFMRH.READ_DATE,
+        HFMRH.FLAG,
+        HFMRH.NEW_RECORD_FLAG,
+        HFMRH.IS_POSTED_FLAG,
+        HFMRH.STATUS,
+        HFMRH.PROGRAM_ID,
+        HFMRH.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_TYPE_ID,
+        TO_CHAR(HFMRH.READ_DATE,'YYYY') YEAR,
+        TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) MONTH
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+        LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH
+        ON HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        WHERE 1=1
+        AND HFMRH.READ_HIS_ID IS not NULL ) batch
+        WHERE 1=1
+        <if test="equipmentId!=null">
+            AND batch.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
+        </if>
+        <if test="companyId!=null">
+            and batch.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+        </if>
+        <if test="projectId!=null">
+            and batch.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+        </if>
+        <if test="equipmentTypeId!=null">
+            and batch.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+        </if>
+        <if test="year!=null">
+            and batch.year=#{year,jdbcType=VARCHAR}
+        </if>
+        <if test="month!=null">
+            and batch.month=#{month,jdbcType=VARCHAR}
+        </if>
     </select>
 
 </mapper>

@@ -50,4 +50,10 @@ public class MeterReadHisServiceImpl extends BaseServiceImpl<MeterReadHis> imple
         return meterReadHisMapper.queryMonth(code);
     }
 
+    @Override
+    public List<MeterReadHis> batchMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize) {
+        PageHelper.startPage(page, pagesize);
+        return meterReadHisMapper.batchMeterReadHis(meterReadHis);
+    }
+
 }

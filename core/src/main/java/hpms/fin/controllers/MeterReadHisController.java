@@ -68,4 +68,13 @@ import java.util.List;
         return new ResponseData(service.queryMonth(requestContext,dto,page,pageSize));
     }
 
+
+    @RequestMapping(value = "/hpms/fin/meter/read/his/batch")
+    @ResponseBody
+    public ResponseData batch(MeterReadHis dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.batchMeterReadHis(requestContext,dto,page,pageSize));
+    }
+
     }

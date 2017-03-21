@@ -17,4 +17,6 @@ public interface IMeterReadHisService extends IBaseService<MeterReadHis>, ProxyS
 
     List<Code> queryMonth(IRequest requestContext, Code code, int page, int pagesize);
 
+    List<MeterReadHis> batchMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize);
+
 }
