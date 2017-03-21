@@ -359,7 +359,7 @@
                         click:function (e) {
                             var tr = $(e.target).closest("tr");
                             var dataItem = this.dataItem(tr);
-                            parent.openTab("set_"+dataItem.chargeRuleId,dataItem.crName,"fin/time_cal.html/?chargeRuleId="+dataItem.chargeRuleId);
+                            parent.openTab("set_"+dataItem.chargeRuleId,dataItem.crName,"${base.contextPath}/fin/time_cal.html/?chargeRuleId="+dataItem.chargeRuleId);
                         }
                     },
                         {name: "edit"},

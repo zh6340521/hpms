@@ -1,0 +1,652 @@
+<#include "../include/header.html">
+    <body>
+    <style>
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color: #333;
+            opacity: 1;
+        }
+
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color: #333;
+            opacity: 1;
+        }
+
+        input:-ms-input-placeholder {
+            color: #333;
+            opacity: 1;
+        }
+
+        input::-webkit-input-placeholder {
+            color: #333;
+            opacity: 1;
+        }
+
+        .red {
+            color: red;
+            position: absolute;
+            margin-top: 22px;
+        }
+    </style>
+    <script src="${base.contextPath}/common/code?resourceTypeData=HPMS_SHARE_RULE" type="text/javascript"></script>
+    <script type="text/javascript">
+        // 初始化viewModel
+        var viewModel = kendo.observable({
+            model: {},
+            // 将快码的值设为全局变量
+            typeResource: resourceTypeData,
+            // 条件查询
+            queryResource: function (e) {
+                $("#grid").data("kendoGrid").dataSource.page(1);
+            },
+            // 新增函数
+            createFunction: function () {
+                $('#grid').data('kendoGrid').addRow();
+            },
+            // 重置查询框
+            resetForm: function (e) {
+                var formDate = viewModel.model.toJSON();
+                for (var k in formDate) {
+                    viewModel.model.set(k,undefined);
+                }
+                $("#grid").data("kendoGrid").dataSource.page(1);
+            },
+        });
+        var companyArray = [];
+        var projectArray = null;
+        var equipmentArray = null;
+        var codeArray = null;
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/fnd/company/query",
+            data: '',
+            async: false,
+            success: function (args) {
+                ca = args.rows;
+                for (var key in args.rows) {
+                    if (args.rows[key].parentCompanyId != null) {
+                        companyArray.push(args.rows[key]);
+                    }
+                }
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/hpms/mdm/project/query",
+            data: '',
+            async: false,
+            success: function (args) {
+                projectArray = args.rows;
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/mdm/equipmentType/query",
+            data: '',
+            async: false,
+            success: function (args) {
+                equipmentArray = args.rows;
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/hpms/fin/pubmeter/query",
+            data: "",
+            async: false,
+            success: function (args) {
+                codeArray = args.rows;
+            }
+        });
+        var cp = [];
+        for (var com in companyArray) {
+            var com_pro = new Object();
+            com_pro.companyId = companyArray[com].companyId;
+            com_pro.companyFullName = companyArray[com].companyFullName;
+            var proo = [];
+            for (var pro in projectArray) {
+                if (projectArray[pro].companyId == com_pro.companyId) {
+                    var proj = new Object();
+                    proj.projectId = projectArray[pro].projectId;
+                    proj.projectName = projectArray[pro].projectName;
+                    proo.push(proj);
+                    com_pro.proo = proo;
+                }
+            }
+            cp.push(com_pro);
+        }
+        var hasEquip = [];
+        var epArray = []
+    </script>
+    <div id="page-content">
+        <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+            <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+                <div class="panel-body">
+                    <div class="row" style="margin-bottom: 5px;">
+                        <!-- 公司 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">公司</label>
+                                <div class="col-sm-8">
+                                    <input id="company" type="text" style="width: 160px"
+                                           data-bind="value:model.companyId">
+                                </div>
+                                <script>
+                                    $("#company").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "companyFullName",
+                                        dataValueField: "companyId",
+                                        dataSource: companyArray,
+                                        change: function (e) {
+                                            viewModel.model.companyId = e.sender._old;
+                                            var cpd = {};
+                                            for (var key in cp) {
+                                                if (cp[key].companyId == e.sender._old) {
+                                                    cpd = cp[key].proo;
+                                                }
+                                            }
+                                            $("#project").kendoDropDownList({
+                                                optionLabel: "--请选择--",
+                                                dataTextField: "projectName",
+                                                dataValueField: "projectId",
+                                                dataSource: cpd,
+                                                change: function (e) {
+                                                    viewModel.model.projectId = e.sender._old;
+                                                }
+                                            }).data("kendoDropDownList");
+                                            kendo.bind($('#project'), viewModel);
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#company'), viewModel);
+                                </script>
+                            </div>
+                        </div>
+                        <!-- 项目 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">项目</label>
+                                <div class="col-sm-8">
+                                    <input id="project" type="text" style="width: 160px"
+                                           data-bind="value:model.projectId">
+                                </div>
+                                <script>
+                                    $("#project").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "projectName",
+                                        dataValueField: "projectId",
+                                        dataSource: projectArray,
+                                        change: function (e) {
+                                            viewModel.model.projectId = e.sender._old;
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#project'), viewModel);
+                                </script>
+                            </div>
+                        </div>
+                        <!-- 仪表类型 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">仪表类型</label>
+                                <div class="col-sm-8">
+                                    <input id="equipmentType" type="text" style="width: 160px"
+                                           data-bind="value:model.equipmentTypeId">
+                                </div>
+                                <script>
+                                    $("#equipmentType").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "typeName",
+                                        dataValueField: "equipmentTypeId",
+                                        dataSource: equipmentArray,
+                                        change: function (e) {
+                                            viewModel.model.equipmentTypeId = e.sender._old;
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#equipmentType'), viewModel);
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">&nbsp;</label>
+                            </div>
+                        </div>
+                        <!-- 仪表编码 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label"><@spring.message
+                                    "hpms.fin.pubmeter.metercode"/></label>
+                                <div class="col-sm-8">
+                                    <input id="edit1" type="text" style="width: 160px"
+                                           data-bind="value:model.equipmentId">
+                                </div>
+                                <script>
+                                    $("#edit1").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "HPMS_MDM_FIN_SHARE")}, {
+                                            query: function (e) {
+                                                if (!e.param.companyId) {
+                                                    e.param.companyId = viewModel.model.companyId;
+                                                }
+                                                if (!e.param.projectId) {
+                                                    e.param.projectId = viewModel.model.projectId;
+                                                }
+                                            }
+                                        }
+                                    ));
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">分摊规则</label>
+                                <div class="col-sm-8">
+                                    <input id="rule" type="text" style="width: 160px"
+                                           data-bind="value:model.demo">
+                                </div>
+                            </div>
+                            <script>
+                                $("#rule").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    dataTextField: "meaning",
+                                    dataValueField: "value",
+                                    valuePrimitive: true,
+                                    dataSource: resourceTypeData,
+                                    index: -1,
+                                });
+                            </script>
+                        </div>
+                        <div style="clear:both"></div>
+                        <!-- 查询框按钮 -->
+                        <div style="float:left;margin-top: 20px">
+                            <span onclick="viewModel.createFunction()" class="btn btn-primary"
+                                  style="float:left;margin-right:5px;margin-left:-15px;width: 70px"><i
+                                    class="fa fa-plus-square" style="margin-right:3px;"></i>
+	<@spring.message "hap.new"/></span>
+                            <span class="btn btn-info" style="width: 70px;float:left;margin-right:5px;"
+                                  data-bind="click:queryResource"
+                                  type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                            <span class="btn btn-default" style="float:left;width:70px" data-bind="click:resetForm"
+                                  type="button"><i class="glyphicon glyphicon-erase" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- gird组件 -->
+        <div>
+            <div id="grid" style="margin-top: -20px;"></div>
+        </div>
+    </div>
+    <script>
+        // 绑定查询框
+        kendo.bind($('#query-form'), viewModel);
+        // 当前路径
+        var crudServiceBaseUrl = '${base.contextPath}/fin/share';
+        // 定义数据源
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl + "/query",
+                    type: "GET",
+                    dataType: "json"
+                },
+                create: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                update: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                destroy: {
+                    url: crudServiceBaseUrl + "/delete",
+                    contentType: "application/json",
+                    type: "DELETE"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type);
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                    }
+                },
+            },
+            requestEnd: function (e) {
+                if (e.type == 'read') {
+                    crcode = e.response.rows;
+                } else if (e.type == 'create' && e.response.success == true) {
+                    kendo.ui.showInfoDialog({
+                        message: '添加成功!'
+                    });
+                } else if (e.type == 'update' && e.response.success == true) {
+                    kendo.ui.showInfoDialog({
+                        message: '更新成功!'
+                    });
+                } else if (e.type = "delete" && e.response.success == true) {
+                    kendo.ui.showInfoDialog({
+                        message: e.response.message
+                    });
+                } else {
+                    $('#grid').data('kendoGrid').dataSource.read();
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "shareRuleId",
+                    fields: {},
+                }
+            }
+        });
+        var grid = $('#grid').kendoGrid({
+            dataSource: dataSource,
+            height: '100%',
+            resizable: false,
+            scrollable: true,
+            selectable: 'row',
+            editable: "inline",
+            sortable: true,
+            navigatable: false,
+            reorderable: true,
+            pageable: {
+                // 分页类别
+                pageSizes: [5, 10, 20, 50],
+                // 刷新按钮
+                refresh: true,
+                // 最大显示页面数
+                buttonCount: 5
+            },
+            columns: [
+                {
+                    title: '操作',
+                    attributes: {style: "text-align:center"},
+                    command: [{
+                        name: "查",
+                        text: "<i class='fa fa-search'></i>",
+                        click: function (e) {
+                            var tr = $(e.target).closest("tr");
+                            var dataItem = this.dataItem(tr);
+//                            parent.openTab("set_"+dataItem.shareRuleId,dataItem.equipmentName,"fin/share_rule_to.html/?shareRuleId="+dataItem.shareRuleId);
+                            window.location.href = "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId;
+                        }
+                    },
+                        {name: "edit"}
+                    ],
+                    width: '8%'
+                },
+                {
+                    field: "companyId",
+                    title: '公司',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    template: function (rowdata) {
+                        for (var k in companyArray) {
+                            if (companyArray[k].companyId == rowdata.companyId) {
+                                return companyArray[k].companyFullName
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        if (options.model.shareRuleId == "") {
+                            $('<input id="comp" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                            $("#comp").kendoDropDownList({
+                                optionLabel: "--请选择--",
+                                dataTextField: "companyFullName",
+                                dataValueField: "companyId",
+                                dataSource: companyArray,
+                                change: function (e) {
+                                    options.model.companyId = e.sender._old;
+                                    var cpd = {};
+                                    for (var key in cp) {
+                                        if (cp[key].companyId == e.sender._old) {
+                                            cpd = cp[key].proo;
+                                        }
+                                    }
+                                    $("#pro").kendoDropDownList({
+                                        optionLabel: "--请选择--",
+                                        dataTextField: "projectName",
+                                        dataValueField: "projectId",
+                                        dataSource: cpd,
+                                        index: -1,
+                                        change: function (e) {
+                                            options.model.projectId = e.sender._old;
+                                            epArray = [];
+                                            var a = 0;
+                                            for(var k2 in codeArray){
+                                                a = 0;
+                                                if(codeArray[k2].projectId == options.model.projectId){
+                                                    var obj = new Object();
+                                                    obj.equipmentTypeId = codeArray[k2].equipmentTypeId;
+                                                    obj.typeName = codeArray[k2].typeName;
+                                                    for(var k3 in epArray){
+                                                        if(epArray[k3].typeName == obj.typeName){
+                                                            a++;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if(a==0)
+                                                    {
+                                                        epArray.push(obj);
+                                                    }
+                                                }
+                                            }
+                                            $("#equip").kendoDropDownList({
+                                                optionLabel: "--请选择--",
+                                                dataTextField: "typeName",
+                                                dataValueField: "equipmentTypeId",
+                                                dataSource: epArray,
+                                                change: function (e) {
+                                                    options.model.equipmentTypeId = e.sender._old;
+                                                },
+                                            }).data("kendoDropDownList");
+                                        }
+                                    }).data("kendoDropDownList");
+                                    kendo.bind($('#pro'), viewModel);
+                                }
+                            }).data("kendoDropDownList");
+                            kendo.bind($('#comp'), viewModel);
+                        } else {
+                            for (var k in companyArray) {
+                                if (companyArray[k].companyId == options.model.companyId) {
+                                    $('<span>' + companyArray[k].companyFullName + '</span>')
+                                        .appendTo(container)
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    field: "projectId",
+                    title: '项目',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    template: function (rowdata) {
+                        for (var k in projectArray) {
+                            if (projectArray[k].projectId == rowdata.projectId) {
+                                return projectArray[k].projectName
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        if (options.model.shareRuleId == "") {
+                            $('<input id="pro" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                            $("#pro").kendoDropDownList({
+                                optionLabel: "--请选择--",
+                                dataTextField: "projectName",
+                                dataValueField: "projectId",
+                                index: -1,
+                                dataSource: projectArray,
+                                change: function (e) {
+                                    options.model.projectId = e.sender._old;
+                                }
+                            }).data("kendoDropDownList");
+                            kendo.bind($('#pro'), viewModel);
+                        } else {
+                            for (var k in projectArray) {
+                                if (projectArray[k].projectId == options.model.projectId) {
+                                    $('<span>' + projectArray[k].projectName + '</span>')
+                                        .appendTo(container)
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    field: "equipmentTypeId",
+                    title: '仪表类型',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    template: function (rowdata) {
+                        for (var k in equipmentArray) {
+                            if (equipmentArray[k].equipmentTypeId == rowdata.equipmentTypeId) {
+                                return equipmentArray[k].typeName
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        if (options.model.shareRuleId == "") {
+                            $('<input id="equip" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                                $("#equip").kendoDropDownList({
+                                    optionLabel: "--请选择--",
+                                    dataTextField: "typeName",
+                                    dataValueField: "equipmentTypeId",
+                                    dataSource: equipmentArray,
+                                    change: function (e) {
+                                        options.model.equipmentTypeId = e.sender._old;
+                                    },
+                                }).data("kendoDropDownList");
+                        } else {
+                            for (var k in equipmentArray) {
+                                if (equipmentArray[k].equipmentTypeId == options.model.equipmentTypeId) {
+                                    $('<span>' + equipmentArray[k].typeName + '</span>')
+                                        .appendTo(container)
+                                }
+                            }
+                        }
+                    },
+                },
+                {
+                    field: "equipmentId",
+                    title: '仪表编号',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    template: function (rowdata) {
+                        var a = 0;
+                        for (var k in hasEquip) {
+                            a = 0;
+                            if (hasEquip[k] == rowdata.equipmentId) {
+                                a++;
+                                break;
+                            }
+                        }
+                        if (a == 0) {
+                            hasEquip.push(rowdata.equipmentId);
+                        }
+                        for (var k in codeArray) {
+                            if (codeArray[k].equipmentId == rowdata.equipmentId) {
+                                return codeArray[k].equipmentCode
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        if (options.model.shareRuleId == "") {
+                            $('<input id="code_edit" style="width: 90%" required validationMessage="必填" type="text" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                            $("#code_edit").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "HPMS_MDM_FIN_SHARE")}, {
+                                    select: function (e) {
+                                        for (var k in hasEquip) {
+                                            if (e.item.equipmentId == hasEquip[k]) {
+                                                kendo.ui.showWarningDialog({
+                                                    message: '同种设备只可创建一次!'
+                                                });
+                                                $(".k-input").val(null);
+                                                $("#code_edit").val(null);
+                                                $("#name_edit").val(null);
+                                                break;
+                                            } else {
+                                                $("#name_edit").val(e.item.equipmentName);
+                                            }
+                                        }
+                                    },
+                                    query: function (e) {
+                                        if (!e.param.companyId) {
+                                            e.param.companyId = options.model.companyId;
+                                        }
+                                        if (!e.param.projectId) {
+                                            e.param.projectId = options.model.projectId;
+                                        }
+                                        if(!e.param.equipmentTypeId){
+                                            e.param.equipmentTypeId = options.model.equipmentTypeId;
+                                        }
+                                    }
+                                }
+                            ));
+                        } else {
+                            for (var k in codeArray) {
+                                if (codeArray[k].equipmentId == options.model.equipmentId) {
+                                    $('<span>' + codeArray[k].equipmentCode + '</span>')
+                                        .appendTo(container)
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    field: "equipmentName",
+                    title: '仪表名称',
+                    width: '10%',
+                    attributes: {style: "text-align:center"},
+                    template: function (rowdata) {
+                        for (var k in codeArray) {
+                            if (codeArray[k].equipmentId == rowdata.equipmentId) {
+                                return codeArray[k].equipmentName
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        if (options.model.shareRuleId == "") {
+                            $('<input id="name_edit" disabled type="text" class="k-textbox" name="' + options.field + '"/>').appendTo(container)
+                        } else {
+                            for (var k in codeArray) {
+                                if (codeArray[k].equipmentId == options.model.equipmentId) {
+                                    $('<span>' + codeArray[k].equipmentName + '</span>')
+                                        .appendTo(container)
+                                }
+                            }
+                        }
+                    },
+                },
+                {
+                    field: "shareRule",
+                    title: '分摊规则',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    template: function (rowdata) {
+                        for (var k in resourceTypeData) {
+                            if (resourceTypeData[k].value == rowdata.shareRule) {
+                                return resourceTypeData[k].meaning
+                            }
+                        }
+                    },
+                    editor: function (container, options) {
+                        $('<input id="rule_edit" required type="text" validationMessage="必填" style="width: 90%" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                        $("#rule_edit").kendoDropDownList({
+                            optionLabel: "--请选择--",
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            valuePrimitive: true,
+                            dataSource: resourceTypeData,
+                            index: -1,
+                        });
+                    }
+                },
+            ],
+        }).data("kendoGrid");
+        // 自动填充界面
+        Hap.autoResizeGrid("#grid");
+        // 标题居中
+        $("#grid thead>tr th").css("text-align", "center");
+    </script>
+    </body>
