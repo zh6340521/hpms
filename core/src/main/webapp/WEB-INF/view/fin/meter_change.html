@@ -14,7 +14,9 @@
     var equipmentId = <#if RequestParameters.equipmentId?exists> ${RequestParameters.equipmentId} <#else>-1</#if>;
     var changeFlag=<#if RequestParameters.optionType?exists> ${RequestParameters.optionType} <#else>-1</#if>;
     var customerBindId=<#if RequestParameters.customerBindId?exists> ${RequestParameters.customerBindId} <#else>-1</#if>;
+    var propertyId = <#if RequestParameters.propertyId?exists> ${RequestParameters.propertyId} <#else>-1</#if>;
     console.log(customerBindId);
+    console.log(propertyId);
     viewModel = kendo.observable({
         model: {
             newRecordFlag : "Y",
@@ -22,6 +24,7 @@
         }
     });
     if(equipmentId !=-1){
+
         $.ajax({
             type   : "POST",
             url: "${base.contextPath}/hpms/fin/pubmeter/change/query",
