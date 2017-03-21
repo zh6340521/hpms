@@ -27,6 +27,10 @@
         <result column="YEAR" property="year" jdbcType="VARCHAR" />
         <result column="MONTH" property="month" jdbcType="VARCHAR" />
         <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL" />
+
+        <!--fuchun.hu@hand-china.com  加了关于暂存字段的映射-->
+        <result column="startMonth" property="startMonth" jdbcType="VARCHAR"/>
+        <result column="endMonth" property="endMonth" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="YearResultMap" type="com.hand.hap.system.dto.Code">
@@ -194,6 +198,78 @@
         and batch.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
         and batch.year=#{year,jdbcType=VARCHAR}
         and batch.month=#{month,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询抄表历史数据 根据开始月份和结束月份   fuchun.hu@hand-china.com-->
+    <select id="queryMeterReadHisForMsr" parameterType="hpms.fin.dto.MeterReadHis" resultMap="BaseResultMap">
+        SELECT HFMRH.READ_HIS_ID,
+        HFMRH.COMPANY_ID,
+        HFMRH.PROJECT_ID,
+        HFMRH.EQUIPMENT_ID,
+        HFMRH.INVOICE_CODE,
+        HFMRH.LAST_READ,
+        HFMRH.CURRENT_READ,
+        HFMRH.METER_TOTAL_USE,
+        HFMRH.METER_TOTAL_AMOUNT,
+        HFMRH.READ_DATE,
+        HFMRH.FLAG,
+        HFMRH.NEW_RECORD_FLAG,
+        HFMRH.IS_POSTED_FLAG,
+        HFMRH.STATUS,
+        HFMRH.PROGRAM_ID,
+        HFMRH.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HME.EQUIPMENT_NAME,
+        HCVV.MEANING STATUS_DESC,
+        HME.EQUIPMENT_TYPE_ID,
+        HFMRH.PROPERTY_ID,
+        TO_CHAR(HFMRH.READ_DATE,'YYYY') YEAR,
+        TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) MONTH
+        FROM HPMS_FIN_METER_READ_HIS HFMRH
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HFMRH.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HFMRH.PROJECT_ID = HMP.PROJECT_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME
+        ON HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HPMS_METER_ENTER_STATUS'
+        AND HCVV.VALUE = HFMRH.STATUS
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+        WHERE 1=1
+        <if test="equipmentId!=null">
+            AND HFMRH.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="equipmentTypeId!=null">
+            and HME.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="companyId!=null">
+            and FCB.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+        </if>
+        <if test="projectId!=null">
+            and HMP.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="year!=null">
+            and TO_CHAR(HFMRH.READ_DATE,'YYYY')=#{year,jdbcType=VARCHAR}
+        </if>
+
+        <if test="startMonth!=null">
+            and  TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) <![CDATA[ >= ]]>
+            #{startMonth,jdbcType=VARCHAR}
+        </if>
+
+        <if test="endMonth!=null">
+            and TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) <![CDATA[ <= ]]>
+            #{endMonth,jdbcType=VARCHAR}
+        </if>
+
     </select>
 
 </mapper>

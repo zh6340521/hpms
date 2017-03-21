@@ -25,4 +25,25 @@ public interface IMeterShareResultService extends IBaseService<MeterShareResult>
      * @return
      */
     List<MeterCharge> findEquipmentTypeByMeterCharge(MeterCharge meterCharge,IRequest requestContext);
+
+    /**
+     * 查询当前年份下拉框
+     * @return
+     */
+    List<MeterShareResult> findYear();
+
+    /**
+     * 查询当前月份下拉框
+     * @return
+     */
+    List<MeterShareResult> findMonth();
+
+    /**
+     * 批量更新
+     * @param requestCtx
+     * @param meterShareResultList
+     */
+    void myBatchUpdate(IRequest requestCtx, List<MeterShareResult> meterShareResultList);
+
+
 }

@@ -4,10 +4,7 @@ package hpms.fin.dto;/**
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -101,6 +98,47 @@ public class MeterShareResult extends BaseDTO {
      */
     @Column
     private String status;
+
+    @Transient
+    private String year; //当前年份
+    @Transient
+    private String Month;//月份
+    @Transient
+    private String startMonth;//开始月份
+    @Transient
+    private String endMonth;//结束月份
+
+    public String getMonth() {
+        return Month;
+    }
+
+    public void setMonth(String month) {
+        Month = month;
+    }
+
+    public String getEndMonth() {
+        return endMonth;
+    }
+
+    public void setEndMonth(String endMonth) {
+        this.endMonth = endMonth;
+    }
+
+    public String getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(String startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
 
     public Long getShareResultId() {
         return shareResultId;

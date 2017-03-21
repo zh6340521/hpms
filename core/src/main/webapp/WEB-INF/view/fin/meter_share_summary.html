@@ -1,0 +1,305 @@
+<#--
+        * description:公表分摊结果显示界面
+        * author:fuchun.hu@hand-china.com
+        * version: 1.0
+        *
+        -->
+    <#include "../include/header.html">
+<body>
+<style>
+    span[class='k-window-title'] {
+        user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    span[class^="l-icon-"] {
+        width: 20px;
+        height: 16px;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    span.red {
+        color: red;
+        font-weight: bold;
+    }
+
+
+
+</style>
+<script src="${base.contextPath}/common/code?shareRuleData=HPMS_MDM_PROPERTY_STATUS" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?enterStatusData=HPMS_METER_ENTER_STATUS" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model:{},
+
+        //查询
+        queryResource: function(e) {
+            $('#grid').data('kendoGrid').dataSource.page(1);
+        },
+
+
+
+    });
+
+
+
+</script>
+
+<!--***************************查询字段分割线*****************************-->
+<div id="page-content">
+    <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+        <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+            <div class="panel-body">
+
+                <div class="row" style="margin-bottom: 5px;">
+                    <!-- 公司 -->
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.property.company"/></label>
+                            <div class="col-sm-8">
+                                <input type="text" id="companyId" style="width: 160px"
+                                       data-bind="value:model.companyId">
+                                <script>
+                                    $("#companyId").kendoComboBox({
+                                        valuePrimitive: true,  //原始值
+                                        dataTextField: "companyFullName",
+                                        dataValueField: "companyId",
+                                        dataSource: {
+                                            transport: {
+                                                read: {
+                                                    url:"${base.contextPath}/mdm/property/companyQuery",
+                                                    type : "POST"
+                                                },
+                                                contentType : "application/json",
+                                            },
+                                            schema: {
+                                                data: 'rows'
+                                            }
+                                        },
+                                        change:function(e){
+                                            //改变值时将带出的值也消失
+                                            if(this.value()==null||this.value()==""){
+                                                document.getElementById("projectId").value = "";
+                                                document.getElementById("equipmentId").value = "";
+                                            }
+
+                                        },
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目 -->
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.property.project"/></label>
+                            <div class="col-sm-8">
+                                <input type="text" id="projectId" style="width: 160px"
+                                       data-bind="value:model.projectId">
+                            </div>
+                            <script>
+                                $("#projectId").kendoComboBox({
+                                    autoBind: false,
+                                    valuePrimitive: true,
+                                    cascadeFrom: "companyId",  //联动绑定的参数
+                                    cascadeFromField: "companyId",
+                                    filter: "contains",
+                                    dataTextField: "projectName",
+                                    dataValueField: "projectId",
+                                    dataSource: {
+                                        serverFiltering:true,
+                                        transport: {
+                                            read: {
+                                                url:"${base.contextPath}/mdm/property/projectQuery",
+                                                type : "POST"
+                                            },
+                                            contentType : "application/json",
+                                            parameterMap: function(options, type) {
+                                                if (type === "read") {
+                                                    var filter = options.filter.filters[0]
+                                                    var map = {};
+                                                    map[filter.field] = filter.value;
+                                                    return map;
+                                                }
+                                            }
+                                        },
+                                        schema: {
+                                            data: 'rows'
+                                        }
+                                    },
+                                }) ;
+                            </script>
+
+                        </div>
+                    </div>
+
+                    <!-- 仪表类型 -->
+                   <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">仪表类型</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="equipmentId" style="width: 160px"
+                                       data-bind="value:model.equipmentId">
+                            </div>
+                            <script>
+                               $("#equipmentId").kendoComboBox({
+                                   autoBind: false,
+                                   valuePrimitive: true,
+                                   cascadeFrom: "projectId",  //联动绑定的参数
+                                   cascadeFromField: "projectId",
+                                   filter: "contains",
+                                   dataTextField: "typeName",
+                                   dataValueField: "equipmentTypeId",
+                                   dataSource: {
+                                       serverFiltering:true,
+                                       transport: {
+                                           read: {
+                                               url: "${base.contextPath}/fin/metershareresult/queryEquipmentId",
+                                               type : "POST"
+                                           },
+                                           contentType : "application/json",
+                                           parameterMap: function(options, type) {
+                                               if (type === "read") {
+                                                   var filter = options.filter.filters[0]
+                                                   var map = {};
+                                                   map[filter.field] = filter.value;
+                                                   return map;
+                                               }
+                                           }
+                                       },
+                                       schema: {
+                                           data: 'rows'
+                                       }
+                                   },
+
+                               }) ;
+
+                            </script>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 5px;">
+                    <!--仪表编号-->
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">仪表编号</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" id="equipmentId" style="width: 160px"
+                                       data-bind="value:model.equipmentId">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--仪表名称-->
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">仪表名称</label>
+                            <div class="col-sm-8">
+                                <input class="k-textbox" type="text" id="equipmentId12" style="width: 160px"
+                                       data-bind="value:model.equipmentId12">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--分摊规则-->
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">分摊规则</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="shareRule" style="width: 160px"
+                                       data-bind="value:model.shareRule">
+                                <script>
+                                    $("#shareRule").kendoComboBox({
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: shareRuleData
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--状态-->
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">状态</label>
+                            <div class="col-sm-8">
+                                <input  type="text" id="status" style="width: 160px"
+                                       data-bind="value:model.status">
+
+                                <script>
+                                    $("#status").kendoComboBox({
+                                        valuePrimitive: true,
+                                        dataTextField: "meaning",
+                                        dataValueField: "value",
+                                        dataSource: enterStatusData
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </form>
+    </div>
+    <!--将form和viewmodel进行绑定-->
+    <script>kendo.bind($('#query-form'), viewModel);</script>
+
+    <div class="row" style="margin-left: 0px;margin-bottom: 10px">
+        <div id="toolbar-btn" style="padding-bottom: 10px;">
+                        <span class="btn btn-primary k-grid-add"
+                              style="float: left; margin-right: 5px;"
+                              onclick="addShare()">
+                            <i class="fa fa-plus-square" style="margin-right:3px;"></i>分摊</span>
+
+                        <span class="btn btn-primary k-grid-add"
+                             style="float: left; margin-right: 5px;"
+                              data-bind="click:createFunction">转入计费</span>
+                        <span class="btn btn-primary k-grid-save-changes"
+                              style="float: left; margin-right: 5px;"
+                              data-bind="click:queryResource">
+                            <i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+        </div>
+    </div>
+
+
+    <!--将按钮绑定到viewmodel上-->
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+    <div style="clear: both;">
+        <div id="grid"></div>
+    </div>
+
+    <div id="createShareWin"></div>
+</div>
+
+<script>
+    //点击【分摊】出现弹框
+    function addShare(){
+        $("#createShareWin").kendoWindow({
+            actions: ["Close"],
+            title: $l('分摊'),
+            draggable: true,
+            width: "900px",
+            height:"450px",
+            content: "${base.contextPath}/fin/meter_share_query.html",
+            iframe: true,
+            modal: true,
+            close: function(){
+                $("#createShareWin").empty();
+
+            }
+        });
+        var win = $("#createShareWin").data("kendoWindow");
+        win.center().open();
+    }
+
+</script>
+</body>

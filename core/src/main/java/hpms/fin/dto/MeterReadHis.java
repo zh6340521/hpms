@@ -1,10 +1,9 @@
 package hpms.fin.dto;
 
-import javax.persistence.*;
-
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import com.hand.hap.system.dto.BaseDTO;
 
+import javax.persistence.*;
 import java.util.Date;
 
 @ExtensionAttribute(disable = true)
@@ -60,6 +59,31 @@ public class MeterReadHis extends BaseDTO {
     private String year;
     @Transient
     private String month;
+
+    /**
+     *  fuchun.hu@hand-china.com
+     *  加了暂存字段 开始月份和结束月份
+     */
+    @Transient
+    private String startMonth;//开始月份
+    @Transient
+    private String endMonth;//结束月份
+
+    public String getStartMonth() {
+        return startMonth;
+    }
+
+    public void setStartMonth(String startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public String getEndMonth() {
+        return endMonth;
+    }
+
+    public void setEndMonth(String endMonth) {
+        this.endMonth = endMonth;
+    }
 
     public Long getPropertyId() {
         return propertyId;
