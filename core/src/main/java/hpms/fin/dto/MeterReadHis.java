@@ -4,243 +4,253 @@ import javax.persistence.*;
 
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import com.hand.hap.system.dto.BaseDTO;
+
 import java.util.Date;
 
-@ExtensionAttribute(disable=true)
+@ExtensionAttribute(disable = true)
 @Table(name = "HPMS_FIN_METER_READ_HIS")
 public class MeterReadHis extends BaseDTO {
-     @Id
-     @Column
-     @GeneratedValue
-      private Long readHisId;
-     @Column
-      private Long companyId;
-     @Column
-      private Long projectId;
-     @Column
-      private Long equipmentId;
-     @Column
-      private String invoiceCode;
-     @Column
-      private Float lastRead;
-     @Column
-      private Float currentRead;
-     @Column
-      private Float meterTotalUse;
-     @Column
-      private Float meterTotalAmount;
-     @Column
-      private Date readDate;
-     @Column
-      private String flag;
-     @Column
-      private String newRecordFlag;
-     @Column
-      private String isPostedFlag;
-     @Column
-      private String status;
-     @Column
-      private Long programId;
-     @Column
-      private Long requestId;
-     @Transient
-      private String companyFullName;
-     @Transient
-      private String projectName;
-     @Transient
-      private String equipmentName;
-     @Transient
-      private String statusDesc;
-     @Transient
-      private Long equipmentTypeId;
-     @Transient
-      private String year;
-     @Transient
-      private String month;
+    @Id
+    @Column
+    @GeneratedValue
+    private Long readHisId;
+    @Column
+    private Long companyId;
+    @Column
+    private Long projectId;
+    @Column
+    private Long equipmentId;
+    @Column
+    private String invoiceCode;
+    @Column
+    private Float lastRead;
+    @Column
+    private Float currentRead;
+    @Column
+    private Float meterTotalUse;
+    @Column
+    private Float meterTotalAmount;
+    @Column
+    private Date readDate;
+    @Column
+    private String flag;
+    @Column
+    private String newRecordFlag;
+    @Column
+    private String isPostedFlag;
+    @Column
+    private String status;
+    @Column
+    private Long programId;
+    @Column
+    private Long requestId;
+    @Column
+    private Long propertyId;
+    @Transient
+    private String companyFullName;
+    @Transient
+    private String projectName;
+    @Transient
+    private String equipmentName;
+    @Transient
+    private String statusDesc;
+    @Transient
+    private Long equipmentTypeId;
+    @Transient
+    private String year;
+    @Transient
+    private String month;
 
+    public Long getPropertyId() {
+        return propertyId;
+    }
 
-     public void setReadHisId(Long readHisId){
-         this.readHisId = readHisId;
-     }
+    public void setPropertyId(Long propertyId) {
+        this.propertyId = propertyId;
+    }
 
-     public Long getReadHisId(){
-         return readHisId;
-     }
+    public void setReadHisId(Long readHisId) {
+        this.readHisId = readHisId;
+    }
 
-     public void setCompanyId(Long companyId){
-         this.companyId = companyId;
-     }
+    public Long getReadHisId() {
+        return readHisId;
+    }
 
-     public Long getCompanyId(){
-         return companyId;
-     }
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
 
-     public void setProjectId(Long projectId){
-         this.projectId = projectId;
-     }
+    public Long getCompanyId() {
+        return companyId;
+    }
 
-     public Long getProjectId(){
-         return projectId;
-     }
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-     public void setEquipmentId(Long equipmentId){
-         this.equipmentId = equipmentId;
-     }
+    public Long getProjectId() {
+        return projectId;
+    }
 
-     public Long getEquipmentId(){
-         return equipmentId;
-     }
+    public void setEquipmentId(Long equipmentId) {
+        this.equipmentId = equipmentId;
+    }
 
-     public void setInvoiceCode(String invoiceCode){
-         this.invoiceCode = invoiceCode;
-     }
+    public Long getEquipmentId() {
+        return equipmentId;
+    }
 
-     public String getInvoiceCode(){
-         return invoiceCode;
-     }
+    public void setInvoiceCode(String invoiceCode) {
+        this.invoiceCode = invoiceCode;
+    }
 
-     public void setLastRead(Float lastRead){
-         this.lastRead = lastRead;
-     }
+    public String getInvoiceCode() {
+        return invoiceCode;
+    }
 
-     public Float getLastRead(){
-         return lastRead;
-     }
+    public void setLastRead(Float lastRead) {
+        this.lastRead = lastRead;
+    }
 
-     public void setCurrentRead(Float currentRead){
-         this.currentRead = currentRead;
-     }
+    public Float getLastRead() {
+        return lastRead;
+    }
 
-     public Float getCurrentRead(){
-         return currentRead;
-     }
+    public void setCurrentRead(Float currentRead) {
+        this.currentRead = currentRead;
+    }
 
-     public void setMeterTotalUse(Float meterTotalUse){
-         this.meterTotalUse = meterTotalUse;
-     }
+    public Float getCurrentRead() {
+        return currentRead;
+    }
 
-     public Float getMeterTotalUse(){
-         return meterTotalUse;
-     }
+    public void setMeterTotalUse(Float meterTotalUse) {
+        this.meterTotalUse = meterTotalUse;
+    }
 
-     public void setMeterTotalAmount(Float meterTotalAmount){
-         this.meterTotalAmount = meterTotalAmount;
-     }
+    public Float getMeterTotalUse() {
+        return meterTotalUse;
+    }
 
-     public Float getMeterTotalAmount(){
-         return meterTotalAmount;
-     }
+    public void setMeterTotalAmount(Float meterTotalAmount) {
+        this.meterTotalAmount = meterTotalAmount;
+    }
 
-     public void setReadDate(Date readDate){
-         this.readDate = readDate;
-     }
+    public Float getMeterTotalAmount() {
+        return meterTotalAmount;
+    }
 
-     public Date getReadDate(){
-         return readDate;
-     }
+    public void setReadDate(Date readDate) {
+        this.readDate = readDate;
+    }
 
-     public void setFlag(String flag){
-         this.flag = flag;
-     }
+    public Date getReadDate() {
+        return readDate;
+    }
 
-     public String getFlag(){
-         return flag;
-     }
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
-     public void setNewRecordFlag(String newRecordFlag){
-         this.newRecordFlag = newRecordFlag;
-     }
+    public String getFlag() {
+        return flag;
+    }
 
-     public String getNewRecordFlag(){
-         return newRecordFlag;
-     }
+    public void setNewRecordFlag(String newRecordFlag) {
+        this.newRecordFlag = newRecordFlag;
+    }
 
-     public void setIsPostedFlag(String isPostedFlag){
-         this.isPostedFlag = isPostedFlag;
-     }
+    public String getNewRecordFlag() {
+        return newRecordFlag;
+    }
 
-     public String getIsPostedFlag(){
-         return isPostedFlag;
-     }
+    public void setIsPostedFlag(String isPostedFlag) {
+        this.isPostedFlag = isPostedFlag;
+    }
 
-     public void setStatus(String status){
-         this.status = status;
-     }
+    public String getIsPostedFlag() {
+        return isPostedFlag;
+    }
 
-     public String getStatus(){
-         return status;
-     }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-     public void setProgramId(Long programId){
-         this.programId = programId;
-     }
+    public String getStatus() {
+        return status;
+    }
 
-     public Long getProgramId(){
-         return programId;
-     }
+    public void setProgramId(Long programId) {
+        this.programId = programId;
+    }
 
-     public void setRequestId(Long requestId){
-         this.requestId = requestId;
-     }
+    public Long getProgramId() {
+        return programId;
+    }
 
-     public Long getRequestId(){
-         return requestId;
-     }
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
+    }
 
-     public void setCompanyFullName(String companyFullName){
+    public Long getRequestId() {
+        return requestId;
+    }
+
+    public void setCompanyFullName(String companyFullName) {
         this.companyFullName = companyFullName;
     }
 
-     public String getCompanyFullName(){
+    public String getCompanyFullName() {
         return companyFullName;
     }
 
-     public void setProjectName(String projectName){
+    public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
 
-     public String getProjectName(){
+    public String getProjectName() {
         return projectName;
     }
 
-     public void setEquipmentName(String equipmentName){
+    public void setEquipmentName(String equipmentName) {
         this.equipmentName = equipmentName;
     }
 
-     public String getEquipmentName(){
+    public String getEquipmentName() {
         return equipmentName;
     }
 
-     public void setStatusDesc(String statusDesc){
+    public void setStatusDesc(String statusDesc) {
         this.statusDesc = statusDesc;
     }
 
-     public String getStatusDesc(){
+    public String getStatusDesc() {
         return statusDesc;
     }
 
-     public void setEquipmentTypeId(Long equipmentTypeId){
+    public void setEquipmentTypeId(Long equipmentTypeId) {
         this.equipmentTypeId = equipmentTypeId;
     }
 
-     public Long getEquipmentTypeId(){
+    public Long getEquipmentTypeId() {
         return equipmentTypeId;
     }
 
-    public void setYear(String year){
+    public void setYear(String year) {
         this.year = year;
     }
 
-    public String getYear(){
+    public String getYear() {
         return year;
     }
 
-    public void setMonth(String month){
+    public void setMonth(String month) {
         this.month = month;
     }
 
-    public String getMonth(){
+    public String getMonth() {
         return month;
     }
 
-     }
+}

@@ -26,6 +26,7 @@
         <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL" />
         <result column="YEAR" property="year" jdbcType="VARCHAR" />
         <result column="MONTH" property="month" jdbcType="VARCHAR" />
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL" />
     </resultMap>
 
     <resultMap id="YearResultMap" type="com.hand.hap.system.dto.Code">
@@ -59,6 +60,7 @@
         HME.EQUIPMENT_NAME,
         HCVV.MEANING STATUS_DESC,
         HME.EQUIPMENT_TYPE_ID,
+        HFMRH.PROPERTY_ID,
         TO_CHAR(HFMRH.READ_DATE,'YYYY') YEAR,
         TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) MONTH
         FROM HPMS_FIN_METER_READ_HIS HFMRH
