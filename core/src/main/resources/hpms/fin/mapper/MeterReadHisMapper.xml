@@ -124,7 +124,7 @@
         HFMRH.CURRENT_READ,
         HFMRH.METER_TOTAL_USE,
         HFMRH.METER_TOTAL_AMOUNT,
-        TRUNC(SYSDATE) READ_DATE,
+        TO_DATE((to_char(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYYMM') || TO_CHAR(SYSDATE,'DD')),'YYYYMMDD') READ_DATE,
         HFMRH.FLAG,
         'Y' NEW_RECORD_FLAG,
         HFMRH.IS_POSTED_FLAG,
@@ -189,24 +189,11 @@
         WHERE 1=1
         AND HFMRH.READ_HIS_ID IS not NULL ) batch
         WHERE 1=1
-        <if test="equipmentId!=null">
-            AND batch.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
-        </if>
-        <if test="companyId!=null">
-            and batch.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
-        </if>
-        <if test="projectId!=null">
-            and batch.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
-        </if>
-        <if test="equipmentTypeId!=null">
-            and batch.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
-        </if>
-        <if test="year!=null">
-            and batch.year=#{year,jdbcType=VARCHAR}
-        </if>
-        <if test="month!=null">
-            and batch.month=#{month,jdbcType=VARCHAR}
-        </if>
+        and batch.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+        and batch.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+        and batch.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+        and batch.year=#{year,jdbcType=VARCHAR}
+        and batch.month=#{month,jdbcType=VARCHAR}
     </select>
 
 </mapper>
