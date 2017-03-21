@@ -7,7 +7,23 @@ import hpms.fin.dto.MeterReadHis;
 import java.util.List;
 
 public interface MeterReadHisMapper extends Mapper<MeterReadHis>{
+    /**
+     * 查询抄表历史数据
+     * @author jun.zhao02@hand-china.com
+     * 2017年3月14日 11:00:00
+     * @param meterReadHis
+     * @return
+     */
     List<MeterReadHis> queryMeterReadHis(MeterReadHis meterReadHis);
+
+    /**
+     * 查询公表抄表历史数据
+     * @author jun.zhao02@hand-china.com
+     * 2017年3月14日 11:00:00
+     * @param meterReadHis
+     * @return
+     */
+    List<MeterReadHis> queryPubMeterReadHis(MeterReadHis meterReadHis);
     List<Code> queryYear(Code code);
     List<Code> queryMonth(Code code);
     List<MeterReadHis> batchMeterReadHis(MeterReadHis meterReadHis);

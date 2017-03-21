@@ -28,6 +28,12 @@ public class MeterReadHisServiceImpl extends BaseServiceImpl<MeterReadHis> imple
     }
 
     @Override
+    public List<MeterReadHis> queryPubMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize) {
+        PageHelper.startPage(page, pagesize);
+        return meterReadHisMapper.queryPubMeterReadHis(meterReadHis);
+    }
+
+    @Override
     public List<MeterReadHis> changeMeterReadHis(IRequest requestContext, Long equipmentId, Long changeEipmentId) {
         MeterReadHis mrh = new MeterReadHis();
         mrh.setEquipmentId(equipmentId);
@@ -36,6 +42,19 @@ public class MeterReadHisServiceImpl extends BaseServiceImpl<MeterReadHis> imple
         for (MeterReadHis k:mList ) {
             k.setEquipmentId(changeEipmentId);
             k.set__status("add");
+        }
+        return batchUpdate(requestContext, mList);
+    }
+
+    @Override
+    public List<MeterReadHis> updateMeterHisOld(IRequest requestContext, Long equipmentId) {
+        MeterReadHis mrh = new MeterReadHis();
+        mrh.setEquipmentId(equipmentId);
+        mrh.setNewRecordFlag("Y");
+        List<MeterReadHis> mList = meterReadHisMapper.queryMeterReadHis(mrh);
+        for (MeterReadHis k:mList ) {
+            k.setNewRecordFlag("N");
+            k.set__status("update");
         }
         return batchUpdate(requestContext, mList);
     }

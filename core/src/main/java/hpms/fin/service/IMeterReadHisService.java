@@ -11,7 +11,11 @@ import java.util.List;
 public interface IMeterReadHisService extends IBaseService<MeterReadHis>, ProxySelf<IMeterReadHisService>{
     List<MeterReadHis> queryMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize);
 
+    List<MeterReadHis> queryPubMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize);
+
     List<MeterReadHis> changeMeterReadHis(IRequest requestContext, Long equipmentId, Long changeEipmentId);
+
+    List<MeterReadHis> updateMeterHisOld(IRequest requestContext, Long equipmentId);
 
     List<Code> queryYear(IRequest requestContext, Code code, int page, int pagesize);
 

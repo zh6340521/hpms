@@ -15,25 +15,35 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-    @Controller
+@Controller
     public class MeterReadHisController extends BaseController{
 
     @Autowired
     private IMeterReadHisService service;
 
-
     @RequestMapping(value = "/hpms/fin/meter/read/his/query")
     @ResponseBody
     public ResponseData query(MeterReadHis dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
-        @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         return new ResponseData(service.queryMeterReadHis(requestContext,dto,page,pageSize));
+    }
+
+    @RequestMapping(value = "/hpms/fin/meter/read/his/queryPub")
+    @ResponseBody
+    public ResponseData queryPub(MeterReadHis dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.queryPubMeterReadHis(requestContext,dto,page,pageSize));
     }
 
     @RequestMapping(value = "/hpms/fin/meter/read/his/submit")
     @ResponseBody
     public ResponseData update(HttpServletRequest request,@RequestBody List<MeterReadHis> dto) {
         IRequest requestCtx = createRequestContext(request);
+        for (MeterReadHis k:dto ) {
+            List<MeterReadHis> mList = service.updateMeterHisOld(requestCtx, k.getEquipmentId());
+        }
         return new ResponseData(service.batchUpdate(requestCtx, dto));
     }
 

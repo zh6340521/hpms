@@ -156,11 +156,12 @@
             <if test="equipmentTypeId!=null">
                 and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=VARCHAR}
             </if>
+            ORDER BY FCB.company_full_name,HMP.PROJECT_NAME,HME.EQUIPMENT_NAME
         </where>
 
     </select>
 
-    <!--查询公共仪表-->
+    <!--查询公共仪表初始化-->
     <select id="queryPubMeterInit" parameterType="hpms.fin.dto.PubMeter" resultMap="BaseResultMap">
         SELECT HME.EQUIPMENT_ID,
         HME.EQUIPMENT_TYPE_ID,
@@ -262,7 +263,7 @@
 
     </select>
 
-    <!--查询公共仪表-->
+    <!--查询公共仪表换表-->
     <select id="queryPubMeterChange" parameterType="hpms.fin.dto.PubMeter" resultMap="BaseResultMap">
         SELECT HME.EQUIPMENT_ID,
         HME.EQUIPMENT_TYPE_ID,
