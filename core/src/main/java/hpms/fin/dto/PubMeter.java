@@ -107,6 +107,26 @@ public class PubMeter extends BaseDTO {
     private String crName;
     @Transient
     private String initFlag;
+    @Transient
+    private String propertyName;
+    @Transient
+    private String propertyNumber;
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyNumber() {
+        return propertyNumber;
+    }
+
+    public void setPropertyNumber(String propertyNumber) {
+        this.propertyNumber = propertyNumber;
+    }
 
     public String getName() { return name; }
 
