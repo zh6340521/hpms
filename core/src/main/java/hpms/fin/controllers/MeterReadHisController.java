@@ -98,7 +98,7 @@ import java.util.List;
      */
     @RequestMapping(value = "/hpms/fin/meter/read/his/queryYear")
     @ResponseBody
-    public ResponseData queryYear( puCode dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+    public ResponseData queryYear(Code dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                                   @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         return new ResponseData(service.queryYear(requestContext,dto,page,pageSize));
