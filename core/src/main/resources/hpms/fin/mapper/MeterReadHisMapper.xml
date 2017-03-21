@@ -171,6 +171,7 @@
         ORDER BY FCB.COMPANY_FULL_NAME, HMP.PROJECT_NAME, HME.EQUIPMENT_NAME, HFMRH.READ_DATE
     </select>
 
+    <!--查询近5年的年份-->
     <select id="queryYear" parameterType="com.hand.hap.system.dto.Code" resultMap="YearResultMap">
         SELECT to_char(SYSDATE,'YYYY') - LEVEL + 1 code
         FROM dual
@@ -178,12 +179,14 @@
         ORDER BY 1
     </select>
 
+    <!--查询12个月-->
     <select id="queryMonth" parameterType="com.hand.hap.system.dto.Code" resultMap="MonthResultMap">
         SELECT LEVEL code
         FROM dual
         connect by LEVEL &lt;= 12
     </select>
 
+    <!--批量录入时列出公表的抄表-->
     <select id="batchMeterReadHis" parameterType="hpms.fin.dto.MeterReadHis" resultMap="BaseResultMap">
         select * from (SELECT HFMRH.READ_HIS_ID,
         HME.COMPANY_ID,
