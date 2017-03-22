@@ -8,4 +8,5 @@ import hpms.fin.dto.ShareRuleBind;
  * on 2017/3/20   19:29
  */
 public interface ShareRuleBindMapper extends Mapper<ShareRuleBind>{
+    int myInsert(ShareRuleBind shareRuleBind);
 }

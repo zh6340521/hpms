@@ -6,18 +6,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import static com.hand.hap.core.BaseConstants.GENERATOR_TYPE;
+
 /**
  * Created by LoseMyself
  * on 2017/3/20   19:24
  */
 @Table(name = "HPMS_FIN_METER_SHARE_BIND")
-public class ShareRuleBind extends BaseDTO {
+public class ShareRuleBind {
     /**
      * 表ID，主键，供其他表做外键
      */
     @Id
     @GeneratedValue(generator = GENERATOR_TYPE)
-    private Long shareBingId;
+    private Long shareBindId;
 
     // 公司ID
     private Long companyId;
@@ -31,12 +33,12 @@ public class ShareRuleBind extends BaseDTO {
     // 建筑实体ID
     private Long propertyId;
 
-    public Long getShareBingId() {
-        return shareBingId;
+    public Long getShareBindId() {
+        return shareBindId;
     }
 
-    public ShareRuleBind setShareBingId(Long shareBingId) {
-        this.shareBingId = shareBingId;
+    public ShareRuleBind setShareBingId(Long shareBindId) {
+        this.shareBindId = shareBindId;
         return this;
     }
 

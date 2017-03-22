@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="hpms.fin.mapper.ShareRuleBindMapper">
+    <insert id="myInsert" parameterType="hpms.fin.dto.ShareRuleBind">
+        INSERT INTO HPMS_FIN_METER_SHARE_BIND(company_id,project_id,share_rule_id,property_id,OBJECT_VERSION_NUMBER,CREATION_DATE,CREATED_BY,LAST_UPDATED_BY,LAST_UPDATE_DATE)
+        VALUES (#{companyId},#{projectId},#{shareRuleId},#{propertyId},1,sysdate,-1,-1,sysdate)
+    </insert>
 </mapper>

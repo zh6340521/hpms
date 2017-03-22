@@ -16,61 +16,35 @@
                     draggable: true,
                     height: "400px",
                     width: "510px",
-                    content: '${base.contextPath}/fin/room_tree.html?companyId='+viewModel.model.companyId+'&projectId='+viewModel.model.projectId,
+                    content: '${base.contextPath}/fin/share_room.html?companyId='+companyId+'&projectId='+projectId+"&shareRuleId="+shareRuleId,
                     iframe: true,
                     modal: true,
                 });
                 var win = $("#room_tree").data("kendoWindow");
                 win.center().open();
             },
-
         });
-
         // 获取chargeRuleId
         var shareRuleId = ${RequestParameters.shareRuleId!0};
+        var projectId = ${RequestParameters.projectId!0};
+        var companyId = ${RequestParameters.companyId!0};
         var equipmentId = ${RequestParameters.equipmentId!0};
 
-
-        var companyArray = null;
-        var projectArray = null;
-        var equipmentArray = null;
-        var eq = [];
-        $.ajax({
-            type   : "GET",
-            url: "${base.contextPath}/fnd/company/query",
-            data: '',
-            async: false,
-            success: function(args) {
-                companyArray = args.rows;
-            }
-        });
-        $.ajax({
-            type   : "GET",
-            url: "${base.contextPath}/hpms/mdm/project/query",
-            data: '',
-            async: false,
-            success: function(args) {
-                projectArray = args.rows;
-            }
-        });
-        $.ajax({
-            type   : "GET",
-            url: "${base.contextPath}/mdm/equipmentType/query",
-            data: '',
-            async: false,
-            success: function(args) {
-                equipmentArray = args.rows;
-            }
-        })
+        // 获取该记录的基本信息
         $.ajax({
             type : "GET",
             url: "${base.contextPath}/hpms/fin/pubmeter/query?equipmentId="+equipmentId,
             data:'',
             async: false,
             success: function(args) {
-                console.log(args);
+                viewModel.model.companyName = args.rows[0].companyFullName;
+                viewModel.model.projectName = args.rows[0].projectName;
+                viewModel.model.typeName = args.rows[0].typeName;
+                viewModel.model.equipmentName = args.rows[0].equipmentName;
+                viewModel.model.equipmentCode = args.rows[0].equipmentCode;
             }
-        })
+        });
+        // 获取公表分摊规则名称
         $.ajax({
             type   : "GET",
             url: '${base.contextPath}/fin/share/query?shareRuleId='+shareRuleId,
@@ -83,26 +57,20 @@
                         viewModel.model.shareRule = resourceTypeData[k].meaning;
                     }
                 }
-                for(var k in companyArray){
-                    if(companyArray[k].companyId ==args.rows[0].companyId){
-                        viewModel.model.companyId = companyArray[k].companyId;
-                        viewModel.model.companyName = companyArray[k].companyFullName;
-                    }
-                }
-                for(var k in projectArray){
-                    if(projectArray[k].projectId ==args.rows[0].projectId){
-                        viewModel.model.projectId = projectArray[k].projectId;
-                        viewModel.model.projectName = projectArray[k].projectName;
-                    }
-                }
-                for(var k in equipmentArray){
-                    if(equipmentArray[k].equipmentTypeId ==args.rows[0].equipmentTypeId){
-                        viewModel.model.equipmentTypeId = equipmentArray[k].equipmentTypeId;
-                        viewModel.model.typeName = equipmentArray[k].typeName;
-                    }
-                }
             }
-        })
+        });
+        // 获取建筑信息
+        var propertyArray = null
+        $.ajax({
+            url: "${base.contextPath}/mdm/property/propertyQuery",
+            data: {companyId:companyId,projectId:projectId},
+            type   : "POST",
+            dataType: "json",
+            async:false,
+            success:function (args){
+                propertyArray = args.rows;
+            }
+        });
 
     </script>
     <div id="page-content">
@@ -155,7 +123,7 @@
                                 <label class="col-sm-4 control-label">仪表编号</label>
                                 <div class="col-sm-8">
                                     <input id="ob" type="text" style="width: 160px"
-                                           data-bind="value:model.crObject"
+                                           data-bind="value:model.equipmentCode"
                                            class="k-textbox" disabled>
                                 </div>
                             </div>
@@ -166,7 +134,7 @@
                                 <label class="col-sm-4 control-label">仪表名称</label>
                                 <div class="col-sm-8">
                                     <input type="text" style="width: 160px"
-                                           data-bind="value:model.crName"
+                                           data-bind="value:model.equipmentName"
                                            class="k-textbox" disabled>
                                 </div>
                             </div>
@@ -208,16 +176,6 @@
                     type: "GET",
                     dataType: "json"
                 },
-                create: {
-                    url: crudServiceBaseUrl + "/submit",
-                    contentType: "application/json",
-                    type: "POST"
-                },
-                update: {
-                    url: crudServiceBaseUrl + "/submit",
-                    contentType: "application/json",
-                    type: "POST"
-                },
                 destroy: {
                     url: crudServiceBaseUrl + "/delete",
                     contentType: "application/json",
@@ -235,11 +193,7 @@
             requestEnd: function (e) {
                 if(e.type=='read'){
                     crcode=e.response.rows;
-                }else if(e.type=='create'&&e.response.success==true){
-                    kendo.ui.showInfoDialog({
-                        message: '添加成功!'
-                    });
-                } else if(e.type=='destroy'&&e.response.success==true){
+                }else if(e.type=='destroy'&&e.response.success==true){
                     kendo.ui.showInfoDialog({
                         message: '删除成功!'
                     });
@@ -254,8 +208,11 @@
                 data: 'rows',
                 total: 'total',
                 model: {
-                    id: "shareBingId",
+                    id: "shareBindId",
                     fields: {
+                        ShareRuleId:{
+                            defaultValue:shareRuleId,
+                        }
                     },
                 }
             }
@@ -292,50 +249,45 @@
                     title: '公司',
                     attributes: {style: "text-align:center"},
                     width: '12%',
-                    editor: function (container, options) {
-                        $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负整数" pattern="^[0-9_]+$" name="' + options.field + '"/>').appendTo(container)
+                    template:function (rowdata){
+                        return viewModel.model.companyName;
                     },
                 },
                 {
                     field: "projectId",
                     title: '项目',
                     width: '12%',
-                    type:"Decimal",format:"{0:N2}",
                     attributes: {style: "text-align:center"},
-                    editor: function (container, options) {
-                        if(options.model.gradePriceId !=""){
-                            var c = options.model.price;
-                            options.model.price = c.toFixed(2);
-                            $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负数" pattern="^([0-9])+(\.[0-9]+)?$" name="' + options.field + '"/>').appendTo(container)
-                        }else{
-                            $('<input  required style="width: 180px" type="text" class="k-textbox" validationMessage="只可为非负数" pattern="^([0-9])+(\.[0-9]+)?$" name="' + options.field + '"/>').appendTo(container)
+                    template:function (rowdata){
+                        return viewModel.model.projectName;
+                    },
+                },
+                {
+                    field: "propertyId",
+                    title: '建筑编码',
+                    attributes: {style: "text-align:center"},
+                    width: '12%',
+                    template:function (rowdata){
+                        for(var k in propertyArray){
+                            if(rowdata.propertyId == propertyArray[k].propertyId){
+                                return propertyArray[k].propertyNumber;
+                            }
                         }
                     },
                 },
                 {
-                    field: "uom",
-                    title: '计量单位',
+                    field: "propertyId",
+                    title: '建筑名称',
                     attributes: {style: "text-align:center"},
                     width: '12%',
                     template:function (rowdata){
-                        for(var k in typeData){
-                            if(typeData[k].value == rowdata.uom){
-                                return typeData[k].meaning
+                        for(var k in propertyArray){
+                            if(rowdata.propertyId == propertyArray[k].propertyId){
+                                return propertyArray[k].propertyName;
                             }
                         }
                     },
-                    editor: function (container, options) {
-                        $('<input type="text" style="width: 120px"class="k-textbox" name="' + options.field + '"/>')
-                            .appendTo(container)
-                            .kendoDropDownList({
-                                dataTextField: "meaning",
-                                dataValueField:"value",
-                                valuePrimitive: true,
-                                dataSource: typeData,
-                                index:-1,
-                            });
-                    },
-                }
+                },
             ],
         }).data("kendoGrid");
         // 自动填充界面

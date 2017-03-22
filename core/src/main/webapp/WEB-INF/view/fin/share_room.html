@@ -1,0 +1,80 @@
+ <#include "../include/header.html">
+        <body>
+        <div id="page-content">
+            <div id="treeview"></div>
+
+        </div>
+        <script type="text/javascript" >
+            var shareRuleId = ${RequestParameters.shareRuleId!0};
+            var projectId = ${RequestParameters.projectId!0};
+            var companyId = ${RequestParameters.companyId!0};
+            homogeneous = new kendo.data.HierarchicalDataSource({
+                transport: {
+                    read: {
+                        url: "${base.contextPath}/fin/feeList/structureQuery",
+                        data: {companyId:companyId,projectId:projectId},
+                        type   : "POST",
+                        dataType: "json"
+                    }
+                },
+                schema: {
+                    data:"rows",
+                    model: {
+                        id: "structureId",
+                        hasChildren: "hasChildren",
+                        children:"items"
+                    }
+                }
+            });
+            var treeview = $("#treeview").kendoTreeView({
+                dataSource:homogeneous,
+                dataValueField: "id",
+                dataTextField: "structureName",
+                select: onSelect
+            });
+            function onSelect(e){
+                var propertyId = this.dataItem(e.node).propertyId;
+                var obj = new Object();
+                obj.companyId = companyId;
+                obj.projectId = projectId;
+                obj.shareRuleId = shareRuleId;
+                obj.propertyId = propertyId;
+                var a = 0;
+                $.ajax({
+                    url: "${base.contextPath}/fin/sharebind/query?shareRuleId="+shareRuleId,
+                    type: "GET",
+                    async:false,
+                    dataType: "json",
+                    success:function (datas) {
+                        for(var k in datas.rows){
+                            if(datas.rows[k].propertyId == obj.propertyId){
+                                a++;
+                                break;
+                            }
+                        }
+                        if(a == 0){
+                            $.ajax({
+                                type : "POST",
+                                url : "${base.contextPath}/fin/sharebind/submit",
+                                data: JSON.stringify(obj),
+                                contentType: "application/json",
+                                success: function(datas) {
+                                    kendo.ui.showInfoDialog({
+                                        message: '新建成功!'
+                                    });
+                                }
+                            });
+                            parent.$('#grid').data('kendoGrid').dataSource.read();
+                        }else{
+                            kendo.ui.showWarningDialog({
+                                message: '新建失败,不可新建已经存在于列表中的房间!'
+                            });
+                        }
+                    }
+                })
+
+
+            }
+        </script>
+        </body>
+        </html>

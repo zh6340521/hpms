@@ -3,9 +3,7 @@ package hpms.fin.controllers;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
-import hpms.fin.dto.PubMeter;
 import hpms.fin.dto.ShareRuleBind;
-import hpms.fin.service.IPubMeterService;
 import hpms.fin.service.IShareRuleBindService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,14 +35,17 @@ public class ShareRuleBindController extends BaseController{
 
     @RequestMapping(value = "fin/sharebind/submit",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData update(HttpServletRequest request, @RequestBody List<ShareRuleBind> dto, BindingResult result) {
+    public ResponseData update(HttpServletRequest request,@RequestBody ShareRuleBind dto, BindingResult result) {
         IRequest requestCtx = createRequestContext(request);
+        ResponseData rd = new ResponseData();
         if (result.hasErrors()) {
-            ResponseData rd = new ResponseData(false);
+            rd.setSuccess(false);
             rd.setMessage(getErrorMessage(result, request));
             return rd;
         }
-        return new ResponseData(service.batchUpdate(requestCtx, dto));
+        rd.setSuccess(true);
+        rd.setRows(Collections.singletonList(service.insert(requestCtx,dto)));
+        return rd;
     }
 
 

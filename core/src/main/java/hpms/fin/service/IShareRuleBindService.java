@@ -9,4 +9,5 @@ import hpms.fin.dto.ShareRuleBind;
  * on 2017/3/20   19:32
  */
 public interface IShareRuleBindService extends IBaseService<ShareRuleBind>,ProxySelf<IShareRuleBindService> {
+    int myInsert(ShareRuleBind shareRuleBind);
 }

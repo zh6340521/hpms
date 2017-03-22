@@ -237,7 +237,7 @@
                                 <label class="col-sm-4 control-label">分摊规则</label>
                                 <div class="col-sm-8">
                                     <input id="rule" type="text" style="width: 160px"
-                                           data-bind="value:model.demo">
+                                           data-bind="value:model.shareRule">
                                 </div>
                             </div>
                             <script>
@@ -369,11 +369,19 @@
                         click: function (e) {
                             var tr = $(e.target).closest("tr");
                             var dataItem = this.dataItem(tr);
-//                            parent.openTab("set_"+dataItem.shareRuleId,dataItem.equipmentName,"fin/share_rule_to.html/?shareRuleId="+dataItem.shareRuleId);
-                            window.location.href = "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId;
+                            var ename = null;
+                            var eid = null;
+                            for (var k in codeArray) {
+                                if (codeArray[k].equipmentId == dataItem.equipmentId) {
+                                     ename = codeArray[k].equipmentName;
+                                     eid = dataItem.equipmentId;
+                                }
+                            }
+                            parent.openTab("set_"+dataItem.shareRuleId,ename,"${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId+"&companyId="+dataItem.companyId+"&projectId="+dataItem.projectId);
+//                            window.location.href = "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId+"&companyId="+dataItem.companyId+"&projectId="+dataItem.projectId;
                         }
                     },
-                        {name: "edit"}
+                        {name: "edit"},{name:"destroy"}
                     ],
                     width: '8%'
                 },
@@ -644,6 +652,7 @@
                 },
             ],
         }).data("kendoGrid");
+
         // 自动填充界面
         Hap.autoResizeGrid("#grid");
         // 标题居中
