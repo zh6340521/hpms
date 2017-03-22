@@ -46,7 +46,7 @@
             resetForm: function (e) {
                 var formDate = viewModel.model.toJSON();
                 for (var k in formDate) {
-                    viewModel.model.set(k,undefined);
+                    viewModel.model.set(k, undefined);
                 }
                 $("#grid").data("kendoGrid").dataSource.page(1);
             },
@@ -373,15 +373,15 @@
                             var eid = null;
                             for (var k in codeArray) {
                                 if (codeArray[k].equipmentId == dataItem.equipmentId) {
-                                     ename = codeArray[k].equipmentName;
-                                     eid = dataItem.equipmentId;
+                                    ename = codeArray[k].equipmentName;
+                                    eid = dataItem.equipmentId;
                                 }
                             }
-                            parent.openTab("set_"+dataItem.shareRuleId,ename,"${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId+"&companyId="+dataItem.companyId+"&projectId="+dataItem.projectId);
+                            parent.openTab("set_" + dataItem.shareRuleId, ename, "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId + "&companyId=" + dataItem.companyId + "&projectId=" + dataItem.projectId);
 //                            window.location.href = "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId+"&companyId="+dataItem.companyId+"&projectId="+dataItem.projectId;
                         }
                     },
-                        {name: "edit"},{name:"destroy"}
+                        {name: "edit"}
                     ],
                     width: '8%'
                 },
@@ -413,46 +413,13 @@
                                             cpd = cp[key].proo;
                                         }
                                     }
-                                    $("#pro").kendoDropDownList({
-                                        optionLabel: "--请选择--",
-                                        dataTextField: "projectName",
-                                        dataValueField: "projectId",
-                                        dataSource: cpd,
-                                        index: -1,
-                                        change: function (e) {
-                                            options.model.projectId = e.sender._old;
-                                            epArray = [];
-                                            var a = 0;
-                                            for(var k2 in codeArray){
-                                                a = 0;
-                                                if(codeArray[k2].projectId == options.model.projectId){
-                                                    var obj = new Object();
-                                                    obj.equipmentTypeId = codeArray[k2].equipmentTypeId;
-                                                    obj.typeName = codeArray[k2].typeName;
-                                                    for(var k3 in epArray){
-                                                        if(epArray[k3].typeName == obj.typeName){
-                                                            a++;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if(a==0)
-                                                    {
-                                                        epArray.push(obj);
-                                                    }
-                                                }
-                                            }
-                                            $("#equip").kendoDropDownList({
-                                                optionLabel: "--请选择--",
-                                                dataTextField: "typeName",
-                                                dataValueField: "equipmentTypeId",
-                                                dataSource: epArray,
-                                                change: function (e) {
-                                                    options.model.equipmentTypeId = e.sender._old;
-                                                },
-                                            }).data("kendoDropDownList");
-                                        }
-                                    }).data("kendoDropDownList");
+                                    $pro.setDataSource(cpd);
                                     kendo.bind($('#pro'), viewModel);
+
+                                    $("#code_edit").parent().children().children(".k-input").val(null);
+                                    $("#code_edit").parent().children().children(".k-input").text(null);
+                                    $("#name_edit").val(null);
+                                    $("#name_edit").text(null);
                                 }
                             }).data("kendoDropDownList");
                             kendo.bind($('#comp'), viewModel);
@@ -481,7 +448,9 @@
                     editor: function (container, options) {
                         if (options.model.shareRuleId == "") {
                             $('<input id="pro" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
-                            $("#pro").kendoDropDownList({
+
+                            //change $pro
+                            $pro = $("#pro").kendoDropDownList({
                                 optionLabel: "--请选择--",
                                 dataTextField: "projectName",
                                 dataValueField: "projectId",
@@ -489,6 +458,27 @@
                                 dataSource: projectArray,
                                 change: function (e) {
                                     options.model.projectId = e.sender._old;
+                                    epArray = [];
+                                    var a = 0;
+                                    for (var k2 in codeArray) {
+                                        a = 0;
+                                        if (codeArray[k2].projectId == options.model.projectId) {
+                                            var obj = new Object();
+                                            obj.equipmentTypeId = codeArray[k2].equipmentTypeId;
+                                            obj.typeName = codeArray[k2].typeName;
+                                            for (var k3 in epArray) {
+                                                if (epArray[k3].typeName == obj.typeName) {
+                                                    a++;
+                                                    break;
+                                                }
+                                            }
+                                            if (a == 0) {
+                                                epArray.push(obj);
+                                            }
+                                        }
+                                    }
+                                    $equ.setDataSource(epArray);
+                                    kendo.bind($('#equip'), viewModel);
                                 }
                             }).data("kendoDropDownList");
                             kendo.bind($('#pro'), viewModel);
@@ -517,15 +507,15 @@
                     editor: function (container, options) {
                         if (options.model.shareRuleId == "") {
                             $('<input id="equip" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
-                                $("#equip").kendoDropDownList({
-                                    optionLabel: "--请选择--",
-                                    dataTextField: "typeName",
-                                    dataValueField: "equipmentTypeId",
-                                    dataSource: equipmentArray,
-                                    change: function (e) {
-                                        options.model.equipmentTypeId = e.sender._old;
-                                    },
-                                }).data("kendoDropDownList");
+                            $equ = $("#equip").kendoDropDownList({
+                                optionLabel: "--请选择--",
+                                dataTextField: "typeName",
+                                dataValueField: "equipmentTypeId",
+                                dataSource: equipmentArray,
+                                change: function (e) {
+                                    options.model.equipmentTypeId = e.sender._old;
+                                },
+                            }).data("kendoDropDownList");
                         } else {
                             for (var k in equipmentArray) {
                                 if (equipmentArray[k].equipmentTypeId == options.model.equipmentTypeId) {
@@ -585,7 +575,7 @@
                                         if (!e.param.projectId) {
                                             e.param.projectId = options.model.projectId;
                                         }
-                                        if(!e.param.equipmentTypeId){
+                                        if (!e.param.equipmentTypeId) {
                                             e.param.equipmentTypeId = options.model.equipmentTypeId;
                                         }
                                     }
