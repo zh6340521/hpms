@@ -138,6 +138,7 @@
             1=1
             AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
             AND HME.CHANGE_EQUIPMENT_ID IS NULL
+            AND HME.EQUIPMENT_STATUS = 'A'
             <if test="equipmentCode!=null">
                 and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
             </if>
@@ -375,6 +376,10 @@
             <if test="changeEquipmentId!=null">
                 and HME.CHANGE_EQUIPMENT_ID=#{changeEquipmentId,jdbcType=VARCHAR}
             </if>
+            <if test="equipmentStatus!=null">
+                and HME.EQUIPMENT_STATUS=#{equipmentStatus,jdbcType=VARCHAR}
+            </if>
+
         </where>
 
     </select>

@@ -48,7 +48,20 @@
             null;
         }else {
             viewModel.model.set("lastRead", Math.round((viewModel.model.currentRead  - viewModel.model.meterTotalUse)*10,2)/10 );
-            viewModel.model.set("meterTotalAmount", Math.round((viewModel.model.currentRead  - viewModel.model.meterTotalUse)*10,2)/10 );
+            viewModel.model.set("meterTotalAmount", null);
+            $.ajax({
+                type   : "POST",
+                url: "${base.contextPath}/hpms/fin/meter/read/his/queryPrice?companyId=" + viewModel.model.companyId + "&projectId="
+                + viewModel.model.projectId + "&equipmentTypeId=" + viewModel.model.equipmentTypeId + "&grade=" + viewModel.model.meterTotalUse,
+                success: function(json) {
+                    var row = json.rows[0] || {};
+                    for (var k in row) {
+                        if (k== "price")
+                        viewModel.model.set("meterTotalAmount", Math.round(viewModel.model.meterTotalUse *row[k] * 100 ,2)/100 );
+                    }
+
+                }
+            });
         }
 
 
@@ -180,6 +193,7 @@
                     </div>
                 </div>
 
+
                 <div class="col-xs-12" >
                     <div class="form-group">
                         <label class="col-xs-2 control-label"
@@ -239,6 +253,14 @@
             }else if(viewModel.model.readDate==''||viewModel.model.readDate==null) {
                 kendo.ui.showInfoDialog({
                     message: '<@spring.message "hpms.fin.pubmeter.readDate"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(! /^(([0-9]+)|([0-9]+\.[0-9]{1}))$/.test(viewModel.model.lastRead) ){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.fin.pubmeter.readlimit"/>'
+                })
+            }else if(viewModel.model.meterTotalAmount==''||viewModel.model.meterTotalAmount==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.fin.pubmeter.readlimit"/>'
                 })
             }else {
                 viewModel.model.set("initFlag", "N");

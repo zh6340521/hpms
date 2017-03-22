@@ -41,6 +41,14 @@
         <result column="CODE" property="code" jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap id="PriceResultMap" type="hpms.fin.dto.MeterGradePrice">
+        <result column="GRADE" property="grade" jdbcType="VARCHAR" />
+        <result column="PRICE" property="price" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL" />
+    </resultMap>
+
     <!--查询抄表记录信息-->
     <select id="queryMeterReadHis" parameterType="hpms.fin.dto.MeterReadHis" resultMap="BaseResultMap">
         SELECT HFMRH.READ_HIS_ID,
@@ -224,7 +232,11 @@
         ON HFMRH.EQUIPMENT_ID = HFMRH2.EQUIPMENT_ID
         AND TO_CHAR(HFMRH.READ_DATE,'YYYYMM') = TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYYMM')
         WHERE 1=1
-        AND HFMRH.READ_HIS_ID IS NULL AND HFMRH2.READ_HIS_ID IS NOT NULL AND HFMRH2.STATUS = 'FREEZED'
+        AND HFMRH.READ_HIS_ID IS NULL
+        AND HFMRH2.READ_HIS_ID IS NOT NULL
+        AND HFMRH2.STATUS = 'FREEZED'
+        AND HME.CHANGE_EQUIPMENT_ID IS NULL
+        AND HME.EQUIPMENT_STATUS = 'A'
 
         UNION ALL
         SELECT HFMRH.READ_HIS_ID,
@@ -260,7 +272,9 @@
         LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH
         ON HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
         WHERE 1=1
-        AND HFMRH.READ_HIS_ID IS not NULL ) batch
+        AND HFMRH.READ_HIS_ID IS not NULL
+        AND HME.CHANGE_EQUIPMENT_ID IS NULL
+        AND HME.EQUIPMENT_STATUS = 'A') batch
         WHERE 1=1
         and batch.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
         and batch.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
@@ -340,6 +354,37 @@
             #{endMonth,jdbcType=VARCHAR}
         </if>
 
+    </select>
+
+    <select id="queryGradePrice" parameterType="hpms.fin.dto.MeterGradePrice" resultMap="PriceResultMap">
+        SELECT HFMGP.GRADE,
+        HFMGP.PRICE,
+        HFMCR.COMPANY_ID,
+        HFMCR.PROJECT_ID,
+        HFMCR.EQUIPMENT_TYPE_ID
+        FROM HPMS_FIN_METER_CHARGE_RULE HFMCR
+        JOIN HPMS_FIN_METER_GRADE_PRICE HFMGP
+        ON HFMCR.CHARGE_RULE_ID = HFMGP.CHARGE_RULE_ID
+        WHERE HFMCR.ENABLE_FLAG = 'Y'
+
+        <if test="companyId!=null">
+            AND HFMCR.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="projectId!=null">
+            AND HFMCR.PROJECT_ID = #{projectId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="equipmentTypeId!=null">
+            AND HFMCR.EQUIPMENT_TYPE_ID = #{equipmentTypeId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="grade!=null">
+            AND HFMGP.GRADE = (SELECT min(to_number(HFMGP2.GRADE))
+                                FROM HPMS_FIN_METER_GRADE_PRICE HFMGP2
+                                WHERE HFMGP2.CHARGE_RULE_ID = HFMGP.CHARGE_RULE_ID
+                                AND to_number(HFMGP2.GRADE) &gt;= #{grade,jdbcType=VARCHAR})
+        </if>
     </select>
 
 </mapper>

@@ -1,6 +1,7 @@
 package hpms.fin.controllers;
 
 import com.hand.hap.system.dto.Code;
+import hpms.fin.dto.MeterGradePrice;
 import org.springframework.stereotype.Controller;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.core.IRequest;
@@ -136,6 +137,23 @@ import java.util.List;
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
         return new ResponseData(service.batchMeterReadHis(requestContext,dto,page,pageSize));
+    }
+
+    /**
+     * 根据公司、项目、设备类型、用量找到价格
+     * @author jun.zhao02@hand-china.com
+     * @param request  请求
+     * @param dto  封装参数对象
+     * @param page     查询页
+     * @param pageSize 页面大小
+     * @return List<MeterGradePrice> 所有符合的结果集
+     */
+    @RequestMapping(value = "/hpms/fin/meter/read/his/queryPrice")
+    @ResponseBody
+    public ResponseData queryPrice(MeterGradePrice dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                                   @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        return new ResponseData(service.queryGradePrice(requestContext,dto,page,pageSize));
     }
 
     }
