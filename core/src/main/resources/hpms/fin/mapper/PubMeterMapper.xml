@@ -52,6 +52,9 @@
         <result column="CR_NAME" property="crName" jdbcType="VARCHAR"/>
         <result column="INIT_FLAG" property="initFlag" jdbcType="VARCHAR"/>
         <result column="CHANGE_DATE" property="changeDate" jdbcType="DATE" />
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR" />
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR" />
+
     </resultMap>
 
 
@@ -153,11 +156,12 @@
             <if test="equipmentTypeId!=null">
                 and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=VARCHAR}
             </if>
+            ORDER BY FCB.company_full_name,HMP.PROJECT_NAME,HME.EQUIPMENT_NAME
         </where>
 
     </select>
 
-    <!--查询公共仪表-->
+    <!--查询公共仪表初始化-->
     <select id="queryPubMeterInit" parameterType="hpms.fin.dto.PubMeter" resultMap="BaseResultMap">
         SELECT HME.EQUIPMENT_ID,
         HME.EQUIPMENT_TYPE_ID,
@@ -236,7 +240,6 @@
 
         <where>
             1=1
-            AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
             <if test="equipmentCode!=null">
                 and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
             </if>
@@ -260,7 +263,7 @@
 
     </select>
 
-    <!--查询公共仪表-->
+    <!--查询公共仪表换表-->
     <select id="queryPubMeterChange" parameterType="hpms.fin.dto.PubMeter" resultMap="BaseResultMap">
         SELECT HME.EQUIPMENT_ID,
         HME.EQUIPMENT_TYPE_ID,
@@ -310,7 +313,9 @@
         HOU.NAME,
         HFMCR.CR_NAME,
         '' INIT_FLAG,
-        HME.CHANGE_DATE
+        HME.CHANGE_DATE,
+        HMP2.PROPERTY_NAME,
+        HMP2.PROPERTY_NUMBER
         FROM HPMS_MDM_EQUIPMENT HME
         LEFT JOIN FND_COMPANY_B FCB
         ON HME.COMPANY_ID = FCB.COMPANY_ID
@@ -335,11 +340,15 @@
         AND HFMCR.PROJECT_ID = HME.PROJECT_ID
         AND HFMCR.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
         AND HFMCR.ENABLE_FLAG = 'Y'
+        LEFT JOIN HPMS_FIN_CUSMETER_BIND HFCB
+        ON HFCB.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        LEFT JOIN HPMS_MDM_PROPERTY HMP2
+        ON HMP2.PROPERTY_ID = HFCB.PROPERTY_ID
 
 
         <where>
             1=1
-            AND HMET.TYPE_ATTRIBUTE = 'PUBLIC METER'
+
             <if test="equipmentCode!=null">
                 and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
             </if>
@@ -359,7 +368,8 @@
                 and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=VARCHAR}
             </if>
             <if test="initFlag!=null">
-                AND (('N' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID not in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS))
+                AND (('N' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID not in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS) AND (HME.EQUIPMENT_ID NOT IN (SELECT EQUIPMENT_ID
+                FROM HPMS_FIN_CUSMETER_BIND)))
                 OR ('Y' = #{initFlag,jdbcType=VARCHAR} and HME.EQUIPMENT_ID in (SELECT EQUIPMENT_ID FROM HPMS_FIN_METER_READ_HIS)))
             </if>
             <if test="changeEquipmentId!=null">

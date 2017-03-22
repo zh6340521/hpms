@@ -109,7 +109,8 @@
         HCVV1.MEANING MEANING2,
         HME2.EQUIPMENT_NAME PARENT_EQUIPMENT_NAME,
         HOU.NAME,
-        HMVS.STRUCTURE_NAME
+        HMVS.STRUCTURE_NAME,
+        HMET.TYPE_ATTRIBUTE
         FROM HPMS_MDM_EQUIPMENT HME
         LEFT JOIN FND_COMPANY_B FCB
         ON HME.COMPANY_ID = FCB.COMPANY_ID
@@ -138,6 +139,9 @@
             <if test="equipmentCode!=null">
                 and HME.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
             </if>
+            <if test="equipmentName!=null">
+                and HME.EQUIPMENT_NAME LIKE concat('%', concat(#{equipmentName,jdbcType=VARCHAR}, '%'))
+            </if>
             <if test="equipmentId!=null">
                 and HME.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
             </if>
@@ -145,14 +149,29 @@
             <if test="companyFullName!=null">
                 and FCB.company_full_name=#{companyFullName,jdbcType=VARCHAR}
             </if>
+            <if test="equipmentTypeId!=null">
+                and HMET.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+            </if>
 
             <if test="projectName!=null">
                 and HMP.PROJECT_NAME=#{projectName,jdbcType=VARCHAR}
             </if>
 
+            <if test="companyId!=null">
+                and HME.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="projectId!=null">
+                and HME.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+            </if>
+
             <if test="typeName!=null">
                 and HMET.TYPE_NAME=#{typeName,jdbcType=VARCHAR}
             </if>
+            <if test="equipmentStatus!=null">
+                and HME.EQUIPMENT_STATUS=#{equipmentStatus,jdbcType=VARCHAR}
+            </if>
+
         </where>
 
     </select>
@@ -196,6 +215,9 @@
         <where>
             1=1
             AND HMET.ENABLE_FLAG='Y'
+            <if test="typeAttribute!=null">
+                and HMET.TYPE_ATTRIBUTE=#{typeAttribute,jdbcType=VARCHAR}
+            </if>
 
         </where>
 

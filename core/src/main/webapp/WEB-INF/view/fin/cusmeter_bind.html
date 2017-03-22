@@ -1,9 +1,3 @@
-<#--
- * description: 公用仪表
- * version: 1.0
- * #copyright#
- * author jun.zhao02@hand-china.com    2017/3/14 10:20:00
--->
 <#include "../include/header.html">
 <script type="text/javascript">
     var viewModel = kendo.observable({
@@ -19,12 +13,11 @@
         }
     });
 
+
     function oprMeter(operation) {
 
         if (operation=="HIS"){
             parent.openTab("pubMeterHis",'<@spring.message "hpms.fin.pubmeter.meterreadhis"/>',"fin/pub_meter_his.html")
-        }else if (operation=="BATCH"){
-            parent.openTab("pubMeterBatch",'<@spring.message "hpms.fin.pubmeter"/><@spring.message "hpms.fin.pubmeter.meterbatch"/>',"fin/pub_meter_batch.html")
         }else {
             var requestData = [];
             var checked = grid.selectedDataItems();
@@ -61,11 +54,11 @@
                                     height: "450px",
                                     width: "700px",
                                     close: function () {
-                                },
-                                content: "meter_init.html?&equipmentId=" + v.equipmentId,
+                                    },
+                                    content: "meter_init.html?&equipmentId=" + v.equipmentId,
                                     iframe: true,
                                     modal: true
-                            });
+                                });
                                 var win = $("#initWin").data("kendoWindow");
                                 win.center().open();
                             }else {
@@ -106,7 +99,7 @@
                                     width: "800px",
                                     close: function () {
                                     },
-                                    content: "meter_change.html?&equipmentId=" + v.equipmentId,
+                                    content: "meter_change.html?&equipmentId=" + v.equipmentId+"&&optionType=1"+"&&customerBindId="+v.cusmeterBindId,
                                     iframe: true,
                                     modal: true
                                 });
@@ -123,86 +116,67 @@
             })
         }
     }
-
 </script>
 <body>
-
 <div id="page-content">
+    <div id="cusmeter_bind_form">
+        <form class="form-horizontal" id="pool_form" role="form" style="margin-top: 5px;">
+            <div class="row">
+                <div class="from-group col-md-3" style="margin-bottom:10px">
+                    <label class="col-md-5 control-label"><@spring.message 'hpms.mdm.property.company'/></label>
+                    <div class="col-md-7">
+                        <input id="companyId" name="companyId" data-bind="value:model.companyId" style="width: 90%;"/>
+                    </div>
+                </div>
+                <div class="from-group col-md-3" style="margin-bottom:10px">
+                    <label class="col-md-5 control-label"><@spring.message 'hpms.mdm.property.project'/></label>
+                    <div class="col-md-7">
+                        <input id="projectId" name="projectId" data-bind="value:model.projectId" style="width: 90%;"/>
+                    </div>
+                </div>
+                <div class="from-group col-md-3" style="margin-bottom:10px">
+                    <label class="col-md-5 control-label"><@spring.message 'hpms.mdm.fee.equipmenttype'/></label>
+                    <div class="col-md-7">
+                        <input id="equipmentTypeId" name="equipmentTypeId" data-bind="value:model.equipmentTypeId" style="width: 90%;"/>
+                    </div>
+                </div>
+                <div class="from-group col-md-3" style="margin-bottom:10px">
+                    <label class="col-md-5 control-label"><@spring.message 'hpms.fin.pubmeter.metercode'/></label>
+                    <div class="col-md-7">
+                        <input id="equipmentCode" name="equipmentCode" type="text" class="k-textbox" data-bind="value:model.equipmentCode" style="width: 90%;">
+                    </div>
+                </div>
 
-    <div id="query_form">
-        <form class="form-horizontal">
-
-            <div class="col-xs-12" >
-                <div class="col-xs-5" >
-                    <div class="form-group">
-                        <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "hpms.mdm.project.companyName"/></label>
-                        <div class="col-xs-7">
-                            <input id="companyId" name="companyId" type="text" data-bind="value:model.companyId" style="width: 100%;">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-5" >
-                    <div class="form-group">
-                        <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "hpms.mdm.project.projectName"/></label>
-                        <div class="col-xs-7">
-                            <input id="projectId" name="projectId" type="text" data-bind="value:model.projectId" style="width: 100%;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xs-12" >
-                <div class="col-xs-5" >
-                    <div class="form-group">
-                        <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "hpms.mdm.fee.equipmenttype"/></label>
-                        <div class="col-xs-7">
-                            <input id="equipmentTypeId" name="equipmentTypeId" type="text" data-bind="value:model.equipmentTypeId" style="width: 100%;">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-5" >
-                    <div class="form-group">
-                        <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.metercode"/></label>
-                        <div class="col-xs-7">
-                            <input id="equipmentCode" name="equipmentCode" type="text" data-bind="value:model.equipmentCode" class="k-textbox" style="width: 100%;">
-                        </div>
-                    </div>
-                </div>
             </div>
         </form>
     </div>
-    <script>kendo.bind($('#query_form'), viewModel);</script>
-    <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
-        <span type="button" onclick="oprMeter('INIT')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hpms.initialization"/></span>
-        <span type="button" onclick="oprMeter('VIEW')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.view"/></span>
-        <span type="button" onclick="oprMeter('CHANGE')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterchange"/></span>
-        <span type="button" onclick="oprMeter('HIS')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-history" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterreadhis"/></span>
-        <span type="button" onclick="oprMeter('BATCH')" class="btn btn-primary" style="float:left;margin-right:5px"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterbatch"/></span>
-        <span type="submit" class="btn btn-primary" style="float:left;width:70px;margin-right:5px;" data-bind="click:queryResource" ><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+    <script>kendo.bind($('#cusmeter_bind_form'), viewModel);</script>
+
+    <div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
+        <span   class="btn btn-primary" onclick="oprMeter('INIT')" style="float:left;margin-right:10px;"><@spring.message "hpms.initialization"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('VIEW')" style="float:left;margin-right:10px;"><@spring.message "hap.view"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('CHANGE')" style="float:left;margin-right:10px;"><@spring.message "hpms.fin.pubmeter.meterchange"/></span>
+        <span   class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "hpms.fin.pubmeter.meterreadhis"/></span>
+        <span   class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "批量录入"/></span>
+        <span   data-bind="click:queryResource" class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "hap.query"/></span>
+        <span   onclick="equipmentView()" class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "仪表绑定"/></span>
+
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+
     <div style="clear:both">
         <div id="Grid"></div>
     </div>
 
 </div>
+
+<div id="equipmentView" style="display: none"></div>
+<div id="propertyView" style="display: none"></div>
 <div id="initWin" style="display: none"></div>
-<div id="hisWin" style="display: none"></div>
 <div id="chgWin" style="display: none"></div>
 
+
 <script type="text/javascript">
-
-    $('#page-content').keydown(function (e) {
-        if (e.keyCode == 13) {
-            e.target.blur();
-            viewModel.queryResource(e);
-        }
-    });
-
 
     $("#companyId").kendoComboBox({
         valuePrimitive: true,
@@ -213,7 +187,7 @@
                 read:function(options) {
                     $.ajax({
                         type   : "POST",
-                        url: "${base.contextPath}/mdm/property/companyQuery",
+                        url: "${base.contextPath}/fnd/company/query",
                         data: {},
                         success: function(json) {
                             options.success(json.rows);
@@ -235,7 +209,7 @@
             serverFiltering:true,
             transport: {
                 read: {
-                    url:"${base.contextPath}/mdm/property/projectQuery",
+                    url:"${base.contextPath}/hpms/mdm/project/query",
                     type : "POST"
                 },
                 contentType : "application/json",
@@ -252,7 +226,9 @@
                 data: 'rows'
             }
         }
+
     }) ;
+
 
     $("#equipmentTypeId").kendoComboBox({
         valuePrimitive: true,
@@ -274,13 +250,32 @@
         }
     });
 
+
+
+
+
     var BaseUrl = _basePath;
     dataSource = new kendo.data.DataSource({
         transport: {
             read: {
-                url: BaseUrl + "/hpms/fin/pubmeter/query",
+                url: BaseUrl + "/hpms/fin/cusmeter/bind/query",
                 type: "POST",
                 dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/hpms/fin/cusmeter/bind/submit",
+                type: "POST",
+                contentType: "application/json"
+            },
+            destroy: {
+                url: BaseUrl + "/hpms/fin/cusmeter/bind/remove",
+                type: "POST",
+                contentType: "application/json"
+            },
+            create: {
+                url: BaseUrl + "/hpms/fin/cusmeter/bind/submit",
+                type: "POST",
+                contentType: "application/json"
             },
             parameterMap: function (options, type) {
                 if (type !== "read" && options.models) {
@@ -298,14 +293,13 @@
             data: 'rows',
             total: 'total',
             model: {
-                id: "equipmentId",
-                fields: {
-                }
+                id: "cusmeterBindId",
+                fields: {}
             }
         }
     });
 
-    var grid = $("#Grid").kendoGrid({
+  var grid = $("#Grid").kendoGrid({
         dataSource: dataSource,
         height: '100%',
         resizable: true,
@@ -320,30 +314,62 @@
         columns: [
             {
                 field: "companyFullName",
-                title: '<@spring.message "hpms.mdm.project.companyName"/>',
-                width: 150
+                title: '<@spring.message "hpms.mdm.property.company"/>',
+                width: 120
             },
                     {
                 field: "projectName",
-                title: '<@spring.message "hpms.mdm.project.projectName"/>',
-                width: 150
+                title: '<@spring.message "hpms.mdm.property.project"/>',
+                width: 120
             },
                     {
                 field: "equipmentName",
                 title: '<@spring.message "hpms.fin.pubmeter.metername"/>',
-                width: 150
+                width: 120
             },
                     {
                 field: "equipmentCode",
                 title: '<@spring.message "hpms.fin.pubmeter.metercode"/>',
-                width: 100
+                width: 120
+            },
+                    {
+                field: "propertyName",
+                title: '<@spring.message "hpms.mdm.property.propertyname"/>',
+                width: 120
             },
         ],
         editable: false
     }).data("kendoGrid");
 
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#Grid')
+        });
+
+    }
+
     Hap.autoResizeGrid("#Grid");
-    $("#Grid thead>tr th:first").text('<@spring.message "hpms.fin.feelist.choose"/>');
+
+    function equipmentView() {
+        $("#equipmentView").kendoWindow({
+            actions: ["Close"],
+            title: $l('客户仪表'),
+            draggable: true,
+            height: "350px",
+            width: "350px",
+            close: function(){
+                //$('#Grid').data('kendoGrid').dataSource.page(1);
+            },
+            content: "${base.contextPath}/fin/equipment_select.html",
+            iframe: true,
+            modal: true
+        });
+        var win = $("#equipmentView").data("kendoWindow");
+        win.center().open();
+    }
+
+
 
 
 </script>

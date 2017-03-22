@@ -1,0 +1,392 @@
+<#--
+        * description:公表分摊查询显示界面
+        * author:fuchun.hu@hand-china.com
+        * version: 1.0
+        *
+        -->
+<#include "../include/header.html">
+<body>
+<style>
+    span[class='k-window-title'] {
+        user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    span[class^="l-icon-"] {
+        width: 20px;
+        height: 16px;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    span.red {
+        color: red;
+        font-weight: bold;
+    }
+
+
+
+</style>
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model:{},
+
+        //查询
+        queryResource: function(e) {
+            $('#grid').data('kendoGrid').dataSource.page(1);
+        },
+
+
+
+    });
+
+
+
+</script>
+
+<!--***************************查询字段分割线*****************************-->
+<div id="page-content">
+    <div id="share_form" style="padding: 0px;border:none;box-shadow: none;">
+        <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+            <div class="panel-body">
+
+                <div class="row" style="margin-bottom: 5px;">
+                    <!-- 公司 -->
+                    <div class="col-sm-4" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"><@spring.message "hpms.mdm.property.company"/></label>
+                            <div class="col-sm-9">
+                                <input id="companyId"  name="companyId" required validationMessage="<@spring.message 'hpms.notempty'/>"
+                                       data-bind="value:model.companyId" style="width: 100%;" />
+                            </div>
+                            <div class="col-sm-3"  style="width:65%;position: absolute;margin-left:87%; margin-top:1%; z-index:99">
+                                <span class="red">&nbsp;&nbsp;*</span>
+                                <span data-for="companyId" class=".k-invalid-msg"></span>
+                                <script>kendo.bind($("#companyId"), viewModel);</script>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- 项目 -->
+                    <div class="col-sm-4" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">项目</label>
+                            <div class="col-sm-9">
+                                <input id="projectId"  name="projectId" required validationMessage="<@spring.message 'hpms.notempty'/>"
+                                       data-bind="value:model.projectId" style="width: 100%;" />
+                            </div>
+                            <div class="col-sm-3"  style="width:65%;position: absolute;margin-left:87%; margin-top:1%; z-index:99">
+                                <span class="red">&nbsp;&nbsp;*</span>
+                                <span data-for="projectId" class=".k-invalid-msg"></span>
+                                <script>kendo.bind($("#projectId"), viewModel);</script>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- 仪表类型 -->
+                    <div class="col-sm-4" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">仪表类型</label>
+                            <div class="col-sm-9">
+                                <input id="equipmentTypeId"  name="equipmentTypeId" required validationMessage="<@spring.message 'hpms.notempty'/>"
+                                       data-bind="value:model.equipmentTypeId" style="width: 100%;" />
+                            </div>
+                            <div class="col-sm-3"  style="width:65%;position: absolute;margin-left:87%; margin-top:1%; z-index:99">
+                                <span class="red">&nbsp;&nbsp;*</span>
+                                <span data-for="equipmentTypeId" class=".k-invalid-msg"></span>
+                                <script>kendo.bind($("#equipmentTypeId"), viewModel);</script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 5px;">
+                    <!--费用日期-->
+                    <div class="col-sm-4" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">费用日期</label>
+                            <div class="col-sm-9">
+                                <input id="year"  name="year"
+                                       data-bind="value:model.year" style="width: 100%;" />
+                                <script>kendo.bind($("#year"), viewModel);</script>
+
+                            </div>
+                            <div class="col-sm-3"  style="width:65%;position: absolute;margin-left:90%; margin-top:1%; z-index:99">
+                                <span>年</span>
+                            </div>
+                        </div>
+                    </div>
+
+                  <!--开始月份-->
+                    <div class="col-sm-4" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input id="startMonth"  name="startMonth"
+                                       data-bind="value:model.startMonth" style="width: 100%;" />
+                                <script>kendo.bind($("#startMonth"), viewModel);</script>
+                            </div>
+                            <div class="col-sm-3"  style="width:65%;position: absolute;margin-left:87%; margin-top:1%; z-index:99">
+                                <span>月至</span>
+                            </div>
+                        </div>
+                    </div>
+
+                   <!--结束月份-->
+                    <div class="col-sm-4" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input id="endMonth"  name="endMonth"
+                                       data-bind="value:model.endMonth" style="width: 100%;" />
+                                <script>kendo.bind($("#endMonth"), viewModel);</script>
+                            </div>
+                            <div class="col-sm-3"  style="width:65%;position: absolute;margin-left:87%; margin-top:1%; z-index:99">
+                                <span>月</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+            <div  align="center" style="clear:both; background: #fff;margin-left:10%;margin-top:50px" id="button">
+                <span class="btn btn-success" id="saveGrid" type="submit"><@spring.message "hap.save"/></span>
+                <span class="btn btn-success" id="closeWin" type="button"><@spring.message "hap.cancel"/></span>
+            </div>
+
+            </form>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $('#share_form').kendoValidator();
+
+                //公司下拉框
+                $("#companyId").kendoComboBox({
+                 valuePrimitive: true,  //原始值
+                  dataTextField: "companyFullName",
+                 dataValueField: "companyId",
+                 dataSource: {
+                   transport: {
+                       read: {
+                              url:"${base.contextPath}/mdm/property/companyQuery",
+                               type : "POST"
+                              },
+                              contentType : "application/json",
+                                            },
+                                            schema: {
+                                                data: 'rows'
+                                            }
+                                        },
+                                        change:function(e){
+                                            //改变值时将带出的值也消失
+                                            if(this.value()==null||this.value()==""){
+                                                document.getElementById("projectId").value = "";
+                                                document.getElementById("equipmentTypeId").value = "";
+                                            }
+
+                                        },
+                                    });
+
+
+    //级联的项目下拉框
+    $("#projectId").kendoComboBox({
+        autoBind: false,
+        valuePrimitive: true,
+        cascadeFrom: "companyId",  //联动绑定的参数
+        cascadeFromField: "companyId",
+        filter: "contains",
+        dataTextField: "projectName",
+        dataValueField: "projectId",
+        dataSource: {
+            serverFiltering:true,
+            transport: {
+                read: {
+                    url:"${base.contextPath}/mdm/property/projectQuery",
+                    type : "POST"
+                },
+                contentType : "application/json",
+                parameterMap: function(options, type) {
+                    if (type === "read") {
+                        var filter = options.filter.filters[0]
+                        var map = {};
+                        map[filter.field] = filter.value;
+                        return map;
+                    }
+                }
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+    }) ;
+
+
+    //级联的仪表类型下拉框
+    $("#equipmentTypeId").kendoComboBox({
+        autoBind: false,
+        valuePrimitive: true,
+        cascadeFrom: "projectId",  //联动绑定的参数
+        cascadeFromField: "projectId",
+        filter: "contains",
+        dataTextField: "typeName",
+        dataValueField: "equipmentTypeId",
+        dataSource: {
+            serverFiltering:true,
+            transport: {
+                read: {
+                    url: "${base.contextPath}/fin/metershareresult/queryEquipmentId",
+                    type : "POST"
+                },
+                contentType : "application/json",
+                parameterMap: function(options, type) {
+                    if (type === "read") {
+                        var filter = options.filter.filters[0]
+                        var map = {};
+                        map[filter.field] = filter.value;
+                        return map;
+                    }
+                }
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+
+    }) ;
+
+
+    //费用日期 年份下拉框
+    $("#year").kendoComboBox({
+        valuePrimitive: true,  //原始值
+        dataTextField: "year",
+        dataValueField: "year",
+        dataSource: {
+            transport: {
+                read: {
+                    url:"${base.contextPath}/fin/metershareresult/queryYear",
+                    type : "POST"
+                },
+                contentType : "application/json",
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+        /*change:function(e){
+            //改变值时将带出的值也消失
+            if(this.value()==null||this.value()==""){
+                document.getElementById("projectId").value = "";
+                document.getElementById("equipmentId").value = "";
+            }
+
+        },*/
+    });
+
+    //开始月份下拉框
+    $("#startMonth").kendoComboBox({
+        valuePrimitive: true,  //原始值
+        dataTextField: "month",
+        dataValueField: "month",
+        dataSource: {
+            transport: {
+                read: {
+                    url:"${base.contextPath}/fin/metershareresult/queryMonth",
+                    type : "POST"
+                },
+                contentType : "application/json",
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+        /*change:function(e){
+            //改变值时将带出的值也消失
+            if(this.value()==null||this.value()==""){
+                document.getElementById("projectId").value = "";
+                document.getElementById("equipmentId").value = "";
+            }
+
+        },*/
+    });
+
+
+    //结束月份下拉框
+    $("#endMonth").kendoComboBox({
+        valuePrimitive: true,  //原始值
+        dataTextField: "month",
+        dataValueField: "month",
+        dataSource: {
+            transport: {
+                read: {
+                    url:"${base.contextPath}/fin/metershareresult/queryMonth",
+                    type : "POST"
+                },
+                contentType : "application/json",
+            },
+            schema: {
+                data: 'rows'
+            }
+        },
+        /*change:function(e){
+            //改变值时将带出的值也消失
+            if(this.value()==null||this.value()==""){
+                document.getElementById("projectId").value = "";
+                document.getElementById("equipmentId").value = "";
+            }
+
+        },*/
+    });
+
+    $("#saveGrid").click(function () {
+        if(viewModel.model.companyId==''||viewModel.model.companyId==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "hpms.mdm.equipment.company"/>不能为空'
+            })
+        }else if(viewModel.model.projectId==''||viewModel.model.projectId==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "hpms.mdm.equipment.project"/>不能为空'
+            })
+        }else if(viewModel.model.equipmentTypeId==''||viewModel.model.equipmentTypeId==null){
+            kendo.ui.showInfoDialog({
+                message:'<@spring.message "hpms.mdm.equipment.equipmentType"/>不能为空'
+            })
+        }else if(viewModel.model.year==''||viewModel.model.year==null){
+            kendo.ui.showInfoDialog({
+                message:'年份不能为空'
+            })
+        }else if(viewModel.model.startMonth==''||viewModel.model.startMonth==null){
+            kendo.ui.showInfoDialog({
+                message:'开始月份不能为空'
+            })
+        }else if(viewModel.model.endMonth==''||viewModel.model.endMonth==null){
+            kendo.ui.showInfoDialog({
+                message:'结束月份不能为空'
+            })
+        }else {
+
+
+            Hap.submitForm({
+                url: '${base.contextPath}/fin/metershareresult/submit',
+                formModel: viewModel.model,
+                success: function (data) {
+                    /*window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
+                    if (isedit) {
+                        window.parent.$("#editWin").data("kendoWindow").close();
+                    } else {
+                        window.parent.$("#newWin").data("kendoWindow").close();
+                    }*/
+                }
+            });
+        }
+    });
+
+
+
+
+</script>
+
+</body>

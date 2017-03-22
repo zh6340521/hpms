@@ -1,5 +1,5 @@
 <#--
- * description: 公用抄表记录
+ * description: 公用抄表批量录入
  * version: 1.0
  * #copyright#
  * author jun.zhao02@hand-china.com    2017/3/14 10:20:00
@@ -15,12 +15,37 @@
             $('#Grid').data('kendoGrid').saveChanges();
         },
         queryResource: function (e) {
-            $('#Grid').data('kendoGrid').dataSource.page(1);
+            if(viewModel.model.companyId==''||viewModel.model.companyId==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.companyName"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.projectId==''||viewModel.model.projectId==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.project.projectName"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.equipmentTypeId==''||viewModel.model.equipmentTypeId==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.mdm.fee.equipmenttype"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.year==''||viewModel.model.year==null) {
+                kendo.ui.showInfoDialog({
+                    message: '<@spring.message "hpms.fin.pubmeter.year"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else if(viewModel.model.month==''||viewModel.model.month==null){
+                kendo.ui.showInfoDialog({
+                    message:'<@spring.message "hpms.fin.pubmeter.month"/><@spring.message "hap.error.nullexception"/>'
+                })
+            }else {
+                $('#Grid').data('kendoGrid').dataSource.page(1);
+            }
         }
     });
 
 </script>
 <body>
+<style type="text/css">
+    span.red_text { color: red; font-weight: bold; }
+</style>
 
 <div id="page-content">
 
@@ -28,51 +53,79 @@
         <form class="form-horizontal">
 
             <div class="col-xs-12" >
-                <div class="col-xs-3" >
+                <div class="col-xs-5" >
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.companyName"/></label>
-                        <div class="col-xs-7">
-                            <input id="companyId" name="companyId" type="text" data-bind="value:model.companyId" style="width: 100%;">
+                        <div class="col-xs-6">
+                            <input id="companyId" name="companyId" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" data-bind="value:model.companyId" style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#companyId'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-2" >
+                            <span class="k-invalid-msg" data-for="companyId"></span>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-3" >
+                <div class="col-xs-5" >
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.mdm.project.projectName"/></label>
-                        <div class="col-xs-7">
-                            <input id="projectId" name="projectId" type="text" data-bind="value:model.projectId" style="width: 100%;">
+                        <div class="col-xs-6">
+                            <input id="projectId" name="projectId" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" data-bind="value:model.projectId" style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#projectId'), viewModel);</script>
                         </div>
-                    </div>
-                </div>
-                <div class="col-xs-3" >
-                    <div class="form-group">
-                        <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "hpms.mdm.fee.equipmenttype"/></label>
-                        <div class="col-xs-7">
-                            <input id="equipmentTypeId" name="equipmentTypeId" type="text" data-bind="value:model.equipmentTypeId" style="width: 100%;">
+                        <div class="col-xs-2" >
+                            <span class="k-invalid-msg" data-for="projectId"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-xs-12" >
-                <div class="col-xs-3" >
+                <div class="col-xs-10" >
                     <div class="form-group">
-                        <label class="col-xs-4 control-label"
-                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.year"/></label>
-                        <div class="col-xs-7">
-                            <input id="year" name="year" type="text" data-bind="value:model.year"  style="width: 100%;">
+                        <label class="col-xs-2 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.fee.equipmenttype"/></label>
+                        <div class="col-xs-3">
+                            <input id="equipmentTypeId" name="equipmentTypeId" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" data-bind="value:model.equipmentTypeId" style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#equipmentTypeId'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-1" >
+                            <span class="k-invalid-msg" data-for="equipmentTypeId"></span>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-3" >
+            </div>
+
+            <div class="col-xs-12" >
+                <div class="col-xs-5" >
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.fin.pubmeter.year"/></label>
+                        <div class="col-xs-6">
+                            <input id="year" name="year" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" data-bind="value:model.year"  style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#year'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-2" >
+                            <span class="k-invalid-msg" data-for="year"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-5" >
                     <div class="form-group">
                         <label class="col-xs-4 control-label"
                                style="text-align: right"><@spring.message "hpms.fin.pubmeter.month"/></label>
-                        <div class="col-xs-7">
-                            <input id="month" name="month" type="text" data-bind="value:model.month" style="width: 100%;">
+                        <div class="col-xs-6">
+                            <input id="month" name="month" type="text" required validationMessage="<@spring.message "hpms.notempty"/>" data-bind="value:model.month" style="width: 95%;">
+                            <span class="red_text">*</span>
+                            <script>kendo.bind($('#month'), viewModel);</script>
+                        </div>
+                        <div class="col-xs-2" >
+                            <span class="k-invalid-msg" data-for="month"></span>
                         </div>
                     </div>
                 </div>
@@ -92,6 +145,8 @@
 
 
 <script type="text/javascript">
+
+    $('#page-content').kendoValidator();
 
     $('#page-content').keydown(function (e) {
         if (e.keyCode == 13) {
@@ -216,12 +271,25 @@
     dataSource = new kendo.data.DataSource({
         transport: {
             read: {
-                url: BaseUrl + "/hpms/fin/meter/read/his/queryPub",
+                url: BaseUrl + "/hpms/fin/meter/read/his/batch",
                 type: "POST",
                 dataType: "json"
             },
+            create: {
+                url: BaseUrl + "/hpms/fin/meter/read/his/submit",
+                contentType: "application/json",
+                type: "POST"
+            },
+            update: {
+                url: BaseUrl + "/hpms/fin/meter/read/his/submit",
+                contentType: "application/json",
+                type: "POST"
+            },
             parameterMap: function (options, type) {
                 if (type !== "read" && options.models) {
+                    var row = options.models[0];
+                    if (row["readHisId"] == null && type == "update")
+                        type = "create";
                     var datas = Hap.prepareSubmitParameter(options, type)
                     return kendo.stringify(datas);
                 } else if (type === "read") {
@@ -250,7 +318,8 @@
         resizable: true,
         scrollable: true,
         navigatable: false,
-        //selectable: 'single, rowbox',
+        recordable : true,
+        editable: "inline",
         pageable: {
             pageSizes: [5, 10, 20, 50],
             refresh: true,
@@ -258,58 +327,86 @@
         },
         columns: [
             {
-                field: "companyFullName",
-                title: '<@spring.message "hpms.mdm.project.companyName"/>',
-                width: 150
-            },
-                    {
-                field: "projectName",
-                title: '<@spring.message "hpms.mdm.project.projectName"/>',
-                width: 150
-            },
-                    {
-                field: "equipmentName",
-                title: '<@spring.message "hpms.fin.pubmeter.metername"/>',
-                width: 150
-            },
-                    {
-                field: "readDate",
-                title: '<@spring.message "hpms.fin.pubmeter.readDate"/>',
-                width: 100,
-                format: "{0:yyyy-MM}"
+                title : '<@spring.message "hap.action"/>',
+                attributes: {style: "text-align:center"},
+                command:[ {
+                    name: "edit",
+                    isEnable: function (data) {
+                        if(data.status == "FREEZED"){
+                            return false;
+                        }
+                        return true;
+                    }
+                } ],
+                width:40
             },
                     {
                 field: "invoiceCode",
                 title: '<@spring.message "hpms.fin.pubmeter.invoiceCode"/>',
-                width: 100
+                width: 100,
+                editor:function (container, options) {
+                    if(options.model.status == "FREEZED") {
+                        $('<span>' + options.model.invoiceCode + '</span>')
+                            .appendTo(container)
+                    }else {
+                        $('<input type="text" class="k-textbox" pattern="^[0-9A-Z]+$" required validationMessage="<@spring.message "hpms.fin.pubmeter.invoicelimit"/>" name="' + options.field + '"/>').appendTo(container)
+                    }
+                }
+            },
+                    {
+                field: "equipmentName",
+                title: '<@spring.message "hpms.fin.pubmeter.metername"/>',
+                width: 150,
+                editor:function (container, options) {
+                    $('<span>'+options.model.equipmentName+'</span>')
+                        .appendTo(container)
+                }
             },
                     {
                 field: "lastRead",
                 title: '<@spring.message "hpms.fin.pubmeter.lastRead"/>',
-                width: 100
+                width: 100,
+                editor:function (container, options) {
+                    $('<span>'+options.model.lastRead+'</span>')
+                        .appendTo(container)
+                }
             },
                     {
                 field: "currentRead",
                 title: '<@spring.message "hpms.fin.pubmeter.currentRead"/>',
-                width: 100
+                width: 100,
+                editor:function (container, options) {
+                    if(options.model.status == "FREEZED") {
+                        $('<span>' + options.model.currentRead + '</span>')
+                            .appendTo(container)
+                    }else {
+                        $('<input type="text" class="k-textbox" pattern="^(([0-9]+)|([0-9]+\.[0-9]{1}))$" required validationMessage="<@spring.message "hpms.fin.pubmeter.numberlimit"/>" name="' + options.field + '"/>').appendTo(container)
+                    }
+                }
             },
                     {
                 field: "meterTotalUse",
                 title: '<@spring.message "hpms.fin.pubmeter.meterTotalUse"/>',
-                width: 100
+                width: 100,
+                editor:function (container, options) {
+                    if(options.model.status == "FREEZED") {
+                        $('<span>' + options.model.meterTotalUse + '</span>')
+                            .appendTo(container)
+                    }else {
+                        $('<input type="text" class="k-textbox" pattern="^(([0-9]+)|([0-9]+\.[0-9]{1}))$" required validationMessage="<@spring.message "hpms.fin.pubmeter.numberlimit"/>" name="' + options.field + '"/>').appendTo(container)
+                    }
+                }
             },
                     {
                 field: "meterTotalAmount",
                 title: '<@spring.message "hpms.fin.pubmeter.meterTotalAmount"/>',
-                width: 100
+                width: 100,
+                editor:function (container, options) {
+                    $('<span>'+options.model.meterTotalAmount+'</span>')
+                        .appendTo(container)
+                }
             },
-                    {
-                field: "statusDesc",
-                title: '<@spring.message "hpms.fin.pubmeter.statusDesc"/>',
-                width: 100
-            },
-        ],
-        editable: false
+        ]
     }).data("kendoGrid");
 
     Hap.autoResizeGrid("#Grid");

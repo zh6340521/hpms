@@ -110,6 +110,16 @@ public class Equipment extends BaseDTO {
     private String name;
     @Transient
     private String structureName;
+    @Transient
+    private String typeAttribute;
+
+    public String getTypeAttribute() {
+        return typeAttribute;
+    }
+
+    public void setTypeAttribute(String typeAttribute) {
+        this.typeAttribute = typeAttribute;
+    }
 
     public String getStructureName() {
         return structureName;

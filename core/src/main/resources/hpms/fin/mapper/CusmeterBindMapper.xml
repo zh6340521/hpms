@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.fin.mapper.CusmeterBindMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.CusmeterBind">
+        <result column="CUSMETER_BIND_ID" property="cusmeterBindId" jdbcType="DECIMAL" />
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_ID" property="equipmentId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_NAME" property="equipmentName" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_CODE" property="equipmentCode" jdbcType="VARCHAR" />
+        <result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+
+    <resultMap type="hpms.mdm.dto.Property" id="PropertyResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
+        <result column="GROUP_ID" property="groupId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL"/>
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_TYPE" property="propertyType" jdbcType="DECIMAL"/>
+        <result column="CONFIG_VALUE_NAME" property="configValueName" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NAME_ALIAS" property="propertyNameAlias" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR"/>
+        <result column="OLD_NUMBER" property="oldNumber" jdbcType="VARCHAR"/>
+        <result column="PROPERTY_STATUS" property="propertyStatus" jdbcType="VARCHAR"/>
+        <result column="PARENT_PROPERTY_ID" property="parentPropertyId" jdbcType="DECIMAL"/>
+        <result column="BUILDING_AMOUNT" property="buildingAmount" jdbcType="DECIMAL"/>
+        <result column="DEPT_AREA" property="deptArea" jdbcType="VARCHAR"/>
+        <result column="FLOOR_AREA" property="floorArea" jdbcType="DECIMAL"/>
+        <result column="GREEN_AREA" property="greenArea" jdbcType="DECIMAL"/>
+        <result column="POSTAL_CODE" property="postalCode" jdbcType="VARCHAR"/>
+        <result column="DEPT_BUILDER" property="deptBuilder" jdbcType="VARCHAR"/>
+        <result column="COMPLETE_TIME" property="completeTime" jdbcType="DATE"/>
+        <result column="SECURITY_UNIT" property="securityUnit" jdbcType="VARCHAR"/>
+        <result column="LONGITUDE" property="longitude" jdbcType="VARCHAR"/>
+        <result column="LATITUDE" property="latitude" jdbcType="VARCHAR"/>
+        <result column="COUNTRY" property="country" jdbcType="VARCHAR"/>
+        <result column="PROVINCE" property="province" jdbcType="VARCHAR"/>
+        <result column="CITY" property="city" jdbcType="VARCHAR"/>
+        <result column="DISTRICT" property="district" jdbcType="VARCHAR"/>
+        <result column="STREET" property="street" jdbcType="VARCHAR"/>
+        <result column="BUILDING_TYPE" property="buildingType" jdbcType="VARCHAR"/>
+        <result column="HEATING_WAY" property="heatingWay" jdbcType="VARCHAR"/>
+        <result column="ROOM_KIND" property="roomKind" jdbcType="VARCHAR"/>
+        <result column="ROOM_TYPE" property="roomType" jdbcType="VARCHAR"/>
+        <result column="ROOM_ORIENTATION" property="roomOrientation" jdbcType="VARCHAR"/>
+        <result column="ROOM_AREA" property="roomArea" jdbcType="DECIMAL"/>
+        <result column="USE_AREA" property="useArea" jdbcType="DECIMAL"/>
+        <result column="FEE_AREA" property="feeArea" jdbcType="DECIMAL"/>
+        <result column="ROOM_DECORATION" property="roomDecoration" jdbcType="VARCHAR"/>
+        <result column="BUILD_DETAILS" property="buildDetails" jdbcType="VARCHAR"/>
+        <result column="PARKING_TYPE" property="parkingType" jdbcType="VARCHAR"/>
+        <result column="PARKING_LENGTH" property="parkingLength" jdbcType="DECIMAL"/>
+        <result column="PARKING_WIDTH" property="parkingWidth" jdbcType="DECIMAL"/>
+        <result column="PARKING_AREA" property="parkingArea" jdbcType="DECIMAL"/>
+        <result column="PUBLIC_SPACE_TYPE" property="publicSpaceType" jdbcType="VARCHAR"/>
+        <result column="PUBLIC_SPACE_AREA" property="publicSpaceArea" jdbcType="DECIMAL"/>
+        <result column="ROOM_STATUS" property="roomStatus" jdbcType="VARCHAR"/>
+        <result column="PARKING_STATUS" property="parkingStatus" jdbcType="VARCHAR"/>
+        <result column="PUBLIC_SPACE_STATUS" property="publicSpaceStatus" jdbcType="VARCHAR"/>
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <resultMap id="EquipMentResultMap" type="hpms.mdm.dto.Equipment">
+        <result column="EQUIPMENT_ID" property="equipmentId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_CODE" property="equipmentCode" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_NAME" property="equipmentName" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_BARCODE" property="equipmentBarcode" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_SERIAL" property="equipmentSerial" jdbcType="VARCHAR" />
+        <result column="ASSETS_NUMBER" property="assetsNumber" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_UOM" property="equipmentUom" jdbcType="VARCHAR" />
+        <result column="DOOR_NO" property="doorNo" jdbcType="VARCHAR" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="ORG_ID" property="orgId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_SIGNIFICANCE" property="equipmentSignificance" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_STATUS" property="equipmentStatus" jdbcType="VARCHAR" />
+        <result column="PURCHASING_DATE" property="purchasingDate" jdbcType="DATE" />
+        <result column="EQUIPMENT_SUPPLIER" property="equipmentSupplier" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_MANUFACTURE" property="equipmentManufacture" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_MODEL" property="equipmentModel" jdbcType="VARCHAR" />
+        <result column="PRODUCTION_DATE" property="productionDate" jdbcType="DATE" />
+        <result column="FACTORY_NUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+        <result column="INSTALL_DATE" property="installDate" jdbcType="DATE" />
+        <result column="USE_DATE" property="useDate" jdbcType="DATE" />
+        <result column="MAINTENANCE_TYPE" property="maintenanceType" jdbcType="VARCHAR" />
+        <result column="DURABLE_YEAR" property="durableYear" jdbcType="DECIMAL" />
+        <result column="GUARANTEE_DATE" property="guaranteeDate" jdbcType="DATE" />
+        <result column="INDICATIVE_PRICE" property="indicativePrice" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_ATTACHMENT" property="equipmentAttachment" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_PICTURE" property="equipmentPicture" jdbcType="VARCHAR" />
+        <result column="TECHNICAL_PARAMETER" property="technicalParameter" jdbcType="VARCHAR" />
+        <result column="PARENT_EQUIPMENT_ID" property="parentEquipmentId" jdbcType="DECIMAL" />
+        <result column="VERSION_ID" property="versionId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_PICTURE_FILE_NAME" property="equipmentPictureFileName" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_PICTURE_CONTENT_TYPE" property="equipmentPictureContentType" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_PICTURE_FILE_SIZE" property="equipmentPictureFileSize" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_PICTURE_UPDATED_AT" property="equipmentPictureUpdatedAt" jdbcType="DATE" />
+        <result column="CHANGE_EQUIPMENT_ID" property="changeEquipmentId" jdbcType="DECIMAL" />
+        <result column="CHANGE_REASON" property="changeReason" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="TYPE_NAME" property="typeName" jdbcType="VARCHAR" />
+        <result column="company_full_name" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="MEANING1" property="meaning1" jdbcType="VARCHAR"/>
+        <result column="MEANING2" property="meaning2" jdbcType="VARCHAR"/>
+        <result column="PARENT_EQUIPMENT_NAME" property="parentEquipmentName" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="STRUCTURE_NAME" property="structureName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryCusmeter" parameterType="hpms.fin.dto.CusmeterBind" resultMap="BaseResultMap">
+
+          SELECT HFCB.PROPERTY_ID,
+           HFCB.CUSMETER_BIND_ID,
+           HFCB.EQUIPMENT_ID,
+           HME.EQUIPMENT_NAME,
+           HME.EQUIPMENT_CODE,
+           FCB.COMPANY_FULL_NAME,
+           HMPR.PROJECT_NAME,
+           HMP.PROPERTY_NAME
+          FROM HPMS_FIN_CUSMETER_BIND HFCB
+          LEFT JOIN HPMS_MDM_EQUIPMENT HME
+            ON HME.EQUIPMENT_ID = HFCB.EQUIPMENT_ID
+          LEFT JOIN HPMS_MDM_PROPERTY HMP
+            ON HMP.PROPERTY_ID = HFCB.PROPERTY_ID
+          LEFT JOIN FND_COMPANY_B FCB
+            ON FCB.COMPANY_ID = HME.COMPANY_ID
+          LEFT JOIN HPMS_MDM_PROJECT HMPR
+            ON HMPR.PROJECT_ID = HME.PROJECT_ID
+
+        <where>
+            1=1
+            <if test="equipmentTypeId!=null">
+                and HME.EQUIPMENT_TYPE_ID = #{equipmentTypeId,jdbcType=DECIMAL}
+            </if>
+            <if test="companyId!=null">
+                and HME.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="projectId!=null">
+                and HME.PROJECT_ID = #{projectId,jdbcType=DECIMAL}
+            </if>
+            <if test="equipmentCode!=null">
+                and HME.EQUIPMENT_CODE = #{equipmentCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+
+
+    <select id="queryPropertyNoLink" resultMap="PropertyResultMap" parameterType="hpms.mdm.dto.Property">
+        SELECT  EQUIPNUM.PROPERTY_ID,
+        EQUIPNUM.GROUP_ID,
+        EQUIPNUM.COMPANY_ID,
+        EQUIPNUM.PROJECT_ID,
+        EQUIPNUM.PROPERTY_TYPE,
+        EQUIPNUM.PROPERTY_NAME,
+        EQUIPNUM.PROPERTY_NAME_ALIAS,
+        EQUIPNUM.PROPERTY_NUMBER,
+        EQUIPNUM.OLD_NUMBER,
+        EQUIPNUM.PROPERTY_STATUS,
+        EQUIPNUM.PARENT_PROPERTY_ID,
+        EQUIPNUM.BUILDING_AMOUNT,
+        EQUIPNUM.DEPT_AREA,
+        EQUIPNUM.FLOOR_AREA,
+        EQUIPNUM.GREEN_AREA,
+        EQUIPNUM.POSTAL_CODE,
+        EQUIPNUM.DEPT_BUILDER,
+        EQUIPNUM.COMPLETE_TIME,
+        EQUIPNUM.SECURITY_UNIT,
+        EQUIPNUM.LONGITUDE,
+        EQUIPNUM.LATITUDE,
+        EQUIPNUM.COUNTRY,
+        EQUIPNUM.PROVINCE,
+        EQUIPNUM.CITY,
+        EQUIPNUM.DISTRICT,
+        EQUIPNUM.STREET,
+        EQUIPNUM.BUILDING_TYPE,
+        EQUIPNUM.HEATING_WAY,
+        EQUIPNUM.ROOM_KIND,
+        EQUIPNUM.ROOM_TYPE,
+        EQUIPNUM.ROOM_ORIENTATION,
+        EQUIPNUM.ROOM_AREA,
+        EQUIPNUM.USE_AREA,
+        EQUIPNUM.FEE_AREA,
+        EQUIPNUM.ROOM_DECORATION,
+        EQUIPNUM.BUILD_DETAILS,
+        EQUIPNUM.PARKING_TYPE,
+        EQUIPNUM.PARKING_LENGTH,
+        EQUIPNUM.PARKING_WIDTH,
+        EQUIPNUM.PARKING_AREA,
+        EQUIPNUM.PUBLIC_SPACE_TYPE,
+        EQUIPNUM.PUBLIC_SPACE_AREA,
+        EQUIPNUM.ROOM_STATUS,
+        EQUIPNUM.PARKING_STATUS,
+        EQUIPNUM.PUBLIC_SPACE_STATUS,
+        EQUIPNUM.ENABLE_FLAG,
+        EQUIPNUM.COMPANY_NAME,
+        EQUIPNUM.PROJECT_NAME,
+        EQUIPNUM.CONFIG_VALUE_NAME,
+        EQUIPNUM.EQUIPNUM
+        FROM (SELECT HMP.PROPERTY_ID,
+        HMP.GROUP_ID,
+        HMP.COMPANY_ID,
+        HMP.PROJECT_ID,
+        HMP.PROPERTY_TYPE,
+        HMP.PROPERTY_NAME,
+        HMP.PROPERTY_NAME_ALIAS,
+        HMP.PROPERTY_NUMBER,
+        HMP.OLD_NUMBER,
+        HMP.PROPERTY_STATUS,
+        HMP.PARENT_PROPERTY_ID,
+        HMP.BUILDING_AMOUNT,
+        HMP.DEPT_AREA,
+        HMP.FLOOR_AREA,
+        HMP.GREEN_AREA,
+        HMP.POSTAL_CODE,
+        HMP.DEPT_BUILDER,
+        HMP.COMPLETE_TIME,
+        HMP.SECURITY_UNIT,
+        HMP.LONGITUDE,
+        HMP.LATITUDE,
+        HMP.COUNTRY,
+        HMP.PROVINCE,
+        HMP.CITY,
+        HMP.DISTRICT,
+        HMP.STREET,
+        HMP.BUILDING_TYPE,
+        HMP.HEATING_WAY,
+        HMP.ROOM_KIND,
+        HMP.ROOM_TYPE,
+        HMP.ROOM_ORIENTATION,
+        HMP.ROOM_AREA,
+        HMP.USE_AREA,
+        HMP.FEE_AREA,
+        HMP.ROOM_DECORATION,
+        HMP.BUILD_DETAILS,
+        HMP.PARKING_TYPE,
+        HMP.PARKING_LENGTH,
+        HMP.PARKING_WIDTH,
+        HMP.PARKING_AREA,
+        HMP.PUBLIC_SPACE_TYPE,
+        HMP.PUBLIC_SPACE_AREA,
+        HMP.ROOM_STATUS,
+        HMP.PARKING_STATUS,
+        HMP.PUBLIC_SPACE_STATUS,
+        HMP.ENABLE_FLAG,
+        FCL.COMPANY_FULL_NAME COMPANY_NAME,
+        HMP2.PROJECT_NAME,
+        HCV.CONFIG_VALUE_NAME,
+        NVL(PRONUM.PRONUM,
+        0) EQUIPNUM
+        FROM HPMS_MDM_PROPERTY HMP
+        LEFT JOIN FND_COMPANY_B FC
+        ON HMP.COMPANY_ID = FC.COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL FCL
+        ON (FC.COMPANY_ID = FCL.COMPANY_ID AND FCL.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN HPMS_MDM_PROJECT HMP2
+        ON HMP.PROJECT_ID = HMP2.PROJECT_ID
+        LEFT JOIN HPMS_CONFIG_VALUE HCV
+        ON HMP.PROPERTY_TYPE = HCV.CONFIG_VALUE_ID
+        LEFT JOIN (SELECT COUNT(0) PRONUM,
+        HFCB.PROPERTY_ID PROPERTY_ID
+        FROM HPMS_FIN_CUSMETER_BIND HFCB
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME
+        ON HFCB.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        WHERE 1 = 1
+        <if test = "equipmentTypeId != null"> AND HMET.EQUIPMENT_TYPE_ID = #{equipmentTypeId , jdbcType=DECIMAL} </if>
+        GROUP BY HFCB.PROPERTY_ID) PRONUM
+        ON PRONUM.PROPERTY_ID = HMP.PROPERTY_ID) EQUIPNUM
+        WHERE EQUIPNUM.EQUIPNUM = 0
+        <if test = "propertyId != null"> AND EQUIPNUM.PROPERTY_ID = #{propertyId , jdbcType=DECIMAL} </if>
+        <if test = "companyId != null"> AND EQUIPNUM.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
+        <if test = "projectId != null"> AND EQUIPNUM.PROJECT_ID = #{projectId , jdbcType=DECIMAL} </if>
+        <if test = "propertyType != null"> AND EQUIPNUM.PROPERTY_TYPE = #{propertyType , jdbcType=DECIMAL} </if>
+        <if test = "configValueName != null"> AND EQUIPNUM.CONFIG_VALUE_NAME = #{configValueName , jdbcType=VARCHAR} </if>
+        <if test = "propertyName != null"> AND EQUIPNUM.PROPERTY_NAME like concat('%', concat(#{propertyName,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "propertyNumber != null"> AND EQUIPNUM.PROPERTY_NUMBER like concat('%', concat(#{propertyNumber,jdbcType=VARCHAR}, '%')) </if>
+        <if test = "oldNumber != null"> AND EQUIPNUM.OLD_NUMBER like concat('%', concat(#{oldNumber,jdbcType=VARCHAR}, '%')) </if>
+    </select>
+
+
+    <select id="queryEquipmentInUse" parameterType="hpms.mdm.dto.Equipment" resultMap="EquipMentResultMap">
+
+        SELECT *
+        FROM (SELECT HME.EQUIPMENT_ID,
+        HME.EQUIPMENT_TYPE_ID,
+        HME.EQUIPMENT_CODE,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_BARCODE,
+        HME.EQUIPMENT_SERIAL,
+        HME.ASSETS_NUMBER,
+        HME.EQUIPMENT_UOM,
+        HME.DOOR_NO,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.ORG_ID,
+        HME.EQUIPMENT_SIGNIFICANCE,
+        HME.EQUIPMENT_STATUS,
+        HME.PURCHASING_DATE,
+        HME.EQUIPMENT_SUPPLIER,
+        HME.EQUIPMENT_MANUFACTURE,
+        HME.EQUIPMENT_MODEL,
+        HME.PRODUCTION_DATE,
+        HME.FACTORY_NUMBER,
+        HME.INSTALL_DATE,
+        HME.USE_DATE,
+        HME.MAINTENANCE_TYPE,
+        HME.DURABLE_YEAR,
+        HME.GUARANTEE_DATE,
+        HME.INDICATIVE_PRICE,
+        HME.EQUIPMENT_ATTACHMENT,
+        HME.EQUIPMENT_PICTURE,
+        HME.TECHNICAL_PARAMETER,
+        HME.PARENT_EQUIPMENT_ID,
+        HME.VERSION_ID,
+        HME.EQUIPMENT_PICTURE_FILE_NAME,
+        HME.EQUIPMENT_PICTURE_CONTENT_TYPE,
+        HME.EQUIPMENT_PICTURE_FILE_SIZE,
+        HME.EQUIPMENT_PICTURE_UPDATED_AT,
+        HME.CHANGE_EQUIPMENT_ID,
+        HME.CHANGE_REASON,
+        HME.PROGRAM_ID,
+        HME.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HMET.TYPE_NAME,
+        HCVV.MEANING MEANING1,
+        HCVV1.MEANING MEANING2,
+        HME2.EQUIPMENT_NAME PARENT_EQUIPMENT_NAME,
+        HOU.NAME,
+        HMVS.STRUCTURE_NAME,
+        HMET.TYPE_ATTRIBUTE,
+        NVL(EQUIPMENT_NUM.PRONUM,
+        0) EQUIPNUM
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HME.EQUIPMENT_TYPE_ID = HMET.EQUIPMENT_TYPE_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HMPS_METER_ATTRIBUTE'
+        AND HCVV.VALUE = HMET.TYPE_ATTRIBUTE
+        AND HCVV.LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
+        ON HCVV1.CODE = 'HPMS_EQUIPMENT_STATUS'
+        AND HCVV1.VALUE = HME.EQUIPMENT_STATUS
+        AND HCVV1.LANG = #{request.locale, jdbcType = VARCHAR}
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME2
+        ON HME2.EQUIPMENT_ID = HME.PARENT_EQUIPMENT_ID
+        LEFT JOIN HR_ORG_UNIT_B HOU
+        ON HOU.UNIT_ID = HME.ORG_ID
+        LEFT JOIN HPMS_MDM_VERSION_STRUCTURE HMVS
+        ON HMVS.STRUCTURE_ID = HME.VERSION_ID
+        LEFT JOIN (SELECT COUNT(0) PRONUM,
+        HFCB.EQUIPMENT_ID EQUIPMENT_ID
+        FROM HPMS_FIN_CUSMETER_BIND HFCB
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME
+        ON HFCB.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        WHERE 1 = 1
+
+        GROUP BY HFCB.EQUIPMENT_ID) EQUIPMENT_NUM
+        ON HME.EQUIPMENT_ID = EQUIPMENT_NUM.EQUIPMENT_ID) EQUIPTABLE
+
+
+        <where>
+            EQUIPTABLE.EQUIPNUM=0
+            <if test="equipmentCode!=null">
+                and EQUIPTABLE.EQUIPMENT_CODE LIKE concat('%', concat(#{equipmentCode,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="equipmentName!=null">
+                and EQUIPTABLE.EQUIPMENT_NAME LIKE concat('%', concat(#{equipmentName,jdbcType=VARCHAR}, '%'))
+            </if>
+
+            <if test="equipmentTypeId!=null">
+                and EQUIPTABLE.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="companyId!=null">
+                and EQUIPTABLE.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="projectId!=null">
+                and EQUIPTABLE.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="equipmentStatus!=null">
+                and EQUIPTABLE.EQUIPMENT_STATUS=#{equipmentStatus,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+    </select>
+
+
+</mapper>

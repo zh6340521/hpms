@@ -12,7 +12,11 @@
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script>
     var equipmentId = <#if RequestParameters.equipmentId?exists> ${RequestParameters.equipmentId} <#else>-1</#if>;
-
+    var changeFlag=<#if RequestParameters.optionType?exists> ${RequestParameters.optionType} <#else>-1</#if>;
+    var customerBindId=<#if RequestParameters.customerBindId?exists> ${RequestParameters.customerBindId} <#else>-1</#if>;
+    var propertyId = <#if RequestParameters.propertyId?exists> ${RequestParameters.propertyId} <#else>-1</#if>;
+    console.log(customerBindId);
+    console.log(propertyId);
     viewModel = kendo.observable({
         model: {
             newRecordFlag : "Y",
@@ -20,6 +24,7 @@
         }
     });
     if(equipmentId !=-1){
+
         $.ajax({
             type   : "POST",
             url: "${base.contextPath}/hpms/fin/pubmeter/change/query",
@@ -49,13 +54,30 @@
                         }
                     }
                 });
+                if(changeFlag!=-1){
+                    $("#companyFullName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#projectName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#typeName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#equipmentName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#crName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#meterTotalAmount").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#propertyNumber").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#propertyName").attr("readonly",true).css("background", "#DDDDDD");
+                }else{
+                    $("#companyFullName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#projectName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#typeName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#equipmentName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#crName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#meterTotalAmount").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#propertyNumber").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#propertyName").attr("readonly",true).css("background", "#DDDDDD");
+                    $("#propertyNumberDiv").hide();
+                    $("#propertyNameDiv").hide();
 
-                $("#companyFullName").attr("readonly",true).css("background", "#DDDDDD");
-                $("#projectName").attr("readonly",true).css("background", "#DDDDDD");
-                $("#typeName").attr("readonly",true).css("background", "#DDDDDD");
-                $("#equipmentName").attr("readonly",true).css("background", "#DDDDDD");
-                $("#crName").attr("readonly",true).css("background", "#DDDDDD");
-                $("#meterTotalAmount").attr("readonly",true).css("background", "#DDDDDD");
+                }
+
+
 
             }
         });
@@ -134,6 +156,28 @@
                             <input id="crName" name="crName" type="text" data-bind="value:model.crName" class="k-textbox"
                                    style="width: 100%;">
                             <script>kendo.bind($('#crName'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6" >
+                    <div class="form-group" id="propertyNumberDiv" >
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.priceline.calculaterule"/></label>
+                        <div class="col-xs-7">
+                            <input id="propertyNumber" name="propertyNumber" type="text" data-bind="value:model.propertyNumber" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#propertyNumber'), viewModel);</script>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6" >
+                    <div class="form-group" id="propertyNameDiv">
+                        <label class="col-xs-4 control-label"
+                               style="text-align: right"><@spring.message "hpms.mdm.priceline.calculaterule"/></label>
+                        <div class="col-xs-7">
+                            <input id="propertyName" name="propertyName" type="text" data-bind="value:model.propertyName" class="k-textbox"
+                                   style="width: 100%;">
+                            <script>kendo.bind($('#propertyName'), viewModel);</script>
                         </div>
                     </div>
                 </div>
@@ -225,7 +269,7 @@
                             if (k=="changeEquipmentId" && row[k] == null) {
                                 viewModel.model.__status = 'update';
                                 Hap.submitForm({
-                                    url: '${base.contextPath}/hpms/fin/pubmeter/submit',
+                                    url: '${base.contextPath}/hpms/fin/pubmeter/submit?cusmeterId='+customerBindId,
                                     formModel: viewModel.model,
                                     success: function (data) {
                                         $.ajax({

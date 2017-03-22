@@ -1,0 +1,191 @@
+<#include "../include/header.html">
+    <script type="text/javascript">
+        var equipmentViewModel = kendo.observable({
+            model: {},
+            createFunction: function () {
+                $('#Grid').data('kendoGrid').addRow();
+            },
+            saveFunction: function () {
+                $('#Grid').data('kendoGrid').saveChanges();
+            },
+            queryResource: function (e) {
+                $('#Grid').data('kendoGrid').dataSource.page(1);
+            }
+        });
+    </script>
+    <body>
+    <div id="page-content">
+        <div id="cusmeter_bind_form">
+            <form class="form-horizontal" id="pool_form" role="form" style="margin-top: 5px;">
+                <div class="row">
+                    <div class="from-group col-md-12" style="margin-bottom:10px">
+                        <label class="col-md-4 control-label"><@spring.message 'hpms.mdm.property.company'/>:</label>
+                        <div class="col-md-8">
+                            <input id="companyId" name="companyId" data-bind="value:model.companyId" style="width: 90%;"/>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="from-group col-md-12" style="margin-bottom:10px">
+                        <label class="col-md-4 control-label"><@spring.message 'hpms.mdm.property.project'/>:</label>
+                        <div class="col-md-8">
+                            <input id="projectId" name="projectId" data-bind="value:model.projectId" style="width: 90%;"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="from-group col-md-12" style="margin-bottom:10px">
+                        <label class="col-md-5 control-label"><@spring.message 'hpms.mdm.fee.equipmenttype'/>:</label>
+                        <div class="col-md-7">
+                            <input id="equipmentTypeId" name="equipmentTypeId" data-bind="value:model.equipmentTypeId" style="width: 90%;"/>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script>kendo.bind($('#cusmeter_bind_form'), equipmentViewModel);</script>
+
+        <div  align="center" style="clear:both; background: #fff;margin-left:9%;padding-top:50px" id="button">
+            <span class="btn btn-success" onclick="propertyView()" type="submit"><@spring.message "hap.save"/></span>
+            <span class="btn btn-success" id="closeWin" type="button"><@spring.message "hap.cancel"/></span>
+        </div>
+        <script>kendo.bind($('#toolbar-btn'), equipmentViewModel);</script>
+
+    </div>
+
+
+
+    <script>
+
+        $("#companyId").kendoComboBox({
+            valuePrimitive: true,
+            dataTextField: "companyFullName",
+            dataValueField: "companyId",
+            dataSource: {
+                transport: {
+                    read:function(options) {
+                        $.ajax({
+                            type   : "POST",
+                            url: "${base.contextPath}/fnd/company/query",
+                            data: {},
+                            success: function(json) {
+                                options.success(json.rows);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        $("#projectId").kendoComboBox({
+            autoBind: false,
+            valuePrimitive: true,
+            cascadeFrom: "companyId",
+            cascadeFromField: "companyId",
+            filter: "contains",
+            dataTextField: "projectName",
+            dataValueField: "projectId",
+            dataSource: {
+                serverFiltering:true,
+                transport: {
+                    read: {
+                        url:"${base.contextPath}/mdm/property/projectQuery",
+                        type : "POST"
+                    },
+                    contentType : "application/json",
+                    parameterMap: function(options, type) {
+                        if (type === "read") {
+                            var filter = options.filter.filters[0]
+                            var map = {};
+                            map[filter.field] = filter.value;
+                            return map;
+                        }
+                    }
+                },
+                schema: {
+                    data: 'rows'
+                }
+            }
+
+        }) ;
+
+
+        $("#equipmentTypeId").kendoComboBox({
+            valuePrimitive: true,
+            dataTextField: "typeName",
+            dataValueField: "equipmentTypeId",
+            dataSource: {
+                transport: {
+                    read:function(options) {
+                        $.ajax({
+                            type   : "POST",
+                            url: "${base.contextPath}/hpms/mdm/equipment/queryEquipmentType?typeAttribute="+'CUSTOMER METER',
+                            data: {},
+                            success: function(json) {
+                                options.success(json.rows);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+
+        $("#page-content").kendoValidator();
+        $("#closeWin").click(function(){
+            window.parent.$("#equipmentView").data("kendoWindow").close();
+        });
+
+        function propertyView() {
+            //window.parent.$("#equipmentView").data("kendoWindow").close();
+            if(equipmentViewModel.model.companyId==''||equipmentViewModel.model.companyId==null){
+                kendo.ui.showInfoDialog({
+                    message:'公司不能为空'
+                });
+            }else if(equipmentViewModel.model.projectId==''||equipmentViewModel.model.projectId==null){
+                kendo.ui.showInfoDialog({
+                    message:'项目不能为空'
+                });
+            }else if(equipmentViewModel.model.equipmentTypeId==''||equipmentViewModel.model.equipmentTypeId==null){
+                kendo.ui.showInfoDialog({
+                    message:'设备类型不能为空'
+                });
+            }else{
+                window.parent.$("#propertyView").kendoWindow({
+                    actions: ["Close"],
+                    width: 1050,
+                    height: 550,
+                    draggable: true,
+                    visible: false,
+                    iframe: true,
+                    close: function () {
+
+                    },
+                    modal: true,
+                    content: '${base.contextPath}/fin/property_select.html?companyId='+equipmentViewModel.model.companyId+'&&projectId='+equipmentViewModel.model.projectId+'&&equipmentTypeId='+equipmentViewModel.model.equipmentTypeId
+                }).data("kendoWindow");
+                var propertyView = window.parent.$("#propertyView").data("kendoWindow");
+                propertyView.maximize();
+                propertyView.open();
+
+                var equipmentView=window.parent.$("#equipmentView").data("kendoWindow");
+                equipmentView.close();
+            }
+
+        }
+
+        
+
+
+
+
+
+
+
+        
+
+    </script>
+    </body>
+    </html>

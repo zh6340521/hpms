@@ -12,7 +12,7 @@
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script>
     var equipmentId = <#if RequestParameters.equipmentId?exists> ${RequestParameters.equipmentId} <#else>-1</#if>;
-
+    var propertyId = <#if RequestParameters.propertyId?exists> ${RequestParameters.propertyId} <#else>-1</#if>;
     viewModel = kendo.observable({
         model: {
             newRecordFlag : "Y",
@@ -20,6 +20,9 @@
         }
     });
     if(equipmentId !=-1){
+        if(propertyId!=-1){
+            viewModel.model.set("propertyId",propertyId);
+        }
         $.ajax({
             type   : "POST",
             url: "${base.contextPath}/hpms/fin/pubmeter/init/query",
@@ -272,7 +275,9 @@
             }
         });
         $("#readDate").kendoDatePicker({
-            format : "yyyy-MM-dd"
+            start: "year",
+            depth: "year",
+            format : "yyyy-MM"
         });
 
     </script>
