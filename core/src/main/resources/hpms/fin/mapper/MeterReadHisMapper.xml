@@ -310,6 +310,7 @@
         AND HCVV.VALUE = HFMRH.STATUS
         AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
         WHERE 1=1
+            AND HFMRH.STATUS='ACTIVE'
         <if test="equipmentId!=null">
             AND HFMRH.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
         </if>
