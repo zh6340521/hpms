@@ -1,7 +1,13 @@
 <#include "../include/header.html">
     <body>
     <script src="${base.contextPath}/common/code?resourceTypeData=HPMS_CR_OBJECT" type="text/javascript"></script>
-
+    <style>
+        .red {
+            color: red;
+            position: absolute;
+            margin-top: 22px;
+        }
+    </style>
     <script type="text/javascript">
         // 初始化viewModel
         var viewModel = kendo.observable({
@@ -368,7 +374,7 @@
                             parent.openTab("set_" + dataItem.chargeRuleId, dataItem.crName, "${base.contextPath}/fin/time_cal.html/?chargeRuleId=" + dataItem.chargeRuleId);
                         }
                     },
-                        {name: "edit"},{name:"destroy"}
+                        {name: "edit"}
                     ],
                     width: '12%'
                 },
@@ -385,7 +391,7 @@
                         }
                     },
                     editor: function (container, options) {
-                        $('<input id="comp" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                        $('<input id="comp" required type="text" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                         $("#comp").kendoDropDownList({
                             optionLabel: "--请选择--",
                             dataTextField: "companyFullName",
@@ -418,7 +424,7 @@
                         }
                     },
                     editor: function (container, options) {
-                        $('<input id="pro" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                        $('<input id="pro" required type="text" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                         $pro1 = $("#pro").kendoDropDownList({
                             optionLabel: "--请选择--",
                             dataTextField: "projectName",
@@ -445,7 +451,7 @@
                         }
                     },
                     editor: function (container, options) {
-                        $('<input id="equip" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                        $('<input id="equip" required type="text" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                         $("#equip").kendoDropDownList({
                             optionLabel: "--请选择--",
                             dataTextField: "typeName",
@@ -497,7 +503,7 @@
                     attributes: {style: "text-align:center"},
                     editor: function (container, options) {
                         if (options.model.chargeRuleId == "") {
-                            $('<input id="editCode" onchange="isHave(this.value)" required type="text" class="k-textbox" validationMessage="大写,数字和_" pattern="^[A-Z0-9_]+$" name="' + options.field + '"/>').appendTo(container)
+                            $('<input id="editCode" onchange="isHave(this.value)" required type="text" class="k-textbox" validationMessage="大写,数字和_" pattern="^[A-Z0-9_]+$" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                         } else {
                             $('<span>' + options.model.crCode + '</span>')
                                 .appendTo(container)
@@ -509,6 +515,9 @@
                     title: '计费规则',
                     width: '12%',
                     attributes: {style: "text-align:center"},
+                    editor: function (container, options) {
+                            $('<input required type="text" class="k-textbox" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                    },
                 },
                 {
                     field: "enableFlag",
