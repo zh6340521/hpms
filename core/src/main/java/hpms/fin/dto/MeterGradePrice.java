@@ -5,6 +5,7 @@ import com.hand.hap.system.dto.BaseDTO;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Created by LoseMyself
@@ -32,6 +33,16 @@ public class MeterGradePrice extends BaseDTO{
 
     /*计量单位*/
     private String uom;
+
+    /*公司ID*/
+    @Transient
+    private Long companyId;
+    /*项目ID*/
+    @Transient
+    private Long projectId;
+    /*设备类型ID*/
+    @Transient
+    private Long equipmentTypeId;
 
     public Long getGradePriceId() {
         return gradePriceId;
@@ -76,5 +87,29 @@ public class MeterGradePrice extends BaseDTO{
     public MeterGradePrice setUom(String uom) {
         this.uom = uom;
         return this;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setEquipmentTypeId(Long equipmentTypeId) {
+        this.equipmentTypeId = equipmentTypeId;
+    }
+
+    public Long getEquipmentTypeId() {
+        return equipmentTypeId;
     }
 }
