@@ -373,12 +373,7 @@
                 title: '<@spring.message "hpms.fin.pubmeter.invoiceCode"/>',
                 width: 100,
                 editor:function (container, options) {
-                    if(options.model.status == "FREEZED") {
-                        $('<span>' + options.model.invoiceCode + '</span>')
-                            .appendTo(container)
-                    }else {
-                        $('<input type="text" class="k-textbox" pattern="^[0-9A-Z]+$" required validationMessage="<@spring.message "hpms.fin.pubmeter.invoicelimit"/>" name="' + options.field + '"/>').appendTo(container)
-                    }
+                    $('<input type="text" class="k-textbox" pattern="^[0-9A-Z]+$" required validationMessage="<@spring.message "hpms.fin.pubmeter.invoicelimit"/>" name="' + options.field + '"/>').appendTo(container)
                 }
             },
                     {
@@ -414,12 +409,7 @@
                 editor:function (container, options) {
                     //TODO set this row in var
                     thisRowData_g = options.model;
-                    if(options.model.status == "FREEZED") {
-                        $('<span>' + options.model.meterTotalUse + '</span>')
-                            .appendTo(container)
-                    }else {
-                        $('<input type="text" class="k-textbox" onblur = "useChange()" pattern="^(([0-9]+)|([0-9]+\.[0-9]{1}))$" required validationMessage="<@spring.message "hpms.fin.pubmeter.numberlimit"/>" name="' + options.field + '"/>').appendTo(container)
-                    }
+                    $('<input type="text" class="k-textbox" onblur = "useChange()" pattern="^(([0-9]+)|([0-9]+\.[0-9]{1}))$" required validationMessage="<@spring.message "hpms.fin.pubmeter.numberlimit"/>" name="' + options.field + '"/>').appendTo(container)
                 }
             },
                     {
