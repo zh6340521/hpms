@@ -70,8 +70,80 @@ public class Invoice extends BaseDTO {
     private String meaning1;
     @Transient
     private String meaning2;
+    @Transient
+    private String meaning3;
+    @Transient
+    private String status;
+    @Transient
+    private Date payDate;
+    @Transient
+    private Float amount;
+    @Transient
+    private Long paymentId;
+    @Transient
+    private String paymentCode;
+    @Transient
+    private String docTypePay;
+    
+    
+    
+	public String getDocTypePay() {
+		return docTypePay;
+	}
 
-    public String getMeaning1() {
+	public void setDocTypePay(String docTypePay) {
+		this.docTypePay = docTypePay;
+	}
+
+	public Long getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(Long paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	public String getPaymentCode() {
+		return paymentCode;
+	}
+
+	public void setPaymentCode(String paymentCode) {
+		this.paymentCode = paymentCode;
+	}
+
+	public String getMeaning3() {
+		return meaning3;
+	}
+
+	public void setMeaning3(String meaning3) {
+		this.meaning3 = meaning3;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Date getPayDate() {
+		return payDate;
+	}
+
+	public void setPayDate(Date payDate) {
+		this.payDate = payDate;
+	}
+
+	public Float getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Float amount) {
+		this.amount = amount;
+	}
+
+	public String getMeaning1() {
         return meaning1;
     }
 
