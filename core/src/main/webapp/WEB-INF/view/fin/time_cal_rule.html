@@ -13,7 +13,7 @@
                 $("#grid").data("kendoGrid").dataSource.page(1);
             },
             // 新增函数
-            createFunction: function(){
+            createFunction: function () {
                 $('#grid').data('kendoGrid').addRow();
             },
             // 重置查询框
@@ -25,74 +25,84 @@
                 $("#grid").data("kendoGrid").dataSource.page(1);
             },
         });
-            var companyArray = [];
-            var projectArray = null;
-            var equipmentArray = null;
-            $.ajax({
-                type   : "GET",
-                url: "${base.contextPath}/fnd/company/query",
-                data: '',
-                async: false,
-                success: function(args) {
-                     ca = args.rows;
-                     for(var key in args.rows){
-                         if(args.rows[key].parentCompanyId != null){
-                             companyArray.push(args.rows[key]);
-                         }
-                     }
-                }
-            });
-            $.ajax({
-                type   : "GET",
-                url: "${base.contextPath}/hpms/mdm/project/query",
-                data: '',
-                async: false,
-                success: function(args) {
-                     projectArray = args.rows;
-                }
-            });
-            $.ajax({
-                type   : "GET",
-                url: "${base.contextPath}/mdm/equipmentType/query",
-                data: '',
-                async: false,
-                success: function(args) {
-                     equipmentArray = args.rows;
-                }
-            })
-            var cp = [];
-            for(var com in companyArray){
-                var com_pro = new Object();
-                com_pro.companyId = companyArray[com].companyId;
-                com_pro.companyFullName = companyArray[com].companyFullName;
-                var proo = [];
-                for(var pro in projectArray){
-                    if(projectArray[pro].companyId == com_pro.companyId) {
-                        var proj = new Object();
-                        proj.projectId = projectArray[pro].projectId;
-                        proj.projectName = projectArray[pro].projectName;
-                        proo.push(proj);
-                        com_pro.proo = proo;
-                    }
-                }
-                cp.push(com_pro);
-            }
-            var crcode ={};
-            function isHave(_o){
-                for(var k in crcode){
-                    if(crcode[k].crCode == _o){
-                        kendo.ui.showWarningDialog({
-                            message: '该计费规则已存在!'
-                        });
-                        $("#editCode").val(null);
+        var companyArray = [];
+        var projectArray = null;
+        var equipmentArray = null;
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/fnd/company/query",
+            data: '',
+            async: false,
+            success: function (args) {
+                ca = args.rows;
+                for (var key in args.rows) {
+                    if (args.rows[key].parentCompanyId != null) {
+                        companyArray.push(args.rows[key]);
                     }
                 }
             }
-            function isActive(_o){
-                kendo.ui.showWarningDialog({
-                    message: "该计费规则下有未冻结的抄表记录,不允许失效操作!"
-                });
+        });
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/hpms/mdm/project/query",
+            data: '',
+            async: false,
+            success: function (args) {
+                projectArray = args.rows;
             }
+        });
+        $.ajax({
+            type: "GET",
+            url: "${base.contextPath}/mdm/equipmentType/query",
+            data: '',
+            async: false,
+            success: function (args) {
+                equipmentArray = args.rows;
+            }
+        })
+        var cp = [];
+        var epp = [];
+        for (var com in companyArray) {
+            var com_pro = new Object();
+            com_pro.companyId = companyArray[com].companyId;
+            com_pro.companyFullName = companyArray[com].companyFullName;
+            var proo = [];
+            for (var pro in projectArray) {
+                if (projectArray[pro].companyId == com_pro.companyId) {
+                    var proj = new Object();
+                    proj.projectId = projectArray[pro].projectId;
+                    proj.projectName = projectArray[pro].projectName;
+                    proo.push(proj);
+                    com_pro.proo = proo;
+                }
+            }
+            cp.push(com_pro);
+        }
+        for (var k in equipmentArray) {
+            if (equipmentArray[k].typeAttribute == "CUSTOMER METER") {
+                epp.push(equipmentArray[k]);
+            }
+            if (equipmentArray[k].typeAttribute == "PUBLIC METER") {
+                epp.push(equipmentArray[k]);
+            }
+        }
+        var crcode = {};
+        function isHave(_o) {
+            for (var k in crcode) {
+                if (crcode[k].crCode == _o) {
+                    kendo.ui.showWarningDialog({
+                        message: '该计费规则已存在!'
+                    });
+                    $("#editCode").val(null);
+                }
+            }
+        }
+        function isActive(_o) {
+            kendo.ui.showWarningDialog({
+                message: "该计费规则下有未冻结的抄表记录,不允许失效操作!"
+            });
+        }
+
     </script>
     <div id="page-content">
         <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
@@ -113,24 +123,15 @@
                                         dataTextField: "companyFullName",
                                         dataValueField: "companyId",
                                         dataSource: companyArray,
-                                        change:function (e) {
-                                            viewModel.model.companyId=e.sender._old;
+                                        change: function (e) {
+                                            viewModel.model.companyId = e.sender._old;
                                             var cpd = {};
-                                            for(var key in cp){
-                                                if(cp[key].companyId == e.sender._old){
+                                            for (var key in cp) {
+                                                if (cp[key].companyId == e.sender._old) {
                                                     cpd = cp[key].proo;
                                                 }
                                             }
-                                            $("#project").kendoDropDownList({
-                                                optionLabel: "--请选择--",
-                                                dataTextField: "projectName",
-                                                dataValueField: "projectId",
-                                                dataSource: cpd,
-                                                change:function (e) {
-                                                    viewModel.model.projectId=e.sender._old;
-                                                }
-                                            }).data("kendoDropDownList");
-                                            kendo.bind($('#project'), viewModel);
+                                            $pro.setDataSource(cpd);
                                         }
                                     }).data("kendoDropDownList");
                                     kendo.bind($('#company'), viewModel);
@@ -146,13 +147,13 @@
                                            data-bind="value:model.projectId">
                                 </div>
                                 <script>
-                                    $("#project").kendoDropDownList({
+                                    $pro = $("#project").kendoDropDownList({
                                         optionLabel: "--请选择--",
                                         dataTextField: "projectName",
                                         dataValueField: "projectId",
                                         dataSource: projectArray,
-                                        change:function (e) {
-                                            viewModel.model.projectId=e.sender._old;
+                                        change: function (e) {
+                                            viewModel.model.projectId = e.sender._old;
                                         }
                                     }).data("kendoDropDownList");
                                     kendo.bind($('#project'), viewModel);
@@ -172,9 +173,9 @@
                                         optionLabel: "--请选择--",
                                         dataTextField: "typeName",
                                         dataValueField: "equipmentTypeId",
-                                        dataSource: equipmentArray,
-                                        change:function (e) {
-                                            viewModel.model.equipmentTypeId=e.sender._old;
+                                        dataSource: epp,
+                                        change: function (e) {
+                                            viewModel.model.equipmentTypeId = e.sender._old;
                                         }
                                     }).data("kendoDropDownList");
                                     kendo.bind($('#equipmentType'), viewModel);
@@ -194,14 +195,15 @@
                                     $("#ob").kendoDropDownList({
                                         optionLabel: "--请选择--",
                                         dataTextField: "meaning",
-                                        dataValueField:"value",
+                                        dataValueField: "value",
                                         valuePrimitive: true,
                                         dataSource: resourceTypeData,
-                                        index:-1,
+                                        index: -1,
                                     });
                                 </script>
                             </div>
-                        </div><br/>
+                        </div>
+                        <br/>
                         <!-- 计费规则 -->
                         <div class="col-sm-3">
                             <div class="form-group">
@@ -224,12 +226,12 @@
                                     // 启用状态下拉框
                                     $("#enable").kendoDropDownList({
                                         optionLabel: "--请选择--",
-                                        dataSource:["启用","失效"],
-                                        index:-1,
-                                        change:function () {
-                                            if(this.value()=="启用"){
+                                        dataSource: ["启用", "失效"],
+                                        index: -1,
+                                        change: function () {
+                                            if (this.value() == "启用") {
                                                 viewModel.model.enableFlag = 'Y'
-                                            }else{
+                                            } else {
                                                 viewModel.model.enableFlag = 'N'
                                             }
                                         }
@@ -240,9 +242,12 @@
                         <div style="clear:both"></div>
                         <!-- 查询框按钮 -->
                         <div style="float:left;margin-top: 20px">
-                            <span onclick="viewModel.createFunction()" class="btn btn-info" style="float:left;margin-right:5px;margin-left:-15px;width: 70px"><i class="fa fa-plus-square" style="margin-right:3px;"></i>
+                            <span onclick="viewModel.createFunction()" class="btn btn-info"
+                                  style="float:left;margin-right:5px;margin-left:-15px;width: 70px"><i
+                                    class="fa fa-plus-square" style="margin-right:3px;"></i>
 	<@spring.message "hap.new"/></span>
-                            <span class="btn btn-primary" style="width: 70px;float:left;margin-right:5px;" data-bind="click:queryResource"
+                            <span class="btn btn-primary" style="width: 70px;float:left;margin-right:5px;"
+                                  data-bind="click:queryResource"
                                   type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
                             <span class="btn btn-default" style="float:left;width:70px" data-bind="click:resetForm"
                                   type="button"><i class="glyphicon glyphicon-erase" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
@@ -294,21 +299,22 @@
                 },
             },
             requestEnd: function (e) {
-                if(e.type=='read'){
-                    crcode=e.response.rows;
-                }else if(e.type=='create'&&e.response.success==true){
+                if (e.type == 'read') {
+                    crcode = e.response.rows;
+                } else if (e.type == 'create' && e.response.success == true) {
                     kendo.ui.showInfoDialog({
                         message: '添加成功!'
                     });
-                }else if(e.type=='update'&&e.response.success==true){
+                } else if (e.type == 'update' && e.response.success == true) {
                     kendo.ui.showInfoDialog({
                         message: '更新成功!'
                     });
-                }else if(e.type="delete"&&e.response.success==true){
+                } else if (e.type = "delete" && e.response.success == true) {
                     kendo.ui.showInfoDialog({
                         message: e.response.message
                     });
-                }else{
+                    $('#grid').data('kendoGrid').dataSource.read();
+                } else {
                     $('#grid').data('kendoGrid').dataSource.read();
                 }
             },
@@ -321,7 +327,7 @@
                 model: {
                     id: "chargeRuleId",
                     fields: {
-                        enableFlag:{
+                        enableFlag: {
                             defaultValue: 'N',
                             type: 'boolean',
                             checkedValue: 'Y',
@@ -351,62 +357,52 @@
             },
             columns: [
                 {
-                    title:'操作',
+                    title: '操作',
                     attributes: {style: "text-align:center"},
-                    command:[ {
+                    command: [{
                         name: "查",
-                        text:"<i class='fa fa-search'></i>",
-                        click:function (e) {
+                        text: "<i class='fa fa-search'></i>",
+                        click: function (e) {
                             var tr = $(e.target).closest("tr");
                             var dataItem = this.dataItem(tr);
-                            parent.openTab("set_"+dataItem.chargeRuleId,dataItem.crName,"${base.contextPath}/fin/time_cal.html/?chargeRuleId="+dataItem.chargeRuleId);
+                            parent.openTab("set_" + dataItem.chargeRuleId, dataItem.crName, "${base.contextPath}/fin/time_cal.html/?chargeRuleId=" + dataItem.chargeRuleId);
                         }
                     },
-                        {name: "edit"},
+                        {name: "edit"},{name:"destroy"}
                     ],
-                    width:'12%'
+                    width: '12%'
                 },
                 {
                     field: "companyId",
                     title: '公司',
                     width: '12%',
                     attributes: {style: "text-align:center"},
-                    template:function (rowdata){
-                                    for(var k in companyArray){
-                                        if(companyArray[k].companyId == rowdata.companyId){
-                                            return companyArray[k].companyFullName
-                                        }
-                                    }
+                    template: function (rowdata) {
+                        for (var k in companyArray) {
+                            if (companyArray[k].companyId == rowdata.companyId) {
+                                return companyArray[k].companyFullName
+                            }
+                        }
                     },
                     editor: function (container, options) {
                         $('<input id="comp" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
-                                $("#comp").kendoDropDownList({
-                                    optionLabel: "--请选择--",
-                                    dataTextField: "companyFullName",
-                                    dataValueField: "companyId",
-                                    dataSource: companyArray,
-                                    change:function (e) {
-                                        options.model.companyId=e.sender._old;
-                                        var cpd = {};
-                                        for(var key in cp){
-                                            if(cp[key].companyId == e.sender._old){
-                                                cpd = cp[key].proo;
-                                            }
-                                        }
-                                        $("#pro").kendoDropDownList({
-                                            optionLabel: "--请选择--",
-                                            dataTextField: "projectName",
-                                            dataValueField: "projectId",
-                                            dataSource: cpd,
-                                            index: -1,
-                                            change:function (e) {
-                                                options.model.projectId=e.sender._old;
-                                            }
-                                        }).data("kendoDropDownList");
-                                        kendo.bind($('#pro'), viewModel);
+                        $("#comp").kendoDropDownList({
+                            optionLabel: "--请选择--",
+                            dataTextField: "companyFullName",
+                            dataValueField: "companyId",
+                            dataSource: companyArray,
+                            change: function (e) {
+                                options.model.companyId = e.sender._old;
+                                var cpd = {};
+                                for (var key in cp) {
+                                    if (cp[key].companyId == e.sender._old) {
+                                        cpd = cp[key].proo;
                                     }
-                                }).data("kendoDropDownList");
-                                kendo.bind($('#comp'), viewModel);
+                                }
+                                $pro1.setDataSource(cpd);
+                            }
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#comp'), viewModel);
                     }
                 },
                 {
@@ -414,26 +410,26 @@
                     title: '项目',
                     width: '12%',
                     attributes: {style: "text-align:center"},
-                    template:function (rowdata){
-                        for(var k in projectArray){
-                            if(projectArray[k].projectId == rowdata.projectId){
+                    template: function (rowdata) {
+                        for (var k in projectArray) {
+                            if (projectArray[k].projectId == rowdata.projectId) {
                                 return projectArray[k].projectName
                             }
                         }
                     },
                     editor: function (container, options) {
-                           $('<input id="pro" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
-                                $("#pro").kendoDropDownList({
-                                    optionLabel: "--请选择--",
-                                    dataTextField: "projectName",
-                                    dataValueField: "projectId",
-                                    index: -1,
-                                    dataSource: projectArray,
-                                    change:function (e) {
-                                        options.model.projectId=e.sender._old;
-                                    }
-                                }).data("kendoDropDownList");
-                                kendo.bind($('#pro'), viewModel);
+                        $('<input id="pro" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
+                        $pro1 = $("#pro").kendoDropDownList({
+                            optionLabel: "--请选择--",
+                            dataTextField: "projectName",
+                            dataValueField: "projectId",
+                            index: -1,
+                            dataSource: projectArray,
+                            change: function (e) {
+                                options.model.projectId = e.sender._old;
+                            }
+                        }).data("kendoDropDownList");
+                        kendo.bind($('#pro'), viewModel);
                     }
                 },
                 {
@@ -441,24 +437,24 @@
                     title: '仪表类型',
                     attributes: {style: "text-align:center"},
                     width: '12%',
-                    template:function (rowdata){
-                        for(var k in equipmentArray){
-                            if(equipmentArray[k].equipmentTypeId == rowdata.equipmentTypeId){
-                                return equipmentArray[k].typeName
+                    template: function (rowdata) {
+                        for (var k in epp) {
+                            if (epp[k].equipmentTypeId == rowdata.equipmentTypeId) {
+                                return epp[k].typeName
                             }
                         }
                     },
                     editor: function (container, options) {
                         $('<input id="equip" required type="text" validationMessage="必填" name="' + options.field + '"/>').appendTo(container)
-                                $("#equip").kendoDropDownList({
-                                    optionLabel: "--请选择--",
-                                    dataTextField: "typeName",
-                                    dataValueField: "equipmentTypeId",
-                                    dataSource: equipmentArray,
-                                    change:function (e) {
-                                        options.model.equipmentTypeId=e.sender._old;
-                                    }
-                                }).data("kendoDropDownList");
+                        $("#equip").kendoDropDownList({
+                            optionLabel: "--请选择--",
+                            dataTextField: "typeName",
+                            dataValueField: "equipmentTypeId",
+                            dataSource: epp,
+                            change: function (e) {
+                                options.model.equipmentTypeId = e.sender._old;
+                            }
+                        }).data("kendoDropDownList");
                     },
                 },
                 {
@@ -466,28 +462,28 @@
                     title: '计费维度',
                     attributes: {style: "text-align:center"},
                     width: '12%',
-                    template:function (rowdata){
-                        for(var k in resourceTypeData){
-                            if(resourceTypeData[k].value == rowdata.crObject){
+                    template: function (rowdata) {
+                        for (var k in resourceTypeData) {
+                            if (resourceTypeData[k].value == rowdata.crObject) {
                                 return resourceTypeData[k].meaning
                             }
                         }
                     },
                     editor: function (container, options) {
-                        if(options.model.chargeRuleId == "") {
+                        if (options.model.chargeRuleId == "") {
                             $('<input type="text" style="width: 120px" name="' + options.field + '"/>')
                                 .appendTo(container)
                                 .kendoDropDownList({
                                     dataTextField: "meaning",
-                                    dataValueField:"value",
+                                    dataValueField: "value",
                                     valuePrimitive: true,
                                     dataSource: resourceTypeData,
-                                    index:-1,
+                                    index: -1,
                                 });
-                        }else{
-                            for(var k in resourceTypeData){
-                                if(resourceTypeData[k].value == options.model.crObject){
-                                    $('<span>'+resourceTypeData[k].meaning+'</span>')
+                        } else {
+                            for (var k in resourceTypeData) {
+                                if (resourceTypeData[k].value == options.model.crObject) {
+                                    $('<span>' + resourceTypeData[k].meaning + '</span>')
                                         .appendTo(container)
                                 }
                             }
@@ -500,10 +496,10 @@
                     width: '10%',
                     attributes: {style: "text-align:center"},
                     editor: function (container, options) {
-                        if(options.model.chargeRuleId == "") {
+                        if (options.model.chargeRuleId == "") {
                             $('<input id="editCode" onchange="isHave(this.value)" required type="text" class="k-textbox" validationMessage="大写,数字和_" pattern="^[A-Z0-9_]+$" name="' + options.field + '"/>').appendTo(container)
-                        }else{
-                            $('<span>'+options.model.crCode+'</span>')
+                        } else {
+                            $('<span>' + options.model.crCode + '</span>')
                                 .appendTo(container)
                         }
                     },
@@ -520,24 +516,24 @@
                     width: '10%',
                     attributes: {style: "text-align:center"},
                     editor: function (container, options) {
-                        if(options.model.chargeRuleId == "") {
-                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
-                        }else if(options.model.enableFlag == "Y"){
+                        if (options.model.chargeRuleId == "") {
+                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.enableFlag + '" style="display: none;" class="k-valid"></span>').appendTo(container)
+                        } else if (options.model.enableFlag == "Y") {
                             $.ajax({
-                                type   : "GET",
-                                url: crudServiceBaseUrl+"/find?chargeRuleId="+options.model.chargeRuleId,
+                                type: "GET",
+                                url: crudServiceBaseUrl + "/find?chargeRuleId=" + options.model.chargeRuleId,
                                 data: '',
                                 async: false,
-                                success: function(args) {
-                                    if(args.success == false){
-                                        $('<span onmouseover="isActive()" tabindex="0" class="k-checkbox k-state-default fa fa-check"><input disabled type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
-                                    }else{
-                                        $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
+                                success: function (args) {
+                                    if (args.success == false) {
+                                        $('<span onmouseover="isActive()" tabindex="0" class="k-checkbox k-state-default fa fa-check"><input disabled type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.enableFlag + '" style="display: none;" class="k-valid"></span>').appendTo(container)
+                                    } else {
+                                        $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.enableFlag + '" style="display: none;" class="k-valid"></span>').appendTo(container)
                                     }
                                 }
                             });
-                        }else{
-                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="'+options.model.enableFlag+'" style="display: none;" class="k-valid"></span>').appendTo(container)
+                        } else {
+                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.enableFlag + '" style="display: none;" class="k-valid"></span>').appendTo(container)
                         }
                     },
                 },
