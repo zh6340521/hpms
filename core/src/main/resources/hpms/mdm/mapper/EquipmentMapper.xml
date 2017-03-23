@@ -223,6 +223,16 @@
 
     </select>
 
+    <select id="queryFeeEquipmentType" parameterType="hpms.mdm.dto.EquipmentType" resultMap="EquipmentTypeMap">
+        SELECT *
+        FROM HPMS_MDM_EQUIPMENT_TYPE HMET
+        WHERE (HMET.TYPE_ATTRIBUTE = 'PUBLIC METER' OR HMET.TYPE_ATTRIBUTE = 'CUSTOMER METER' AND HMET.METER_FLAG = 'Y')
+        AND HMET.TYPE_NAME NOT IN (SELECT NVL(HMF1.EQUIPMENT_TYPE,
+        -1) TYPE_NAME
+        FROM HPMS_MDM_FEE HMF1
+        WHERE HMF1.ENABLE_FLAG = 'Y')
+    </select>
+
 
 
 

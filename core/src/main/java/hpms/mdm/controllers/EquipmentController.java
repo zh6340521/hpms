@@ -61,6 +61,14 @@ public class EquipmentController extends BaseController {
         return new ResponseData(equipmentTypes);
     }
 
+    @RequestMapping(value = "/hpms/mdm/equipment/queryFeeEquipmentType",method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData queryFeeEquipmentType(@ModelAttribute EquipmentType equipmentType,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        List<EquipmentType> equipmentTypes=service.queryFeeEquipmentType(requestContext,equipmentType);
+        return new ResponseData(equipmentTypes);
+    }
+
     @RequestMapping({"/hpms/mdm/equipment/queryFiles"})
     public ResponseData query(HttpServletRequest request,  String sourceType, String sourceKey, @RequestParam(defaultValue = DEFAULT_PAGE) int page, @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
         IRequest requestCtx = createRequestContext(request);

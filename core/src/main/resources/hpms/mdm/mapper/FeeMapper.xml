@@ -117,6 +117,10 @@
                 and HMF.ENABLE_FLAG=#{enableFlag,jdbcType=VARCHAR}
             </if>
 
+            <if test="equipmentType!=null">
+                and HMF.EQUIPMENT_TYPE=#{equipmentType,jdbcType=VARCHAR}
+            </if>
+
         </where>
 
     </select>

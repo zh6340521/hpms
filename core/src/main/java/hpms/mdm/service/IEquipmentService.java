@@ -13,6 +13,8 @@ public interface IEquipmentService extends IBaseService<Equipment>, ProxySelf<IE
 
     List<EquipmentType> queryEquipmentType(IRequest requestContext, EquipmentType equipmentType);
 
+    List<EquipmentType> queryFeeEquipmentType(IRequest requestContext, EquipmentType equipmentType);
+
     List<Equipment> queryEquipment(IRequest requestContext,Equipment equipment,int page,int pagesize);
 
     List<Equipment> submitEquipment(IRequest requestContext,List<Equipment> equipments);

@@ -17,7 +17,9 @@
     function oprMeter(operation) {
 
         if (operation=="HIS"){
-            parent.openTab("pubMeterHis",'<@spring.message "hpms.fin.pubmeter.meterreadhis"/>',"fin/pub_meter_his.html")
+            parent.openTab("pubMeterHis",'<@spring.message "hpms.fin.pubmeter.meterreadhis"/>',"fin/cus_meter_his.html")
+        }else if (operation=="BATCH"){
+            parent.openTab("pubMeterBatch",'<@spring.message "客户仪表"/><@spring.message "hpms.fin.pubmeter.meterbatch"/>',"fin/cus_meter_batch.html")
         }else {
             var requestData = [];
             var checked = grid.selectedDataItems();
@@ -38,7 +40,7 @@
                 if(v.equipmentId != null && v.equipmentId != ''){
                     $.ajax({
                         type   : "POST",
-                        url: "${base.contextPath}/hpms/fin/meter/read/his/query",
+                        url: "${base.contextPath}/hpms/fin/meter/read/cus/query",
                         data: { equipmentId : v.equipmentId },
 
                         success: function(json) {
@@ -55,7 +57,7 @@
                                     width: "700px",
                                     close: function () {
                                     },
-                                    content: "meter_init.html?&equipmentId=" + v.equipmentId,
+                                    content: "meter_init.html?&equipmentId=" + v.equipmentId+"&&propertyId="+v.propertyId,
                                     iframe: true,
                                     modal: true
                                 });
@@ -82,7 +84,7 @@
                 if(v.equipmentId != null && v.equipmentId != ''){
                     $.ajax({
                         type   : "POST",
-                        url: "${base.contextPath}/hpms/fin/meter/read/his/query",
+                        url: "${base.contextPath}/hpms/fin/meter/read/cus/query",
                         data: { equipmentId : v.equipmentId },
 
                         success: function(json) {
@@ -99,7 +101,7 @@
                                     width: "800px",
                                     close: function () {
                                     },
-                                    content: "meter_change.html?&equipmentId=" + v.equipmentId+"&&optionType=1"+"&&customerBindId="+v.cusmeterBindId,
+                                    content: "meter_change.html?&equipmentId=" + v.equipmentId+"&&optionType=1"+"&&customerBindId="+v.cusmeterBindId+"&&propertyId="+v.propertyId,
                                     iframe: true,
                                     modal: true
                                 });
@@ -153,13 +155,13 @@
     <script>kendo.bind($('#cusmeter_bind_form'), viewModel);</script>
 
     <div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
-        <span   class="btn btn-primary" onclick="oprMeter('INIT')" style="float:left;margin-right:10px;"><@spring.message "hpms.initialization"/></span>
-        <span   class="btn btn-primary" onclick="oprMeter('VIEW')" style="float:left;margin-right:10px;"><@spring.message "hap.view"/></span>
-        <span   class="btn btn-primary" onclick="oprMeter('CHANGE')" style="float:left;margin-right:10px;"><@spring.message "hpms.fin.pubmeter.meterchange"/></span>
-        <span   class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "hpms.fin.pubmeter.meterreadhis"/></span>
-        <span   class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "批量录入"/></span>
-        <span   data-bind="click:queryResource" class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "hap.query"/></span>
-        <span   onclick="equipmentView()" class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "仪表绑定"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('INIT')" style="float:left;margin-right:10px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hpms.initialization"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('VIEW')" style="float:left;margin-right:10px;"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.view"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('CHANGE')" style="float:left;margin-right:10px;"><i class="fa fa-exchange" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterchange"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('HIS')" style="float:left;margin-right:10px;"><i class="fa fa-history" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterreadhis"/></span>
+        <span   class="btn btn-primary" onclick="oprMeter('BATCH')" style="float:left;margin-right:10px;"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterbatch"/></span>
+        <span   data-bind="click:queryResource" class="btn btn-primary" style="float:left;margin-right:10px;"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+        <span   onclick="equipmentView()" class="btn btn-primary" style="float:left;margin-right:10px;"><i class="fa fa-chain" style="margin-right:3px;"></i><@spring.message "hpms.fin.pubmeter.meterblind"/></span>
 
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
@@ -239,7 +241,7 @@
                 read:function(options) {
                     $.ajax({
                         type   : "POST",
-                        url: "${base.contextPath}/mdm/equipmentType/query",
+                        url:  "${base.contextPath}/hpms/mdm/equipment/queryEquipmentType?typeAttribute="+'CUSTOMER METER',
                         data: {},
                         success: function(json) {
                             options.success(json.rows);
@@ -354,7 +356,7 @@
     function equipmentView() {
         $("#equipmentView").kendoWindow({
             actions: ["Close"],
-            title: $l('客户仪表'),
+            title: $l('<@spring.message "hpms.fin.cusmeter.selectType"/>'),
             draggable: true,
             height: "350px",
             width: "350px",
