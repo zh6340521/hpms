@@ -47,7 +47,8 @@ public class Invoice extends BaseDTO {
       private Long programId;
       @Column
       private Long requestId;
-
+      @Column
+      private String chargeStatus;
     @Transient
     private String companyFullName;
     @Transient
@@ -85,8 +86,36 @@ public class Invoice extends BaseDTO {
     @Transient
     private String docTypePay;
     
+    private String type;
+    @Transient
+    public String referenceNumber;
     
     
+    
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+
+	public String getChargeStatus() {
+		return chargeStatus;
+	}
+
+	public void setChargeStatus(String chargeStatus) {
+		this.chargeStatus = chargeStatus;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public String getDocTypePay() {
 		return docTypePay;
 	}

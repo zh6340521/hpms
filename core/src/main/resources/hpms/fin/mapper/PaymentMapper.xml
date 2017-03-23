@@ -36,77 +36,74 @@
         <result column="PAYMENT_ID" property="paymentId" jdbcType="DECIMAL" />
         <result column="PAYMENT_CODE" property="paymentCode" jdbcType="DECIMAL" />
         <result column="DOC_TYPE_PAY" property="docTypePay" jdbcType="VARCHAR" />
+        <result column="CHARGE_STATUS" property="chargeStatus" jdbcType="VARCHAR" />
+        <result column="REFERENCE_CODE" property="referenceNumber" jdbcType="VARCHAR" />
+        
 
     </resultMap>
     
     <!--查询应付信息-->
     <select id="queryInvoice" parameterType="hpms.fin.dto.Invoice" resultMap="InvoiceResultMap">
-        SELECT
-          HFI.INVOICE_ID,
-          HFI.COMPANY_ID,
-          HFI.PROJECT_ID,
-          HFI.PAYABLE_CODE,
-          HFI.INVOICE_TYPE,
-          HFI.INVOICE_NUM,
-          HFI.OCCUPATION_ID,
-          HFI.ACCOUNT_DATE,
-          HFI.ACCOUNT_PERIOD,
-          HFI.PAYMENT_TERM_ID,
-          HFI.PAYMENT_METHOD_ID,
-          HFI.TRANS_TYPE,
-          HFI.INVOICE_AMOUNT,
-          HFI.TAX_AMOUNT,
-          HFI.ENABLE_FLAG,
-          FCB.COMPANY_FULL_NAME,
-          HMP.PROJECT_NAME,
-          HCO.PROPERTY_NUMBER,
-          HCO.PROPERTY_NAME,
-          HCO.CUSTOMER_NAME,
-          HMPT.PAYMENT_TERM_NAME,
-          HMPM.PAYMENT_METHOD_NAME,
-          HCVV1.MEANING MEANING1,
-          HCVV2.MEANING MEANING2,
-          NVL(HFP.INVOICE_NUMBER,'') INVOICE_NUMBER,
-          NVL(HCVV3.MEANING,'预付款') STATUS,
-          NVL(HFP.PAY_DATE,'') PAY_DATE,
-          NVL(HFP.AMOUNT,'') AMOUNT,
-          NVL(HFP.PAYMENT_ID,'') PAYMENT_ID,
-          'AC' doc_type_pay
-          FROM HPMS_FIN_INVOICE HFI
-          LEFT JOIN FND_COMPANY_B FCB
-          ON HFI.COMPANY_ID = FCB.COMPANY_ID
-          LEFT JOIN HPMS_MDM_PROJECT HMP
-          ON HMP.PROJECT_ID = HFI.PROJECT_ID
-          LEFT JOIN HPMS_CS_OCCUPATION HCO
-          ON HCO.OCCUPATION_ID = HFI.OCCUPATION_ID
-          LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT
-          ON HMPT.PAYMENT_TERM_ID = HFI.PAYMENT_TERM_ID
-          LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
-          ON HMPM.PAYMENT_METHOD_ID = HFI.PAYMENT_METHOD_ID
-          LEFT JOIN HPMS_FIN_PAYMENT HFP
-          ON HFI.PAYABLE_CODE = HFP.INVOICE_NUMBER
-	        LEFT JOIN HPMS_CODE_VALUE_V HCVV1
-	        ON HCVV1.CODE = 'HPMS_AP_INVOICE_TYPE'
-	        AND HCVV1.VALUE = HFI.INVOICE_TYPE
-	        AND HCVV1.LANG = #{request.locale,jdbcType=VARCHAR}
-	        LEFT JOIN HPMS_CODE_VALUE_V HCVV2
-	        ON HCVV2.CODE = 'HPMS_TRANS_TYPE_AP'
-	        AND HCVV2.VALUE = HFI.TRANS_TYPE
-	        AND HCVV2.LANG = #{request.locale,jdbcType=VARCHAR}
-	        LEFT JOIN HPMS_CODE_VALUE_V HCVV3
-	        ON HCVV3.CODE = 'HPMS_PAYMENT_STATUS'
-	        AND HCVV3.VALUE = HFP.STATUS
-	        AND HCVV3.LANG = #{request.locale,jdbcType=VARCHAR}
-
+        SELECT HFI.INVOICE_ID,
+                       HFI.COMPANY_ID,
+                       HFI.PROJECT_ID,
+                       HFI.PAYABLE_CODE,
+                       HFI.INVOICE_TYPE,
+                       HFI.INVOICE_NUM,
+                       HFI.OCCUPATION_ID,
+                       HFI.ACCOUNT_DATE,
+                       HFI.ACCOUNT_PERIOD,
+                       HFI.PAYMENT_TERM_ID,
+                       HFI.PAYMENT_METHOD_ID,
+                       HFI.INVOICE_AMOUNT,
+                       HFI.TAX_AMOUNT,
+                       HFI.ENABLE_FLAG,
+                       FCB.COMPANY_FULL_NAME,
+                       HMP.PROJECT_NAME,
+                       HCO.PROPERTY_NUMBER,
+                       HCO.PROPERTY_NAME,
+                       HCO.CUSTOMER_NAME,
+                       HFP.REFERENCE_CODE,
+                       HMPT.PAYMENT_TERM_NAME,
+                       HMPM.PAYMENT_METHOD_NAME,
+                       NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) TRANS_TYPE,
+                       NVL(HFI.Charge_Status, 'CREATED') chargeStatus,
+                       NVL(HFP.PAYMENT_CODE, '') PAYMENT_CODE,
+                       NVL(HFP.STATUS, 'PAY_ADVANCE') STATUS,
+                       NVL(HFP.PAY_DATE, '') PAY_DATE,
+                       NVL(HFP.AMOUNT, '') AMOUNT,
+                       NVL(HFP.PAYMENT_ID, '') PAYMENT_ID,
+                       'AC' doc_type_pay
+                  FROM HPMS_FIN_INVOICE HFI
+                  LEFT JOIN FND_COMPANY_B FCB
+                    ON HFI.COMPANY_ID = FCB.COMPANY_ID
+                  LEFT JOIN HPMS_MDM_PROJECT HMP
+                    ON HMP.PROJECT_ID = HFI.PROJECT_ID
+                  LEFT JOIN HPMS_CS_OCCUPATION HCO
+                    ON HCO.OCCUPATION_ID = HFI.OCCUPATION_ID
+                  LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT
+                    ON HMPT.PAYMENT_TERM_ID = HFI.PAYMENT_TERM_ID
+                  LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
+                    ON HMPM.PAYMENT_METHOD_ID = HFI.PAYMENT_METHOD_ID
+                  LEFT JOIN HPMS_FIN_PAYMENT HFP
+                    ON HFI.INVOICE_ID = HFP.INVOICE_ID
         <where>
-			1=1 AND (HFI.INVOICE_TYPE = 'PAYABLE_OTHER' OR HFI.INVOICE_TYPE = 'PAYABLE')
-			<if test="propertyNumber!=null">
-				AND HCO.PROPERTY_NUMBER = #{propertyNumber,jdbcType=VARCHAR}
+       	 1=1
+        	<if test='type=="receivable"'>
+			 	AND (NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) = 'PAYABLE' OR NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) = 'OTHER')
+			</if>
+			<if test='type=="advance"'>
+				AND	NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) = 'ADVANCED'
+			</if>
+			<if test='type=="all"'>
+                AND NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) != 'NULL'
+            </if>
+			<if test="occupationId!=null">
+				AND HFI.OCCUPATION_ID = #{occupationId,jdbcType=DECIMAL}
 			</if>
 			<if test="paymentId!=null">
-				AND HCO.HFP.PAYMENT_ID = #{propertyNumber,jdbcType=paymentId}
+				AND HFP.PAYMENT_ID = #{paymentId,jdbcType=paymentId}
 			</if>
         </where>
-
     </select>
 </mapper>
