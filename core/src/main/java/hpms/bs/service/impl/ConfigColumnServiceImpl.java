@@ -171,6 +171,53 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
         return ccList;
     }
 
+
+    @Override
+    public List<ConfigColumn> queryRequiredByCache(IRequest iRequest, Long configValueId, Long configId) {
+        String cid = Long.toString(configId);
+        logger.info("查询缓存中对应的头表对象");
+        Config config = configCache.getValue(cid);
+
+        List<ConfigValue> configValueList = new ArrayList<>();
+        List<ConfigColumn> ccList = new ArrayList<>();
+
+        logger.info("头表对象对应的行表");
+        List<ConfigValue> cvList = config.getConfigValueList();
+        if (!cvList.isEmpty() && cvList.size() != 0) {
+            for (ConfigValue cv : cvList) {
+                if (cv.getConfigValueId().equals(configValueId) || cv.getConfigValueId() == configValueId) {
+                    configValueList.add(cv);
+
+                    logger.info("查询该表对应的行表");
+                    for (ConfigValue cv1 : configValueList) {
+                        List<ConfigColumn> cc1List = cv1.getConfigColumnList();
+                        if (!cc1List.isEmpty() && cc1List.size() != 0) {
+                            for (ConfigColumn cc : cc1List) {
+                                logger.info("查询所有启用的字段");
+                                if (cc.getEnableFlag().equals("Y") || cc.getEnableFlag() == "Y") {
+                                    logger.info("判断字符是否必输");
+                                    if (cc.getRequiredFlag().equals("Y") || cc.getRequiredFlag() == "Y") {
+
+                                        ccList.add(cc);
+
+                                    }
+
+                                }
+                            }
+
+
+                        }
+                    }
+                }
+            }
+
+
+        }
+        return ccList;
+    }
+
+
+
     @Override
     public Map<Long,List<ConfigColumn>> findConfigColumnCacheBydisplayLineNo(IRequest iRequest, Long configValueId, Long configId, Long displayLineNo) {
         String cid = Long.toString(configId);

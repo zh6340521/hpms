@@ -112,6 +112,26 @@ public class ConfigColumnController extends BaseController {
     }
 
     /**
+     * 从缓存中查询必输字段
+     * @param configValueId
+     * @param configId
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/bs/configcolumn/queryRequiredByCache")
+    @ResponseBody
+    public ResponseData queryRequiredByCache(Long configValueId,Long configId,HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        List<ConfigColumn> ccList = configColumnService.queryRequiredByCache(requestContext,configValueId,configId);
+        return new ResponseData(ccList);
+    }
+
+
+
+
+
+
+    /**
      * 根据行号从缓存中查询数据
      * @param configValueId
      * @param configId
