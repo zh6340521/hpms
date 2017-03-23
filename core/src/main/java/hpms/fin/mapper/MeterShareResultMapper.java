@@ -5,6 +5,8 @@ package hpms.fin.mapper;/**
 import com.hand.hap.mybatis.common.Mapper;
 import hpms.fin.dto.MeterShareResult;
 
+import java.util.List;
+
 /**
  * @author fuchun.hu@hand-china.com
  * @version 1.0
@@ -14,4 +16,24 @@ import hpms.fin.dto.MeterShareResult;
  */
 
 public interface MeterShareResultMapper extends Mapper<MeterShareResult> {
+
+    /**
+     * 查询公表分摊结果数据
+     * @param msr
+     * @return
+     */
+    List<MeterShareResult> findMeterShareResult(MeterShareResult msr);
+
+    /**
+     * 转入计费后改变状态
+     * @param msr
+     */
+    void changeMeterShareResult(MeterShareResult msr);
+
+    /**
+     * 根据设备id和费用日期查询历史表数据
+     * @param msr
+     * @return
+     */
+    List<MeterShareResult> findMsrData(MeterShareResult msr);
 }
