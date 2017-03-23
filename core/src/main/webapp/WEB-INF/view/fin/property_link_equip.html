@@ -16,10 +16,7 @@
         ${RequestParameters.propertyId}
         <#else>-1</#if>;
 
-        console.log(companyId);
-        console.log(projectId);
-        console.log(equipmentTypeId);
-        console.log("建筑Id"+propertyId);
+
 
         var viewModel = kendo.observable({
             model: {},
@@ -56,7 +53,7 @@
         <script>kendo.bind($('#property_bind_form'), viewModel);</script>
 
         <div class="pull-left" id="toolbar-btn" style="clear:both;padding-bottom:10px;padding-top:20px;">
-            <span   data-bind="click:queryResource" class="btn btn-primary" style="float:left;margin-right:10px;"><@spring.message "hap.query"/></span>
+            <span   data-bind="click:queryResource" class="btn btn-primary" style="float:left;margin-right:10px;"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
         </div>
         <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
 
