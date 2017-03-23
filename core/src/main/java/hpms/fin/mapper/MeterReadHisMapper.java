@@ -2,6 +2,7 @@ package hpms.fin.mapper;
 
 import com.hand.hap.mybatis.common.Mapper;
 import com.hand.hap.system.dto.Code;
+import hpms.fin.dto.MeterGradePrice;
 import hpms.fin.dto.MeterReadHis;
 
 import java.util.List;
@@ -61,4 +62,13 @@ public interface MeterReadHisMapper extends Mapper<MeterReadHis>{
      * @return
      */
     List<MeterReadHis> queryMeterReadHisForMsr(MeterReadHis meterReadHis);
+
+    /**
+     * 根据公司、项目、设备类型、用量找到价格
+     * @author jun.zhao02@hand-china.com
+     * 2017年3月22日 10:29:00
+     * @param meterGradePrice
+     * @return
+     */
+    List<MeterGradePrice> queryGradePrice(MeterGradePrice meterGradePrice);
 }

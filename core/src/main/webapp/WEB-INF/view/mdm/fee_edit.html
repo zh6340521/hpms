@@ -163,7 +163,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='feeCode']").parent();
-                        	$parent.append('<span style="position:absolute;z-index:1;right:-62%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="feeCode" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"大写字母下划线数字"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-80%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="feeCode" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"大写字母下划线数字"+'</span>');
                         	newViewModel.model.set('feeCode',null);
                             }
 
@@ -358,7 +358,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='precision']").parent();
-                        	$parent.append('<span style="position:absolute;z-index:1;right:-42%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="precision" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-52%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="precision" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
                         	newViewModel.model.set('precision',null);
                             }
 
@@ -439,12 +439,28 @@
                     <label class="col-xs-6 control-label"
                            style="text-align: right"><@spring.message "hpms.mdm.Fee.equipmentType"/>:</label>
                     <div class="col-xs-6">
-                         <input id="equipmentType" name="equipmentType" style="width: 100%" data-bind="text:model.equipmentType,value:model.equipmentType"/>
+                         <input id="equipmentTypeId" name="equipmentType" style="width: 100%" data-bind="text:model.equipmentType,value:model.equipmentType"/>
                         <script>
-                        $("#equipmentType").kendoDropDownList({
-
-                        }).data("kendoDropDownList");
-                        kendo.bind($('#equipmentType'), newViewModel);</script>
+                            $("#equipmentTypeId").kendoComboBox({
+                                valuePrimitive: true,
+                                dataTextField: "typeName",
+                                dataValueField: "typeName",
+                                dataSource: {
+                                    transport: {
+                                        read:function(options) {
+                                            $.ajax({
+                                                type   : "POST",
+                                                url: "${base.contextPath}/hpms/mdm/equipment/queryFeeEquipmentType",
+                                                data: {},
+                                                success: function(json) {
+                                                    options.success(json.rows);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                        kendo.bind($('#equipmentTypeId'), newViewModel);</script>
                     </div>
                 </div>
             </div>
@@ -509,7 +525,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='overdueRate']").parent();
-                        	$parent.append('<span style="position:absolute;z-index:1;right:-42%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="overdueRate" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-52%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="overdueRate" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
                         	newViewModel.model.set('overdueRate',null);
                             }
 
@@ -536,7 +552,7 @@
                         	}else{
                         	//alert('非正整数');
                         	var $parent = $("input[name='chargeDays']").parent();
-                        	$parent.append('<span style="position:absolute;z-index:1;right:-42%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="chargeDays" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
+                        	$parent.append('<span style="position:absolute;z-index:1;right:-52%;top:-2px;" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" data-for="chargeDays" role="alert">'+'<span class="k-icon k-warning">'+'</span>'+"为≥0的整数"+'</span>');
                         	kendo.bind($('#chargeDays'), newViewModel);
                             }
 

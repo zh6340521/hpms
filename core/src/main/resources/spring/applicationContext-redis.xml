@@ -13,6 +13,12 @@
 
     <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
     </bean>
+    <bean id="resourceItemCache" class="com.hand.hap.cache.impl.ResourceItemCache">
+        <property name="name" value="resource_item"/>
+    </bean>
+    <bean id="roleResourceItemCache" class="com.hand.hap.cache.impl.RoleResourceItemCache">
+        <property name="name" value="role_resource_item"/>
+    </bean>
 
     <bean id="redisSentinelConfiguration"
           class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
@@ -150,6 +156,8 @@
                 <ref bean="resourceCustomizationCache"/>
                 <ref bean="dataModelCache"/>
                 <ref bean="configCache"/>
+                <ref bean="resourceItemCache"/>
+                <ref bean="roleResourceItemCache"/>
 
                 <!--add by yyz -->
                 <ref bean="hap_extend_rules"/>

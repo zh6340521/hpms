@@ -10,6 +10,7 @@ public interface EquipmentMapper extends Mapper<Equipment>{
     List<EquipmentType> queryEquipmentType(EquipmentType equipmentType);
 
     List<Equipment> queryEquipment(Equipment equipment);
+    List<EquipmentType> queryFeeEquipmentType(EquipmentType equipmentType);
 
 
 

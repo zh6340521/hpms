@@ -8,15 +8,17 @@ import com.hand.hap.system.dto.ResponseData;
 import hpms.fin.dto.MeterCharge;
 import hpms.fin.dto.MeterShareResult;
 import hpms.fin.service.IMeterShareResultService;
+import hpms.utils.ValidationTableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,7 +78,7 @@ public class MeterShareResultController extends BaseController {
     }
 
     /**
-     * 批量更新
+     * 保存方法---查询数据并保存到数据库
      * @param meterShareResultList
      * @param request
      * @return
@@ -84,14 +86,62 @@ public class MeterShareResultController extends BaseController {
      */
     @RequestMapping(value = "/fin/metershareresult/submit", method = RequestMethod.POST)
     @ResponseBody
-    public  ResponseData feeListSubmit(@RequestBody List<MeterShareResult> meterShareResultList , HttpServletRequest request) throws Exception{
+    public  ResponseData msrSubmit(@RequestBody List<MeterShareResult> meterShareResultList , HttpServletRequest request){
         IRequest requestContext = createRequestContext(request);
-        meterShareResultService.myBatchUpdate(requestContext,meterShareResultList);
+        try {
+            meterShareResultService.myBatchUpdate(requestContext,meterShareResultList);
+        } catch (ValidationTableException e) {
+            ResponseData rd = new ResponseData(false);
+            String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+                    RequestContextUtils.getLocale(request));
+            rd.setMessage(errorMessage);
+            return rd;
+        }
         return new ResponseData(meterShareResultList);
     }
 
 
+    /**
+     * 查询公表分摊结果数据
+     * @param msr
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/fin/metershareresult/query")
+    @ResponseBody
+    public ResponseData query(@ModelAttribute MeterShareResult msr, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) throws ParseException {
+        IRequest requestContext = createRequestContext(request);
 
+        List<MeterShareResult> mcList = meterShareResultService.findAllMeterShareResult(requestContext,msr,page,pageSize);
+        for(MeterShareResult m1:mcList){
+            //对日期进行类型转换
+            SimpleDateFormat dateformat1=new SimpleDateFormat("yyyy-MM-dd");
+            String a1=dateformat1.format(m1.getCallableDate());
+
+            String a2 = dateformat1.format(m1.getMsDate());
+
+
+           m1.setFormatCallableDate(a1);
+            m1.setFormatMsDate(a2);
+        }
+        return new ResponseData(mcList);
+    }
+
+    /**
+     * 转入计费
+     * @param meterShareResultList
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/fin/metershareresult/changeStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public  ResponseData msrChangeStatus(@RequestBody List<MeterShareResult> meterShareResultList , HttpServletRequest request) throws Exception{
+        IRequest requestContext = createRequestContext(request);
+        meterShareResultService.changeStaus(requestContext,meterShareResultList);
+        return new ResponseData(meterShareResultList);
+    }
 
 
 

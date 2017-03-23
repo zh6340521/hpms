@@ -167,6 +167,8 @@
                                 ${RequestParameters.propertyId}
                              <#else>-1</#if>;
 
+		var configValueId;
+		var configId;
 
 	    $('#property_form').kendoValidator();
 	    $("#groupId").kendoComboBox({
@@ -294,6 +296,9 @@
               }
           },
 		  select:function(e){
+              configValueId = e.dataItem.configValueId;
+              configId = e.dataItem.configId;
+
 			  //查询子表数据
 			  findConfigColumn(e.dataItem.configValueId,e.dataItem.configId,"property_form",viewModel);
 
@@ -343,6 +348,9 @@
       	}
       	
 		function submitData() {
+
+			//调用js查询所有动态列的必输
+            findAllRequiredData(configValueId,configId,viewModel);
 			/*alert("js is "+viewModel.model.roomArea);
 			alert("groupId is "+viewModel.model.groupId);*/
 

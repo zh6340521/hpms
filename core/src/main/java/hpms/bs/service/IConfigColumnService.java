@@ -43,6 +43,15 @@ public interface IConfigColumnService extends IBaseService<ConfigColumn>,ProxySe
     public List<ConfigColumn> findConfigColumnByCache(IRequest iRequest,Long configValueId,Long configId);
 
     /**
+     * 根据主键查询缓存中必输的数据
+     * @param iRequest
+     * @param configValueId
+     * @param configId
+     * @return
+     */
+    public List<ConfigColumn> queryRequiredByCache(IRequest iRequest,Long configValueId,Long configId);
+
+    /**
      * 根据主键和行号查询缓存中的数据
      * @param iRequest
      * @param configValueId

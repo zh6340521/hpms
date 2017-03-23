@@ -1105,6 +1105,34 @@ function vaildateRequired(validatemessage,self){
 }
 
 
+//查询缓存中的必输字段
+function findAllRequiredData(configValueId,configId,viewModel){
+    //alert(viewModel.model.get("groupId"));
+    $.ajax({
+        url: _basePath+"/bs/configcolumn/queryRequiredByCache?configValueId="+configValueId+"&configId="+configId,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (data) {
+
+            if(data.success==true){
+                for (var i = 0; i < data.rows.length; i++){
+                    if(viewModel.model.get(data.rows[i].columnId)==''||viewModel.model.get(data.rows[i].columnId)==null){
+                        kendo.ui.showInfoDialog({
+                            message:data.rows[i].columnNameAlias+'不能为空'
+                        })
+                    }
+                }
+
+            }
+
+
+        },
+
+    });
+}
+
+
 
 
 

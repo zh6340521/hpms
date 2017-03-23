@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="hpms.fin.mapper.ShareRuleBindMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.ShareRuleBind" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="share_bind_id" property="shareBindId" jdbcType="DECIMAL" />
+        <result column="company_id" property="companyId" jdbcType="DECIMAL" />
+        <result column="project_id" property="projectId" jdbcType="DECIMAL" />
+        <result column="share_rule_id" property="shareRuleId" jdbcType="DECIMAL" />
+        <result column="property_id" property="propertyId" jdbcType="DECIMAL" />
+
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectname" jdbcType="VARCHAR" />
+        <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+        <result column="property_number" property="propertyNumber" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <!--查询全部公表分摊绑定房间数据-->
+    <select id="findAllShareRuleBind" resultMap="BaseResultMap" parameterType="hpms.fin.dto.ShareRuleBind">
+        SELECT sb.share_bind_id,
+       sb.company_id,
+       sb.project_id,
+       sb.share_rule_id,
+       sb.property_id,
+       cb.company_full_name as company_name,
+       mp.project_name,
+       hmp.property_name,
+       hmp.property_number
+
+  FROM hpms_fin_meter_share_bind sb,
+       fnd_company_b             cb,
+       hpms_mdm_project          mp,
+       hpms_mdm_property         hmp
+ WHERE sb.company_id = cb.company_id
+   AND sb.project_id = mp.project_id
+   AND hmp.property_id = sb.property_id
+
+   and sb.share_rule_id=#{shareRuleId,jdbcType=DECIMAL}
+    </select>
+
+
+
+
     <insert id="myInsert" parameterType="hpms.fin.dto.ShareRuleBind">
         INSERT INTO HPMS_FIN_METER_SHARE_BIND(company_id,project_id,share_rule_id,property_id,OBJECT_VERSION_NUMBER,CREATION_DATE,CREATED_BY,LAST_UPDATED_BY,LAST_UPDATE_DATE)
         VALUES (#{companyId},#{projectId},#{shareRuleId},#{propertyId},1,sysdate,-1,-1,sysdate)

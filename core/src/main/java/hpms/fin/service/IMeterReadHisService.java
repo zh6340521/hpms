@@ -4,6 +4,7 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.dto.Code;
 import com.hand.hap.system.service.IBaseService;
+import hpms.fin.dto.MeterGradePrice;
 import hpms.fin.dto.MeterReadHis;
 
 import java.util.List;
@@ -83,5 +84,16 @@ public interface IMeterReadHisService extends IBaseService<MeterReadHis>, ProxyS
      * @return List<MeterReadHis> 所有符合的结果集
      */
     List<MeterReadHis> batchMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize);
+
+    /**
+     * 根据公司、项目、设备类型、用量找到价格
+     * @author jun.zhao02@hand-china.com
+     * @param requestContext  请求
+     * @param meterGradePrice  封装参数对象
+     * @param page     查询页
+     * @param pagesize 页面大小
+     * @return List<MeterReadHis> 所有符合的结果集
+     */
+    List<MeterGradePrice> queryGradePrice(IRequest requestContext, MeterGradePrice meterGradePrice, int page, int pagesize);
 
 }

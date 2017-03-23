@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.dto.Code;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
+import hpms.fin.dto.MeterGradePrice;
 import hpms.fin.mapper.MeterReadHisMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,12 @@ public class MeterReadHisServiceImpl extends BaseServiceImpl<MeterReadHis> imple
     public List<MeterReadHis> batchMeterReadHis(IRequest requestContext, MeterReadHis meterReadHis, int page, int pagesize) {
         PageHelper.startPage(page, pagesize);
         return meterReadHisMapper.batchMeterReadHis(meterReadHis);
+    }
+
+    @Override
+    public List<MeterGradePrice> queryGradePrice(IRequest requestContext, MeterGradePrice meterGradePrice, int page, int pagesize) {
+        PageHelper.startPage(page, pagesize);
+        return meterReadHisMapper.queryGradePrice(meterGradePrice);
     }
 
 }

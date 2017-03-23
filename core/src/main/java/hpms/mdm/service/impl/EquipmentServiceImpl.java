@@ -29,6 +29,11 @@ public class EquipmentServiceImpl extends BaseServiceImpl<Equipment> implements 
     }
 
     @Override
+    public List<EquipmentType> queryFeeEquipmentType(IRequest requestContext, EquipmentType equipmentType) {
+        return equipmentMapper.queryFeeEquipmentType(equipmentType);
+    }
+
+    @Override
     public List<Equipment> queryEquipment(IRequest requestContext, Equipment equipment, int page, int pagesize) {
         PageHelper.startPage(page, pagesize);
         return equipmentMapper.queryEquipment(equipment);

@@ -18,7 +18,7 @@
         </style>
 
         <script src="${base.contextPath}/common/code?invoiceClass=HPMS_AP_INVOICE_TYPE" type="text/javascript"></script>
-        <script src="${base.contextPath}/common/code?transType=HPMS_TRANS_TYPE" type="text/javascript"></script>
+        <script src="${base.contextPath}/common/code?aptransType=HPMS_AP_TRANS_TYPE" type="text/javascript"></script>
         <script type="text/javascript">
 
 
@@ -31,7 +31,7 @@
             var newViewModel = kendo.observable({
                 model: {},
                 invoiceClassData:invoiceClass,
-                transTypeData:transType
+                transTypeData:aptransType
             });
 
             $(document).ready(function(){
@@ -53,6 +53,7 @@
                 $('#saveForm').hide();
                 $('#selectRoom').attr("disabled", true);
                 //$('#addrow').attr("disabled", true);
+
             });
 
 
@@ -318,14 +319,9 @@
 
             }).data("kendoDatePicker");
 
-           /* document.getElementById('accountDate').onblur=function(){
-                //console.log(this.value);
-                newViewModel.model.set('accountPeriod',this.value.substring(0,7));
-            }
-*/
+
             document.getElementById("companyId").onblur=function(){
-               // console.log(newViewModel.model.companyId);
-                //console.log(newViewModel.model.projectId);
+
                 if(newViewModel.model.companyId==null||newViewModel.model.projectId==undefined
                         ||newViewModel.model.companyId==undefined||newViewModel.model.projectId==null){
                     document.getElementById("selectRoom").disabled=true;
@@ -334,8 +330,7 @@
                 }
             }
             document.getElementById("projectId").onblur=function(){
-                //console.log(newViewModel.model.companyId);
-               // console.log(newViewModel.model.projectId);
+
                 if(newViewModel.model.companyId==null||newViewModel.model.projectId==undefined
                         ||newViewModel.model.companyId==undefined||newViewModel.model.projectId==null){
                     document.getElementById("selectRoom").disabled=true;
@@ -347,13 +342,18 @@
             document.getElementById('invoiceamount').onblur=function(){
                 var curbalance=newViewModel.model.curbalance;
                 if(curbalance!=null&&curbalance!=''){
+
+                    console.log(this.value);
                     if(parseFloat(this.value)>parseFloat(curbalance)){
                         kendo.ui.showInfoDialog({
                             message : '<@spring.message "超出范围"/>'
                         });
                         newViewModel.model.set('invoiceAmount',null);
-                    }else{
+                        newViewModel.model.set('balance',-(parseFloat(curbalance)));
+                    }else if(this.value!=null&&this.value!=''){
                         newViewModel.model.set('balance',-(parseFloat(curbalance)-parseFloat(this.value)));
+                    }else{
+                        newViewModel.model.set('balance',-(parseFloat(curbalance)));
                     }
                 }
             }
@@ -367,7 +367,7 @@
                     return dataItem['meaning'] || ''
                 },
                 dataValueField: "value",
-                dataSource: transType,
+                dataSource: aptransType,
                 select : function(e){
                     var dataItem = this.dataItem(e.item);
                     newViewModel.model.set('transType',dataItem.value);
@@ -528,21 +528,16 @@
                     width      : 80,
                     attributes  : {style: "text-align:center"},
                     template: function(dataItem) {
-                        //console.log(dataItem['lineNumner']);
+
                         if(dataItem['lineNumner']==null||dataItem['lineNumner']==''){
-                            //var editor = $('<span id="lineNumber"></span>');
-                           // console.log(newViewModel.model.showlineNumber);
+
                             return newViewModel.model.showlineNumber;
                         }else{
                             return dataItem['lineNumner'];
                         }
-                        //return dataItem['lineNumner']||'';
+
                     },
                     editor: function(container, options){
-                            //container.html(options.model.lineNumner);
-                        /*var editor = $('<span id="lineNumber" name="lineNumber"></span>');
-                        editor.css('width','100%');
-                        container.append(editor);*/
                         container.removeClass('k-edit-cell');
                         container.html(options.model.lineNumner);
 
@@ -660,16 +655,14 @@
                     template:function(dataItem) {
                        return dataItem['lineAmount']||'';
                     },
-                    editor: function(container, options){
+                    editor: function(container, options) {
 
-                       if (options.model.invoiceLineId != "") {
-                           container.html(options.model.lineAmount);
-                           container.removeClass('k-edit-cell');
-                       }else {
-                           var editor = $('<input type="text" name="lineAmount" class="k-input k-textbox">');
-                           editor.css('width','100%');
-                           container.append(editor);
-                       }
+                        if (options.model.invoiceLineId != "") {
+                            container.html(options.model.lineAmount);
+                            container.removeClass('k-edit-cell');
+                        } else {
+                           $('<input id="lineAmount" type="text" style="width: 100%" class="k-textbox" pattern="^(([0-9]+)|([0-9]+\\.[0-9]{1,2}))$" required validationMessage="<@spring.message 'hpms.fin.invoice.amountlimit'/>" name="' + options.field + '"/>').appendTo(container);
+                    }
                     }
                 },{
                     field      : "taxCode",
@@ -774,6 +767,7 @@
 
             var dataSource1;
             function submitInvoiceLine() {
+                $('#invoice_grid').kendoValidator();
                 if(newViewModel.model.paymentTermId==null||newViewModel.model.paymentTermId==''){
                     kendo.ui.showInfoDialog({
                         message:'<@spring.message "hpms.fin.invoice.paymentterm"/>不能为空'
@@ -823,10 +817,8 @@
                         viewModel.model.set('taxCode',items[items.length-1].taxCode);
                         viewModel.model.set('taxAmount',items[items.length-1].taxAmount);
                         viewModel.model.set('description',items[items.length-1].description);
-                        //newViewModel.model.set('occupationId',10017);
-                        //newViewModel.model.set('payableCode',"A01YF201703020023");
-                        newViewModel.model.set('curbalance',items[items.length-1].lineAmount);
-                        newViewModel.model.set('balance',-(items[items.length-1].lineAmount));
+                        newViewModel.model.set('curbalance',parseFloat(items[items.length-1].lineAmount)+parseFloat(items[items.length-1].taxAmount));
+                        newViewModel.model.set('balance',-(parseFloat(items[items.length-1].lineAmount)+parseFloat(items[items.length-1].taxAmount)));
                         newViewModel.model.set('taxAmount',(items[items.length-1].taxAmount));
                         newViewModel.model.set('invoiceAmount',0);
 
@@ -860,9 +852,9 @@
                             taxAmount=parseFloat(items[i].taxAmount)+taxAmount;
                         }
 
-                        newViewModel.model.set('curbalance',balance);
+                        newViewModel.model.set('curbalance',balance+taxAmount);
 
-                        newViewModel.model.set('balance',-balance);
+                        newViewModel.model.set('balance',-(balance+taxAmount));
                         newViewModel.model.set('taxAmount',taxAmount);
                         newViewModel.model.set('invoiceAmount',0);
 
@@ -1010,7 +1002,7 @@
                 }else{
                     $('#invoice_grid').data('kendoGrid').addRow();
                     var items=dataSource1.data();
-                    console.log(items[items.length-2].lineNumner+1);
+                    //console.log(items[items.length-2].lineNumner+1);
                     newViewModel.model.set("showlineNumber",items[items.length-2].lineNumner+1);
                     document.getElementById("lineNumber").innerHTML = items[items.length-2].lineNumner+1;
                     $('#addrow').removeAttr("onclick");

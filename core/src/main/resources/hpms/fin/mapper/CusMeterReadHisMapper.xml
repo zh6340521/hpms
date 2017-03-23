@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.fin.mapper.CusMeterReadHisMapper">
+    <resultMap id="BaseResultMap" type="hpms.fin.dto.CusMeterReadHis">
+        <result column="READ_HIS_ID" property="readHisId" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="EQUIPMENT_ID" property="equipmentId" jdbcType="DECIMAL" />
+        <result column="INVOICE_CODE" property="invoiceCode" jdbcType="VARCHAR" />
+        <result column="LAST_READ" property="lastRead" jdbcType="DECIMAL" />
+        <result column="CURRENT_READ" property="currentRead" jdbcType="DECIMAL" />
+        <result column="METER_TOTAL_USE" property="meterTotalUse" jdbcType="DECIMAL" />
+        <result column="METER_TOTAL_AMOUNT" property="meterTotalAmount" jdbcType="DECIMAL" />
+        <result column="READ_DATE" property="readDate" jdbcType="DATE" />
+        <result column="FLAG" property="flag" jdbcType="VARCHAR" />
+        <result column="NEW_RECORD_FLAG" property="newRecordFlag" jdbcType="VARCHAR" />
+        <result column="IS_POSTED_FLAG" property="isPostedFlag" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+        <result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_NAME" property="equipmentName" jdbcType="VARCHAR" />
+        <result column="STATUS_DESC" property="statusDesc" jdbcType="VARCHAR" />
+        <result column="EQUIPMENT_TYPE_ID" property="equipmentTypeId" jdbcType="DECIMAL" />
+        <result column="YEAR" property="year" jdbcType="VARCHAR" />
+        <result column="MONTH" property="month" jdbcType="VARCHAR" />
+        <result column="PROPERTY_ID" property="propertyId" jdbcType="DECIMAL"/>
+        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR"/>
+        <result column="TYPE_NAME" property="typeName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="OccupationResultMap" type="hpms.cs.dto.Occupation" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!--查询抄表历史信息-->
+    <select id="queryCusMeterReadHis" parameterType="hpms.fin.dto.CusMeterReadHis" resultMap="BaseResultMap">
+        SELECT HFMRH.READ_HIS_ID,
+        HFMRH.COMPANY_ID,
+        HFMRH.PROJECT_ID,
+        HFMRH.EQUIPMENT_ID,
+        HFMRH.INVOICE_CODE,
+        HFMRH.LAST_READ,
+        HFMRH.CURRENT_READ,
+        HFMRH.METER_TOTAL_USE,
+        HFMRH.METER_TOTAL_AMOUNT,
+        HFMRH.READ_DATE,
+        HFMRH.FLAG,
+        HFMRH.NEW_RECORD_FLAG,
+        HFMRH.IS_POSTED_FLAG,
+        HFMRH.STATUS,
+        HFMRH.PROGRAM_ID,
+        HFMRH.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HME.EQUIPMENT_NAME,
+        HMP2.PROPERTY_NAME,
+        HCVV.MEANING STATUS_DESC,
+        HME.EQUIPMENT_TYPE_ID,
+        HFMRH.PROPERTY_ID,
+        HMET.TYPE_NAME,
+        TO_CHAR(HFMRH.READ_DATE,'YYYY') YEAR,
+        TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) MONTH
+        FROM HPMS_FIN_METER_READ_HIS HFMRH
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HFMRH.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HFMRH.PROJECT_ID = HMP.PROJECT_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT HME
+        ON HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        LEFT JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID=hme.equipment_type_id
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HPMS_METER_ENTER_STATUS'
+        AND HCVV.VALUE = HFMRH.STATUS
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+        LEFT JOIN HPMS_MDM_PROPERTY HMP2
+        on HMP2.PROPERTY_ID=HFMRH.PROPERTY_ID
+        LEFT JOIN HPMS_MDM_VERSION_STRUCTURE HMVS1
+        on HMVS1.PROPERTY_ID=HMP2.PROPERTY_ID
+        WHERE 1=1 AND HMET.TYPE_ATTRIBUTE='CUSTOMER METER'
+        AND HFMRH.EQUIPMENT_ID in (select HFCB.EQUIPMENT_ID from HPMS_FIN_CUSMETER_BIND HFCB)
+        <if test="structureId!=null">
+        and HMVS1.structure_id in (select HMVS.STRUCTURE_ID from HPMS_MDM_VERSION_STRUCTURE HMVS
+        start with HMVS.STRUCTURE_ID=#{structureId,jdbcType=DECIMAL}
+        CONNECT BY PRIOR HMVS.STRUCTURE_ID = HMVS.PARENT_STRUCTURE_ID)
+        </if>
+        <if test="equipmentId!=null">
+            AND HFMRH.EQUIPMENT_Id=#{equipmentId,jdbcType=DECIMAL}
+        </if>
+
+        <if test="newRecordFlag!=null">
+            AND HFMRH.NEW_RECORD_FLAG=#{newRecordFlag,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId!=null">
+            and FCB.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+        </if>
+        <if test="projectId!=null">
+            and HMP.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+        </if>
+        <if test="equipmentTypeId!=null">
+            and HME.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+        </if>
+        <if test="year!=null">
+            and TO_CHAR(HFMRH.READ_DATE,'YYYY')=#{year,jdbcType=VARCHAR}
+        </if>
+        <if test="month!=null">
+            and TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM')))=#{month,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="queryOccupationIn"  parameterType="hpms.fin.dto.CusMeterReadHis" resultMap="OccupationResultMap">
+        SELECT *
+          FROM HPMS_CS_OCCUPATION HCO
+          LEFT JOIN HPMS_MDM_PROPERTY HMP4
+            ON HMP4.PROPERTY_ID = HCO.PROPERTY_ID
+         WHERE HCO.PROPERTY_ID = #{propertyId,jdbcType=DECIMAL}
+           AND #{readDate,jdbcType=DATE} BETWEEN NVL(HCO.TRANSFER_DATE,
+                                                            SYSDATE) AND NVL(HCO.MOVEOUT_DATE,
+                                                                             SYSDATE)
+    </select>
+
+
+
+    <!--批量录入时列出客户仪表的抄表-->
+    <select id="batchCusMeterReadHis" parameterType="hpms.fin.dto.CusMeterReadHis" resultMap="BaseResultMap">
+         select * from (SELECT HFMRH.READ_HIS_ID,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.EQUIPMENT_ID,
+        HFMRH.INVOICE_CODE,
+        HFMRH2.CURRENT_READ LAST_READ,
+        HFMRH.CURRENT_READ,
+        HFMRH.METER_TOTAL_USE,
+        HFMRH.METER_TOTAL_AMOUNT,
+        TO_DATE((to_char(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYYMM') || TO_CHAR(SYSDATE,'DD')),'YYYYMMDD') READ_DATE,
+        HFMRH.FLAG,
+        'Y' NEW_RECORD_FLAG,
+        HFMRH.IS_POSTED_FLAG,
+        'ACTIVE' STATUS,
+        HFMRH.PROGRAM_ID,
+        HFMRH.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_TYPE_ID,
+        TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYY') YEAR,
+        HFMRH2.PROPERTY_ID,
+        TO_CHAR(TO_NUMBER(TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'MM'))) MONTH
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HMET.TYPE_ATTRIBUTE = 'CUSTOMER METER'
+        LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH2
+        ON HFMRH2.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH
+        ON HFMRH.EQUIPMENT_ID = HFMRH2.EQUIPMENT_ID
+        AND TO_CHAR(HFMRH.READ_DATE,'YYYYMM') = TO_CHAR(ADD_MONTHS(HFMRH2.READ_DATE,1),'YYYYMM')
+        WHERE 1=1
+        AND HFMRH.READ_HIS_ID IS NULL AND HFMRH2.READ_HIS_ID IS NOT NULL AND HFMRH2.STATUS = 'FREEZED'
+        AND HFMRH2.EQUIPMENT_ID in (select HFCB.EQUIPMENT_ID from HPMS_FIN_CUSMETER_BIND HFCB)
+
+        UNION ALL
+        SELECT HFMRH.READ_HIS_ID,
+        HME.COMPANY_ID,
+        HME.PROJECT_ID,
+        HME.EQUIPMENT_ID,
+        HFMRH.INVOICE_CODE,
+        HFMRH.LAST_READ,
+        HFMRH.CURRENT_READ,
+        HFMRH.METER_TOTAL_USE,
+        HFMRH.METER_TOTAL_AMOUNT,
+        HFMRH.READ_DATE,
+        HFMRH.FLAG,
+        HFMRH.NEW_RECORD_FLAG,
+        HFMRH.IS_POSTED_FLAG,
+        HFMRH.STATUS,
+        HFMRH.PROGRAM_ID,
+        HFMRH.REQUEST_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMP.PROJECT_NAME,
+        HME.EQUIPMENT_NAME,
+        HME.EQUIPMENT_TYPE_ID,
+        TO_CHAR(HFMRH.READ_DATE,'YYYY') YEAR,
+        HFMRH.PROPERTY_ID,
+        TO_CHAR(TO_NUMBER(TO_CHAR(HFMRH.READ_DATE,'MM'))) MONTH
+        FROM HPMS_MDM_EQUIPMENT HME
+        LEFT JOIN FND_COMPANY_B FCB
+        ON HME.COMPANY_ID = FCB.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMP
+        ON HME.PROJECT_ID = HMP.PROJECT_ID
+        JOIN HPMS_MDM_EQUIPMENT_TYPE HMET
+        ON HMET.EQUIPMENT_TYPE_ID = HME.EQUIPMENT_TYPE_ID
+        AND HMET.TYPE_ATTRIBUTE = 'CUSTOMER METER'
+        LEFT JOIN HPMS_FIN_METER_READ_HIS HFMRH
+        ON HFMRH.EQUIPMENT_ID = HME.EQUIPMENT_ID
+        WHERE 1=1
+        AND HFMRH.READ_HIS_ID IS not NULL and HFMRH.EQUIPMENT_ID in (select HFCB.EQUIPMENT_ID from HPMS_FIN_CUSMETER_BIND HFCB)) batch
+        WHERE 1=1
+        and batch.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+        and batch.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+        and batch.EQUIPMENT_TYPE_ID=#{equipmentTypeId,jdbcType=DECIMAL}
+        and batch.year=#{year,jdbcType=VARCHAR}
+        and batch.month=#{month,jdbcType=VARCHAR}
+    </select>
+
+
+
+
+
+
+
+</mapper>

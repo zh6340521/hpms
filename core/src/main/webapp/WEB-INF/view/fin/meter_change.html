@@ -44,7 +44,7 @@
                             read:function(options) {
                                 $.ajax({
                                     type   : "POST",
-                                    url: "${base.contextPath}/hpms/fin/pubmeter/change/query?companyId=" + viewModel.model.companyId + "&projectId=" + viewModel.model.projectId + "&equipmentTypeId=" + viewModel.model.equipmentTypeId + "&initFlag=N",
+                                    url: "${base.contextPath}/hpms/fin/pubmeter/change/query?companyId=" + viewModel.model.companyId + "&projectId=" + viewModel.model.projectId + "&equipmentTypeId=" + viewModel.model.equipmentTypeId + "&initFlag=N&equipmentStatus=A" ,
                                     data: {},
                                     success: function(json) {
                                         options.success(json.rows);
