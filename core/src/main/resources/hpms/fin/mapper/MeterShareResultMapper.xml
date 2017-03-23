@@ -9,7 +9,6 @@
         <id column="share_result_id" property="shareResultId" jdbcType="DECIMAL" />
         <result column="company_id" property="companyId" jdbcType="DECIMAL" />
         <result column="project_id" property="projectId" jdbcType="DECIMAL" />
-        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
         <result column="equipment_id" property="equipmentId" jdbcType="DECIMAL"/>
         <result column="property_id" property="propertyId" jdbcType="DECIMAL" />
         <result column="ms_date" property="msDate" jdbcType="TIMESTAMP" />
@@ -18,6 +17,152 @@
         <result column="ms_mount" property="msMount" jdbcType="DECIMAL" />
         <result column="callable_date" property="callableDate" jdbcType="TIMESTAMP" />
         <result column="status" property="status" jdbcType="VARCHAR" />
+
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="equipment_code" property="equipmentCode" jdbcType="VARCHAR" />
+        <result column="equipment_name" property="equipmentName" jdbcType="VARCHAR" />
+        <result column="status_meanings" property="statusMeanings" jdbcType="VARCHAR" />
+        <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+        <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+        <result column="share_rule" property="shareRule" jdbcType="VARCHAR" />
+        <result column="equipment_type_id" property="equipmentTypeId" jdbcType="DECIMAL" />
+
+        <result column="YEAR" property="year" jdbcType="VARCHAR"/>
+        <result column="startMonth" property="startMonth" jdbcType="VARCHAR"/>
+        <result column="endMonth" property="endMonth" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <!--查询公表分摊结果数据-->
+    <select id="findMeterShareResult" parameterType="hpms.fin.dto.MeterShareResult" resultMap="BaseResultMap">
+
+    SELECT sr.share_result_id,
+       sr.company_id,
+       sr.project_id,
+       cb.company_full_name     AS company_name,
+       hhp.project_name         AS project_name,
+       sr.invoice_code,
+       hme.equipment_code       AS equipment_code,
+       hme.equipment_name       AS equipment_name,
+       sr.callable_date,
+       hcv.meaning              AS status_meanings,
+       sr.status,
+       sr.object_version_number,
+       sr.property_id,
+       hmp.property_name as property_name,
+       hmp.property_number,
+       sr.ms_date,
+       hco.customer_name as customer_name,
+       sr.ms_mount,
+       msr.share_rule,
+       hme.equipment_type_id,
+       sr.equipment_id
+  FROM hpms_fin_meter_share_result sr
+  LEFT JOIN hpms_cs_occupation hco
+    ON hco.property_id = sr.property_id
+   AND hco.status = 'IN'
+  JOIN fnd_company_b cb
+    ON sr.company_id = cb.company_id
+  JOIN hpms_mdm_project hhp
+    ON sr.project_id = hhp.project_id
+  JOIN hpms_mdm_equipment hme
+    ON hme.equipment_id = sr.equipment_id
+  JOIN hpms_code_value_v hcv
+    ON hcv.code = 'HPMS_METER_ENTER_STATUS'
+   AND hcv.value = sr.status
+   AND hcv.lang =  #{request.locale,jdbcType=VARCHAR}
+  JOIN hpms_mdm_property hmp
+    ON hmp.property_id = sr.property_id
+  join HPMS_FIN_METER_SHARE_RULE msr
+  on msr.company_id = sr.company_id
+  and msr.project_id = sr.project_id
+  and msr.equipment_id=  sr.equipment_id
+
+  <where>
+      1=1
+      <if test="companyId!=null">
+          and sr.company_id=#{companyId,jdbcType=DECIMAL}
+      </if>
+
+      <if test="projectId!=null">
+          and  sr.project_id=#{projectId,jdbcType=DECIMAL}
+      </if>
+
+      <if test="equipmentTypeId!=null">
+          and hme.equipment_type_id=#{equipmentTypeId,jdbcType=DECIMAL}
+      </if>
+
+      <if test="equipmentId!=null">
+         and sr.equipment_id=#{equipmentId,jdbcType=DECIMAL}
+      </if>
+
+      <if test="shareRule!=null">
+        and  msr.share_rule=#{shareRule,jdbcType=VARCHAR}
+      </if>
+
+      <if test="status!=null">
+        and sr.status=#{status,jdbcType=VARCHAR}
+      </if>
+  </where>
+    </select>
+
+    <!--改变状态-->
+    <update id="changeMeterShareResult" parameterType="hpms.fin.dto.MeterShareResult">
+      update hpms_fin_meter_share_result sr
+      <set>
+          <if test="lastUpdatedBy != null">LAST_UPDATED_BY =
+              #{lastUpdatedBy,javaType=java.lang.Long},
+          </if>
+          <if test="lastUpdateDate != null">LAST_UPDATE_DATE =
+              #{lastUpdateDate,javaType=java.util.Date},
+          </if>
+          <if test="lastUpdateLogin != null">LAST_UPDATE_LOGIN =
+              #{lastUpdateLogin,javaType=java.lang.Long},
+          </if>
+          <if test="attributeCategory != null">ATTRIBUTE_CATEGORY =
+              #{attributeCategory,javaType=java.lang.String},
+          </if>
+          OBJECT_VERSION_NUMBER =OBJECT_VERSION_NUMBER+1,
+
+          sr.status='FREEZED'
+      </set>
+
+        where sr.share_result_id=#{shareResultId,jdbcType=DECIMAL}
+        and sr.object_version_number=#{objectVersionNumber,javaType=java.lang.Long}
+
+    </update>
+
+    <!--根据设备id和费用日期查询历史表数据-->
+    <select id="findMsrData" parameterType="hpms.fin.dto.MeterShareResult" resultMap="BaseResultMap">
+    SELECT sr.share_result_id,
+           sr.company_id
+  FROM hpms_fin_meter_share_result sr,
+       hpms_mdm_equipment          me
+
+       <where>
+           1=1
+           and sr.equipment_id = me.equipment_id
+           and me.equipment_type_id = #{equipmentTypeId,jdbcType=DECIMAL}
+           <if test="year!=null">
+               and TO_CHAR(sr.callable_date,'YYYY')=#{year,jdbcType=VARCHAR}
+           </if>
+
+           <if test="startMonth!=null">
+               and  TO_CHAR(TO_NUMBER(TO_CHAR(sr.callable_date,'MM'))) <![CDATA[ >= ]]>
+               #{startMonth,jdbcType=VARCHAR}
+           </if>
+
+           <if test="endMonth!=null">
+               and TO_CHAR(TO_NUMBER(TO_CHAR(sr.callable_date,'MM'))) <![CDATA[ <= ]]>
+               #{endMonth,jdbcType=VARCHAR}
+           </if>
+
+
+       </where>
+
+
+
+    </select>
+
 
  </mapper>

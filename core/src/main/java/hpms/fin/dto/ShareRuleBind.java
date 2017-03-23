@@ -2,9 +2,7 @@ package hpms.fin.dto;
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import static com.hand.hap.core.BaseConstants.GENERATOR_TYPE;
 
@@ -13,7 +11,7 @@ import static com.hand.hap.core.BaseConstants.GENERATOR_TYPE;
  * on 2017/3/20   19:24
  */
 @Table(name = "HPMS_FIN_METER_SHARE_BIND")
-public class ShareRuleBind {
+public class ShareRuleBind{
     /**
      * 表ID，主键，供其他表做外键
      */
@@ -22,59 +20,104 @@ public class ShareRuleBind {
     private Long shareBindId;
 
     // 公司ID
+    @Column
     private Long companyId;
 
     // 项目ID
+    @Column
     private Long projectId;
 
     // 公表分摊规则
+    @Column
     private Long shareRuleId;
 
     // 建筑实体ID
+    @Column
     private Long propertyId;
+
+    /**
+     * fuchun.hu@hand-china.com
+     * 加了暂存字段
+     */
+    @Transient
+    private String companyName;
+    @Transient
+    private String projectname;
+    @Transient
+    private String propertyName;
+    @Transient
+    private String propertyNumber;
+
 
     public Long getShareBindId() {
         return shareBindId;
     }
 
-    public ShareRuleBind setShareBingId(Long shareBindId) {
+    public void setShareBindId(Long shareBindId) {
         this.shareBindId = shareBindId;
-        return this;
     }
 
     public Long getCompanyId() {
         return companyId;
     }
 
-    public ShareRuleBind setCompanyId(Long companyId) {
+    public void setCompanyId(Long companyId) {
         this.companyId = companyId;
-        return this;
     }
 
     public Long getProjectId() {
         return projectId;
     }
 
-    public ShareRuleBind setProjectId(Long projectId) {
+    public void setProjectId(Long projectId) {
         this.projectId = projectId;
-        return this;
     }
 
     public Long getShareRuleId() {
         return shareRuleId;
     }
 
-    public ShareRuleBind setShareRuleId(Long shareRuleId) {
+    public void setShareRuleId(Long shareRuleId) {
         this.shareRuleId = shareRuleId;
-        return this;
     }
 
     public Long getPropertyId() {
         return propertyId;
     }
 
-    public ShareRuleBind setPropertyId(Long propertyId) {
+    public void setPropertyId(Long propertyId) {
         this.propertyId = propertyId;
-        return this;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getProjectname() {
+        return projectname;
+    }
+
+    public void setProjectname(String projectname) {
+        this.projectname = projectname;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyNumber() {
+        return propertyNumber;
+    }
+
+    public void setPropertyNumber(String propertyNumber) {
+        this.propertyNumber = propertyNumber;
     }
 }

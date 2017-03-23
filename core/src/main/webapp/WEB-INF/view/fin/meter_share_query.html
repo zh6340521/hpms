@@ -69,9 +69,11 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
 
                     <!-- 项目 -->
+                <div class="row" style="margin-bottom: 5px;">
                     <div class="col-sm-4" style="margin-bottom: 5px;">
                         <div class="form-group">
                             <label class="col-sm-3 control-label">项目</label>
@@ -86,9 +88,11 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
 
                     <!-- 仪表类型 -->
+                <div class="row" style="margin-bottom: 5px;">
                     <div class="col-sm-4" style="margin-bottom: 5px;">
                         <div class="form-group">
                             <label class="col-sm-3 control-label">仪表类型</label>
@@ -103,7 +107,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                   </div>
+
 
                 <div class="row" style="margin-bottom: 5px;">
                     <!--费用日期-->
@@ -261,13 +266,16 @@
 
     //费用日期 年份下拉框
     $("#year").kendoComboBox({
-        valuePrimitive: true,  //原始值
+        valuePrimitive: true,
         dataTextField: "year",
         dataValueField: "year",
+       /* dataTextField: "code",
+        dataValueField: "code",*/
         dataSource: {
             transport: {
                 read: {
                     url:"${base.contextPath}/fin/metershareresult/queryYear",
+                    //url: "${base.contextPath}/hpms/fin/meter/read/his/queryYear",
                     type : "POST"
                 },
                 contentType : "application/json",
@@ -289,12 +297,15 @@
     //开始月份下拉框
     $("#startMonth").kendoComboBox({
         valuePrimitive: true,  //原始值
-        dataTextField: "month",
-        dataValueField: "month",
+        /*dataTextField: "month",
+        dataValueField: "month",*/
+        dataTextField: "code",
+        dataValueField: "code",
         dataSource: {
             transport: {
                 read: {
-                    url:"${base.contextPath}/fin/metershareresult/queryMonth",
+                    //url:"${base.contextPath}/fin/metershareresult/queryMonth",
+                    url: "${base.contextPath}/hpms/fin/meter/read/his/queryMonth",
                     type : "POST"
                 },
                 contentType : "application/json",
@@ -317,12 +328,15 @@
     //结束月份下拉框
     $("#endMonth").kendoComboBox({
         valuePrimitive: true,  //原始值
-        dataTextField: "month",
-        dataValueField: "month",
+        /*dataTextField: "month",
+        dataValueField: "month",*/
+        dataTextField: "code",
+        dataValueField: "code",
         dataSource: {
             transport: {
                 read: {
-                    url:"${base.contextPath}/fin/metershareresult/queryMonth",
+                    //url:"${base.contextPath}/fin/metershareresult/queryMonth",
+                    url: "${base.contextPath}/hpms/fin/meter/read/his/queryMonth",
                     type : "POST"
                 },
                 contentType : "application/json",
@@ -373,12 +387,11 @@
                 url: '${base.contextPath}/fin/metershareresult/submit',
                 formModel: viewModel.model,
                 success: function (data) {
-                    /*window.parent.$('#Grid').data('kendoGrid').dataSource.page(1);
-                    if (isedit) {
-                        window.parent.$("#editWin").data("kendoWindow").close();
-                    } else {
-                        window.parent.$("#newWin").data("kendoWindow").close();
-                    }*/
+                    //刷新父界面
+                    window.parent.$('#grid').data('kendoGrid').dataSource.page(1);
+                    //关闭弹框
+                    window.parent.$("#createShareWin").data("kendoWindow").close();
+
                 }
             });
         }

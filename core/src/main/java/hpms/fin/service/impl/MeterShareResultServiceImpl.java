@@ -3,20 +3,28 @@ package hpms.fin.service.impl;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.IBaseService;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
-import hpms.fin.dto.MeterCharge;
-import hpms.fin.dto.MeterReadHis;
-import hpms.fin.dto.MeterShareResult;
-import hpms.fin.mapper.MeterChargeMapper;
-import hpms.fin.mapper.MeterReadHisMapper;
-import hpms.fin.mapper.MeterShareResultMapper;
+import hpms.cs.dto.Occupation;
+import hpms.cs.service.IOccupationService;
+import hpms.fin.dto.*;
+import hpms.fin.mapper.*;
 import hpms.fin.service.IMeterShareResultService;
+import hpms.fin.service.IShareRuleBindService;
+import hpms.fin.service.IShareRuleService;
+import hpms.mdm.dto.Property;
+import hpms.mdm.mapper.PropertyMapper;
+import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +47,24 @@ public class MeterShareResultServiceImpl extends BaseServiceImpl<MeterShareResul
 
     @Autowired
     private MeterReadHisMapper meterReadHisMapper;
+
+    @Autowired
+    private PubMeterMapper pubMeterMapper;
+
+    @Autowired
+    private IShareRuleService shareRuleService;
+
+    @Autowired
+    private IShareRuleBindService shareRuleBindService;
+
+    @Autowired
+    private ShareRuleBindMapper shareRuleBindMapper;
+
+    @Autowired
+    private PropertyMapper propertyMapper;
+
+    @Autowired
+    private IOccupationService occupationService;
 
     @Override
     public List<MeterCharge> findEquipmentTypeByMeterCharge(MeterCharge meterCharge, IRequest requestContext) {
@@ -163,50 +189,282 @@ public class MeterShareResultServiceImpl extends BaseServiceImpl<MeterShareResul
     }
 
     @Override
-    public void myBatchUpdate(IRequest requestCtx, List<MeterShareResult> meterShareResultList) {
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ValidationTableException.class)
+    public void myBatchUpdate(IRequest requestCtx, List<MeterShareResult> meterShareResultList) throws ValidationTableException{
         logger.info("创建IBaseService的动态代理");
         IBaseService self = (IBaseService) AopContext.currentProxy();
 
+        List<MeterShareResult> m1List = new ArrayList<>();
+        List<MeterShareResult> m2List = new ArrayList<>();
+        List<MeterShareResult> m3List = new ArrayList<>();
+
+
         logger.info("根据传入的数据去抄表历史表进行查询");
         for(MeterShareResult msr:meterShareResultList){
-            MeterReadHis  mrh = new MeterReadHis();
-            mrh.setCompanyId(msr.getCompanyId());  //公司id
-            mrh.setProjectId(msr.getProjectId());  //项目id
-            mrh.setEquipmentId(msr.getEquipmentId()); //仪表id
-            mrh.setYear(msr.getYear());  //费用日期 年
+
+            logger.info("查询之前的数据并进行删除");
+            findMeterShareResultData(msr);
+
+
+            logger.info("查询[公表抄表]中的仪表编码，仪表名称");
+            PubMeter pm = new PubMeter();
+            pm.setCompanyId(msr.getCompanyId());   //公司id
+            pm.setProjectId(msr.getProjectId());    //项目id
+            pm.setEquipmentTypeId(msr.getEquipmentTypeId());   //仪表类型id
+
+            List<PubMeter> pmList = pubMeterMapper.queryPubMeter(pm);
+
+            if(!pmList.isEmpty()&&pmList.size()!=0){
+                for(PubMeter p1:pmList) {
+                    logger.info("查询[抄表历史]中的金额");
+                    MeterReadHis  mrh = new MeterReadHis();
+                    mrh.setCompanyId(msr.getCompanyId());  //公司id
+                    mrh.setProjectId(msr.getProjectId());  //项目id
+                    mrh.setEquipmentTypeId(msr.getEquipmentTypeId()); //仪表类型id
+                    mrh.setYear(msr.getYear());  //费用日期 年
+
+                    mrh.setStartMonth(msr.getStartMonth());   //开始月份
+                    mrh.setEndMonth(msr.getEndMonth());    //结束月份
+                    mrh.setEquipmentId(p1.getEquipmentId());  //仪表id
+
+                    Float meterTotalAmount=0.00f;  //总金额
+
+                    List<MeterReadHis> meterReadHises = meterReadHisMapper.queryMeterReadHisForMsr(mrh);
+                    if(!meterReadHises.isEmpty()&&meterReadHises.size()!=0){
+                        for(MeterReadHis mr:meterReadHises){
 
 
 
-            mrh.setStartMonth(msr.getStartMonth());   //开始时间
-            mrh.setEndMonth(msr.getEndMonth());    //结束时间
+                            logger.info("历史表中的总金额");
+                            meterTotalAmount = mr.getMeterTotalAmount();
 
-            logger.info("查询抄表历史中的数据");
-            List<MeterReadHis> meterReadHises = meterReadHisMapper.queryMeterReadHisForMsr(mrh);
 
-            if(!meterReadHises.isEmpty()&&meterReadHises.size()!=0){
-                for(MeterReadHis mr:meterReadHises){
-                    logger.info("将查询得到的数据赋给公表分摊结果表");
-                    msr.setInvoiceCode(mr.getInvoiceCode());  //发票号
-                    msr.setCallableDate(mr.getReadDate());   //费用日期
-                    msr.setStatus(mr.getStatus());   //状态
+
+                            logger.info("查询[公表分摊]仪表编码，查询公表分摊中的分摊规则");
+                            ShareRule sr = new ShareRule();
+                            sr.setCompanyId(msr.getCompanyId());//公司id
+                            sr.setProjectId(msr.getProjectId());//项目id
+                            sr.setEquipmentTypeId(msr.getEquipmentTypeId());//仪表类型id
+
+                            sr.setEquipmentId(p1.getEquipmentId());//仪表id
+
+                            List<ShareRule> srList = shareRuleService.select(requestCtx,sr, 1, 10);
+
+                            String shareRule="";   //分摊金额
+
+                            int roomSize=0;//房间个数
+                            Long shareRuleId=0L;
+
+                            if(!srList.isEmpty()&&srList.size()!=0){
+                                for(ShareRule s1:srList){
+                                    logger.info("查询分摊规则");
+                                    shareRule = s1.getShareRule();
+                                    shareRuleId = s1.getShareRuleId();
+                                }
+
+                                logger.info("查询公表分摊下绑定的房间");
+                                ShareRuleBind sr1 = new ShareRuleBind();
+                                sr1.setCompanyId(msr.getCompanyId());//公司id
+                                sr1.setProjectId(msr.getProjectId());//项目id
+                                sr1.setShareRuleId(shareRuleId);  //分摊规则id
+
+
+
+                                List<ShareRuleBind> srbList = shareRuleBindMapper.findAllShareRuleBind(sr1);
+                                if(!srbList.isEmpty()&&srbList.size()!=0){
+                                    for(ShareRuleBind srb:srbList) {
+                                        roomSize = srbList.size();
+
+                                        logger.info("将查询得到的数据赋给公表分摊结果表");
+                                        MeterShareResult msr1  = new MeterShareResult();
+                                        msr1.setInvoiceCode(mr.getInvoiceCode());  //发票号
+                                        msr1.setCallableDate(mr.getReadDate());   //费用日期
+                                        msr1.setStatus(mr.getStatus());   //状态
+                                        msr1.setEquipmentId(mr.getEquipmentId());  //设备id
+                                        msr1.setCompanyId(mr.getCompanyId());    //公司id
+                                        msr1.setProjectId(mr.getProjectId());  //项目id
+                                        msr1.setEquipmentTypeId(mr.getEquipmentTypeId()); //设备类型id
+
+                                        msr1.setMsDate(new Date());   //分摊日期为当前时间
+                                        msr1.setPropertyId(srb.getPropertyId());  //建筑实体id
+
+                                        Occupation o =new Occupation();
+                                        o.setPropertyId(srb.getPropertyId());
+                                        o.setStatus("IN");
+                                        List<Occupation> oList= occupationService.select(requestCtx,o, 1, 10);
+                                        if(!oList.isEmpty()&&oList.size()!=0) {
+                                            for (Occupation o1 : oList) {
+                                                msr1.setMsPerson(o1.getCustomerName());  //分摊人
+                                            }
+                                        }
+
+                                        m1List.add(msr1);
+                                    }
+                                   /* logger.info("查询分摊人");
+                                    for(ShareRuleBind s1:srbList){
+                                        Occupation o =new Occupation();
+                                        o.setPropertyId(s1.getPropertyId());
+                                        o.setStatus("IN");
+                                       List<Occupation> oList= occupationService.select(requestCtx,o, 1, 10);
+                                        if(!oList.isEmpty()&&oList.size()!=0){
+                                            for(Occupation o1:oList){
+                                                MeterShareResult msr4  = new MeterShareResult();
+                                                msr4.setMsPerson(o1.getCustomerName());
+                                                m4List.add(msr4);
+                                            }
+                                        }
+
+                                    }*/
+
+
+                                        logger.info("根据分摊规则来计算分摊金额");
+
+
+                                        if(shareRule.equals("MEMBER")||shareRule=="MEMBER"){
+                                            logger.info("按住户分摊");
+
+                                            List<ShareRuleBind> srbList2 = shareRuleBindMapper.findAllShareRuleBind(sr1);
+                                            for(ShareRuleBind s:srbList2){
+                                                Float msMount = meterTotalAmount/roomSize;
+                                                MeterShareResult msr2  = new MeterShareResult();
+                                                msr2.setMsMount(msMount);   //分摊金额
+                                                m3List.add(msr2);
+                                            }
+
+
+                                        }else if(shareRule.equals("AREA")||shareRule=="AREA"){
+                                            List<Long> propertyIdList = new ArrayList<>();
+
+                                            List<Property> pList = new ArrayList<>();
+                                            BigDecimal sumFeeArea = new BigDecimal(0);
+                                            logger.info("查询公表分摊绑定下所有的建筑实体");
+                                            List<ShareRuleBind> srbList1 = shareRuleBindMapper.findAllShareRuleBind(sr1);
+
+
+                                            for(ShareRuleBind s:srbList1){
+                                                propertyIdList.add(s.getPropertyId());
+                                            }
+
+                                            logger.info("按面积分摊");
+                                            Property p =new Property();
+                                            for(Long propertyId:propertyIdList) {
+                                                p.setPropertyId(propertyId);
+
+                                                logger.info("查询该建筑代码的建筑档案下的收费面积");
+                                                List<Property> pList1 = propertyMapper.propertyQuery(p);
+
+                                                //Float sumFeeArea=0.0f;//房间总面积
+
+
+                                                if (!pList1.isEmpty() && pList1.size() != 0) {
+                                                    for (Property p2 : pList1) {
+                                                        if (p2.getFeeArea() == null) {
+                                                            throw new ValidationTableException("未找到房间收费面积！", null);
+                                                        } else {
+                                                            logger.info("算出所有房间的总面积");
+                                                            for (int m = 0; m < pList1.size(); m++) {
+                                                                BigDecimal a = new BigDecimal(pList1.get(m).getFeeArea());
+                                                                sumFeeArea = sumFeeArea.add(a);
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+                                                pList.addAll(pList1);
+                                            }
+
+                                            logger.info("收费面积");
+                                            List<Float> feeAreaList = new ArrayList<>();
+                                            for(Property p2:pList){
+                                                feeAreaList.add(p2.getFeeArea());
+                                            }
+
+
+                                            BigDecimal c = new BigDecimal(0.00);   //定义百分比
+                                            for(Float f:feeAreaList){
+                                                MeterShareResult msr2  = new MeterShareResult();
+                                                BigDecimal b=new BigDecimal(f);
+                                                c=b.divide(sumFeeArea, 2, RoundingMode.HALF_UP);
+                                                //pList.get(i).setFloorPercentage(c);
+
+                                                logger.info("计算分摊金额");
+                                                BigDecimal mta = new BigDecimal(meterTotalAmount);  //总金额
+                                                Float msMount=c.multiply(mta).floatValue();
+
+                                                msr2.setMsMount(msMount);
+                                                m3List.add(msr2);
+
+                                            }
+
+                                        }
+
+                                    }else{
+                                    throw new ValidationTableException("该分摊规则下没有房间！", null);
+                                }
+
+                    }
+
+                            }
+
+                        }
+
+
+
+                    }
+
                 }
             }
 
-            logger.info("将propertyId暂存到数据库");
-            Long propertyId=new Long((long)10041);
-            msr.setPropertyId(propertyId);
 
-            logger.info("进行批量更新");
-            if(msr.getShareResultId()!=null){
-                self.updateByPrimaryKey(requestCtx,msr);
-            }else{
-                self.insertSelective(requestCtx,msr);
-            }
-
+        //将分摊金额的值赋给m1List
+        for(int i=0;i<m1List.size();i++){
+            m1List.get(i).setMsMount(m3List.get(i).getMsMount());
 
         }
 
 
+        m2List.addAll(m1List);
+        //将数据保存到数据库
+        for(MeterShareResult m1:m2List){
+            if(m1.getShareResultId()!=null){
+                self.updateByPrimaryKey(requestCtx,m1);
+            }else{
+                self.insertSelective(requestCtx,m1);
+            }
+        }
 
+        }
+
+
+    //根据设备类型id和费用日期查询历史表的数据
+    public void findMeterShareResultData(MeterShareResult msr){
+
+        List<MeterShareResult> mList =  meterShareResultMapper.findMsrData(msr);
+        logger.info("如果存在就将其删除");
+        if(!mList.isEmpty()&&mList.size()!=0){
+            for(MeterShareResult m1:mList){
+                meterShareResultMapper.delete(m1);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+    @Override
+    public List<MeterShareResult> findAllMeterShareResult(IRequest requestContext, MeterShareResult msr, int page, int pageSize) {
+        List<MeterShareResult> msrList = meterShareResultMapper.findMeterShareResult(msr);
+        return msrList;
+    }
+
+    @Override
+    public void changeStaus(IRequest requestCtx, List<MeterShareResult> meterShareResultList) {
+        for(MeterShareResult m:meterShareResultList){
+            meterShareResultMapper.changeMeterShareResult(m);
+        }
     }
 }

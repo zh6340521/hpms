@@ -2,6 +2,7 @@ package hpms.fin.dto;/**
  * Created by user1 on 2017/3/20.
  */
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.*;
@@ -67,6 +68,7 @@ public class MeterShareResult extends BaseDTO {
      * 分摊日期
      */
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date  msDate;
 
     /**
@@ -85,12 +87,13 @@ public class MeterShareResult extends BaseDTO {
      * 分摊金额
      */
     @Column
-    private Long  msMount;
+    private Float  msMount;
 
     /**
      * 费用日期
      */
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date   callableDate;
 
     /**
@@ -107,6 +110,121 @@ public class MeterShareResult extends BaseDTO {
     private String startMonth;//开始月份
     @Transient
     private String endMonth;//结束月份
+
+    @Transient
+    private String companyName;//公司名称
+    @Transient
+    private String projectName;//项目名称
+    @Transient
+    private String equipmentCode;//设备编号
+    @Transient
+    private String equipmentName;//设备名称
+    @Transient
+    private String statusMeanings;//状态
+    @Transient
+    private Long equipmentTypeId;  //设备类型id
+    @Transient
+    private String propertyName;//建筑名称
+    @Transient
+    private String customerName;//业主
+
+    @Transient
+    private String formatCallableDate;
+    @Transient
+    private String formatMsDate;
+
+    @Transient
+    private String  shareRule;//分摊规则
+
+
+
+    public String getShareRule() {
+        return shareRule;
+    }
+
+    public void setShareRule(String shareRule) {
+        this.shareRule = shareRule;
+    }
+
+    public String getFormatCallableDate() {
+        return formatCallableDate;
+    }
+
+    public void setFormatCallableDate(String formatCallableDate) {
+        this.formatCallableDate = formatCallableDate;
+    }
+
+    public String getFormatMsDate() {
+        return formatMsDate;
+    }
+
+    public void setFormatMsDate(String formatMsDate) {
+        this.formatMsDate = formatMsDate;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public Long getEquipmentTypeId() {
+        return equipmentTypeId;
+    }
+
+    public void setEquipmentTypeId(Long equipmentTypeId) {
+        this.equipmentTypeId = equipmentTypeId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getEquipmentCode() {
+        return equipmentCode;
+    }
+
+    public void setEquipmentCode(String equipmentCode) {
+        this.equipmentCode = equipmentCode;
+    }
+
+    public String getEquipmentName() {
+        return equipmentName;
+    }
+
+    public void setEquipmentName(String equipmentName) {
+        this.equipmentName = equipmentName;
+    }
+
+    public String getStatusMeanings() {
+        return statusMeanings;
+    }
+
+    public void setStatusMeanings(String statusMeanings) {
+        this.statusMeanings = statusMeanings;
+    }
 
     public String getMonth() {
         return Month;
@@ -204,11 +322,11 @@ public class MeterShareResult extends BaseDTO {
         this.invoiceCode = invoiceCode;
     }
 
-    public Long getMsMount() {
+    public Float getMsMount() {
         return msMount;
     }
 
-    public void setMsMount(Long msMount) {
+    public void setMsMount(Float msMount) {
         this.msMount = msMount;
     }
 
