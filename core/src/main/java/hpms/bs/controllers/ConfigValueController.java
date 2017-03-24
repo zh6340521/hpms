@@ -9,6 +9,7 @@ import hpms.bs.dto.Config;
 import hpms.bs.dto.ConfigValue;
 import hpms.bs.service.IConfigService;
 import hpms.bs.service.IConfigValueService;
+import hpms.utils.ValidationTableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -74,7 +75,15 @@ public class ConfigValueController extends BaseController {
             rd.setMessage(getErrorMessage(result, request));
             return rd;
         }
-        configValueService.myBatchUpdate(requestCtx, cfv);
+        try {
+            configValueService.myBatchUpdate(requestCtx, cfv);
+        } catch (ValidationTableException e) {
+            ResponseData rd = new ResponseData(false);
+            String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+                    RequestContextUtils.getLocale(request));
+            rd.setMessage(errorMessage);
+            return rd;
+        }
         return new ResponseData(cfv);
     }
 

@@ -6,6 +6,7 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.core.ProxySelf;
 import com.hand.hap.system.service.IBaseService;
 import hpms.bs.dto.ConfigValue;
+import hpms.utils.ValidationTableException;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface IConfigValueService extends IBaseService<ConfigValue>,ProxySelf
      * @param requestCtx
      * @param cvs
      */
-    public void myBatchUpdate(IRequest requestCtx, List<ConfigValue> cvs);
+    public void myBatchUpdate(IRequest requestCtx, List<ConfigValue> cvs) throws ValidationTableException;
 
     /**
      * 查询redis中的数据

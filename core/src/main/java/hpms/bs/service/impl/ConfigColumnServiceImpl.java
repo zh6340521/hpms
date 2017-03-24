@@ -103,6 +103,12 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
                 }
             }
 
+            int a = UniqueConfigColumn(cvs,cc.getConfigColumnId(),cc);
+            if(a>0){
+                logger.info("将这条记录删除，并抛出错误信息");
+                cvs.remove(cc);
+                throw new ValidationTableException("该字段名已存在！", null);
+            }
             if(cc.getConfigColumnId()!=null){
                 self.updateByPrimaryKey(requestCtx,cc);
             }else{
@@ -112,6 +118,30 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
         }
 
         submitConfigColumnDataRedis(cvs,requestCtx);
+    }
+
+
+    //验证字段名的唯一性
+    public int UniqueConfigColumn(List<ConfigColumn> ccs, Long  configColumnId,ConfigColumn cc) {
+        int count = 0;
+        cc.setConfigColumnId(configColumnId);
+
+        logger.info("查询 除了自身外其他的数据");
+        List<ConfigColumn> dmcList = configColumMapper.findUniqueConfigColumn(cc);
+        count = dmcList.size();
+        for (ConfigColumn b1 : dmcList) {
+            for (ConfigColumn b2 : ccs) {
+                if (b1.getConfigColumnId().equals(b1.getConfigColumnId())) {
+                    if (b1.getColumnName().equals(b2.getColumnName())) {
+                        continue;
+                    } else {
+                        count = count - 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return count;
     }
 
     @Override
