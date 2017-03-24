@@ -581,8 +581,7 @@ function showFormElements(data,formName,viewModel) {
             //当文本框为必输时
             if (data.rows[i].requiredFlag == "Y") {
                 $("#" + formName).append(
-
-                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-bottom: 5px;">'+
 
                     '<div class="col-md-4 tdAlign">'+
 
@@ -1105,7 +1104,14 @@ function vaildateRequired(validatemessage,self){
 }
 
 
-//查询缓存中的必输字段
+/**
+ * 查询缓存中的必输字段,并在前台保存时进行校验
+ * @author fuchun.hu@hand-china.com 2017年3月24日 10:03:59
+ * @param configValueId
+ * @param configId
+ * @param viewModel
+ *
+ */
 function findAllRequiredData(configValueId,configId,viewModel){
     //alert(viewModel.model.get("groupId"));
     $.ajax({

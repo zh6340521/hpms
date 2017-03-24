@@ -131,10 +131,16 @@
 				    </div>
 				</div>
 			</div>
+			<div>
+                <p class="bord-btm pad-ver text-main text-bold">
+				附加属性
+                </p>
+			</div>
 
 
 
 		</form>
+
 	</div>
 	<script>kendo.bind($('#property_form'), viewModel);</script>
 
@@ -151,7 +157,7 @@
 	</script>
 
 
-	<div id="toolbar-btn" style="clear:both;" align="center">
+	<div id="toolbar-btn" style="margin-top:150px;margin-left:830px;">
         <span id="submit" onclick="submitData()" class="btn btn-primary" style="width:80px;margin-right:5px;"><@spring.message "hap.save"/></span>
         <span id="cancel" onclick="cancel()" class="btn btn-primary" style="width:80px;"><@spring.message "hap.cancel"/></span>
 	</div>
@@ -351,36 +357,35 @@
 
 			//调用js查询所有动态列的必输
             findAllRequiredData(configValueId,configId,viewModel);
-			/*alert("js is "+viewModel.model.roomArea);
-			alert("groupId is "+viewModel.model.groupId);*/
+
 
 	        if(viewModel.model.groupId==''||viewModel.model.groupId==null){
 	            kendo.ui.showInfoDialog({
-	                message:'groupId不能为空'
+	                message:'集团不能为空'
 	            })
 	        }else if(viewModel.model.companyId==''||viewModel.model.companyId==null){
 	            kendo.ui.showInfoDialog({
-	                message:'companyId不能为空'
+	                message:'公司不能为空'
 	            })
 	        }else if(viewModel.model.projectId==''||viewModel.model.projectId==null){
 	            kendo.ui.showInfoDialog({
-	                message:'projectId不能为空'
+	                message:'项目不能为空'
 	            })
 	        }else if(viewModel.model.propertyType==''||viewModel.model.propertyType==null){
 	            kendo.ui.showInfoDialog({
-	                message:'propertyType不能为空'
+	                message:'建筑类型不能为空'
 	            })
 	        }else if(viewModel.model.propertyName==''||viewModel.model.propertyName==null){
 	            kendo.ui.showInfoDialog({
-	                message:'propertyName不能为空'
+	                message:'建筑名称不能为空'
 	            })
 	        }else if(viewModel.model.propertyNumber==''||viewModel.model.propertyNumber==null){
 	            kendo.ui.showInfoDialog({
-	                message:'propertyNumber不能为空'
+	                message:'建筑编码不能为空'
 	            })
 	        }else if(viewModel.model.propertyStatus==''||viewModel.model.propertyStatus==null){
 	            kendo.ui.showInfoDialog({
-	                message:'propertyStatus不能为空'
+	                message:'建筑状态不能为空'
 	            })
 	        }else {
 	        	if(isedit == 0){

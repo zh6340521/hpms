@@ -14,7 +14,28 @@
         <result column="enable_flag" property="enableFlag" jdbcType="VARCHAR" />
 
 
-
     </resultMap>
+
+    <!--校验编码的唯一性-->
+    <select id="findUnique" resultMap="BaseResultMap" parameterType="hpms.bs.dto.ConfigValue">
+         SELECT hcv.config_value_id,
+                hcv.config_value_number
+    FROM hpms_config_value hcv
+
+        <where>
+            1=1
+            <if test="configValueId!=null">
+                and hcv.config_value_id != #{configValueId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="configValueNumber!=null">
+                and  hcv.config_value_number =#{configValueNumber,jdbcType=VARCHAR}
+            </if>
+
+            <if test="configId!=null">
+                and hcv.config_id=#{configId,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
 
 </mapper>

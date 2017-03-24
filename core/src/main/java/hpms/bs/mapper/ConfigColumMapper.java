@@ -18,4 +18,11 @@ public interface ConfigColumMapper extends Mapper<ConfigColumn> {
 
     //根据行号查询数据
     public List<ConfigColumn> findConfigColumnBydisplayLineNo(ConfigColumn c);
+
+    /**
+     * 查询字段名的唯一性
+     * @param c
+     * @return
+     */
+    List<ConfigColumn>  findUniqueConfigColumn(ConfigColumn c);
 }

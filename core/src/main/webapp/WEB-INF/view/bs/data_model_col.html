@@ -270,9 +270,16 @@
                     title:'<@spring.message "lovitem.field_type"/>',
                     width: 80,
                     editor: function(container, options){
-                        var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
-                        editor.css('width','100%');
-                        container.append(editor);
+                        if (options.model.modelColId != "") {
+                            container.html(options.model.columnType);
+                            container.removeClass('k-edit-cell');
+                        } else {
+                            var editor = $('<input id="columnType" class="k-input k-textbox k-valid" type="text" name="columnType"/>');
+                            editor.css('width','100%');
+                            container.append(editor);
+                        }
+
+
                     }
                 },
                 {
@@ -282,9 +289,16 @@
                     width: 80 ,
                     attributes: {style: "text-align:center"},
                     editor: function(container, options){
-                        var editor = $('<input id="columnLength" class="k-input k-textbox k-valid" type="text" name="columnLength"/>');
-                        editor.css('width','100%');
-                        container.append(editor);
+
+
+                        if (options.model.modelColId != "") {
+                            container.html(options.model.columnLength);
+                            container.removeClass('k-edit-cell');
+                        } else {
+                            var editor = $('<input id="columnLength" class="k-input k-textbox k-valid" type="text" name="columnLength"/>');
+                            editor.css('width','100%');
+                            container.append(editor);
+                        }
                     }
                 },
                 {

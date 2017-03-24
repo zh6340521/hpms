@@ -62,4 +62,26 @@
 
 
     </select>
+
+    <!--查询字段名的唯一性-->
+    <select id="findUniqueConfigColumn" parameterType="hpms.bs.dto.ConfigColumn" resultMap="BaseResultMap">
+        SELECT cc.config_column_id,
+               cc.column_name
+     FROM hpms_config_column cc
+
+        <where>
+            1=1
+            <if test="configColumnId!=null">
+                and cc.config_column_id != #{configColumnId,jdbcType=DECIMAL}
+            </if>
+
+            <if test="columnName!=null">
+                and  cc.column_name =#{columnName,jdbcType=VARCHAR}
+            </if>
+
+            <if test="configValueId!=null">
+                and cc.config_value_id=#{configValueId,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
     </mapper>

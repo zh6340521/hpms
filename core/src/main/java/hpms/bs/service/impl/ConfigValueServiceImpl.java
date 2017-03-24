@@ -13,6 +13,7 @@ import hpms.bs.mapper.ConfigMapper;
 import hpms.bs.mapper.ConfigValuesMapper;
 import hpms.bs.service.IConfigValueService;
 import hpms.cache.ConfigCache;
+import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
@@ -50,11 +51,18 @@ public class ConfigValueServiceImpl extends BaseServiceImpl<ConfigValue> impleme
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void myBatchUpdate(IRequest requestCtx, List<ConfigValue> cvs) {
+    public void myBatchUpdate(IRequest requestCtx, List<ConfigValue> cvs) throws ValidationTableException {
         logger.info("创建IBaseService的动态代理");
         IBaseService self = (IBaseService) AopContext.currentProxy();
 
         for(ConfigValue cv:cvs){
+            int a = UniqueConfigValueNumber(cvs,cv.getConfigValueId(),cv);
+            if(a>0){
+                logger.info("将这条记录删除，并抛出错误信息");
+                cvs.remove(cv);
+                throw new ValidationTableException("该编码已存在！", null);
+            }
+
             cv.setLastUpdatedBy(requestCtx.getUserId());
             cv.setLastUpdateDate(new Date());
 
@@ -68,6 +76,32 @@ public class ConfigValueServiceImpl extends BaseServiceImpl<ConfigValue> impleme
         logger.info("将数据同步到redis");
         submitConfigValueData(cvs,requestCtx);
     }
+
+
+    //验证字段名的唯一性
+    public int UniqueConfigValueNumber(List<ConfigValue> cvs, Long  configValueId,ConfigValue cv) {
+        int count = 0;
+        cv.setConfigValueId(configValueId);
+
+        logger.info("查询 除了自身外其他的数据");
+        List<ConfigValue> dmcList = configValuesMapper.findUnique(cv);
+        count = dmcList.size();
+        for (ConfigValue b1 : dmcList) {
+            for (ConfigValue b2 : cvs) {
+                if (b1.getConfigValueId().equals(b2.getConfigValueId())) {
+                    if (b1.getConfigValueNumber().equals(b2.getConfigValueNumber())) {
+                        continue;
+                    } else {
+                        count = count - 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+
 
     @Override
     public List<ConfigValue> queryConfigCache(IRequest requestCtx, Long configValueId,String configId) {
