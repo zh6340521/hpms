@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by LoseMyself on 2017/3/7.
@@ -33,8 +31,6 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
 
     @Autowired
     private ProjectMapper projectMapper;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public boolean isDateOk(List<Sequence> sequences) {
@@ -92,11 +88,8 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
         Long currentNum = sequence.getCurrentNum();
         String currentPrefix = sequence.getCurrentPrefix();
 
-        logger.debug("companyFlag：" + companyFlag) ;
-        logger.debug("companyId：" + companyId) ;
         //获取公司编码
         if (companyFlag.equals("Y") && companyId != null) {
-            logger.debug("if：1") ;
             Company company = new Company();
             company.setCompanyId(companyId);
             company = companyMapper.selectByPrimaryKey(company);
@@ -120,14 +113,9 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
 
         docCode = prefix + companyCode + projectCode + currentDate;
 
-        logger.debug("docCode：" + docCode) ;
-        logger.debug("currentPrefix：" + currentPrefix) ;
-        logger.debug("currentNum：" + currentNum) ;
-
         //判断前缀及当前编号
         //首次生产编号或者重新编号
         if (currentNum == null || ! docCode.equals(currentPrefix)) {
-            logger.debug("if") ;
             sequence.setCurrentNum(startNum);
             sequence.setCurrentPrefix(docCode);
             docCode = docCode + startNum;
@@ -136,7 +124,6 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
         }
         //根据当前编号生产下个编号
         else {
-            logger.debug("else") ;
             if (String.valueOf(currentNum + 1).length()  > figure) {
                 throw new RuntimeException("无法生成设备编号，超出终止编码");
             } else {
@@ -151,7 +138,6 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
             }
         }
         //返回编号
-        logger.debug("docCode：" + docCode) ;
         return docCode;
     }
 }
