@@ -102,6 +102,9 @@
 
 
         var win = $("#addFeeId").data("kendoWindow");
+        win.bind("close",function () {
+            $("#tabstrip").data("kendoTabStrip").select($('#all'));
+        });
         win.center().open();
     }
 
