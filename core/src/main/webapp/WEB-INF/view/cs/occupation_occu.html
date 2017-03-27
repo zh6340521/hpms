@@ -196,7 +196,7 @@
                             <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.occupation.customername"/>：</label>
                             <div class="col-sm-8">
                                 <input id="customerNameId" type="text" style="width:150px;margin-right:5px;"
-                                       data-bind="value:model.customerName" >
+                                      >
                                 <span class="red">&nbsp;*</span>
                             </div>
                         </div>
@@ -296,6 +296,7 @@
         change:function (e) {
             viewModel.model.set("customerCode",e.sender._dataItem.customerNumber);
             viewModel.model.set("customerId", e.sender._dataItem.customerId);
+            viewModel.model.set("customerName", e.sender._dataItem.fullName);
 
         },
         textField: 'fullName'
