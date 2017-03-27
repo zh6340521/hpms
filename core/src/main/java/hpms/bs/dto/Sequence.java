@@ -7,6 +7,7 @@ import com.hand.hap.system.dto.BaseDTO;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -67,6 +68,11 @@ public class Sequence extends BaseDTO{
      * 当前编号
      */
     private Long currentNum;
+
+    /*
+     * 当前前缀，当前单据编号=当前前缀+当前编号
+     */
+    private String currentPrefix;
 
     /*
      * 有效期起
@@ -161,6 +167,15 @@ public class Sequence extends BaseDTO{
 
     public Sequence setCurrentNum(Long currentNum) {
         this.currentNum = currentNum;
+        return this;
+    }
+
+    public String getCurrentPrefix() {
+        return currentPrefix;
+    }
+
+    public Sequence setCurrentPrefix(String currentPrefix) {
+        this.currentPrefix = currentPrefix;
         return this;
     }
 
