@@ -10,7 +10,12 @@ import hpms.fin.mapper.*;
 import hpms.fin.service.IMeterShareResultService;
 import hpms.fin.service.IShareRuleBindService;
 import hpms.fin.service.IShareRuleService;
+import hpms.mdm.dto.EquipmentType;
+import hpms.mdm.dto.Fee;
 import hpms.mdm.dto.Property;
+import hpms.mdm.mapper.BpGeneralMapper;
+import hpms.mdm.mapper.EquipmentTypeMapper;
+import hpms.mdm.mapper.FeeMapper;
 import hpms.mdm.mapper.PropertyMapper;
 import hpms.utils.ValidationTableException;
 import org.slf4j.Logger;
@@ -65,6 +70,18 @@ public class MeterShareResultServiceImpl extends BaseServiceImpl<MeterShareResul
 
     @Autowired
     private IOccupationService occupationService;
+
+    @Autowired
+    private FeeListMapper feeListMapper;
+
+    @Autowired
+    private BpGeneralMapper bpGeneralMapper;
+
+    @Autowired
+    private EquipmentTypeMapper equipmentTypeMapper;
+
+    @Autowired
+    private FeeMapper feeMapper;
 
     @Override
     public List<MeterCharge> findEquipmentTypeByMeterCharge(MeterCharge meterCharge, IRequest requestContext) {
@@ -462,9 +479,139 @@ public class MeterShareResultServiceImpl extends BaseServiceImpl<MeterShareResul
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void changeStaus(IRequest requestCtx, List<MeterShareResult> meterShareResultList) {
-        for(MeterShareResult m:meterShareResultList){
+        List<MeterReadHis> mrhList = new ArrayList<>();
+
+        for(MeterShareResult m:meterShareResultList) {
+            if(m.getStatus()=="ACTIVE"||m.getStatus().equals("ACTIVE")){
+                logger.info("将数据存入应收费用清单表");
+                insertDataToFeeList(requestCtx,m);
+            }
+
+
             meterShareResultMapper.changeMeterShareResult(m);
+
+            logger.info("查询抄表历史表的数据");
+            MeterReadHis mr = new MeterReadHis();
+            mr = meterReadHisMapper.queryMeterReadHisByData(m).get(0);
+            mrhList.add(mr);
         }
+            if(!mrhList.isEmpty()&&mrhList.size()!=0){
+                for(MeterReadHis mrh:mrhList){
+                    logger.info("改变抄表历史表的状态");
+                    meterReadHisMapper.changeMeterReadHisStatus(mrh);
+                }
+
+            }
+
+        }
+
+    //将公表分摊查询的数据插入应收费用清单
+    public void insertDataToFeeList(IRequest requestCtx,MeterShareResult m){
+        FeeList fl = new FeeList();
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSS");
+        String formDate =sdf.format(date);
+        fl.setFeeListCode(formDate);   //计费单编号
+
+        fl.setFeeStatus("CREATED");   //计费单状态  “已生成”
+
+        fl.setCustomerName(m.getMsPerson());  //所属客户
+
+        //根据分摊人和建筑名称找到建筑代码
+        Occupation o =new Occupation();
+        o.setPropertyId(m.getPropertyId());
+        o.setCustomerName(m.getMsPerson());
+
+        List<Occupation> oList= occupationService.select(requestCtx,o, 1, 10);
+        if(!oList.isEmpty()&&oList.size()!=0){
+            for(Occupation oc:oList){
+                fl.setOccupationId(oc.getOccupationId());
+            }
+        }else{
+            fl.setOccupationId(null);
+        }
+
+             //对费用日期进行类型转换
+            SimpleDateFormat dateformat1=new SimpleDateFormat("yyyy-MM-dd");
+            String a1=dateformat1.format(m.getCallableDate());
+            fl.setFeePeriod(a1);   //收费期间
+
+            //根据仪表类型id查询仪表类型名称
+            EquipmentType et = new EquipmentType();
+            et.setEquipmentTypeId(m.getEquipmentTypeId());
+            List<EquipmentType> equipmentTypeList =equipmentTypeMapper.select(et);
+            if(!equipmentTypeList.isEmpty()&&equipmentTypeList.size()!=0){
+                for(EquipmentType e:equipmentTypeList){
+
+                    //根据分摊的仪表的仪表类型从费用项目表中读取相应的费用项的费用类型
+                    Fee f = new Fee();
+                    f.setEquipmentType(e.getTypeName());
+                    List<Fee> feeList =feeMapper.queryFee(f);
+                    if(!feeList.isEmpty()&&feeList.size()!=0){
+                        for(Fee fee:feeList){
+                            fl.setFeeTypeId(fee.getFeeTypeId());  //款项类型ID
+                            fl.setFeeId(fee.getFeeId());   //收费项目ID
+                            fl.setTransType(fee.getTransType());  //交易类型
+
+                        }
+                    }else{
+                        fl.setFeeTypeId(null);  //款项类型ID
+                        fl.setFeeId(null);   //收费项目ID
+                        fl.setTransType(null);  //交易类型
+                    }
+
+                    fl.setUnitPrice(m.getMsMount());   //单价
+                    fl.setFeeQuantity(1L);     //数量为“1”
+                    fl.setCurrencyType("CNY");  //默认为“CNY”
+                    fl.setSegmentFlag(null);   //峰度 默认为null
+
+                    //查询抄表记录中的抄表数
+                    MeterReadHis mr = new MeterReadHis();
+                    mr.setEquipmentId(m.getEquipmentId());
+                    List<MeterReadHis> meterReadHises = meterReadHisMapper.queryMeterReadHis(mr);
+                    if(!meterReadHises.isEmpty()&&meterReadHises.size()!=0){
+                        for(MeterReadHis r:meterReadHises){
+                            fl.setLastRecord(r.getLastRead());  //本次抄表数
+                            fl.setPresentRecord(r.getCurrentRead());  //上次抄表数
+                        }
+                    }else{
+                        fl.setLastRecord(null);  //本次抄表数
+                        fl.setPresentRecord(null);  //上次抄表数
+                    }
+
+                    BigDecimal a = new BigDecimal(m.getMsMount());
+                    BigDecimal b = new BigDecimal(1L);
+                    BigDecimal c =a.multiply(b.setScale(2,BigDecimal.ROUND_HALF_UP));
+                    fl.setGrossAmount(c.floatValue());  //单价*数量
+
+                    fl.setAdjAmount((float)0);//折扣
+                    fl.setOverduePayment((float)0);//违约金;
+
+                    fl.setAccruedDate(new Date()); //计费日期起 分摊结果中的转入计费日期
+                    fl.setDateTo(new Date());   //计费截止日期
+                    fl.setGenerateDate(new Date());//生成日期
+
+                    fl.setCountedDate(null);//计提日期	空
+
+                    fl.setTotalAmount(c.floatValue()); //应收合计 总价
+                    fl.setRemark(null);  //备注 null
+                    fl.setDataSource(null);  //数据来源 null
+                    fl.setReferenceNumber(null);  //参考编号 null
+                    fl.setPayPartRepair(null);  //维修单结算方  null
+                    fl.setCountedDate(null);   //计提日期  null
+
+                    logger.info("将数据存入数据库");
+                    feeListMapper.insertSelective(fl);
+
+                }
+            }
+
+        }
+
+
+
     }
-}
+
+

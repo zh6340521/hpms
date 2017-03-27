@@ -4,6 +4,7 @@ import com.hand.hap.mybatis.common.Mapper;
 import com.hand.hap.system.dto.Code;
 import hpms.fin.dto.MeterGradePrice;
 import hpms.fin.dto.MeterReadHis;
+import hpms.fin.dto.MeterShareResult;
 
 import java.util.List;
 
@@ -71,4 +72,21 @@ public interface MeterReadHisMapper extends Mapper<MeterReadHis>{
      * @return
      */
     List<MeterGradePrice> queryGradePrice(MeterGradePrice meterGradePrice);
+
+    /**
+     * 根据公司、项目、设备类型、日期找到数据
+     * @author fuchun.hu@hand-china.com
+     * 2017年3月27日 10:58:13
+     * @param meterShareResult
+     * @return
+     */
+    List<MeterReadHis> queryMeterReadHisByData(MeterShareResult meterShareResult);
+
+    /**
+     * 将对应抄表历史表的数据变成冻结
+     * @author fuchun.hu@hand-china.com
+     * 2017年3月27日 11:15:57
+     * @param mrh
+     */
+    void changeMeterReadHisStatus(MeterReadHis mrh);
 }

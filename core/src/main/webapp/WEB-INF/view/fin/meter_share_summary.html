@@ -118,7 +118,7 @@
                                 <input type="text" id="companyId" style="width: 160px"
                                        data-bind="value:model.companyId">
                                 <script>
-                                    $("#companyId").kendoComboBox({
+                                   /* $("#companyId").kendoComboBox({
                                         valuePrimitive: true,  //原始值
                                         dataTextField: "companyFullName",
                                         dataValueField: "companyId",
@@ -143,7 +143,27 @@
                                             }
 
                                         },
-                                    });
+                                    });*/
+
+
+                                   $("#companyId").kendoDropDownList({
+                                       optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+                                       dataTextField:"companyFullName",
+                                       dataValueField:"companyId",
+                                       valuePrimitive:true,
+                                       dataSource: {
+                                           transport: {
+                                               read: {
+                                                   url:"${base.contextPath}/fnd/company/query",
+                                                   type : "POST"
+                                               },
+                                               contentType : "application/json"
+                                           },
+                                           schema: {
+                                               data: 'rows'
+                                           }
+                                       }
+                                   });
                                 </script>
                             </div>
                         </div>
@@ -158,7 +178,33 @@
                                        data-bind="value:model.projectId">
                             </div>
                             <script>
-                                $("#projectId").kendoComboBox({
+                                $("#projectId").kendoDropDownList({
+                                    optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+                                    dataTextField:"projectName",
+                                    dataValueField:"projectId",
+                                    cascadeFrom:"companyId",
+                                    valuePrimitive:true,
+                                    dataSource: {
+                                        transport: {
+                                            read: {
+                                                url:"${base.contextPath}/hpms/mdm/project/query",
+                                                type : "POST"
+                                            },
+                                            contentType : "application/json",
+                                            parameterMap: function(options, type) {
+                                                if (type === "read") {
+                                                    return {startDateActive:new Date(),endDateActive:new Date()};
+                                                }
+                                            }
+                                        },
+                                        schema: {
+                                            data: 'rows'
+                                        }
+                                    },
+
+                                });
+
+                                /*$("#projectId").kendoComboBox({
                                     autoBind: false,
                                     valuePrimitive: true,
                                     cascadeFrom: "companyId",  //联动绑定的参数
@@ -188,7 +234,7 @@
                                             data: 'rows'
                                         }
                                     },
-                                }) ;
+                                }) ;*/
                             </script>
 
                         </div>
