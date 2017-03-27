@@ -5,6 +5,8 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.fin.dto.MeterCharge;
 import hpms.fin.service.IMeterChargeService;
+import hpms.mdm.dto.Project;
+import hpms.mdm.service.IProjectService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,14 @@ public class MeterChargeController extends BaseController{
 
     @Autowired
     private IMeterChargeService meterChargeService;
+    @RequestMapping(value="fin/charge/qq",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseData query(Project dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+        IRequest requestContext = createRequestContext(request);
+        List<Project> projects = meterChargeService.projectQuery(requestContext,dto,page,pageSize);
+        return new ResponseData(projects);
+    }
 
     @RequestMapping(value = "fin/charge/find",method = RequestMethod.GET)
     @ResponseBody

@@ -1,9 +1,13 @@
 package hpms.fin.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.hand.hap.core.IRequest;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.fin.dto.MeterCharge;
 import hpms.fin.mapper.MeterChargeMapper;
 import hpms.fin.service.IMeterChargeService;
+import hpms.mdm.dto.Project;
+import hpms.mdm.mapper.ProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +23,6 @@ import java.util.List;
 public class MeterChargeService extends BaseServiceImpl<MeterCharge> implements IMeterChargeService{
     @Autowired
     private MeterChargeMapper mapper;
-
 
     @Override
     public boolean isHaveEn(MeterCharge meterCharge) {
@@ -44,5 +47,11 @@ public class MeterChargeService extends BaseServiceImpl<MeterCharge> implements 
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<Project> projectQuery(IRequest requestContext, Project project, int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        return mapper.projectQuery(project);
     }
 }

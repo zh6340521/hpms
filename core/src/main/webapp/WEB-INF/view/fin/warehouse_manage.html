@@ -1,26 +1,6 @@
 <#include "../include/header.html">
     <body>
     <style>
-        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-            color: #333;
-            opacity: 1;
-        }
-
-        ::-moz-placeholder { /* Mozilla Firefox 19+ */
-            color: #333;
-            opacity: 1;
-        }
-
-        input:-ms-input-placeholder {
-            color: #333;
-            opacity: 1;
-        }
-
-        input::-webkit-input-placeholder {
-            color: #333;
-            opacity: 1;
-        }
-
         .red {
             color: red;
             position: absolute;
@@ -71,7 +51,7 @@
         });
         $.ajax({
             type: "GET",
-            url: "${base.contextPath}/fin/charge/qq",
+            url: "${base.contextPath}/hpms/mdm/project/query",
             data: '',
             async: false,
             success: function (args) {
@@ -183,75 +163,25 @@
                                 </script>
                             </div>
                         </div>
-                        <!-- 仪表类型 -->
+                        <!-- 仓库编码 -->
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">仪表类型</label>
+                                <label class="col-sm-4 control-label">仓库编码</label>
                                 <div class="col-sm-8">
                                     <input id="equipmentType" type="text" style="width: 160px"
                                            data-bind="value:model.equipmentTypeId">
                                 </div>
-                                <script>
-                                    $("#equipmentType").kendoDropDownList({
-                                        optionLabel: "--请选择--",
-                                        dataTextField: "typeName",
-                                        dataValueField: "equipmentTypeId",
-                                        dataSource: epp,
-                                        change: function (e) {
-                                            viewModel.model.equipmentTypeId = e.sender._old;
-                                        }
-                                    }).data("kendoDropDownList");
-                                    kendo.bind($('#equipmentType'), viewModel);
-                                </script>
                             </div>
                         </div>
+                        <!-- 仓库名称 -->
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">&nbsp;</label>
-                            </div>
-                        </div>
-                        <!-- 仪表编码 -->
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label"><@spring.message
-                                    "hpms.fin.pubmeter.metercode"/></label>
+                                <label class="col-sm-4 control-label">仓库名称</label>
                                 <div class="col-sm-8">
                                     <input id="edit1" type="text" style="width: 160px"
                                            data-bind="value:model.equipmentId">
                                 </div>
-                                <script>
-                                    $("#edit1").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "HPMS_MDM_FIN_SHARE")}, {
-                                            query: function (e) {
-                                                if (!e.param.companyId) {
-                                                    e.param.companyId = viewModel.model.companyId;
-                                                }
-                                                if (!e.param.projectId) {
-                                                    e.param.projectId = viewModel.model.projectId;
-                                                }
-                                            }
-                                        }
-                                    ));
-                                </script>
                             </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">分摊规则</label>
-                                <div class="col-sm-8">
-                                    <input id="rule" type="text" style="width: 160px"
-                                           data-bind="value:model.shareRule">
-                                </div>
-                            </div>
-                            <script>
-                                $("#rule").kendoDropDownList({
-                                    optionLabel: "--请选择--",
-                                    dataTextField: "meaning",
-                                    dataValueField: "value",
-                                    valuePrimitive: true,
-                                    dataSource: resourceTypeData,
-                                    index: -1,
-                                });
-                            </script>
                         </div>
                         <div style="clear:both"></div>
                         <!-- 查询框按钮 -->
@@ -365,26 +295,7 @@
                 {
                     title: '操作',
                     attributes: {style: "text-align:center"},
-                    command: [{
-                        name: "查",
-                        text: "<i class='fa fa-search'></i>",
-                        click: function (e) {
-                            var tr = $(e.target).closest("tr");
-                            var dataItem = this.dataItem(tr);
-                            var ename = null;
-                            var eid = null;
-                            for (var k in codeArray) {
-                                if (codeArray[k].equipmentId == dataItem.equipmentId) {
-                                    ename = codeArray[k].equipmentName;
-                                    eid = dataItem.equipmentId;
-                                }
-                            }
-                            parent.openTab("set_" + dataItem.shareRuleId, ename, "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId + "&companyId=" + dataItem.companyId + "&projectId=" + dataItem.projectId);
-//                            window.location.href = "${base.contextPath}/fin/share_rule_to.html/?shareRuleId=" + dataItem.shareRuleId + "&equipmentId=" + dataItem.equipmentId+"&companyId="+dataItem.companyId+"&projectId="+dataItem.projectId;
-                        }
-                    },
-                        {name: "edit"}
-                    ],
+                    command: [{name: "edit"}],
                     width: '8%'
                 },
                 {
@@ -491,151 +402,60 @@
                 },
                 {
                     field: "equipmentTypeId",
-                    title: '仪表类型',
+                    title: '仓库名称',
                     attributes: {style: "text-align:center"},
                     width: '12%',
-                    template: function (rowdata) {
-                        for (var k in equipmentArray) {
-                            if (equipmentArray[k].equipmentTypeId == rowdata.equipmentTypeId) {
-                                return equipmentArray[k].typeName
-                            }
-                        }
-                    },
                     editor: function (container, options) {
                         if (options.model.shareRuleId == "") {
-                            $('<input id="equip" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
-                             $equ = $("#equip").kendoDropDownList({
-                                optionLabel: "--请选择--",
-                                dataTextField: "typeName",
-                                dataValueField: "equipmentTypeId",
-                                dataSource: epp,
-                                change: function (e) {
-                                    options.model.equipmentTypeId = e.sender._old;
-                                },
-                            }).data("kendoDropDownList");
-                        } else {
-                            for (var k in equipmentArray) {
-                                if (equipmentArray[k].equipmentTypeId == options.model.equipmentTypeId) {
-                                    $('<span>' + equipmentArray[k].typeName + '</span>')
-                                        .appendTo(container)
-                                }
-                            }
+                            $('<span>' + options.model.equipmentTypeId + '</span>')
+                                .appendTo(container)
                         }
-                    },
+                    }
                 },
                 {
                     field: "equipmentId",
-                    title: '仪表编号',
+                    title: '仓库类型',
                     attributes: {style: "text-align:center"},
                     width: '12%',
-                    template: function (rowdata) {
-                        var a = 0;
-                        for (var k in hasEquip) {
-                            a = 0;
-                            if (hasEquip[k] == rowdata.equipmentId) {
-                                a++;
-                                break;
-                            }
-                        }
-                        if (a == 0) {
-                            hasEquip.push(rowdata.equipmentId);
-                        }
-                        for (var k in codeArray) {
-                            if (codeArray[k].equipmentId == rowdata.equipmentId) {
-                                return codeArray[k].equipmentCode
-                            }
-                        }
-                    },
                     editor: function (container, options) {
                         if (options.model.shareRuleId == "") {
-                            $('<input id="code_edit" style="width: 90%" required validationMessage="必填" type="text" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
-                            $("#code_edit").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "HPMS_MDM_FIN_SHARE")}, {
-                                    select: function (e) {
-                                        for (var k in hasEquip) {
-                                            if (e.item.equipmentId == hasEquip[k]) {
-                                                kendo.ui.showWarningDialog({
-                                                    message: '同种设备只可创建一次!'
-                                                });
-                                                $(".k-input").val(null);
-                                                $("#code_edit").val(null);
-                                                $("#name_edit").val(null);
-                                                break;
-                                            } else {
-                                                $("#name_edit").val(e.item.equipmentName);
-                                            }
-                                        }
-                                    },
-                                    query: function (e) {
-                                        if (!e.param.companyId) {
-                                            e.param.companyId = options.model.companyId;
-                                        }
-                                        if (!e.param.projectId) {
-                                            e.param.projectId = options.model.projectId;
-                                        }
-                                        if (!e.param.equipmentTypeId) {
-                                            e.param.equipmentTypeId = options.model.equipmentTypeId;
-                                        }
-                                    }
-                                }
-                            ));
-                        } else {
-                            for (var k in codeArray) {
-                                if (codeArray[k].equipmentId == options.model.equipmentId) {
-                                    $('<span>' + codeArray[k].equipmentCode + '</span>')
-                                        .appendTo(container)
-                                }
-                            }
+                            $('<span>' + options.model.equipmentId + '</span>')
+                                .appendTo(container)
                         }
                     }
                 },
                 {
                     field: "equipmentName",
-                    title: '仪表名称',
+                    title: '仓库地址',
                     width: '10%',
                     attributes: {style: "text-align:center"},
-                    template: function (rowdata) {
-                        for (var k in codeArray) {
-                            if (codeArray[k].equipmentId == rowdata.equipmentId) {
-                                return codeArray[k].equipmentName
-                            }
-                        }
-                    },
-                    editor: function (container, options) {
-                        if (options.model.shareRuleId == "") {
-                            $('<input id="name_edit" disabled type="text" class="k-textbox" name="' + options.field + '"/>').appendTo(container)
-                        } else {
-                            for (var k in codeArray) {
-                                if (codeArray[k].equipmentId == options.model.equipmentId) {
-                                    $('<span>' + codeArray[k].equipmentName + '</span>')
-                                        .appendTo(container)
-                                }
-                            }
-                        }
-                    },
                 },
                 {
                     field: "shareRule",
-                    title: '分摊规则',
+                    title: '状态',
                     width: '12%',
                     attributes: {style: "text-align:center"},
-                    template: function (rowdata) {
-                        for (var k in resourceTypeData) {
-                            if (resourceTypeData[k].value == rowdata.shareRule) {
-                                return resourceTypeData[k].meaning
-                            }
+                    editor: function (container, options) {
+                        if (options.model.shareRuleId == "") {
+                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.shareRule + '" style="display: none;" class="k-valid"></span>').appendTo(container)
+                        } else if (options.model.shareRule == "Y") {
+                            $.ajax({
+                                type: "GET",
+                                url: crudServiceBaseUrl + "/find?chargeRuleId=" + options.model.chargeRuleId,
+                                data: '',
+                                async: false,
+                                success: function (args) {
+                                    if (args.success == false) {
+                                        $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input disabled type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.shareRule + '" style="display: none;" class="k-valid"></span>').appendTo(container)
+                                    } else {
+                                        $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.shareRule + '" style="display: none;" class="k-valid"></span>').appendTo(container)
+                                    }
+                                }
+                            });
+                        } else {
+                            $('<span tabindex="0" class="k-checkbox k-state-default fa fa-check"><input type="checkbox" name="enableFlag" data-type="boolean" data-bind="checked:enableFlag" data-role="checkbox" value="' + options.model.enableFlag + '" style="display: none;" class="k-valid"></span>').appendTo(container)
                         }
                     },
-                    editor: function (container, options) {
-                        $('<input id="rule_edit" required type="text" validationMessage="必填" style="width: 90%" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
-                        $("#rule_edit").kendoDropDownList({
-                            optionLabel: "--请选择--",
-                            dataTextField: "meaning",
-                            dataValueField: "value",
-                            valuePrimitive: true,
-                            dataSource: resourceTypeData,
-                            index: -1,
-                        });
-                    }
                 },
             ],
         }).data("kendoGrid");
