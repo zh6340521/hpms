@@ -8,12 +8,15 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import hpms.mdm.dto.VersionStructure;
 import hpms.mdm.service.IVersionStructureService;
+import hpms.utils.ValidationTableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -55,9 +58,40 @@ public class VersionStructureController extends BaseController {
      */
     @RequestMapping(value = "/mdm/structure/submit")
     @ResponseBody
-    public ResponseData update(HttpServletRequest request,@RequestBody List<VersionStructure> vs){
-        IRequest requestCtx = createRequestContext(request);
-        return new ResponseData(versionStructureService.batchUpdate(requestCtx, vs));
+    public ResponseData update(HttpServletRequest request,@RequestBody List<VersionStructure> vs,BindingResult result){
+
+        IRequest requestContext = createRequestContext(request);
+        getValidator().validate(vs, result);
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }else{
+            try {
+                VersionStructure v = new VersionStructure();
+                v.setStructureNumber(vs.get(0).getStructureNumber());
+
+
+                List<VersionStructure> vList = versionStructureService.findAllVersionStructure(v, requestContext, 1, 10);
+                if (!vList.isEmpty() && vList.size() != 0) {
+
+                    throw new ValidationTableException("该结构编码已存在！", null);
+                }
+
+
+                return new ResponseData(versionStructureService.batchUpdate(requestContext, vs));
+
+            }catch(ValidationTableException e){
+                ResponseData responseData = new ResponseData(false);
+                String errorMessage = this.getMessageSource().getMessage(e.getCode(), null,
+                        RequestContextUtils.getLocale(request));
+                responseData.setMessage(errorMessage);
+                return responseData;
+            }
+
+            }
+
+
     }
 
     /**
@@ -77,8 +111,6 @@ public class VersionStructureController extends BaseController {
      *
      * 查询
      * @param vs
-     * @param page
-     * @param pageSize
      * @param request
      * @return
      */
