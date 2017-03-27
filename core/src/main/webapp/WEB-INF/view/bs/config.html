@@ -65,7 +65,6 @@
                   <div class="row" style="margin-bottom: 5px;">
                       <div class="col-sm-4">
                           <div class="form-group">
-                              <!--<label class="col-sm-4 control-label">公司</label>-->
                               <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.property.company"/></label>
                               <div class="col-sm-8">
                                   <input type="text" id="companyId" style="width: 160px"
@@ -111,7 +110,7 @@
                               <!--<label class="col-sm-4 control-label">模型名称</label>-->
                               <label class="col-sm-4 control-label"><@spring.message "hpms.bs.model_name"/></label>
                               <div class="col-md-6">
-                                  <input name="modelName" type="text" style="width: 100%" id="modelName"
+                                  <input name="modelName" type="text" style="width: 160px" id="modelName"
                                          data-bind="value:model.modelId,text:model.modelName">
 
                                   <script>kendo.bind($('#modelName'), viewModel);</script>
@@ -126,7 +125,7 @@
                               <!--<label class="col-sm-4 control-label">配置编码</label>-->
                               <label class="col-sm-4 control-label"><@spring.message "hpms.bs.config_number"/></label>
                               <div class="col-md-7">
-                                  <input type="text" class="k-textbox" name="configNumber"  data-bind="value:model.configNumber" style="width: 90%;"/>
+                                  <input type="text" class="k-textbox" name="configNumber"  data-bind="value:model.configNumber" style="width: 160px"/>
                               </div>
                           </div>
                       </div>
@@ -137,7 +136,7 @@
                               <!--<label class="col-sm-4 control-label">配置名称</label>-->
                               <label class="col-sm-4 control-label"><@spring.message "hpms.bs.config_name"/></label>
                               <div class="col-md-7">
-                                  <input type="text" class="k-textbox" name="configName"  data-bind="value:model.configName" style="width: 90%;"/>
+                                  <input type="text" class="k-textbox" name="configName"  data-bind="value:model.configName" style="width: 160px"/>
                               </div>
                           </div>
                       </div>

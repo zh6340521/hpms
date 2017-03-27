@@ -142,42 +142,23 @@
                                 </div>
                                 <script>
                                     $("#company").kendoDropDownList({
-                                        optionLabel: "--请选择--",
+                                        optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
                                         dataTextField: "companyFullName",
                                         dataValueField: "companyId",
-                                        dataSource: companyArray,
-                                        change: function (e) {
-                                            viewModel.model.companyId = e.sender._old;
-                                            var cpd = {};
-                                            for (var key in cp) {
-                                                if (cp[key].companyId == e.sender._old) {
-                                                    cpd = cp[key].proo;
-                                                }
+                                        valuePrimitive: true,
+                                        dataSource: {
+                                            transport: {
+                                                read: {
+                                                    url: "${base.contextPath}/fnd/company/query",
+                                                    type: "POST"
+                                                },
+                                                contentType: "application/json"
+                                            },
+                                            schema: {
+                                                data: 'rows'
                                             }
-//                                            $pro1.setDataSource(cpd);
-                                            $pro1.setDataSource(
-                                                {
-                                                    transport: {
-                                                        read: {
-                                                            url: "${base.contextPath}/hpms/mdm/project/query?companyId="+viewModel.model.companyId,
-                                                            type: "POST"
-                                                        },
-                                                        contentType: "application/json",
-                                                        parameterMap: function (options, type) {
-                                                            if (type === "read") {
-                                                                return {startDateActive: new Date(), endDateActive: new Date()};
-                                                            }
-                                                        }
-                                                    },
-                                                    schema: {
-                                                        data: 'rows'
-                                                    }
-                                                }
-                                            )
                                         }
-                                    }).data("kendoDropDownList");
-                                    kendo.bind($('#company'), viewModel);
-
+                                    });
                                 </script>
                             </div>
                         </div>
@@ -190,21 +171,12 @@
                                            data-bind="value:model.projectId">
                                 </div>
                                 <script>
-                                    //                                    $pro1 = $("#project").kendoDropDownList({
-                                    //                                        optionLabel: "--请选择--",
-                                    //                                        dataTextField: "projectName",
-                                    //                                        dataValueField: "projectId",
-                                    //                                        dataSource: projectArray,
-                                    //                                        change: function (e) {
-                                    //                                            viewModel.model.projectId = e.sender._old;
-                                    //                                        }
-                                    //                                    }).data("kendoDropDownList");
-                                    //                                    kendo.bind($('#project'), viewModel);
-                                    $pro1 = $("#project").kendoDropDownList({
+                                    $("#project").kendoDropDownList({
                                         optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
                                         dataTextField: "projectName",
                                         dataValueField: "projectId",
-                                        cascadeFrom: "companyId",
+                                        cascadeFrom: "company",
+                                        cascadeFromField: "companyId",
                                         valuePrimitive: true,
                                         dataSource: {
                                             transport: {
@@ -223,8 +195,7 @@
                                                 data: 'rows'
                                             }
                                         },
-                                    }).data("kendoDropDownList");
-                                    kendo.bind($('#project'), viewModel);
+                                    });
                                 </script>
                             </div>
                         </div>
@@ -237,16 +208,36 @@
                                            data-bind="value:model.equipmentTypeId">
                                 </div>
                                 <script>
-                                    $("#equipmentType").kendoDropDownList({
-                                        optionLabel: "--请选择--",
+                                    $("#equipmentType").kendoComboBox({
+                                        optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+                                        valuePrimitive: true,
+                                        cascadeFrom: "project",  //联动绑定的参数
+                                        cascadeFromField: "projectId",
                                         dataTextField: "typeName",
                                         dataValueField: "equipmentTypeId",
-                                        dataSource: epp,
-                                        change: function (e) {
-                                            viewModel.model.equipmentTypeId = e.sender._old;
-                                        }
-                                    }).data("kendoDropDownList");
-                                    kendo.bind($('#equipmentType'), viewModel);
+                                        index:-1,
+                                        dataSource: {
+                                            serverFiltering: true,
+                                            transport: {
+                                                read: {
+                                                    url: "${base.contextPath}/fin/metershareresult/queryEquipmentId",
+                                                    type: "POST"
+                                                },
+                                                contentType: "application/json",
+                                                parameterMap: function (options, type) {
+                                                    if (type === "read") {
+                                                        var filter = options.filter.filters[0]
+                                                        var map = {};
+                                                        map[filter.field] = filter.value;
+                                                        return map;
+                                                    }
+                                                }
+                                            },
+                                            schema: {
+                                                data: 'rows'
+                                            }
+                                        },
+                                    });
                                 </script>
                             </div>
                         </div>
@@ -266,14 +257,14 @@
                                 </div>
                                 <script>
                                     $("#edit1").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "HPMS_MDM_FIN_SHARE")}, {
-                                            query: function (e) {
-                                                if (!e.param.companyId) {
-                                                    e.param.companyId = viewModel.model.companyId;
-                                                }
-                                                if (!e.param.projectId) {
-                                                    e.param.projectId = viewModel.model.projectId;
-                                                }
+                                        query: function (e) {
+                                            if (!e.param.companyId) {
+                                                e.param.companyId = viewModel.model.companyId;
                                             }
+                                            if (!e.param.projectId) {
+                                                e.param.projectId = viewModel.model.projectId;
+                                            }
+                                        }
                                         }
                                     ));
                                 </script>
@@ -448,19 +439,23 @@
                         if (options.model.shareRuleId == "") {
                             $('<input id="comp" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                             $("#comp").kendoDropDownList({
-                                optionLabel: "--请选择--",
+                                optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
                                 dataTextField: "companyFullName",
                                 dataValueField: "companyId",
-                                dataSource: companyArray,
-                                change: function (e) {
-                                    options.model.companyId = e.sender._old;
-                                    var cpd = {};
-                                    for (var key in cp) {
-                                        if (cp[key].companyId == e.sender._old) {
-                                            cpd = cp[key].proo;
-                                        }
+                                valuePrimitive: true,
+                                dataSource: {
+                                    transport: {
+                                        read: {
+                                            url: "${base.contextPath}/fnd/company/query",
+                                            type: "POST"
+                                        },
+                                        contentType: "application/json"
+                                    },
+                                    schema: {
+                                        data: 'rows'
                                     }
-                                    $pro.setDataSource(cpd);
+                                },
+                                change: function (e) {
                                     $("#code_edit").parent().children().children(".k-input").val(null);
                                     $("#code_edit").parent().children().children(".k-input").text(null);
                                     $("#name_edit").val(null);
@@ -494,34 +489,30 @@
                         if (options.model.shareRuleId == "") {
                             $('<input id="pro" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                             $pro = $("#pro").kendoDropDownList({
-                                optionLabel: "--请选择--",
+                                optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
                                 dataTextField: "projectName",
                                 dataValueField: "projectId",
-                                index: -1,
-                                dataSource: projectArray,
-                                change: function (e) {
-                                    options.model.projectId = e.sender._old;
-                                    epArray = [];
-                                    var a = 0;
-                                    for (var k2 in codeArray) {
-                                        a = 0;
-                                        if (codeArray[k2].projectId == options.model.projectId) {
-                                            var obj = new Object();
-                                            obj.equipmentTypeId = codeArray[k2].equipmentTypeId;
-                                            obj.typeName = codeArray[k2].typeName;
-                                            for (var k3 in epArray) {
-                                                if (epArray[k3].typeName == obj.typeName) {
-                                                    a++;
-                                                    break;
-                                                }
-                                            }
-                                            if (a == 0) {
-                                                epArray.push(obj);
+                                cascadeFrom: "comp",
+                                cascadeFromField: "companyId",
+                                valuePrimitive: true,
+                                index:-1,
+                                dataSource: {
+                                    transport: {
+                                        read: {
+                                            url: "${base.contextPath}/hpms/mdm/project/query",
+                                            type: "POST"
+                                        },
+                                        contentType: "application/json",
+                                        parameterMap: function (options, type) {
+                                            if (type === "read") {
+                                                return {startDateActive: new Date(), endDateActive: new Date()};
                                             }
                                         }
+                                    },
+                                    schema: {
+                                        data: 'rows'
                                     }
-                                    $equ.setDataSource(epArray);
-                                }
+                                },
                             }).data("kendoDropDownList");
                             kendo.bind($('#pro'), viewModel);
                         } else {
@@ -550,12 +541,34 @@
                         if (options.model.shareRuleId == "") {
                             $('<input id="equip" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
                             $equ = $("#equip").kendoDropDownList({
-                                optionLabel: "--请选择--",
+                                optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
+                                autoBind: false,
+                                valuePrimitive: true,
+                                cascadeFrom: "pro",  //联动绑定的参数
+                                cascadeFromField: "projectId",
                                 dataTextField: "typeName",
                                 dataValueField: "equipmentTypeId",
-                                dataSource: epp,
-                                change: function (e) {
-                                    options.model.equipmentTypeId = e.sender._old;
+                                index:-1,
+                                dataSource: {
+                                    serverFiltering: true,
+                                    transport: {
+                                        read: {
+                                            url: "${base.contextPath}/fin/metershareresult/queryEquipmentId",
+                                            type: "POST"
+                                        },
+                                        contentType: "application/json",
+                                        parameterMap: function (options, type) {
+                                            if (type === "read") {
+                                                var filter = options.filter.filters[0]
+                                                var map = {};
+                                                map[filter.field] = filter.value;
+                                                return map;
+                                            }
+                                        }
+                                    },
+                                    schema: {
+                                        data: 'rows'
+                                    }
                                 },
                             }).data("kendoDropDownList");
                         } else {
