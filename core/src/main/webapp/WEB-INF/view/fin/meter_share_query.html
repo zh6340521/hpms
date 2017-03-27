@@ -177,7 +177,8 @@
                  dataSource: {
                    transport: {
                        read: {
-                              url:"${base.contextPath}/mdm/property/companyQuery",
+                             // url:"${base.contextPath}/mdm/property/companyQuery",
+                               url:"${base.contextPath}/fnd/company/query",
                                type : "POST"
                               },
                               contentType : "application/json",
@@ -210,7 +211,8 @@
             serverFiltering:true,
             transport: {
                 read: {
-                    url:"${base.contextPath}/mdm/property/projectQuery",
+                    //url:"${base.contextPath}/mdm/property/projectQuery",
+                    url:"${base.contextPath}/hpms/mdm/project/query",
                     type : "POST"
                 },
                 contentType : "application/json",
