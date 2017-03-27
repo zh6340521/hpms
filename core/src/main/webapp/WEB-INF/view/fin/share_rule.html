@@ -98,7 +98,7 @@
         });
 
         var cp = [];
-        var epp =[];
+        var epp = [];
         for (var k in equipmentArray) {
             if (equipmentArray[k].typeAttribute == "CUSTOMER METER") {
                 epp.push(equipmentArray[k]);
@@ -154,10 +154,30 @@
                                                     cpd = cp[key].proo;
                                                 }
                                             }
-                                            $pro1.setDataSource(cpd);
+//                                            $pro1.setDataSource(cpd);
+                                            $pro1.setDataSource(
+                                                {
+                                                    transport: {
+                                                        read: {
+                                                            url: "${base.contextPath}/hpms/mdm/project/query?companyId="+viewModel.model.companyId,
+                                                            type: "POST"
+                                                        },
+                                                        contentType: "application/json",
+                                                        parameterMap: function (options, type) {
+                                                            if (type === "read") {
+                                                                return {startDateActive: new Date(), endDateActive: new Date()};
+                                                            }
+                                                        }
+                                                    },
+                                                    schema: {
+                                                        data: 'rows'
+                                                    }
+                                                }
+                                            )
                                         }
                                     }).data("kendoDropDownList");
                                     kendo.bind($('#company'), viewModel);
+
                                 </script>
                             </div>
                         </div>
@@ -170,14 +190,39 @@
                                            data-bind="value:model.projectId">
                                 </div>
                                 <script>
+                                    //                                    $pro1 = $("#project").kendoDropDownList({
+                                    //                                        optionLabel: "--请选择--",
+                                    //                                        dataTextField: "projectName",
+                                    //                                        dataValueField: "projectId",
+                                    //                                        dataSource: projectArray,
+                                    //                                        change: function (e) {
+                                    //                                            viewModel.model.projectId = e.sender._old;
+                                    //                                        }
+                                    //                                    }).data("kendoDropDownList");
+                                    //                                    kendo.bind($('#project'), viewModel);
                                     $pro1 = $("#project").kendoDropDownList({
-                                        optionLabel: "--请选择--",
+                                        optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
                                         dataTextField: "projectName",
                                         dataValueField: "projectId",
-                                        dataSource: projectArray,
-                                        change: function (e) {
-                                            viewModel.model.projectId = e.sender._old;
-                                        }
+                                        cascadeFrom: "companyId",
+                                        valuePrimitive: true,
+                                        dataSource: {
+                                            transport: {
+                                                read: {
+                                                    url: "${base.contextPath}/hpms/mdm/project/query",
+                                                    type: "POST"
+                                                },
+                                                contentType: "application/json",
+                                                parameterMap: function (options, type) {
+                                                    if (type === "read") {
+                                                        return {startDateActive: new Date(), endDateActive: new Date()};
+                                                    }
+                                                }
+                                            },
+                                            schema: {
+                                                data: 'rows'
+                                            }
+                                        },
                                     }).data("kendoDropDownList");
                                     kendo.bind($('#project'), viewModel);
                                 </script>
@@ -504,7 +549,7 @@
                     editor: function (container, options) {
                         if (options.model.shareRuleId == "") {
                             $('<input id="equip" required type="text" style="width: 90%" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
-                             $equ = $("#equip").kendoDropDownList({
+                            $equ = $("#equip").kendoDropDownList({
                                 optionLabel: "--请选择--",
                                 dataTextField: "typeName",
                                 dataValueField: "equipmentTypeId",
