@@ -250,8 +250,7 @@
 	                    		amountValidation: function (input) {
 	                    			if (input.is("[name='amount']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-										//增加一段正整数判断
-	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) && !/^[0-9]*[1-9][0-9]*$/.test(input.val())){
+	                                    if (! /^(([0-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val())){
 	                                        input.attr("data-amountValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
 	                                        return false;
 	                                    }
@@ -265,8 +264,7 @@
 	                    		percentValidation: function (input) {
 	                    			if (input.is("[name='percent']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-                                        //增加一段正整数判断
-	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) && !/^[0-9]*[1-9][0-9]*$/.test(input.val())){
+	                                    if (! /^(([0-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val())){
 	                                        input.attr("data-percentValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
 	                                        return false;
 	                                    }
