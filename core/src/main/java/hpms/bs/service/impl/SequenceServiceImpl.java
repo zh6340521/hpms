@@ -63,8 +63,18 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
         return true;
     }
 
+    /**
+     *
+     * 描述:获取单据编号
+     * @author jun.zhao02@hand-china.com
+     * @param request
+     * @param sequenceCode
+     * @param companyId
+     * @param projectId
+     * @return
+     */
     @Override
-    public String getNextDocCode(IRequest request, String sequenceCode, Long companyId, Long projectId) {
+    public String getNextDocCode(IRequest request, String sequenceCode, Long companyId, Long projectId) throws RuntimeException{
         List<Sequence> seqList = sequenceRuleMapper.queryValidByCode(sequenceCode);
         //判断查询结果
         if (seqList.size() != 1) {
@@ -122,7 +132,7 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
             sequence.set__status("update");
             seqList = super.batchUpdate(request,seqList);
         }
-        //根据当前编号生产下个编号
+        //根据当前编号生成下个编号
         else {
             if (String.valueOf(currentNum + 1).length()  > figure) {
                 throw new RuntimeException("无法生成设备编号，超出终止编码");
