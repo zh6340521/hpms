@@ -1,5 +1,9 @@
 package hpms.fin.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +33,26 @@ public class PaymentServiceImpl extends BaseServiceImpl<Payment> implements IPay
 	private PaymentMapper paymentMapper;
 
 	@Override
-	public List<Invoice> queryInvoice(Invoice invoice, IRequest requestContext, int page, int pagesize) {
+	public List<Payment> queryInvoice(Payment payment, IRequest requestContext, int page, int pagesize) {
 		PageHelper.startPage(page, pagesize);
-		return paymentMapper.queryInvoice(invoice);
+		return paymentMapper.queryInvoice(payment);
+	}
+
+	@Override
+	public List<Payment> queryCollection(Payment payment, IRequest requestContext, int page, int pagesize) {
+		PageHelper.startPage(page, pagesize);
+		return paymentMapper.queryCollection(payment);
+	}
+
+	@Override
+	public List<Payment> saveReceipt(List<Payment> payment, IRequest requestContext) {
+		for (Payment payments : payment) {
+			List<Invoice> invoices = payments.getInvoice();
+			for (Invoice invoice : invoices) {
+				invoice.getInvoiceId();
+			}
+		}
+		
+		return null;
 	}
 }
