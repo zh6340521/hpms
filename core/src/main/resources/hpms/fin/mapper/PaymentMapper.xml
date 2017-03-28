@@ -2,108 +2,168 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="hpms.fin.mapper.PaymentMapper">
-	<resultMap id="InvoiceResultMap" type="hpms.fin.dto.Invoice">
-        <result column="INVOICE_ID" property="invoiceId" jdbcType="DECIMAL" />
+	<resultMap id="ResultMap" type="hpms.fin.dto.Payment" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="PAYMENT_ID" property="paymentId" jdbcType="DECIMAL" />
         <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
         <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
-        <result column="PAYABLE_CODE" property="payableCode" jdbcType="VARCHAR" />
-        <result column="INVOICE_TYPE" property="invoiceType" jdbcType="VARCHAR" />
-        <result column="INVOICE_DATE" property="invoiceDate" jdbcType="DATE" />
-        <result column="INVOICE_NUM" property="invoiceNum" jdbcType="VARCHAR" />
-        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
-        <result column="ACCOUNT_DATE" property="accountDate" jdbcType="DATE" />
-        <result column="ACCOUNT_PERIOD" property="accountPeriod" jdbcType="VARCHAR" />
-        <result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
-        <result column="PAYMENT_METHOD_ID" property="paymentMethodId" jdbcType="DECIMAL" />
-        <result column="TRANS_TYPE" property="transType" jdbcType="VARCHAR" />
-        <result column="INVOICE_AMOUNT" property="invoiceAmount" jdbcType="DECIMAL" />
-        <result column="TAX_AMOUNT" property="taxAmount" jdbcType="DECIMAL" />
-        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
-        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
-        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
-        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
-        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
-        <result column="PROPERTY_NAME" property="propertyName" jdbcType="VARCHAR" />
-        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR" />
-        <result column="MEANING1" property="meaning1" jdbcType="VARCHAR" />
-        <result column="MEANING2" property="meaning2" jdbcType="VARCHAR" />
-        <result column="MEANING3" property="meaning3" jdbcType="VARCHAR" />
-        <result column="PAY_DATE" property="payDate" jdbcType="DATE" />
+        <result column="INVOICE_ID" property="invoiceId" jdbcType="DECIMAL" />
         <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="INVOICE_Number" property="invoiceNumber" jdbcType="VARCHAR" />
+        <result column="PAYMENT_CODE" property="paymentCode" jdbcType="VARCHAR" />
+        <result column="FEE_ID" property="feeId" jdbcType="DECIMAL" />
         <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
-        <result column="PAYMENT_TERM_NAME" property="paymentTermName" jdbcType="VARCHAR" />
-        <result column="PAYMENT_METHOD_NAME" property="paymentMethodName" jdbcType="VARCHAR" />
-        <result column="PAYMENT_ID" property="paymentId" jdbcType="DECIMAL" />
-        <result column="PAYMENT_CODE" property="paymentCode" jdbcType="DECIMAL" />
-        <result column="DOC_TYPE_PAY" property="docTypePay" jdbcType="VARCHAR" />
+        <result column="TRANS_TYPE" property="transType" jdbcType="VARCHAR" />
+        <result column="LINE_NUMBER" property="lineNumber" jdbcType="DECIMAL" />
+        <result column="PAYER" property="payer" jdbcType="VARCHAR" />
         <result column="CHARGE_STATUS" property="chargeStatus" jdbcType="VARCHAR" />
-        <result column="REFERENCE_CODE" property="referenceNumber" jdbcType="VARCHAR" />
+        <result column="REFERENCE_CODE" property="referenceCode" jdbcType="VARCHAR" />
+        <result column="PAY_DATE" property="payDate" jdbcType="DATE" />
+        <result column="PROPERTY_NUMBER" property="propertyNumber" jdbcType="VARCHAR" />
+        <result column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL" />
+        <result column="SETTLEMENT_AMOUNT" property="settlementAmount" jdbcType="DECIMAL" />
+        <result column="PAYMENT_METHOD_ID" property="paymentMethodId" jdbcType="DECIMAL" />
+        <result column="DOC_TYPE_PAY" property="docTypePay" jdbcType="VARCHAR" />
+        <result column="OCCUPATION_ID" property="occupationId" jdbcType="DECIMAL" />
+        <result column="PAYABLE_CODE" property="payableCode" jdbcType="VARCHAR" />
+        <result column="ACCOUNT_PERIOD" property="accountPeriod" jdbcType="VARCHAR" />
+        <result column="INVOICE_AMOUNT" property="invoiceAmount" jdbcType="DECIMAL" />
         
-
+        
+        <result column="FEE_LIST_ID" property="feeListId" jdbcType="DECIMAL" />
+        <result column="TOTAL_AMOUNT" property="totalAmount" jdbcType="DECIMAL" />
+        <result column="FEE_LIST_CODE" property="feeListCode" jdbcType="VARCHAR" />
+        <result column="FEE_STATUS" property="feeStatus" jdbcType="VARCHAR" />
+        <result column="FEE_PERIOD" property="feePeriod" jdbcType="VARCHAR" />
     </resultMap>
     
     <!--查询应付信息-->
-    <select id="queryInvoice" parameterType="hpms.fin.dto.Invoice" resultMap="InvoiceResultMap">
-        SELECT HFI.INVOICE_ID,
-                       HFI.COMPANY_ID,
-                       HFI.PROJECT_ID,
-                       HFI.PAYABLE_CODE,
-                       HFI.INVOICE_TYPE,
-                       HFI.INVOICE_NUM,
-                       HFI.OCCUPATION_ID,
-                       HFI.ACCOUNT_DATE,
-                       HFI.ACCOUNT_PERIOD,
-                       HFI.PAYMENT_TERM_ID,
-                       HFI.PAYMENT_METHOD_ID,
-                       HFI.INVOICE_AMOUNT,
-                       HFI.TAX_AMOUNT,
-                       HFI.ENABLE_FLAG,
-                       FCB.COMPANY_FULL_NAME,
-                       HMP.PROJECT_NAME,
-                       HCO.PROPERTY_NUMBER,
-                       HCO.PROPERTY_NAME,
-                       HCO.CUSTOMER_NAME,
-                       HFP.REFERENCE_CODE,
-                       HMPT.PAYMENT_TERM_NAME,
-                       HMPM.PAYMENT_METHOD_NAME,
-                       NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) TRANS_TYPE,
-                       NVL(HFI.Charge_Status, 'CREATED') chargeStatus,
-                       NVL(HFP.PAYMENT_CODE, '') PAYMENT_CODE,
-                       NVL(HFP.STATUS, 'PAY_ADVANCE') STATUS,
-                       NVL(HFP.PAY_DATE, '') PAY_DATE,
-                       NVL(HFP.AMOUNT, '') AMOUNT,
-                       NVL(HFP.PAYMENT_ID, '') PAYMENT_ID,
-                       'AC' doc_type_pay
-                  FROM HPMS_FIN_INVOICE HFI
-                  LEFT JOIN FND_COMPANY_B FCB
-                    ON HFI.COMPANY_ID = FCB.COMPANY_ID
-                  LEFT JOIN HPMS_MDM_PROJECT HMP
-                    ON HMP.PROJECT_ID = HFI.PROJECT_ID
-                  LEFT JOIN HPMS_CS_OCCUPATION HCO
-                    ON HCO.OCCUPATION_ID = HFI.OCCUPATION_ID
-                  LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT
-                    ON HMPT.PAYMENT_TERM_ID = HFI.PAYMENT_TERM_ID
-                  LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
-                    ON HMPM.PAYMENT_METHOD_ID = HFI.PAYMENT_METHOD_ID
-                  LEFT JOIN HPMS_FIN_PAYMENT HFP
-                    ON HFI.INVOICE_ID = HFP.INVOICE_ID
+    <select id="queryInvoice" parameterType="hpms.fin.dto.Payment" resultMap="ResultMap">
+    SELECT HFI.INVOICE_ID,
+		       HFP.COMPANY_ID,
+		       HFP.PROJECT_ID,
+		       HFI.PAYABLE_CODE,
+		       HFI.INVOICE_TYPE,
+		       HFI.INVOICE_NUM,
+		       HFI.OCCUPATION_ID,
+		       HFI.ACCOUNT_DATE,
+		       HFI.ACCOUNT_PERIOD,
+		       HFI.PAYMENT_TERM_ID,
+		       HFI.PAYMENT_METHOD_ID,
+		       HFI.INVOICE_AMOUNT,
+		       HFI.TAX_AMOUNT,
+		       HFI.ENABLE_FLAG,
+		       FCB.COMPANY_FULL_NAME,
+		       HMP.PROJECT_NAME,
+		       HCO.PROPERTY_NUMBER,
+		       HCO.PROPERTY_NAME,
+		       HCO.CUSTOMER_NAME,
+		       HFP.REFERENCE_CODE,
+		       HMPT.PAYMENT_TERM_NAME,
+		       HMPM.PAYMENT_METHOD_NAME,
+		       HFP.PAYMENT_CODE,
+		       HFP.PAY_DATE,
+		       HFP.STATUS,
+		       HFP.PAYER,
+		       HFP.LINE_NUMBER,
+		       HFP.PAYMENT_ID,
+		       HFI.CHARGE_STATUS,
+		       HFP.AMOUNT,
+		       HFP.TRANS_TYPE,
+		       (HFI.INVOICE_AMOUNT - NVL(HFP.AMOUNT, 0)) SETTLEMENT_AMOUNT,
+		       'AC' doc_type_pay
+		  FROM HPMS_FIN_PAYMENT HFP
+		  LEFT JOIN HPMS_FIN_INVOICE HFI
+		    ON HFP.INVOICE_ID = HFI.INVOICE_ID
+		  LEFT JOIN FND_COMPANY_B FCB
+		    ON HFP.COMPANY_ID = FCB.COMPANY_ID
+		  LEFT JOIN HPMS_MDM_PROJECT HMP
+		    ON HMP.PROJECT_ID = HFP.PROJECT_ID
+		  LEFT JOIN HPMS_CS_OCCUPATION HCO
+		    ON HCO.PROPERTY_NUMBER = HFP.PROPERTY_NUMBER
+		  LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT
+		    ON HMPT.PAYMENT_TERM_ID = HFP.PAYMENT_TERM_ID
+		  LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
+		    ON HMPM.PAYMENT_METHOD_ID = HFP.PAYMENT_METHOD_ID
         <where>
        	 1=1
         	<if test='type=="receivable"'>
-			 	AND (NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) = 'PAYABLE' OR NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) = 'OTHER')
+        		 AND HFP.TRANS_TYPE = 'PAYABLE'
+			 	 AND (NVL(HFI.CHARGE_STATUS, 'CREATED') = 'PART_SETTLEMENT' OR NVL(HFI.CHARGE_STATUS, 'CREATED') = 'CREATED')
 			</if>
 			<if test='type=="advance"'>
-				AND	NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) = 'ADVANCED'
+				AND	HFP.TRANS_TYPE = 'ADVANCED'
 			</if>
 			<if test='type=="all"'>
-                AND NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) != 'NULL'
+                AND (NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) NOT IN ('NULL','AGENT'))
+            </if>
+			<if test="occupationId!=null">
+				AND HCO.OCCUPATION_ID = #{occupationId,jdbcType=DECIMAL}
+			</if>
+        </where>
+        UNION
+    	SELECT HFI.INVOICE_ID,
+			       HFI.COMPANY_ID,
+			       HFI.PROJECT_ID,
+			       HFI.PAYABLE_CODE,
+			       HFI.INVOICE_TYPE,
+			       HFI.INVOICE_NUM,
+			       HFI.OCCUPATION_ID,
+			       HFI.ACCOUNT_DATE,
+			       HFI.ACCOUNT_PERIOD,
+			       HFI.PAYMENT_TERM_ID,
+			       HFI.PAYMENT_METHOD_ID,
+			       HFI.INVOICE_AMOUNT,
+			       HFI.TAX_AMOUNT,
+			       HFI.ENABLE_FLAG,
+			       FCB.COMPANY_FULL_NAME,
+			       HMP.PROJECT_NAME,
+			       HCO.PROPERTY_NUMBER,
+			       HCO.PROPERTY_NAME,
+			       HCO.CUSTOMER_NAME,
+			       HFP.REFERENCE_CODE,
+			       HMPT.PAYMENT_TERM_NAME,
+			       HMPM.PAYMENT_METHOD_NAME,
+			       HFP.PAYMENT_CODE,
+			       HFP.PAY_DATE,
+			       HFP.STATUS,
+			       HFP.PAYER,
+		       	   HFP.LINE_NUMBER,
+			       HFP.PAYMENT_ID,
+			       NVL(HFI.CHARGE_STATUS, 'CREATED') CHARGE_STATUS,
+			       HFP.AMOUNT,
+			       HFI.TRANS_TYPE,
+			       (HFI.INVOICE_AMOUNT - NVL(HFP.AMOUNT, 0)) SETTLEMENT_AMOUNT,
+			       'AC' doc_type_pay
+			  FROM HPMS_FIN_INVOICE HFI
+			  LEFT JOIN FND_COMPANY_B FCB
+			    ON HFI.COMPANY_ID = FCB.COMPANY_ID
+			  LEFT JOIN HPMS_MDM_PROJECT HMP
+			    ON HMP.PROJECT_ID = HFI.PROJECT_ID
+			  LEFT JOIN HPMS_CS_OCCUPATION HCO
+			    ON HCO.OCCUPATION_ID = HFI.OCCUPATION_ID
+			  LEFT JOIN HPMS_MDM_PAYMENT_TERM HMPT
+			    ON HMPT.PAYMENT_TERM_ID = HFI.PAYMENT_TERM_ID
+			  LEFT JOIN HPMS_MDM_PAYMENT_METHOD HMPM
+			    ON HMPM.PAYMENT_METHOD_ID = HFI.PAYMENT_METHOD_ID
+			  LEFT JOIN HPMS_FIN_PAYMENT HFP
+			    ON HFP.INVOICE_ID = HFI.INVOICE_ID
+        <where>
+       	 1=1
+        	<if test='type=="receivable"'>
+        		AND (HFI.TRANS_TYPE = 'PAYABLE' OR HFI.TRANS_TYPE = 'ADVANCED')
+   				AND (NVL(HFI.CHARGE_STATUS, 'CREATED') = 'PART_SETTLEMENT' OR NVL(HFI.CHARGE_STATUS, 'CREATED') = 'CREATED')
+			</if>
+			<if test='type=="advance"'>
+				AND	1=2
+			</if>
+			<if test='type=="all"'>
+                AND (NVL(HFP.TRANS_TYPE, HFI.TRANS_TYPE) NOT IN ('NULL','AGENT'))
             </if>
 			<if test="occupationId!=null">
 				AND HFI.OCCUPATION_ID = #{occupationId,jdbcType=DECIMAL}
 			</if>
-			<if test="paymentId!=null">
-				AND HFP.PAYMENT_ID = #{paymentId,jdbcType=paymentId}
-			</if>
         </where>
     </select>
+    
+    
 </mapper>

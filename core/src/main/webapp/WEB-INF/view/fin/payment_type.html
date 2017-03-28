@@ -1,7 +1,7 @@
 <#--
         * description: 付款录入界面
         * version: 1.0
-        * author: huifang。zhou@hand-china.com
+        * author: huifang.zhou@hand-china.com
         * #{copyright}#
         *
         -->
@@ -41,14 +41,33 @@
 
     var viewModel = kendo.observable({
         model: {
-            receiptDate:Hap.formatDate(new Date())
+            payDate:Hap.formatDate(new Date())
 
         }
     });
     
+    function refund(receiptId) {
+        $("#refundId").kendoWindow({
+            actions: ["Close"],
+            title: '<@spring.message "hpms.mdm.receipt.refund"/>',
+            draggable: true,
+            height: "450px",
+            width: "800px",
+            close: function(){
+                $("#refundId").empty();
+            },
+            content: "${base.contextPath}/fin/receipt_refund.html?receiptId="+receiptId,
+            iframe: true,
+            modal: true
+        });
 
-    function receipt() {
-        if (viewModel.model.get("companyId")==null){
+        var win = $("#refundId").data("kendoWindow");
+        win.center().open();
+    }
+    
+    
+    function savePayment(){
+    	if (viewModel.model.get("companyId")==null){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
                 message: '<@spring.message "hpms.fin.receipt.selectcompany"/>'
@@ -70,31 +89,7 @@
                 message: '<@spring.message "hpms.fin.receipt.selectcustomer"/>'
             });
             return;
-        }
-
-        if (type==='advance'){
-            viewModel.model.set("status", "PAY_ADVANCE");
-        } else if (type==='receivable') {
-            let gridData = $("#receivableGrid").data("kendoGrid").selectedDataItems();
-            viewModel.model.set("feeLists",gridData);
-            viewModel.model.set("status", "PAY_CLEARED");
-        }
-
-        if (type!=='advance'){
-
-            if (viewModel.model.feeLists.length==0){
-                kendo.ui.showInfoDialog({
-                    title: $l('hap.prompt'),
-                    message: '<@spring.message "hpms.mdm.receipt.selectfeelist"/>'
-                });
-                return;
-            }
-
-        }
-
-
-
-        if (viewModel.model.get("sumPrice") < viewModel.model.get("receiptAmount")){
+        }if (viewModel.model.get("sumPrice") < viewModel.model.get("amount")){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
                 message: '<@spring.message "hpms.mdm.receipt.sumPricemin"/>'
@@ -102,67 +97,58 @@
             return;
         }
 
-        if (!viewModel.model.get("receiptAmount") || viewModel.model.get("receiptAmount")<=0){
+        if (!viewModel.model.get("amount") || viewModel.model.get("amount")<=0){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
                 message: '<@spring.message "hpms.mdm.receipt.receiptAmountbig"/>'
             });
             return;
         }
-        if (!viewModel.model.get("receiptMethod")){
+        if (!viewModel.model.get("paymentMethodId")){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
                 message: '<@spring.message "hpms.mdm.receipt.selectreceiptmethod"/>'
             });
             return;
         }
-        if (!viewModel.model.get("receiptTerm")){
+        if (!viewModel.model.get("paymentTermId")){
             kendo.ui.showInfoDialog({
                 title: $l('hap.prompt'),
                 message: '<@spring.message "hpms.mdm.receipt.selectreceiptterm"/>'
             });
             return;
         }
-
-        viewModel.model.set("transactor","${Session.userName}");
-        $.ajax({
-            url: '${base.contextPath}/fin/receipt/submit',
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json",
-            data       : JSON.stringify(viewModel.model),
-            success: function (args) {
-                if (args.success) {
-                    kendo.ui.showInfoDialog({
-                        title: $l('hap.prompt'),
-                        message: $l('hap.tip.success')
-                    }).done(function () {
+    	if(type==='advance'){
+    	    viewModel.model.set("status","PAY_ADVANCE");
+    	    viewModel.model.set("transType","ADVANCED");
+    		viewModel.model.__status = 'add';
+    		Hap.submitForm({
+                url: '${base.contextPath}/hpms/fin/payment/saveAdvance',
+                formModel: viewModel.model,
+                success: function(data) {
+                    if (data.success) {
+						kendo.ui.showInfoDialog({
+							message : '<@spring.message "hap.tip.success"/>'
+						});
                         $("#tabstrip").data("kendoTabStrip").select($('#all'));
-                    })
-                }
-            }
-        });
-
-
-    }
-
-    function refund(receiptId) {
-        $("#refundId").kendoWindow({
-            actions: ["Close"],
-            title: '<@spring.message "hpms.mdm.receipt.refund"/>',
-            draggable: true,
-            height: "450px",
-            width: "800px",
-            close: function(){
-                $("#refundId").empty();
-            },
-            content: "${base.contextPath}/fin/receipt_refund.html?receiptId="+receiptId,
-            iframe: true,
-            modal: true
-        });
-
-        var win = $("#refundId").data("kendoWindow");
-        win.center().open();
+					}else{
+					     kendo.ui.showInfoDialog({
+							message : "失败!"
+						});
+					}
+                	}
+                });
+			}else if(type==='receivable'){
+				 var balance = viewModel.model.balance;
+				 if(balance==0){
+				 	
+				 }else{
+				 	kendo.ui.showInfoDialog({
+							message : "余额不等于0!"
+						});
+				 }
+				
+		}
     }
 
 </script>
@@ -270,7 +256,7 @@
                             <label class="col-sm-4 control-label"><@spring.message "hpms.fin.payment.date"/>：</label>
                             <div class="col-sm-8">
                                 <input id="receiptDateId" type="text" style="width:150px;margin-right:5px;"
-                                       data-bind="value:model.receiptDate">
+                                       data-bind="value:model.payDate">
                             </div>
                         </div>
                     </div>
@@ -311,15 +297,23 @@
                         <div class="form-group" style="margin: 0">
                             <label class="col-sm-4 control-label"><@spring.message "hpms.mdm.payment.rel_pay"/>：</label>
                             <div class="col-sm-8">
-                                <input id="receiptAmountInp" type="text" style="width:150px;margin-right:5px;"
+                                <input id="amount" type="text" style="width:150px;margin-right:5px;"
                                        data-bind="value:model.amount">
                                 <script>
                                     $("#sumPriceInp").kendoNumericTextBox({});
-                                    $("#receiptAmountInp").kendoNumericTextBox({
+                                    $("#amount").kendoNumericTextBox({
                                         min: 0,
                                         change: function () {
                                             var value = this.value();
-                                            viewModel.model.set("lineAmount", viewModel.model.sumPrice - value);
+                                            var sumAmount = viewModel.model.advanceSpan;
+                                            
+                                            var advanceFlag = viewModel.model.advanceFlag;
+				 							if(advanceFlag=='Y'){
+				 								viewModel.model.set("balance", viewModel.model.sumPrice - value- sumAmount);  
+				 							}else{
+				 								viewModel.model.set("balance", viewModel.model.sumPrice - value);
+				 							}
+                                            
                                         }
                                     });
                                 </script>
@@ -330,8 +324,7 @@
                         <div class="form-group" style="margin: 0">
                             <label class="col-sm-4 control-label"><@spring.message "hpms.fin.invoice.balance"/>：</label>
                             <div class="col-sm-8">
-                                <input id="balanceInp" type="text" style="width:150px;margin-right:5px;"
-                                       data-bind="value:model.lineAmount" disabled>
+                                <input id="balanceInp" type="text" style="width:150px;margin-right:5px;" data-bind="value:model.balance" disabled>
 									<script>
                                     $("#balanceInp").kendoNumericTextBox({});
                                 </script>
@@ -347,16 +340,15 @@
     </div>
 
     <div class="pull-left" id="toolbar-btn" style="height: 30px;margin-left:200px;margin-bottom: 10px;">
-		 <span id="receiptBtn" class="btn btn-primary k-grid-add"
-              style="float: left; margin-right: 5px;" onclick="receipt()">
+		 <span id="receiptBtn" class="btn btn-primary k-grid-add" style="float: left; margin-right: 5px;" onclick="savePayment()">
             <i class="fa fa-pencil-square-o" style="margin-right:3px;"></i>
             <@spring.message "hpms.fin.payment"/>
         </span>
     </div>
-
-	<script>kendo.bind($('#panel'), viewModel);</script>
+	<script>kendo.bind($('#page-content'), viewModel);</script>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <script>kendo.bind($('#query-form'), viewModel);</script>
+	<script>kendo.bind($('#pull-left'), viewModel);</script>
 
     <div id="tabstrip" style="clear:both;">
         <ul class="nav nav-tabs">
@@ -364,31 +356,29 @@
             <li id="advance"><@spring.message "hpms.fin.payment.advance"/></li>
             <li id="all"><@spring.message "hpms.mdm.receipt.all"/></li>
         </ul>
-        <!--应收-->
+        <!--应付-->
         <div>
             <div id="advanceDiv" style="margin-top: 5px;">
                 <input id="advanceId" type="text" style="margin-right:5px;" data-bind="value:model.advanceFlag">
                 <@spring.message "hpms.mdm.receipt.advancediv1"/>
                 <span style="color: red" id="customerNameSpan"></span>
                 <@spring.message "hpms.fin.payment.selections"/>
-                <span style="color: red" id="advanceSpan"></span>
+                <span style="color: red" id="advanceSpan" data-bind="value:model.advanceSpan"></span>
                 <@spring.message "hpms.mdm.receipt.advancediv3"/>
                 <script>
                     $("#advanceId").kendoCheckbox({
                         change:function(e){
                             let value = this.value();
+                            viewModel.model.set("advanceFlag",value);
                             if (value==='Y') {
-
                                 var sumPrice = viewModel.model.sumPrice;
                                 if (sumPrice < advanceAmount) {
-                                    viewModel.model.set("receiptAmount", sumPrice);
+                                    viewModel.model.set("amount", sumPrice);
                                 } else if (sumPrice > advanceAmount) {
-                                    viewModel.model.set("receiptAmount", advanceAmount);
+                                    viewModel.model.set("amount", advanceAmount);
                                 }
-                                viewModel.model.set("operationType", "advanceReceivable");
-
                             } else {
-                                viewModel.model.set("receiptAmount", 0);
+                                viewModel.model.set("amount", 0);
                             }
 
                         }
@@ -399,7 +389,7 @@
                 <div id="receivableGrid"></div>
             </div>
         </div>
-        <!--预收-->
+        <!--预付-->
         <div>
             <div style="clear:both">
                 <div id="advanceGrid"></div>
@@ -417,6 +407,9 @@
 </div>
 
 <script type="text/javascript">
+
+
+
 	$('#page-content').kendoValidator();
     $("#tabstrip").kendoTabStrip({
         animation: {
@@ -427,21 +420,20 @@
         select: function (e) {
             if (e.item.id==='advance') {
             	viewModel.model.set("type","advance");
+            	type = 'advance';
                 $('#advanceGrid').data('kendoGrid').dataSource.page(1);
-                type = 'advance';
-		
+				$("#receiptBtn").show();
             }
 
             if (e.item.id==='all') {
                 viewModel.model.set("type","all");
-                type = 'all';
                 $('#allGrid').data('kendoGrid').dataSource.page(1);
-
-
+                type = 'all';
+                $("#receiptBtn").hide();
             }
             if (e.item.id==='receivable') {
                 $.ajax({
-                    url: '${base.contextPath}/hpms/fin/payment/query?type=receivable&occupationId='+(viewModel.model.get("occupationId") || 0),
+                    url: '${base.contextPath}/hpms/fin/payment/query?type=advance&occupationId='+(viewModel.model.get("occupationId") || 0),
                     type: "POST",
                     dataType: "json",
                     async:false,
@@ -455,7 +447,7 @@
                         if (invoiceAmount > 0) {
                             $("#advanceDiv").show();
                             $("#advanceSpan").text(invoiceAmount);
-
+                            viewModel.model.set("advanceSpan",invoiceAmount);
                         } else {
                             $("#advanceDiv").hide();
                         }
@@ -463,6 +455,7 @@
                 });
                 viewModel.model.set("type","receivable");
                 $('#receivableGrid').data('kendoGrid').dataSource.page(1);
+                $("#receiptBtn").show();
             }
         }
     });
@@ -513,7 +506,7 @@
     $("#paymentMethodId").kendoDropDownList({
         optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
         dataTextField:"paymentMethodName",
-        dataValueField:"paymentMethodCode",
+        dataValueField:"paymentMethodId",
         valuePrimitive:true,
         index:0,
         dataSource: {
@@ -533,7 +526,7 @@
     $("#paymentTermId").kendoDropDownList({
         optionLabel: '<@spring.message "hpms.mdm.equipmenttype.select"/>',
         dataTextField:"paymentTermName",
-        dataValueField:"paymentTermCode",
+        dataValueField:"paymentTermId",
         valuePrimitive:true,
         index:0,
         dataSource: {
@@ -639,6 +632,7 @@
             model: {
                 id: "paymentId",
                 fields: {
+                	payDate:{type:"date"}
                 }
             }
         }
@@ -682,38 +676,8 @@
                 }
             },
             {
-                field: "paymentCode",
-                title: '<@spring.message "hpms.fin.payment.paymentlcode"/>',
-                attributes: {style: "text-align:center"},
-                width: 150
-            },
-
-            {
-                field: "status",
-                title: '<@spring.message "hpms.fin.payment.ispay"/>',
-                attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-                    var v = dataItem.status;
-                    $.each(statusData,function(i,n){
-                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
-                            v = n.meaning;
-                            return v;
-                        }
-                    });
-                    return v || "";
-                }
-            },
-
-            {
-                field: "propertyNumber",
-                title: '<@spring.message "hpms.mdm.occupation.propertynumber"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "payDate",
-                title: '<@spring.message "hpms.fin.payment.date"/>',
+                field: "accountPeriod",
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
@@ -724,7 +688,7 @@
                 width: 120
             },
             {
-                field: "amount",
+                field: "settlementAmount",
                 title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
@@ -770,122 +734,11 @@
                 e.stopPropagation();
 
                 var grid = $("#receivableGrid").data("kendoGrid");
-
-                $(e.target.parentNode.parentNode).toggleClass("k-state-selected");
-
-                // 处理全选框
-                var head = $(".k-headbox");
-                if (grid.items().length===grid.select().length){
-                    if (!head.hasClass("fa fa-check")){
-                        head.addClass("fa fa-check");
-                    }
-                } else {
-                    if (head.hasClass("fa fa-check")){
-                        head.removeClass("fa fa-check");
-                    }
-                }
                 sumPrice(grid);
             });
         }
     });
 
-    $("#advanceGrid").kendoGrid({
-        autoBind: false,
-        dataSource: receiptDataSource,
-        height: '500px',
-        resizable: true,
-        scrollable: true,
-        navigatable: false,
-        selectable:"multiple,rowbox",
-        pageable: {
-            pageSizes: [5, 10, 20, 50],
-            refresh: true,
-            buttonCount: 5
-        },
-        editable: false,
-        columns: [
-            {
-                field: "paymentCode",
-                title: '<@spring.message "hpms.fin.payment.paymentlcode"/>',
-                attributes: {style: "text-align:center"},
-                width: 150
-            },
-            {
-                field: "status",
-                title: '<@spring.message "hpms.fin.payment.ispay"/>',
-                attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-                    var v = dataItem.status;
-                    $.each(statusData,function(i,n){
-                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
-                            v = n.meaning;
-                            return v;
-                        }
-                    });
-                    return v || "";
-                }
-            },
-
-            {
-                field: "propertyNumber",
-                title: '<@spring.message "hpms.mdm.occupation.propertynumber"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "payDate",
-                title: '<@spring.message "hpms.fin.payment.date"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "invoiceAmount",
-                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "amount",
-                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "transType",
-                title: '<@spring.message "hpms.fin.invoice.transtype"/>',
-                attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-                    var v = dataItem.transType;
-                    $.each(transTypeData,function(i,n){
-                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
-                            v = n.meaning;
-                            return v;
-                        }
-                    });
-                    return v || "";
-                }
-                
-            },
-            {
-                field: "docTypePay",
-                title: '<@spring.message "hpms.mdm.receipt.docType"/>',
-                attributes: {style: "text-align:center"},
-                width: 120,
-                template:function (dataItem) {
-                    var v = dataItem.docTypePay;
-                    $.each(docTypeData,function(i,n){
-                        if((n.value||'').toLowerCase() == (v||'').toLowerCase()){
-                            v = n.meaning;
-                            return v;
-                        }
-                    });
-                    return v || "";
-                }
-            }
-        ]
-    });
 
     $("#allGrid").kendoGrid({
         autoBind: false,
@@ -909,12 +762,6 @@
                 width: 200
             },
             {
-                field: "referenceNumber",
-                title: '<@spring.message "hpms.fin.feelist.referencenumber"/>',
-                attributes: {style: "text-align:center"},
-                width: 150
-            },
-            {
                 field: "chargeStatus",
                 title: '<@spring.message "hpms.mdm.receipt.feestatusname"/>',
                 attributes: {style: "text-align:center"},
@@ -936,7 +783,18 @@
                 attributes: {style: "text-align:center"},
                 width: 150
             },
-
+            {
+                field: "LineNumber",
+                title: '<@spring.message "hpms.fin.feelist.referencenumber"/>',
+                attributes: {style: "text-align:center"},
+                width: 150
+            },
+            {
+                field: "accountPeriod",
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
+                attributes: {style: "text-align:center"},
+                width: 120
+            },
             {
                 field: "status",
                 title: '<@spring.message "hpms.fin.payment.ispay"/>',
@@ -953,27 +811,21 @@
                     return v || "";
                 }
             },
-
-            {
-                field: "propertyNumber",
-                title: '<@spring.message "hpms.mdm.occupation.propertynumber"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
             {
                 field: "payDate",
                 title: '<@spring.message "hpms.fin.payment.date"/>',
                 attributes: {style: "text-align:center"},
-                width: 120
+                width: 120,
+                format: "{0:yyyy-MM-dd}"
             },
             {
-                field: "invoiceAmount",
+                field: "amount",
                 title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
             {
-                field: "amount",
+                field: "settlementAmount",
                 title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
@@ -1077,28 +929,16 @@
                     return v || "";
                 }
             },
-
-            {
-                field: "propertyNumber",
-                title: '<@spring.message "hpms.mdm.occupation.propertynumber"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
-            },
             {
                 field: "payDate",
-                title: '<@spring.message "hpms.fin.payment.date"/>',
+                title: '<@spring.message "hpms.fin.feelist.feeperiod"/>',
                 attributes: {style: "text-align:center"},
-                width: 120
-            },
-            {
-                field: "invoiceAmount",
-                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
-                attributes: {style: "text-align:center"},
-                width: 120
+                width: 120,
+                format: "{0:yyyy-MM}"
             },
             {
                 field: "amount",
-                title: '<@spring.message "hpms.mdm.receipt.settlementamount"/>',
+                title: '<@spring.message "hpms.fin.invoice.lineamount"/>',
                 attributes: {style: "text-align:center"},
                 width: 120
             },
@@ -1142,13 +982,11 @@
 
     function sumPrice(grid) {
         var sum = 0;
-        var adjAmountSum = 0;
-        for (var dataItem of grid.selectedDataItems()){
-            adjAmountSum += dataItem.adjAmount;
-            sum += dataItem.amount;
+        var selectItems = grid.selectedDataItems();
+        for (var dataItem of selectItems){
+            sum += dataItem.settlementAmount;
         }
-        viewModel.model.set("sumPrice",sum.toFixed(2));
-        viewModel.model.set("adjAmount",adjAmountSum.toFixed(2));
+	        viewModel.model.set("sumPrice",sum.toFixed(2));
     }
 
     $("thead>tr th").css("text-align","center");
