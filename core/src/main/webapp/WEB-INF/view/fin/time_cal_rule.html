@@ -31,68 +31,6 @@
                 $("#grid").data("kendoGrid").dataSource.page(1);
             },
         });
-        var companyArray = [];
-        var projectArray = null;
-        var equipmentArray = null;
-        $.ajax({
-            type: "GET",
-            url: "${base.contextPath}/fnd/company/query",
-            data: '',
-            async: false,
-            success: function (args) {
-                ca = args.rows;
-                for (var key in args.rows) {
-                    if (args.rows[key].parentCompanyId != null) {
-                        companyArray.push(args.rows[key]);
-                    }
-                }
-            }
-        });
-        $.ajax({
-            type: "GET",
-            url: "${base.contextPath}/fin/charge/qq",
-            data: '',
-            async: false,
-            success: function (args) {
-                projectArray = args.rows;
-            }
-        });
-        console.log(projectArray)
-        $.ajax({
-            type: "GET",
-            url: "${base.contextPath}/mdm/equipmentType/query",
-            data: '',
-            async: false,
-            success: function (args) {
-                equipmentArray = args.rows;
-            }
-        })
-        var cp = [];
-        var epp = [];
-        for (var com in companyArray) {
-            var com_pro = new Object();
-            com_pro.companyId = companyArray[com].companyId;
-            com_pro.companyFullName = companyArray[com].companyFullName;
-            var proo = [];
-            for (var pro in projectArray) {
-                if (projectArray[pro].companyId == com_pro.companyId) {
-                    var proj = new Object();
-                    proj.projectId = projectArray[pro].projectId;
-                    proj.projectName = projectArray[pro].projectName;
-                    proo.push(proj);
-                    com_pro.proo = proo;
-                }
-            }
-            cp.push(com_pro);
-        }
-        for (var k in equipmentArray) {
-            if (equipmentArray[k].typeAttribute == "CUSTOMER METER") {
-                epp.push(equipmentArray[k]);
-            }
-            if (equipmentArray[k].typeAttribute == "PUBLIC METER") {
-                epp.push(equipmentArray[k]);
-            }
-        }
         var crcode = {};
         function isHave(_o) {
             for (var k in crcode) {
@@ -109,7 +47,6 @@
                 message: "该计费规则下有未冻结的抄表记录,不允许失效操作!"
             });
         }
-
     </script>
     <div id="page-content">
         <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
@@ -314,7 +251,7 @@
         var dataSource = new kendo.data.DataSource({
             transport: {
                 read: {
-                    url: crudServiceBaseUrl + "/query",
+                    url: crudServiceBaseUrl + "/cq",
                     type: "GET",
                     dataType: "json"
                 },
@@ -327,11 +264,6 @@
                     url: crudServiceBaseUrl + "/update",
                     contentType: "application/json",
                     type: "POST"
-                },
-                destroy: {
-                    url: crudServiceBaseUrl + "/delete",
-                    contentType: "application/json",
-                    type: "DELETE"
                 },
                 parameterMap: function (options, type) {
                     if (type !== "read" && options.models) {
@@ -349,6 +281,7 @@
                     kendo.ui.showInfoDialog({
                         message: '添加成功!'
                     });
+                    $('#grid').data('kendoGrid').dataSource.read();
                 } else if (e.type == 'update' && e.response.success == true) {
                     kendo.ui.showInfoDialog({
                         message: '更新成功!'
@@ -422,11 +355,7 @@
                     width: '12%',
                     attributes: {style: "text-align:center"},
                     template: function (rowdata) {
-                        for (var k in companyArray) {
-                            if (companyArray[k].companyId == rowdata.companyId) {
-                                return companyArray[k].companyFullName
-                            }
-                        }
+                        return rowdata['companyName']|| ''
                     },
                     editor: function (container, options) {
                         $('<input id="comp" required type="text" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
@@ -463,11 +392,7 @@
                     width: '12%',
                     attributes: {style: "text-align:center"},
                     template: function (rowdata) {
-                        for (var k in projectArray) {
-                            if (projectArray[k].projectId == rowdata.projectId) {
-                                return projectArray[k].projectName
-                            }
-                        }
+                        return rowdata['projectName']|| ''
                     },
                     editor: function (container, options) {
                         $('<input id="pro" required type="text" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
@@ -506,11 +431,7 @@
                     attributes: {style: "text-align:center"},
                     width: '12%',
                     template: function (rowdata) {
-                        for (var k in epp) {
-                            if (epp[k].equipmentTypeId == rowdata.equipmentTypeId) {
-                                return epp[k].typeName
-                            }
-                        }
+                        return rowdata['typeName']|| ''
                     },
                     editor: function (container, options) {
                         $('<input id="equip" required type="text" validationMessage="必填" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)

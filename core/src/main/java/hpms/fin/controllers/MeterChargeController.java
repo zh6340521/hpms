@@ -25,13 +25,15 @@ public class MeterChargeController extends BaseController{
 
     @Autowired
     private IMeterChargeService meterChargeService;
-    @RequestMapping(value="fin/charge/qq",method = RequestMethod.GET)
+
+    @RequestMapping(value = "fin/charge/cq",method = RequestMethod.GET)
     @ResponseBody
-    public ResponseData query(Project dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
-                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
-        IRequest requestContext = createRequestContext(request);
-        List<Project> projects = meterChargeService.projectQuery(requestContext,dto,page,pageSize);
-        return new ResponseData(projects);
+    public ResponseData chargeQuery(HttpServletRequest request, MeterCharge meterCharge,
+                               @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
+    ) {
+        IRequest requestContext = this.createRequestContext(request);
+        return new ResponseData(meterChargeService.chargeQuery(requestContext, page, pageSize,meterCharge));
     }
 
     @RequestMapping(value = "fin/charge/find",method = RequestMethod.GET)
@@ -49,19 +51,6 @@ public class MeterChargeController extends BaseController{
         }
         return responseData;
     }
-
-
-    @RequestMapping(value = "fin/charge/query",method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseData select(HttpServletRequest request, MeterCharge meterCharge,
-                               @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
-    ) {
-        IRequest requestContext = this.createRequestContext(request);
-        return new ResponseData(meterChargeService.select(requestContext,meterCharge, page, pageSize));
-    }
-
-
 
     @RequestMapping(value = "fin/charge/add",method = RequestMethod.POST)
     @ResponseBody
@@ -102,15 +91,4 @@ public class MeterChargeController extends BaseController{
         }
         return new ResponseData(meterChargeService.batchUpdate(requestCtx, dto));
     }
-
-
-    @RequestMapping(value = "fin/charge/delete",method = RequestMethod.DELETE)
-    public ResponseData delete(@RequestBody List<MeterCharge> sequences){
-        ResponseData responseData = new ResponseData();
-        meterChargeService.batchDelete(sequences);
-        responseData.setMessage("删除成功");
-        responseData.setSuccess(true);
-        return responseData;
-    }
-
 }

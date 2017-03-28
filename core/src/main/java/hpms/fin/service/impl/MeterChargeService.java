@@ -50,8 +50,8 @@ public class MeterChargeService extends BaseServiceImpl<MeterCharge> implements 
     }
 
     @Override
-    public List<Project> projectQuery(IRequest requestContext, Project project, int page, int pageSize) {
+    public List<MeterCharge> chargeQuery(IRequest requestContext, int page, int pageSize,MeterCharge meterCharge) {
         PageHelper.startPage(page, pageSize);
-        return mapper.projectQuery(project);
+        return mapper.chargeQuery(meterCharge);
     }
 }

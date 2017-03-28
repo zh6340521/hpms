@@ -24,5 +24,11 @@ public interface MeterChargeMapper extends Mapper<MeterCharge>{
      */
     List<MeterCharge> findEquipmentTypeByMeterCharge(MeterCharge meterCharge);
 
-    List<Project> projectQuery(Project project);
+    /**
+     * 查询仪表计费
+     * @author pengfei.zheng@hand-china.com   2017年3月28日 14:22:44
+     * @param meterCharge
+     * @return
+     */
+    List<MeterCharge> chargeQuery(MeterCharge meterCharge);
 }

@@ -16,5 +16,5 @@ public interface IMeterChargeService extends IBaseService<MeterCharge>, ProxySel
 
     boolean isHaveEn(MeterCharge meterCharge);
     boolean isChange(MeterCharge meterCharge);
-    List<Project> projectQuery(IRequest requestContext, Project project, int page, int pageSize);
+    List<MeterCharge> chargeQuery(IRequest requestContext, int page, int pageSize,MeterCharge meterCharge);
 }

@@ -13,43 +13,13 @@
                 $('#grid').data('kendoGrid').addRow();
             },
         });
-
         // 获取chargeRuleId
         var chargeRuleId = ${RequestParameters.chargeRuleId!0};
 
-        var companyArray = null;
-        var projectArray = null;
-        var equipmentArray = null;
+        // 填充表头
         $.ajax({
             type   : "GET",
-            url: "${base.contextPath}/fnd/company/query",
-            data: '',
-            async: false,
-            success: function(args) {
-                companyArray = args.rows;
-            }
-        });
-        $.ajax({
-            type   : "GET",
-            url: "${base.contextPath}/fin/charge/qq",
-            data: '',
-            async: false,
-            success: function(args) {
-                projectArray = args.rows;
-            }
-        });
-        $.ajax({
-            type   : "GET",
-            url: "${base.contextPath}/mdm/equipmentType/query",
-            data: '',
-            async: false,
-            success: function(args) {
-                equipmentArray = args.rows;
-            }
-        })
-        $.ajax({
-            type   : "GET",
-            url: '${base.contextPath}/fin/charge/query?chargeRuleId='+chargeRuleId,
+            url: '${base.contextPath}/fin/charge/cq?chargeRuleId='+chargeRuleId,
             data: '',
             async: false,
             success: function(args) {
@@ -59,21 +29,9 @@
                         viewModel.model.crObject = resourceTypeData[k].meaning;
                     }
                 }
-                for(var k in companyArray){
-                    if(companyArray[k].companyId ==args.rows[0].companyId){
-                        viewModel.model.companyName = companyArray[k].companyFullName;
-                    }
-                }
-                for(var k in projectArray){
-                    if(projectArray[k].projectId ==args.rows[0].projectId){
-                        viewModel.model.projectName = projectArray[k].projectName;
-                    }
-                }
-                for(var k in equipmentArray){
-                    if(equipmentArray[k].equipmentTypeId ==args.rows[0].equipmentTypeId){
-                        viewModel.model.typeName = equipmentArray[k].typeName;
-                    }
-                }
+                viewModel.model.companyName = args.rows[0].companyName;
+                viewModel.model.projectName = args.rows[0].projectName;
+                viewModel.model.typeName = args.rows[0].typeName;
                 if(args.rows[0].enableFlag =="Y"){
                     viewModel.model.enableFlag = "启用";
                 }else if(args.rows[0].enableFlag == "N"){
@@ -93,7 +51,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">公司</label>
                                 <div class="col-sm-8">
-                                    <input type="text" style="width: 160px"
+                                    <input type="text" style="width: 160px;background:#DDDDDD"
                                            data-bind="value:model.companyName"
                                            class="k-textbox" value="123" disabled>
                                 </div>
@@ -104,7 +62,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">项目</label>
                                 <div class="col-sm-8">
-                                    <input type="text" style="width: 160px"
+                                    <input type="text" style="width: 160px;background:#DDDDDD"
                                            data-bind="value:model.projectName"
                                            class="k-textbox" value="123" disabled>
                                 </div>
@@ -115,7 +73,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">仪表类型</label>
                                 <div class="col-sm-8">
-                                    <input type="text" style="width: 160px"
+                                    <input type="text" style="width: 160px;background:#DDDDDD"
                                            data-bind="value:model.typeName"
                                            class="k-textbox" value="123" disabled>
                                 </div>
@@ -126,7 +84,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">计费维度</label>
                                 <div class="col-sm-8">
-                                    <input id="ob" type="text" style="width: 160px"
+                                    <input id="ob" type="text" style="width: 160px;background:#DDDDDD"
                                            data-bind="value:model.crObject"
                                            class="k-textbox" value="123" disabled>
                                 </div>
@@ -137,7 +95,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">计费规则</label>
                                 <div class="col-sm-8">
-                                    <input type="text" style="width: 160px"
+                                    <input type="text" style="width: 160px;background:#DDDDDD"
                                            data-bind="value:model.crName"
                                            class="k-textbox" disabled>
                                 </div>
@@ -148,7 +106,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">启用状态</label>
                                 <div class="col-sm-8">
-                                    <input id="enable" type="text" style="width: 160px"
+                                    <input id="enable" type="text" style="width: 160px;background:#DDDDDD"
                                            data-bind="value:model.enableFlag"
                                            class="k-textbox" disabled>
                                 </div>

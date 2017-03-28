@@ -57,6 +57,30 @@ public class MeterCharge extends BaseDTO{
     @Transient
     private String typeName;
 
+    @Transient
+    private String projectName;//暂存字段--项目名称
+
+    @Transient
+    private String companyName;//暂存字段--公司名称
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public MeterCharge setProjectName(String projectName) {
+        this.projectName = projectName;
+        return this;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public MeterCharge setCompanyName(String companyName) {
+        this.companyName = companyName;
+        return this;
+    }
+
 
     public String getTypeName() {
         return typeName;
