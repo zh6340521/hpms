@@ -173,34 +173,6 @@
                                
                         <input id="project" name="project" style="width: 90%" data-bind="text:model.projectId,value:model.projectId"/>
                         <script>
-                        $("#project").kendoDropDownList({
-
-                            optionLabel: "--请选择--",
-                            //valuePrimitive: true,
-                            dataTextField: "projectName",
-                            dataValueField: "projectId",
-                            dataSource: {
-                                transport: {
-                                    read:function(options) {
-                                        $.ajax({
-                                            type   : "POST",
-                                            url: "${base.contextPath}/mdm/property/projectQuery",
-                                            data: {},
-                                            success: function(json) {
-                                               // console.log(json);
-                                                options.success(json.rows);
-                                            }
-                                        });
-                                    }
-                                }
-                            },
-                            select:function(e){
-                                newViewModel.model.set('projectId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
-
-                                //console.log(newViewModel.model.projectId);
-                            }
-                   	      	                      
-                        }).data("kendoDropDownList"); 
                         kendo.bind($('#project'), newViewModel);
                         </script>
 
@@ -377,10 +349,42 @@
                             $("#department").kendoDropDownList({
 
                             });
+                            $("#project").kendoDropDownList({
+
+                            });
                             if(newViewModel.model.companyId==null){
                                 $("input[name='department']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
                                 newViewModel.model.set('orgId',null);
+                                $("input[name='project']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                                newViewModel.model.set('projectId',null);
                             }else{
+
+                                $("#project").kendoDropDownList({
+
+                                    optionLabel: "--请选择--",
+                                    //valuePrimitive: true,
+                                    dataTextField: "projectName",
+                                    dataValueField: "projectId",
+                                    dataSource: {
+                                        transport: {
+                                            read:function(options) {
+                                                $.ajax({
+                                                    type   : "POST",
+                                                    url: "${base.contextPath}/mdm/property/projectQuery?companyId="+newViewModel.model.companyId,
+                                                    data: {},
+                                                    success: function(json) {
+
+                                                        options.success(json.rows);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    },
+                                    select:function(e){
+                                        newViewModel.model.set('projectId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                    }
+
+                                }).data("kendoDropDownList");
                                 $("#department").kendoDropDownList({
                                     optionLabel: "--请选择--",
                                     dataTextField: "name",
@@ -432,12 +436,41 @@
                                 },
                                 select:function (e) {
                                     newViewModel.model.set('companyId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
-                                    //console.log(newViewModel.model.companyId);
+
                                     if(newViewModel.model.companyId==null||newViewModel.model.companyId==''){
                                         $("input[name='department']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
                                         newViewModel.model.set('orgId',null);
+                                        $("input[name='project']").parent().removeClass("k-state-default").addClass("k-state-disabled").unbind();
+                                        newViewModel.model.set('projectId',null);
 
                                     }else{
+                                        $("#project").kendoDropDownList({
+
+                                         optionLabel: "--请选择--",
+                                         //valuePrimitive: true,
+                                         dataTextField: "projectName",
+                                         dataValueField: "projectId",
+                                         dataSource: {
+                                         transport: {
+                                         read:function(options) {
+                                         $.ajax({
+                                         type   : "POST",
+                                         url: "${base.contextPath}/mdm/property/projectQuery?companyId="+newViewModel.model.companyId,
+                                         data: {},
+                                         success: function(json) {
+
+                                         options.success(json.rows);
+                                         }
+                                         });
+                                         }
+                                         }
+                                         },
+                                         select:function(e){
+                                         newViewModel.model.set('projectId',e.sender.dataItem(e.item)[e.sender.options.dataValueField]);
+                                         }
+
+                                         }).data("kendoDropDownList");
+
 
                                         $("#department").kendoDropDownList({
                                             optionLabel: "--请选择--",

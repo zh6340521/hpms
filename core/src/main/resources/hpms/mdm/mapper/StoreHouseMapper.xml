@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hpms.mdm.mapper.StoreHouseMapper">
+    <resultMap id="BaseResultMap" type="hpms.mdm.dto.StoreHouse">
+        <result column="STORE_HOUSE_ID" property="storeHouseId" jdbcType="DECIMAL" />
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="STORE_HOUSE_CODE" property="storeHouseCode" jdbcType="VARCHAR" />
+        <result column="STORE_HOUSE_NAME" property="storeHouseName" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="COMPANY_FULL_NAME" property="companyFullName" jdbcType="VARCHAR" />
+        <result column="MEANING" property="meaning" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <select id="queryAllStoreHouse" resultMap="BaseResultMap" parameterType="hpms.mdm.dto.StoreHouse">
+        SELECT HMSH.STORE_HOUSE_ID,
+        HMSH.STORE_HOUSE_CODE,
+        HMSH.STORE_HOUSE_NAME,
+        HMSH.TYPE,
+        HMSH.ADDRESS,
+        HMSH.ENABLE_FLAG,
+        HMSH.COMPANY_ID,
+        HMSH.PROJECT_ID,
+        FCB.COMPANY_FULL_NAME,
+        HMS.PROJECT_NAME,
+        HCVV.MEANING meaning
+
+        FROM HPMS_MDM_STORE_HOUSE HMSH
+
+        LEFT JOIN FND_COMPANY_B FCB
+        ON FCB.COMPANY_ID = HMSH.COMPANY_ID
+        LEFT JOIN HPMS_MDM_PROJECT HMS
+        ON HMSH.PROJECT_ID = HMS.PROJECT_ID
+        LEFT JOIN HPMS_CODE_VALUE_V HCVV
+        ON HCVV.CODE = 'HPMS_STORE_HOUSE_TYPE'
+        AND HCVV.VALUE = HMSH.TYPE
+        AND HCVV.LANG = #{request.locale,jdbcType=VARCHAR}
+        <where>
+            1=1
+            <if test="storeHouseCode!=null">
+                and HMSH.STORE_HOUSE_CODE LIKE concat('%', concat(#{storeHouseCode,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="storeHouseName!=null">
+                and HMSH.STORE_HOUSE_NAME LIKE concat('%', concat(#{storeHouseName,jdbcType=VARCHAR}, '%'))
+            </if>
+            <if test="storeHouseId!=null">
+                and HMSH.STORE_HOUSE_ID=#{storeHouseId,jdbcType=DECIMAL}
+            </if>
+            <if test="companyId!=null">
+                and HMSH.COMPANY_ID=#{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="projectId!=null">
+                and HMSH.PROJECT_ID=#{projectId,jdbcType=DECIMAL}
+            </if>
+
+        </where>
+
+
+
+    </select>
+
+
+</mapper>
