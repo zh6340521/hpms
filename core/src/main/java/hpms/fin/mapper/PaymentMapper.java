@@ -3,8 +3,6 @@ package hpms.fin.mapper;
 import java.util.List;
 
 import com.hand.hap.mybatis.common.Mapper;
-
-import hpms.fin.dto.Invoice;
 import hpms.fin.dto.Payment;
 /**
  * 
@@ -21,5 +19,20 @@ public interface PaymentMapper extends Mapper<Payment>{
 	 * @param invoice
 	 * @return
 	 */
-	public List<Invoice> queryInvoice(Invoice invoice);
+	public List<Payment> queryInvoice(Payment payment);
+	
+	
+	/**
+	 * 查询收款单状态为已收款的应收应付
+	 * @param invoice
+	 * @return
+	 */
+	public List<Payment> queryCollection(Payment payment);
+	
+	/**
+	 * 应付的付款按钮事件
+	 * @param invoice
+	 * @return
+	 */
+	public List<Payment> saveReceipt(List<Payment> payment);
 }

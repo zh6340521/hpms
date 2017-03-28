@@ -1,12 +1,17 @@
 package hpms.fin.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hand.hap.system.dto.BaseDTO;
 
 
@@ -32,7 +37,7 @@ public class Payment extends BaseDTO{
 	 */
 	@Id
 	@Column
-	@GeneratedValue(generator=GENERATOR_TYPE)
+	@GeneratedValue(generator = GENERATOR_TYPE)
 	private Long paymentId;
 	
 	/**
@@ -97,6 +102,8 @@ public class Payment extends BaseDTO{
 	 * 付款日期
 	 */
 	@Column
+	@JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date payDate;
 	
 	/**
@@ -123,11 +130,138 @@ public class Payment extends BaseDTO{
 	
 	@Column
 	private Long requestId;
+	
+    @Transient
+    private String docTypePay;//单据类型
+    
 	/**
 	 * 行版本号，用来处理锁
 	 */
 	@Column
 	private Long objectVersionNumber;
+	
+	@Transient
+	private String type;
+    
+    /**
+     * 可结算金额
+     */
+	@Transient
+    private Float settlementAmount;
+	/**
+	 * 交款人
+	 */
+    @Column
+    public String payer;
+    /**
+     * 行项目
+     */
+    @Column
+    public Long lineNumber;
+    @Transient
+    private List<Invoice> invoice;
+
+    /**
+     * 用于在service层判断前台操作类型
+     */
+    @Transient
+    private String operationType;
+    
+    @Transient
+    private Long occupationId;//入伙表id
+    
+    @Transient
+	private String payableCode;//应付明细编号 
+    @Transient
+    private String chargeStatus;//计费状态
+    @Transient
+    private String accountPeriod;//计费期间
+    @Transient
+    private Float invoiceAmount;//应付总额
+    @Transient
+    public Long feeListId;//应收id
+    @Transient
+    private String feeListCode;//应收计费编号
+    @Transient
+    private String feeStatus;//计费状态
+    @Transient
+    private String feePeriod;//计费期间 
+    @Transient
+    private Float totalAmount;//应收总额
+	
+	public String getPayer() {
+		return payer;
+	}
+	public void setPayer(String payer) {
+		this.payer = payer;
+	}
+	
+	public Long getLineNumber() {
+		return lineNumber;
+	}
+	public void setLineNumber(Long lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+	public Float getInvoiceAmount() {
+		return invoiceAmount;
+	}
+	public void setInvoiceAmount(Float invoiceAmount) {
+		this.invoiceAmount = invoiceAmount;
+	}
+	public String getPayableCode() {
+		return payableCode;
+	}
+	public void setPayableCode(String payableCode) {
+		this.payableCode = payableCode;
+	}
+	public String getChargeStatus() {
+		return chargeStatus;
+	}
+	public void setChargeStatus(String chargeStatus) {
+		this.chargeStatus = chargeStatus;
+	}
+	public String getAccountPeriod() {
+		return accountPeriod;
+	}
+	public void setAccountPeriod(String accountPeriod) {
+		this.accountPeriod = accountPeriod;
+	}
+	public Long getOccupationId() {
+		return occupationId;
+	}
+	public void setOccupationId(Long occupationId) {
+		this.occupationId = occupationId;
+	}
+	public String getDocTypePay() {
+		return docTypePay;
+	}
+	public void setDocTypePay(String docTypePay) {
+		this.docTypePay = docTypePay;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public Float getSettlementAmount() {
+		return settlementAmount;
+	}
+	public void setSettlementAmount(Float settlementAmount) {
+		this.settlementAmount = settlementAmount;
+	}
+	public List<Invoice> getInvoice() {
+		return invoice;
+	}
+	public void setInvoice(List<Invoice> invoice) {
+		this.invoice = invoice;
+	}
+	public String getOperationType() {
+		return operationType;
+	}
+	public void setOperationType(String operationType) {
+		this.operationType = operationType;
+	}
 	public Long getPaymentId() {
 		return paymentId;
 	}
