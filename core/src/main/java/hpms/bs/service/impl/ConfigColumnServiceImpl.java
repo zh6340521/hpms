@@ -300,12 +300,17 @@ public class ConfigColumnServiceImpl extends BaseServiceImpl<ConfigColumn> imple
             map.put(displayLineNo,ccList);
             logger.info("遍历map");
             for (Long key : map.keySet()) {
-                System.out.println("Key = " + key);
                 List<ConfigColumn> ConfigColumns =map.get(key);
                 if(!ConfigColumns.isEmpty()&&ConfigColumns.size()!=0){
                     for(ConfigColumn cc:ConfigColumns){
+                        logger.info("当一行只有一列时，长度默认显示为6");
+                        int dataLength;
+                        if(ConfigColumns.size()==1){
+                             dataLength=6;
+                        }else{
+                             dataLength = 12/ConfigColumns.size();
+                        }
 
-                        int dataLength = 12/ConfigColumns.size();
                         cc.setDataLength(new Long(dataLength));
                     }
                 }

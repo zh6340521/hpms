@@ -30,6 +30,11 @@
         model.set("feeLists",feeList);
         model.set("transactor","${Session.userName}");
         model.set("receiptAmount",$("#totalAmountId").text());
+        if ("RECEIVABLE"===transType){
+            model.set("receiptStatus", "C");
+        }else if("DEPOSIT"===transType) {
+            model.set("receiptStatus", "A");
+        }
         $.ajax({
             url: '${base.contextPath}/fin/receipt/submit',
             type: "POST",
@@ -38,6 +43,7 @@
             data       : JSON.stringify(model),
             success: function (args) {
                 if (args.success) {
+                    model.set("feeLists",null);
                     kendo.ui.showInfoDialog({
                         title: $l('hap.prompt'),
                         message: $l('hap.tip.success')

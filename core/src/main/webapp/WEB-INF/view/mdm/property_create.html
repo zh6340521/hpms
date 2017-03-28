@@ -208,7 +208,7 @@
               serverFiltering:true,
               transport: {
                   read: {
-                  	url:"${base.contextPath}/mdm/property/companyQuery",
+                      url:"${base.contextPath}/mdm/property/companyQuery",
                   	type : "POST" 
                   }, 
                   contentType : "application/json",
@@ -246,7 +246,7 @@
               serverFiltering:true,
               transport: {
                   read: {
-                  	url:"${base.contextPath}/mdm/property/projectQuery",
+                      url:"${base.contextPath}/hpms/mdm/project/query",
                   	type : "POST" 
                   }, 
                   contentType : "application/json",
@@ -305,7 +305,7 @@
               configValueId = e.dataItem.configValueId;
               configId = e.dataItem.configId;
 
-			  //查询子表数据
+			  //调用后台js动态拼接列
 			  findConfigColumn(e.dataItem.configValueId,e.dataItem.configId,"property_form",viewModel);
 
 

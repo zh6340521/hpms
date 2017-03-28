@@ -6,4 +6,23 @@
         where SEQUENCE_CODE = #{value}
         order by end_date_active desc
     </select>
+
+    <select id="queryValidByCode" resultType="hpms.bs.dto.Sequence">
+        SELECT HS.SEQUENCE_ID sequenceId,
+               HS.SEQUENCE_CODE sequenceCode,
+               HS.SEQUENCE_NAME sequenceName,
+               HS.COMPANY_FLAG companyFlag,
+               HS.PROJECT_FLAG projectFlag,
+               HS.PREFIX prefix,
+               HS.DATE_FORMAT dateFormat,
+               HS.FIGURE figure,
+               HS.START_NUM startNum,
+               HS.CURRENT_NUM currentNum,
+               HS.CURRENT_PREFIX currentPrefix,
+               HS.START_DATE_ACTIVE startDateActive,
+               HS.END_DATE_ACTIVE endDateActive
+          FROM HPMS_SEQUENCE HS
+         WHERE HS.SEQUENCE_CODE = #{value}
+           AND TRUNC(SYSDATE) BETWEEN HS.START_DATE_ACTIVE AND NVL(HS.END_DATE_ACTIVE,TRUNC(SYSDATE))
+    </select>
 </mapper>

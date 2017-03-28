@@ -1,0 +1,258 @@
+<#include "../include/header.html">
+    <body>
+    <style>
+        .red {
+            color: red;
+            position: absolute;
+            margin-top: 22px;
+        }
+    </style>
+    <script>
+        // 初始化viewModel
+        var viewModel = kendo.observable({
+            model: {},
+            // 新增函数
+            createFunction: function () {
+                $('#grid').data('kendoGrid').addRow();
+            },
+            // 条件查询
+            queryResource: function (e) {
+                $("#grid").data("kendoGrid").dataSource.page(1);
+            },
+            // 重置查询框
+            resetForm: function (e) {
+                var formDate = viewModel.model.toJSON();
+                for (var k in formDate) {
+                    viewModel.model.set(k, undefined);
+                }
+                $("#grid").data("kendoGrid").dataSource.page(1);
+            },
+        });
+        function isHave(_o,_i) {
+            $.ajax({
+                type: "GET",
+                url: "${base.contextPath}/mdm/purchase/query?orgCode="+_o,
+                data: '',
+                async: false,
+                success: function (args) {
+                    if(args.total != 0){
+                        kendo.ui.showWarningDialog({
+                            message: '组织代码不可重复!'
+                        });
+                        $("#editCode").val(_i);
+                    }
+                }
+            });
+        }
+    </script>
+    <div id="page-content">
+        <div id="room_tree"></div>
+        <div class="panel" style="padding: 0px;border:none;box-shadow: none;">
+            <form class="form-horizontal" id="query-form" style="margin-top: 1px;">
+                <div id="form" class="panel-body">
+                    <div class="row" style="margin-bottom: 5px;">
+                        <!-- 采购组织代码 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">采购组织代码</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px;"
+                                           data-bind="value:model.orgCode"
+                                           class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 采购组织名称 -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">采购组织名称</label>
+                                <div class="col-sm-8">
+                                    <input type="text" style="width: 160px;"
+                                           data-bind="value:model.orgName"
+                                           class="k-textbox">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both"></div>
+                        <div style="margin-top: 20px">
+                        <span onclick="viewModel.createFunction()" class="btn btn-primary"
+                              style="float:left;margin-right:5px;margin-left:-15px;width: 70px"><i
+                                class="fa fa-plus-square" style="margin-right:3px;"></i>
+	<@spring.message "hap.new"/></span>
+                        <span class="btn btn-info" style="width: 70px;float:left;margin-right:5px;"
+                              data-bind="click:queryResource"
+                              type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                        <span class="btn btn-default" style="float:left;width:70px" data-bind="click:resetForm"
+                              type="button"><i class="glyphicon glyphicon-erase" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- gird组件 -->
+        <div style="clear: both;">
+            <div id="grid" style="margin-top: 0px"></div>
+        </div>
+    </div>
+    <script>
+        // 绑定查询框
+        kendo.bind($('#query-form'), viewModel);
+        // 当前路径
+        var crudServiceBaseUrl = '${base.contextPath}/mdm/purchase';
+        // 定义数据源
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl + "/query",
+                    type: "GET",
+                    dataType: "json"
+                },
+                create: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                update: {
+                    url: crudServiceBaseUrl + "/submit",
+                    contentType: "application/json",
+                    type: "POST"
+                },
+                parameterMap: function (options, type) {
+                    if (type !== "read" && options.models) {
+                        var datas = Hap.prepareSubmitParameter(options, type);
+                        return kendo.stringify(datas);
+                    } else if (type === "read") {
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
+                    }
+                },
+            },
+            requestEnd: function (e) {
+                if (e.type == 'read') {
+                    crcode = e.response.rows;
+                } else if (e.type == 'create' && e.response.success == true) {
+                    kendo.ui.showInfoDialog({
+                        message: '添加成功!'
+                    });
+                } else if (e.type == 'update' && e.response.success == true) {
+                    kendo.ui.showInfoDialog({
+                        message: '更新成功!'
+                    });
+                }else {
+                    $('#grid').data('kendoGrid').dataSource.read();
+                }
+            },
+            batch: true,
+            serverPaging: true,
+            pageSize: 10,
+            schema: {
+                data: 'rows',
+                total: 'total',
+                model: {
+                    id: "purchaseOrgId",
+                    fields: {
+                        startDate:{type:"date"},
+                        endDate:{type:"date",defaultValue:''},
+                    },
+                }
+            }
+        });
+
+        var grid = $('#grid').kendoGrid({
+            dataSource: dataSource,
+            height: '100%',
+            resizable: false,
+            scrollable: true,
+            selectable: 'row',
+            editable: "inline",
+            sortable: true,
+            navigatable: false,
+            reorderable: true,
+            pageable: {
+                // 分页类别
+                pageSizes: [5, 10, 20, 50],
+                // 刷新按钮
+                refresh: true,
+                // 最大显示页面数
+                buttonCount: 5
+            },
+            columns: [
+                {
+                    title: '操作',
+                    attributes: {style: "text-align:center"},
+                    command: [{name: "edit"}],
+                    width: '8%'
+                },
+                {
+                    field: "orgCode",
+                    title: '采购组织代码',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    editor: function (container, options) {
+                        $('<input id="editCode" onchange="isHave(this.value,'+'&quot;'+options.model.orgCode+'&quot;'+')" required type="text" validationMessage="只允许输入大写,数字和_" pattern="^[A-Z0-9_]+$" style="width: 80%" class="k-textbox" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                    }
+                },
+                {
+                    field: "orgName",
+                    title: '采购组织名称',
+                    width: '12%',
+                    attributes: {style: "text-align:center"},
+                    editor: function (container, options) {
+                        $('<input required type="text" validationMessage="必填" style="width: 80%" class="k-textbox" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                    }
+                },
+                {
+                    field: "startDate",
+                    title: '有效期起',
+                    attributes: {style: "text-align:center"},
+                    format:"{0: yyyy/MM/dd}",
+                    width: '12%',
+                    editor: function (container, options) {
+                        $('<input id="startDate" required validationMessage="必填" style="width:80%" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                        $("#startDate").kendoDatePicker({
+                                format:"yyyy/MM/dd",
+                                change: function () {
+                                    if (this.value() != null) {
+                                        d = this.value();
+                                    } else {
+                                        d = new Date(1900, 0, 1, 22, 0, 0);
+                                    }
+                                    $('#endDate').data('kendoDatePicker').min(d)
+                                }
+                            }).data("kendoDatePicker");
+                    }
+                },
+                {
+                    field: "endDate",
+                    title: '有效期至',
+                    attributes: {style: "text-align:center"},
+                    format:"{0: yyyy/MM/dd}",
+                    width: '12%',
+                    editor: function (container, options) {
+                        var start = options.model.startDate;
+                        var d;
+                        if (start) {
+                            d = start;
+                        }
+                        $('<input id="endDate" required validationMessage="必填" style="width: 80%" name="' + options.field + '"/><span class="red">*</span>').appendTo(container)
+                        $("#endDate").kendoDatePicker({
+                                format:"yyyy/MM/dd",
+                                min: d,
+                                change: function () {
+                                    if (this.value() != null) {
+                                        d = this.value();
+                                    } else {
+                                        d = new Date(2099, 0, 1, 22, 0, 0);
+                                    }
+                                    $('#startDate').data('kendoDatePicker').max(d)
+                                }
+                            }).data("kendoDatePicker");
+                    }
+                },
+            ],
+        }).data("kendoGrid");
+        // 自动填充界面
+        Hap.autoResizeGrid("#grid");
+        // 标题居中
+        $("#grid thead>tr th").css("text-align", "center");
+    </script>
+    </body>

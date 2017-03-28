@@ -447,11 +447,17 @@
                         width: '20%' ,
                         attributes: {style: "text-align:center"},
                         template:function (rowdata){
-                            for(var k in resourceTypeData){
-                                if(resourceTypeData[k].value == rowdata.businessFormat){
-                                    return resourceTypeData[k].meaning
+                            if(rowdata.businessFormat!=null){
+
+                                for(var k in resourceTypeData){
+                                    if(resourceTypeData[k].value == rowdata.businessFormat){
+                                        return resourceTypeData[k].meaning
+                                    }
                                 }
+                            }else{
+                                return "";
                             }
+
                         },
                         editor: function (container, options) {
                             $('<input type="text" style="width: 120px" name="' + options.field + '"/>')

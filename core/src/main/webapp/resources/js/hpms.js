@@ -172,6 +172,7 @@ function ViewFormElementsBydisplayLineNo(data,formName,viewModel,configValueId,c
  * @constructor
  */
 function ViewFormElements(data,formName,viewModel){
+    //alert(data.rows.length);
     for (var i = 0; i < data.rows.length; i++) {
 
         //文本框
@@ -182,13 +183,85 @@ function ViewFormElements(data,formName,viewModel){
                 '<label >' + data.rows[i].columnNameAlias + '</label>' +
                 '</div>' +
                 '<div class="col-md-8">' +
-                '<input  disabled="disabled"  class="k-textbox"  id="' + data.rows[i].columnId + '"   style="width: 70%; background-color:#DDDDDD" value="' + viewModel.model.get(data.rows[i].columnId) + '" />' +
+               // '<input  disabled="disabled"  class="k-textbox"  id="' + data.rows[i].columnId + '"   style="width: 70%; background-color:#DDDDDD" value="' + viewModel.model.get(data.rows[i].columnId) + '" />' +
+                '<input disabled="disabled" class="k-textbox" onblur="validateDecimal('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '"  style="width: 70%; background-color:#DDDDDD" value="' + viewModel.model.get(data.rows[i].columnId) + '"  />'+
 
                 '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>' +
                 '</div>' +
                 '</div>'
 
             );
+        }else if(data.rows[i].columnStyle == "DECIMAL")//只能输入小数
+        {
+
+
+                $("#" + formName).append(
+
+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
+                    '<div class="col-md-4 tdAlign">'+
+
+                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
+                    '</div>'+
+                    '<div class="col-md-8">'+
+                    '<input disabled="disabled" class="k-textbox" onblur="validateDecimal('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '"  style="width: 70%; background-color:#DDDDDD" value="' + viewModel.model.get(data.rows[i].columnId) + '"  />'+
+                    '</div>'+
+                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
+                    '</div>'
+                );
+
+
+
+        }else if(data.rows[i].columnStyle == "NUMBER") //只能输入整数
+        {
+
+                $("#" + formName).append(
+
+
+                    '<div id="div1" class="col-md-' + data.rows[i].dataLength + '" style="margin-top: 5px;">'+
+
+                    '<div class="col-md-4 tdAlign">'+
+
+                    '<label >' + data.rows[i].columnNameAlias + '</label>'+
+                    '</div>'+
+                    '<div class="col-md-8">'+
+                    '<input  disabled="disabled" class="k-textbox" onblur="validateNumber('+data.rows[i].columnLength+',this)" id="' + data.rows[i].columnId + '"  name="' + data.rows[i].columnId + '" '+ data.rows[i].vaildateMessage+'  validationMessage="必输" data-bind="value:model.' + data.rows[i].columnId + '" style="width: 70%; background-color:#DDDDDD" value="' + viewModel.model.get(data.rows[i].columnId) + '"" />'+
+                    '</div>'+
+
+                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
+
+                    '</div>'
+                );
+
+
+
+        }
+        else if(data.rows[i].columnStyle == "DATE")  //日期格式
+        {
+
+
+                $("#" + formName).append(
+
+                    '<div id="div1" class="col-md-'+data.rows[i].dataLength+'" style="margin-top:5px">'+
+                    '<div class="col-md-4 tdAlign">'+
+                    '<label>'+ data.rows[i].columnNameAlias+'</label>'+
+                    '</div>'+
+                    '<div class="col-md-8">'+
+                    '<input disabled="disabled"  id="'+ data.rows[i].columnId+'" name="'+ data.rows[i].columnId+'" data-bind="value:model.'+ data.rows[i].columnId+'"   style="width: 70%; background-color:#DDDDDD" value="' + viewModel.model.get(data.rows[i].columnId) + '""" />'+
+                    '<script>kendo.bind($("#" + "' + data.rows[i].columnId + '"), viewModel);</script>'+
+                    '<script type="text/javascript">'+
+                    '$("#"+"'+ data.rows[i].columnId+'").kendoDatePicker({ format : "yyyy-MM-dd"});'+
+                    '</script>'+
+                    '</div>'+
+                    '<div>'+
+
+                    '</div>'+
+
+                    '</div>'
+                );
+
+
         }else if(data.rows[i].columnStyle == "LIST")  //下拉框
         {
             //当sqlId不为空且没有级联时，只解析sqlId
@@ -889,6 +962,7 @@ function showFormElements(data,formName,viewModel) {
 
 
                         '</div>'
+
                     );
                 }else{
                     $("#" + formName).append(

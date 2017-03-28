@@ -10,10 +10,26 @@
         <result column="cr_code" property="crCode" jdbcType="VARCHAR" />
         <result column="cr_name" property="crName" jdbcType="VARCHAR" />
         <result column="enable_flag" property="enableFlag" jdbcType="VARCHAR" />
-
         <result column="type_name" property="typeName" jdbcType="VARCHAR" />
-
     </resultMap>
+    <resultMap id="BaseMap" type="hpms.mdm.dto.Project">
+        <result column="PROJECT_ID" property="projectId" jdbcType="DECIMAL" />
+        <result column="PROJECT_CODE" property="projectCode" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" jdbcType="VARCHAR" />
+        <result column="GROUP_ID" property="groupId" jdbcType="DECIMAL" />
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="PROJECT_CONTACT" property="projectContact" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="PROJECT_ADDRESS" property="projectAddress" jdbcType="VARCHAR" />
+        <result column="START_DATE_ACTIVE" property="startDateActive" jdbcType="DATE" />
+        <result column="END_DATE_ACTIVE" property="endDateActive" jdbcType="DATE" />
+        <result column="ENABLE_FLAG" property="enableFlag" jdbcType="VARCHAR" />
+        <result column="PROGRAM_ID" property="programId" jdbcType="DECIMAL" />
+        <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    </resultMap>
+
 
 
     <select id="isHaveEnable" parameterType="hpms.fin.dto.MeterCharge" resultType="hpms.fin.dto.MeterCharge">
@@ -40,5 +56,42 @@
      WHERE cr.equipment_type_id = et.equipment_type_id
      and cr.project_id=#{projectId,jdbcType=DECIMAL}
     and cr.enable_flag='Y'
+    </select>
+
+    <select id="projectQuery" resultMap="BaseMap" parameterType="hpms.mdm.dto.Project">
+        SELECT HMP.PROJECT_ID,
+        HMP.PROJECT_CODE,
+        HMP.PROJECT_NAME,
+        HMP.GROUP_ID,
+        HMP.COMPANY_ID,
+        HMP.PROJECT_CONTACT,
+        HMP.CONTACT_PHONE,
+        HMP.PROJECT_ADDRESS,
+        HMP.START_DATE_ACTIVE,
+        HMP.END_DATE_ACTIVE,
+        HMP.ENABLE_FLAG,
+        HMP.PROGRAM_ID,
+        HMP.REQUEST_ID,
+        FG.COMPANY_FULL_NAME GROUP_NAME,
+        FC.COMPANY_FULL_NAME COMPANY_NAME
+        FROM HPMS_MDM_PROJECT HMP
+        LEFT JOIN FND_COMPANY_B fg
+        ON hmp.group_id = fg.COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL fgl
+        ON (fg.COMPANY_ID = fgl.COMPANY_ID AND fgl.LANG = #{request.locale, jdbcType = VARCHAR})
+        LEFT JOIN FND_COMPANY_B fc
+        ON hmp.COMPANY_ID = fc.COMPANY_ID
+        LEFT JOIN FND_COMPANY_TL fcl
+        ON (fc.COMPANY_ID = fcl.COMPANY_ID AND fcl.LANG = #{request.locale, jdbcType = VARCHAR})
+        WHERE 1=1
+        <if test = "projectId != null"> AND hmp.PROJECT_ID like #{projectId , jdbcType=DECIMAL} </if>
+        <if test = "projectCode != null"> AND hmp.Project_Code like concat('%', concat(#{projectCode , jdbcType=VARCHAR}, '%')) </if>
+        <if test = "projectName != null"> AND hmp.Project_Name like concat('%', concat(#{projectName , jdbcType=VARCHAR}, '%')) </if>
+        <if test = "startDateActive != null">
+            AND hmp.START_DATE_ACTIVE &lt;= #{startDateActive,jdbcType=DATE}
+        </if>
+        <if test = "endDateActive != null">
+            AND hmp.END_DATE_ACTIVE &gt;= #{endDateActive,jdbcType=DATE}
+        </if>
     </select>
 </mapper>

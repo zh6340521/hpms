@@ -57,11 +57,19 @@
                                 type : "POST",
                                 url : "${base.contextPath}/fin/sharebind/submit",
                                 data: JSON.stringify(obj),
+                                async: false,
                                 contentType: "application/json",
                                 success: function(datas) {
-                                    kendo.ui.showInfoDialog({
-                                        message: '新建成功!'
-                                    });
+                                    console.log(datas)
+                                    if(datas.success == false){
+                                        kendo.ui.showWarningDialog({
+                                            message: '新建失败,只可添加房间!'
+                                        });
+                                    }else{
+                                        kendo.ui.showInfoDialog({
+                                            message: '新建成功!'
+                                        });
+                                    }
                                 }
                             });
                             parent.$('#grid').data('kendoGrid').dataSource.read();

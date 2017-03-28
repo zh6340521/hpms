@@ -2,6 +2,7 @@ package hpms.fin.mapper;
 
 import com.hand.hap.mybatis.common.Mapper;
 import hpms.fin.dto.MeterCharge;
+import hpms.mdm.dto.Project;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface MeterChargeMapper extends Mapper<MeterCharge>{
      * @return
      */
     List<MeterCharge> findEquipmentTypeByMeterCharge(MeterCharge meterCharge);
+
+    List<Project> projectQuery(Project project);
 }

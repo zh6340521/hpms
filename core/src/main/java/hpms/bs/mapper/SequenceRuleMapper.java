@@ -11,4 +11,5 @@ import java.util.List;
  */
 public interface SequenceRuleMapper extends Mapper<Sequence>{
     List<Sequence> getDate (String code);
+    List<Sequence> queryValidByCode (String code);
 }

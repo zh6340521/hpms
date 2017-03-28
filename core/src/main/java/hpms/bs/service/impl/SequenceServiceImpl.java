@@ -1,13 +1,19 @@
 package hpms.bs.service.impl;
 
+import com.hand.hap.core.IRequest;
+import com.hand.hap.fnd.dto.Company;
+import com.hand.hap.fnd.mapper.CompanyMapper;
 import com.hand.hap.system.service.impl.BaseServiceImpl;
 import hpms.bs.dto.Sequence;
 import hpms.bs.mapper.SequenceRuleMapper;
 import hpms.bs.service.ISequenceService;
+import hpms.mdm.dto.Project;
+import hpms.mdm.mapper.ProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +25,12 @@ import java.util.List;
 public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements ISequenceService{
     @Autowired
     private SequenceRuleMapper sequenceRuleMapper;
+
+    @Autowired
+    private CompanyMapper companyMapper;
+
+    @Autowired
+    private ProjectMapper projectMapper;
 
     @Override
     public boolean isDateOk(List<Sequence> sequences) {
@@ -49,5 +61,93 @@ public class SequenceServiceImpl extends BaseServiceImpl<Sequence> implements IS
                 return false;
         }
         return true;
+    }
+
+    /**
+     *
+     * 描述:获取单据编号
+     * @author jun.zhao02@hand-china.com
+     * @param request
+     * @param sequenceCode
+     * @param companyId
+     * @param projectId
+     * @return
+     */
+    @Override
+    public String getNextDocCode(IRequest request, String sequenceCode, Long companyId, Long projectId) throws RuntimeException{
+        List<Sequence> seqList = sequenceRuleMapper.queryValidByCode(sequenceCode);
+        //判断查询结果
+        if (seqList.size() != 1) {
+            throw new RuntimeException("无法生成单据编号，请检查编码规则");
+        }
+
+        //定义变量
+        String docCode = "";
+        String companyCode = "";
+        String projectCode = "";
+
+        //获取sequence
+        Sequence sequence = new Sequence();
+        sequence = seqList.get(0);
+        String prefix = sequence.getPrefix();
+        String companyFlag = sequence.getCompanyFlag();
+        String projectFlag = sequence.getProjectFlag();
+        String dateFormat = sequence.getDateFormat();
+        Long figure = sequence.getFigure();
+        Long startNum = sequence.getStartNum();
+        Long currentNum = sequence.getCurrentNum();
+        String currentPrefix = sequence.getCurrentPrefix();
+
+        //获取公司编码
+        if (companyFlag.equals("Y") && companyId != null) {
+            Company company = new Company();
+            company.setCompanyId(companyId);
+            company = companyMapper.selectByPrimaryKey(company);
+            companyCode = company.getCompanyCode();
+        }
+
+        //获取项目编码
+        if (projectFlag.equals("Y") && projectId != null) {
+            Project project = new Project();
+            project.setProjectId(projectId);
+            project = projectMapper.selectByPrimaryKey(project);
+            projectCode = project.getProjectCode();
+        }
+
+        //获取当前的日期
+        Date date = new Date();
+        //设置要获取到什么样的时间
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        //获取String类型的时间
+        String currentDate = sdf.format(date);
+
+        docCode = prefix + companyCode + projectCode + currentDate;
+
+        //判断前缀及当前编号
+        //首次生产编号或者重新编号
+        if (currentNum == null || ! docCode.equals(currentPrefix)) {
+            sequence.setCurrentNum(startNum);
+            sequence.setCurrentPrefix(docCode);
+            docCode = docCode + startNum;
+            sequence.set__status("update");
+            seqList = super.batchUpdate(request,seqList);
+        }
+        //根据当前编号生成下个编号
+        else {
+            if (String.valueOf(currentNum + 1).length()  > figure) {
+                throw new RuntimeException("无法生成设备编号，超出终止编码");
+            } else {
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < String.valueOf(currentNum + 1).length() - figure; i++) {
+                    sb.append("0");
+                }
+                sequence.setCurrentNum(currentNum + 1);
+                docCode = currentPrefix + sb.toString() + (currentNum + 1);
+                sequence.set__status("update");
+                seqList = super.batchUpdate(request,seqList);
+            }
+        }
+        //返回编号
+        return docCode;
     }
 }
