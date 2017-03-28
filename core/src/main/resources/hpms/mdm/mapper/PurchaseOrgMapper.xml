@@ -3,13 +3,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="hpms.mdm.mapper.PurchaseOrgMapper">
     <resultMap type="hpms.mdm.dto.PaymentTerm" id="BaseResultMap" extends="com.hand.hap.mapper.StdMapper.STD">
-        <id column="PAYMENT_TERM_ID" property="paymentTermId" jdbcType="DECIMAL"/>
-        <result column="PAYMENT_TERM_CODE" property="paymentTermCode" jdbcType="VARCHAR"/>
-        <result column="PAYMENT_TERM_NAME" property="paymentTermName" jdbcType="VARCHAR"/>
-        <result column="DAYS" property="days" jdbcType="DECIMAL"/>
-        <result column="AP_FLAG" property="apFlag" jdbcType="VARCHAR"/>
-        <result column="AP_FLAG_NAME" property="apFlagName" jdbcType="VARCHAR"/>
-        <result column="AR_FLAG" property="arFlag" jdbcType="VARCHAR"/>
-        <result column="AR_FLAG_NAME" property="arFlagName" jdbcType="VARCHAR"/>
+        <id column="PURCHASE_ORG_ID" property="purchaseOrgId" jdbcType="DECIMAL"/>
+        <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR"/>
+        <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="START_DATE" property="startDate" jdbcType="DATE"/>
+        <result column="END_DATE" property="endDate" jdbcType="DATE"/>
     </resultMap>
 </mapper>

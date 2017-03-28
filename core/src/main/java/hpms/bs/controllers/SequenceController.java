@@ -73,8 +73,11 @@ public class SequenceController extends BaseController{
 
     @RequestMapping(value = "bs/seq/getNext",method = RequestMethod.POST)
     @ResponseBody
-    public String getNext(HttpServletRequest request,@RequestParam String sequenceCode, @RequestParam Long companyId, @RequestParam Long projectId) {
+    public ResponseData getNext(HttpServletRequest request,@RequestParam String sequenceCode, @RequestParam Long companyId, @RequestParam Long projectId) {
         IRequest requestContext = this.createRequestContext(request);
-        return new String(service.getNextDocCode(requestContext,sequenceCode,companyId,projectId));
+        ResponseData responseData = new ResponseData();
+        responseData.setSuccess(true);
+        responseData.setCode(service.getNextDocCode(requestContext,sequenceCode,companyId,projectId));
+        return responseData;
     }
 }

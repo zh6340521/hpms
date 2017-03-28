@@ -250,7 +250,8 @@
 	                    		amountValidation: function (input) {
 	                    			if (input.is("[name='amount']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
+										//增加一段正整数判断
+	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) && !/^[0-9]*[1-9][0-9]*$/.test(input.val())){
 	                                        input.attr("data-amountValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
 	                                        return false;
 	                                    }
@@ -264,7 +265,8 @@
 	                    		percentValidation: function (input) {
 	                    			if (input.is("[name='percent']") && input.val() != "") {
 	                                    // 正则校验-只允许输入非负数
-	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) ){
+                                        //增加一段正整数判断
+	                                    if (! /^(([1-9]+)|([0-9]+\.[0-9]{1,2}))$/.test(input.val()) && !/^[0-9]*[1-9][0-9]*$/.test(input.val())){
 	                                        input.attr("data-percentValidation-msg", "<@spring.message 'hpms.mdm.priceline.verifynumber'/>");
 	                                        return false;
 	                                    }
@@ -274,7 +276,7 @@
                     		}
                     	},
                     	description: {type:"string"},
-                    	enableFlag: {type:"string"}
+                    	enableFlag: {defaultValue: 'Y',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'}//type:"string"
 	                }
 	            }
 	        }
@@ -529,21 +531,21 @@
 		        	field      : "enableFlag",
 	                title      : "<@spring.message 'hpms.mdm.feetype.enableflag'/>", 
 	                width      : "7%",
-	                attributes  : {style: "text-align:center"},
-	                template: function(dataItem){
-		           		return dataItem['enableFlagName']|| '' 
-		           	},
-		           	editor: function(container, options){
-				        	$('<input name="' + options.field + '"/>')
-		                         .appendTo(container)
-		                         .kendoDropDownList({
-		                             dataTextField: "meaning",
-		                             dataValueField: "value",
-		                             valuePrimitive: true,
-		                             dataSource: enableFlagData
-		                    });
-				        
-		            }
+	                attributes  : {style: "text-align:center"}
+//	                ,template: function(dataItem){
+//		           		return dataItem['enableFlagName']|| ''
+//		           	}
+//                    ,editor: function(container, options){
+//				        	$('<input name="' + options.field + '"/>')
+//		                         .appendTo(container)
+//		                         .kendoDropDownList({
+//		                             dataTextField: "meaning",
+//		                             dataValueField: "value",
+//		                             valuePrimitive: true,
+//		                             dataSource: enableFlagData
+//		                    });
+//
+//		            }
 		        },{
 		        	field      : "description",
 	                title      : "<@spring.message 'hap.description'/>", 

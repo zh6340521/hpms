@@ -60,7 +60,8 @@
     	ON hmdp.ENABLE_FLAG = hcvv2.VALUE AND hcvv2.CODE = 'MDM.ENABLE_FLAG' AND hcvv2.LANG = #{request.locale, jdbcType = VARCHAR}
         WHERE 1 = 1
         <if test = "discountProId != null"> AND hmdp.DISCOUNT_PRO_ID = #{discountProId , jdbcType=DECIMAL} </if>
-        <if test = "discountProCode != null"> AND hmdp.DISCOUNT_PRO_CODE like concat('%', concat(#{discountProCode,jdbcType=VARCHAR}, '%')) </if>
+        <!--<if test = "discountProCode != null"> AND hmdp.DISCOUNT_PRO_CODE like concat('%', concat(#{discountProCode,jdbcType=VARCHAR}, '%')) </if>-->
+		<if test = "discountProCode != null"> AND hmdp.DISCOUNT_PRO_CODE  = #{discountProCode,jdbcType=VARCHAR} </if>
         <if test = "discountProName != null"> AND hmdp.DISCOUNT_PRO_NAME like concat('%', concat(#{discountProName,jdbcType=VARCHAR}, '%')) </if>
         <if test = "companyId != null"> AND hmdp.COMPANY_ID = #{companyId , jdbcType=DECIMAL} </if>
         <if test = "projectId != null"> AND hmdp.PROJECT_ID = #{projectId , jdbcType=DECIMAL} </if>
